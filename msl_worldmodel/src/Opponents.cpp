@@ -16,7 +16,6 @@ using std::make_shared;
 
 using nonstd::optional;
 using nonstd::nullopt;
-using nonstd::make_optional;
 
 Opponents::Opponents(MSLWorldModel *wm, int ringBufferLength)
     : opponentsAlloClustered(ringBufferLength)
@@ -65,7 +64,7 @@ optional<geometry::CNPointEgo> Opponents::getInCorridor(double angle, double wid
 
     if (found)
     {
-        return make_optional<geometry::CNPointEgo>(closest);
+        return closest;
     }
     return nullopt;
 }
@@ -96,9 +95,10 @@ optional<geometry::CNPointEgo> Opponents::getClosestToBall(double &distance)
             found = true;
         }
     }
+
     if (found)
     {
-        return make_optional<geometry::CNPointEgo>(closest);
+        return closest;
     }
 
     return nullopt;

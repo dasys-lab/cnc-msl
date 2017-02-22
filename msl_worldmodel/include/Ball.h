@@ -40,7 +40,7 @@ class Ball
 
     std::shared_ptr<geometry::CNVecAllo> getBallVel3D(int index = 0);
     nonstd::optional<geometry::CNPointAllo> getAlloBallPosition();
-    std::shared_ptr<geometry::CNPointEgo> getEgoBallPosition();
+    nonstd::optional<geometry::CNPointEgo> getEgoBallPosition();
     std::shared_ptr<geometry::CNVecEgo> getEgoBallVelocity();
     std::shared_ptr<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
     std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
@@ -59,7 +59,7 @@ class Ball
     bool getOppBallPossession(int index = 0);
     double getBallDiameter();
 
-    geometry::CNPointAllo getBallPickupPosition();
+    nonstd::optional<geometry::CNPointAllo> getBallPickupPosition();
 
     void updateSharedBall();
     void updateBallGuess();
@@ -89,7 +89,7 @@ class Ball
     ObjectContainer ballBuf;
     MovingObject mv;
     unsigned long long lastUpdateReceived;
-    geometry::CNPointEgo lastKnownBallPos;
+    nonstd::optional<geometry::CNPointEgo> lastKnownBallPos;
     double HAVE_BALL_TOLERANCE_DRIBBLE;
     double KICKER_DISTANCE;
     double KICKER_DISTANCE_SIMULATOR;
@@ -112,12 +112,14 @@ class Ball
     InfoBuffer<geometry::CNPointAllo> ballGuessPosition;
     InfoBuffer<geometry::CNVecEgo> visionBallVelocityBuffer;
     InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
+
+    // TODO: add validityDurations for each buffer
     const InfoTime maxValidity = 1000000000;
 
     double haveDistance;
 
     bool selfInBallPossesion;
-    geometry::CNPointAllo ballPickupPosition;
+    nonstd::optional<geometry::CNPointAllo> ballPickupPosition;
 
 };
 } /* namespace msl */

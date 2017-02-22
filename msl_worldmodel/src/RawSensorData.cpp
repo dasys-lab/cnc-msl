@@ -111,6 +111,10 @@ const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommandsB
     return this->joystickCommands;
 }
 
+/**
+ * Process and store RawOdometryInfo messages.
+ * @param msg the RawOdometryInfo to process
+ */
 void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 {
     auto motion = make_shared<InformationElement<geometry::CNPositionAllo>>(
@@ -122,6 +126,10 @@ void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr
     ownVelocityMotion.add(vel);
 }
 
+/**
+ * Process and store JoystickCommand messages.
+ * @param msg the JoystickCommand message to process
+ */
 void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 {
 
@@ -134,6 +142,10 @@ void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
     }
 }
 
+/**
+ * Process and store MotionBurst messages.
+ * @param msg the MotionBurst message to process
+ */
 void RawSensorData::processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
 {
     // CNPointEgo, but origin is not the center of the robot
@@ -144,12 +156,20 @@ void RawSensorData::processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
     opticalFlow.add(ofInfo);
 }
 
+/**
+ * Process and store light barrier messages.
+ * @param msg the light barrier message to process
+ */
 void RawSensorData::processLightBarrier(std_msgs::BoolPtr msg)
 {
     auto lbInfo = make_shared<InformationElement<bool>>(msg->data, wm->getTime(), this->maxValidity, 1.0);
     lightBarrier.add(lbInfo);
 }
 
+/**
+ * Process and store MotionControl messages.
+ * @param cmd the MotionControl message to process
+ */
 void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl &cmd)
 {
     msl_actuator_msgs::MotionControl mcData = cmd;
@@ -158,6 +178,10 @@ void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl
     lastMotionCommand.add(mcInfo);
 }
 
+/**
+ * Process and store world model data.
+ * @param data the WorldModelData to process
+ */
 void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 {
     InfoTime time = wm->getTime();
@@ -181,9 +205,8 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         ownVelocityVision.add(velInfo);
     }
 
-    auto ballPos = make_shared<geometry::CNPointEgo>(data->ball.point.x, data->ball.point.y, data->ball.point.z);
-    auto ballVel =
-        make_shared<geometry::CNVecEgo>(data->ball.velocity.vx, data->ball.velocity.vy, data->ball.velocity.vz);
+    auto ballPos = geometry::CNPointEgo(data->ball.point.x, data->ball.point.y, data->ball.point.z);
+    auto ballVel = geometry::CNVecEgo(data->ball.velocity.vx, data->ball.velocity.vy, data->ball.velocity.vz);
 
     if (data->ball.confidence > 0.00000001)
         this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
@@ -222,6 +245,10 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
     wm->getVisionDataEventTrigger()->run();
 }
 
+/**
+ * Process and store CorrectedOdometryInfo messages.
+ * @param coi the CorrectedOdometryInfo message to process
+ */
 void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi)
 {
     auto coData = make_shared<geometry::CNPositionAllo>(coi->position.x, coi->position.y, coi->position.angle);
@@ -231,6 +258,10 @@ void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdome
     this->wm->ball->updateOnLocalizationData(coi->imageTime);
 }
 
+/**
+ * Process and store BallHypothesisList messages.
+ * @param list the BallHypothesisList message to process
+ */
 void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr &list)
 {
     auto bhlData = *list;
@@ -240,6 +271,10 @@ void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisLis
     this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 }
 
+/**
+ * Process and store IMUData messages.
+ * @param msg the IMUData message to process
+ */
 void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
 {
     auto imuData = *msg;
