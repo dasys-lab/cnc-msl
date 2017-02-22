@@ -34,6 +34,7 @@
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_msgs/JoystickCommand.h>
+#include <msl_msgs/Pose2dStamped.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
@@ -100,6 +101,8 @@ MSLWorldModel::MSLWorldModel()
     correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel *)this);
     lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo, (MSLWorldModel *)this);
     imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel *)this);
+
+    goalDetectionSub = n.subscribe("/goal", 10, &MSLWorldModel::onGoalDetectionData, (MSLWorldModel *)this);
 
     this->sharedWorldModel = new MSLSharedWorldModel(this);
     this->timeLastSimMsgReceived = 0;
@@ -482,5 +485,10 @@ int MSLWorldModel::getOwnId()
 void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
 {
     rawSensorData->processLightBarrier(msg);
+}
+
+void msl::MSLWorldModel::onGoalDetectionData(msl_msgs::Pose2dStampedPtr msg) {
+
+
 }
 } /* namespace msl */

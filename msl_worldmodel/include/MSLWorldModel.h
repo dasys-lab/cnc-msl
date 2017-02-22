@@ -29,6 +29,7 @@ ROS_DECLARE_MESSAGE(Bool)
 namespace msl_msgs
 {
 ROS_DECLARE_MESSAGE(JoystickCommand)
+ROS_DECLARE_MESSAGE(Pose2dStamped)
 }
 namespace msl_actuator_msgs
 {
@@ -101,6 +102,7 @@ class MSLWorldModel
     void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
     void onLightBarrierInfo(std_msgs::BoolPtr msg);
     void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
+    void onGoalDetectionData(msl_msgs::Pose2dStampedPtr msg);
 
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
@@ -160,6 +162,7 @@ class MSLWorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
+    ros::Subscriber goalDetectionSub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

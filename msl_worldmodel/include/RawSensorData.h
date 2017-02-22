@@ -20,6 +20,7 @@
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
+#include "msl_msgs/Pose2dStamped.h"
 #include "msl_msgs/JoystickCommand.h"
 #include "msl_msgs/MotionInfo.h"
 #include "msl_sensor_msgs/BallHypothesisList.h"
@@ -37,7 +38,7 @@ class MSLWorldModel;
 class RawSensorData
 {
   public:
-    RawSensorData(MSLWorldModel *wm, int ringBufferLength);
+RawSensorData(MSLWorldModel *wm, int ringBufferLength);
     virtual ~RawSensorData();
     shared_ptr<vector<double>> getDistanceScan(int index = 0);
     bool getLightBarrier(int index = 0);
@@ -53,6 +54,8 @@ class RawSensorData
     shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
     shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
     shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
+    shared_ptr<msl_msgs::Pose2dStamped> getGoalDetection(int index = 0);
+
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
     void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
     void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
@@ -62,6 +65,7 @@ class RawSensorData
     void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi);
     void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr &list);
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
+    void processGoalDetectionData(msl_msgs::Pose2dStampedPtr msg);
 
   private:
     RingBuffer<InformationElement<vector<double>>> distanceScan;
@@ -77,6 +81,7 @@ class RawSensorData
     RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
     RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
     RingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
+    RingBuffer<InformationElement<msl_msgs::Pose2dStamped>> goalDetectionData;
     MSLWorldModel *wm;
 
     unsigned long maxInformationAge;

@@ -33,6 +33,7 @@ RawSensorData::RawSensorData(MSLWorldModel *wm, int ringbufferLength)
     , lastMotionCommand(ringbufferLength)
     , ballHypothesis(ringbufferLength)
     , imuData(ringbufferLength)
+	, goalDetectionData(ringbufferLength)
 {
     this->wm = wm;
     ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -178,6 +179,15 @@ shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> RawSensorData::getCorrectedOd
 shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesisList(int index)
 {
     auto x = ballHypothesis.getLast(index);
+    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+    {
+        return nullptr;
+    }
+    return x->getInformation();
+}
+
+shared_ptr<msl_msgs::Pose2dStamped> RawSensorData::getGoalDetection(int index) {
+    auto x = goalDetectionData.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
     {
         return nullptr;
@@ -366,5 +376,19 @@ void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
         log(0, atan2(cmd->magnet.y, cmd->magnet.x));
         // log(1, imuData.getAverageMod());
     }
+}
+
+void RawSensorData::processGoalDetectionData(msl_msgs::Pose2dStampedPtr msg) {
+
+	cout << "RSA: in process method" << endl;
+	shared_ptr<msl_msgs::Pose2dStamped> pose = make_shared<msl_msgs::Pose2dStamped>();
+
+	pose->pose.x = msg->pose.x;
+	pose->pose.y = msg->pose.y;
+	pose->pose.theta = msg->pose.theta;
+
+	shared_ptr<InformationElement<msl_msgs::Pose2dStamped>> elem = make_shared<InformationElement<msl_msgs::Pose2dStamped>>(pose, wm->getTime());
+	goalDetectionData.add(elem);
+
 }
 } /* namespace alica */
