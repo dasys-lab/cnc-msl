@@ -9,7 +9,7 @@ using namespace std;
 #include <FileSystem.h>
 #include <container/CNPoint2D.h>
 #include "ConsoleCommandHelper.h"
-#include "Plans/Calibration/RotateOnce.h"
+//#include "Plans/Calibration/RotateOnce.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -32,11 +32,11 @@ namespace alica
 	void RotationCalibrationCalculation::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1475074396562) ENABLED START*/ //Add additional options here
-		if (this->isSuccess() || this->isFailure())
+		/*if (this->isSuccess() || this->isFailure())
 		{
 			return;
 		}
-		if (RotateOnce::measurements[0] == NULL)
+//		if (RotateOnce::measurements[0] == NULL)
 		{
 			RotateOnce::measurements[0] = RotateOnce::measurements[1];
 			RotateOnce::measurements[1] = new geometry::CNPoint2D(RotateOnce::measurements[0]->x + 10, 0); // TODO x field
@@ -88,7 +88,7 @@ namespace alica
 		// fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
 
 		// TODO use measurements for gnuplot call
-		stringstream cmd;
+		/*stringstream cmd;
 		string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
 
 		if (RotateOnce::logCounter > RotationCalibrationCalculation::MAX_POINTS_USED_FOR_REGRESSION)
@@ -125,7 +125,7 @@ namespace alica
 
 		/* I like C! */
 		// match plotted value
-		const int max_line_size = 400;
+		/*const int max_line_size = 400;
 		const int output_size = gnuplotReturn.size() + 1;
 		const char *ret = gnuplotReturn.c_str();
 		char output[output_size];
@@ -172,7 +172,7 @@ namespace alica
 
 		wm->setRobotRadius(RotateOnce::measurements[1]->x);
 		cout << "OH SHIT IT WORKED!" << endl;
-		this->setFailure(true);
+		this->setFailure(true);*/
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

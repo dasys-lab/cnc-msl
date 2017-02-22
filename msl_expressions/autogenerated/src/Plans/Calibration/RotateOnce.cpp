@@ -87,12 +87,12 @@ namespace alica
 		lastBearing = currentBearing;
 	}
 
-	void RotateOnce::getMotionBearing()
+	double RotateOnce::getMotionBearing()
 	{
 		return wm->rawOdometry->position.angle;
 	}
 
-	void RotateOnce::getIMUBearing()
+	double RotateOnce::getIMUBearing()
 	{
 		return wm->rawSensorData->getAverageBearing();
 	}

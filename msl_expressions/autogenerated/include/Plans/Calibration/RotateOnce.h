@@ -41,8 +41,8 @@ namespace alica
         double getLimitedRotationSpeed(double desiredSpeed);
         void logCalibrationResult(double currentRadius, double calibError);
 
-		void getMotionBearing();
-		void getIMUBearing();
+		double getMotionBearing();
+		double getIMUBearing();
 
 		void updateRotationCount(double currentBearing, double &lastBearing, int &rotations);
 		/*PROTECTED REGION END*/
