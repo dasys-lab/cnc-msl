@@ -13,25 +13,22 @@ using namespace std;
 namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
-	geometry::CNPoint2D* RotateOnce::measurements[2] = {NULL, NULL};
 	int RotateOnce::logCounter = 0;
+
 	/*PROTECTED REGION END*/
 	RotateOnce::RotateOnce() :
 			DomainBehaviour("RotateOnce")
 	{
 		/*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
-		initialRadius = wm->getRobotRadius();
-		precisionBuffer = new msl::RingBuffer<double>(PRECISION_BUFFER_SIZE);
-		initialAngle = 0;
-		initialBearing = 0;
+		robotRadius = wm->getRobotRadius();
+		lastMotionBearing = getMotionBearing();
+		lastIMUBearing = getIMUBearing();
 		rotationSpeed = 0;
-		lastRotationCalibError = 0;
 		/*PROTECTED REGION END*/
 	}
 	RotateOnce::~RotateOnce()
 	{
 		/*PROTECTED REGION ID(dcon1467397900274) ENABLED START*/ //Add additional options here
-		delete precisionBuffer;
 		/*PROTECTED REGION END*/
 	}
 	void RotateOnce::run(void* msg)
@@ -46,82 +43,58 @@ namespace alica
 		mc.motion.rotation = rotationSpeed;
 		send(mc);
 
-		int currentSegment = getCurrentRotationSegment();
-		double currentBearing = wm->rawSensorData->getAverageBearing();
+		double currentIMUBearing = getIMUBearing();
+		double currentMotionBearing = getMotionBearing();
+		double circDiff = circularDiff(currentIMUBearing, lastIMUBearing);
 
-		if (currentSegment == 0 || visitedSegments[currentSegment - 1])
-		{
-			visitedSegments[currentSegment] = true;
-		}
+		updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations);
+		updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations);
 
-		// for(int i= 0; i<3; i++) { cout << "seg" << i << ": " << visitedSegments[i] << " "; } cout << endl;
+		cout << (imuRotations + lastIMUBearing) << "; " << (motionRotations + lastMotionBearing) << endl;
 
-		if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
-		{
-			double circDiff = circularDiff(currentBearing, initialBearing);
-			precisionBuffer->add(make_shared<double>(circDiff));
-
-			rotationSpeed = getLimitedRotationSpeed(-circDiff);
-
-			if (precisionBuffer->getSize() == PRECISION_BUFFER_SIZE)
-			{
-				// cout << "buffer" << endl;
-				double diffSum = 0;
-				for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
-				{
-					diffSum += precisionBuffer->getActualElement(i);
-					// cout << i << ": " << precisionBuffer->getActualElement(i) << endl;
-				}
-
-				if (diffSum >= 0)
-				{
-					double endAngle = wm->rawOdometry->position.angle;
-					cout << "end angle: " << endAngle << " => ";
-					lastRotationCalibError = circularDiff(initialAngle, endAngle);
-					logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
-					measurements[1]->y = lastRotationCalibError;
-					// wm->adjustRobotRadius(STEP_SIZE);
-					this->setSuccess(true);
-				}
-			}
-		}
+		// cout << "buffer" << endl;
+//		double endAngle = wm->rawOdometry->position.angle;
+//		cout << "end angle: " << endAngle << " => ";
+//		lastRotationCalibError = circularDiff(lastMotionBearing, endAngle);
+//		logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
+//		measurements[1]->y = lastRotationCalibError;
+		// wm->adjustRobotRadius(STEP_SIZE);
+//		this->setSuccess(true);
 		/*PROTECTED REGION END*/
 	}
 	void RotateOnce::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
 		rotationSpeed = ACCELERATION;
-		initialBearing = wm->rawSensorData->getAverageBearing();
-		precisionBuffer->clear(true);
-		initialAngle = wm->rawOdometry->position.angle;
-
-		// TODO this needs an explaining comment
-		segments[0] = fmod(initialBearing + 1.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-		segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-		segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-		visitedSegments[0] = false;
-		visitedSegments[1] = false;
-		visitedSegments[2] = false;
-		cout << "starting angle: " << initialAngle << ", ";
-
+		lastMotionBearing = getMotionBearing();
+		lastIMUBearing = getIMUBearing();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
-	int RotateOnce::getCurrentRotationSegment()
+	void RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations)
 	{
-		double currentBearing = wm->rawSensorData->getAverageBearing();
-		double minDiff = 1337; // anything greater than 2 pi actually
-		int segment = -1;
-		for (int i = 0; i < 3; i++)
+		double circDiff = circularDiff(currentBearing, lastBearing);
+		if (circDiff < 0 && circDiff > CIRCDIFF_THRESHOLD)
 		{
-			double diff = abs(circularDiff(segments[i], currentBearing));
-			if (diff < minDiff)
-			{
-				segment = i;
-				minDiff = diff;
-			}
+			return;
 		}
-		return segment;
+
+		if (lastBearing > currentBearing)
+		{
+			rotations++;
+		}
+
+		lastBearing = currentBearing;
+	}
+
+	void RotateOnce::getMotionBearing()
+	{
+		return wm->rawOdometry->position.angle;
+	}
+
+	void RotateOnce::getIMUBearing()
+	{
+		return wm->rawSensorData->getAverageBearing();
 	}
 
 	double RotateOnce::circularDiff(double a, double b)
