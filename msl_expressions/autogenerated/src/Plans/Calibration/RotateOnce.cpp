@@ -21,8 +21,8 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
 		robotRadius = wm->getRobotRadius();
-		lastMotionBearing = getMotionBearing();
-		lastIMUBearing = getIMUBearing();
+		lastMotionBearing = 0;
+		lastIMUBearing = 0;
 		rotationSpeed = 0;
 		/*PROTECTED REGION END*/
 	}
