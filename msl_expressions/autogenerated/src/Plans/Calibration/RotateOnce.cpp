@@ -77,10 +77,10 @@ namespace alica
 		double circDiff = circularDiff(currentBearing, lastBearing);
 		double currentNormedBearing = (currentBearing + M_PI)/ (2*M_PI);
 		double lastNormedBearing = (lastBearing + M_PI)/ (2*M_PI);
-
-		if (circDiff < 0 && circDiff > CIRCDIFF_THRESHOLD)
+		cout << "circDiff: " << circDiff << "; ";
+		if (circDiff <= 0 && circDiff > CIRCDIFF_THRESHOLD)
 		{
-			return;
+			return 0;
 		}
 
 		if (lastNormedBearing > currentNormedBearing)
@@ -106,6 +106,11 @@ namespace alica
 	double RotateOnce::circularDiff(double a, double b)
 	{
 		double diff = a - b;
+		if(diff == 0)
+		{
+			return 0;
+		}
+
 		double sign = diff / abs(diff);
 		double absDiff = abs(diff);
 		double atMost180 = min(2 * M_PI - absDiff, absDiff);

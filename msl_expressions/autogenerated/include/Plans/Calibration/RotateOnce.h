@@ -15,7 +15,7 @@ namespace alica
         virtual ~RotateOnce();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1467397900274) ENABLED START*/ //Add additional public methods here
-        double const CIRCDIFF_THRESHOLD = 1.001;
+        double const CIRCDIFF_THRESHOLD = 0.5; //TODO tweak
         static int logCounter;
 
         /*PROTECTED REGION END*/
@@ -44,7 +44,7 @@ namespace alica
 		double getMotionBearing();
 		double getIMUBearing();
 
-		void updateRotationCount(double currentBearing, double &lastBearing, int &rotations);
+		double updateRotationCount(double currentBearing, double &lastBearing, int &rotations);
 		/*PROTECTED REGION END*/
 	};
 } /* namespace alica */
