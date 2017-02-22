@@ -21,6 +21,10 @@
 
 using std::atan;
 using std::cos;
+using std::make_shared;
+using nonstd::nullopt;
+using nonstd::optional;
+using nonstd::make_opt;
 
 namespace msl
 {
@@ -61,7 +65,7 @@ const InfoBuffer<geometry::CNPointEgo> &Ball::getVisionBallPositionBuffer() cons
     return this->visionBallPositionBuffer;
 }
 
-const InfoBuffer<geometry::CNVecAllo> &Ball::getVisionBallVelocityBuffer() const
+const InfoBuffer<geometry::CNVecEgo> &Ball::getVisionBallVelocityBuffer() const
 {
     return this->visionBallVelocityBuffer;
 }
@@ -71,16 +75,23 @@ geometry::CNPointAllo Ball::getBallPickupPosition()
     return this->ballPickupPosition;
 }
 
-shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
+optional<geometry::CNPointAllo> Ball::getAlloBallPosition()
 {
-    auto ownPos = this->wm->rawSensorData->getOwnPositionVision().getLast();
+    auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+
+    if(!ownPosInfo)
+    {
+    	return nullopt;
+    }
 
     auto egoBallPos = this->getEgoBallPosition();
     if (!egoBallPos)
     {
-    	return nullptr;
+        return nullopt;
     }
-    return egoBallPos->toAllo(ownPos->getInformation()->get());
+
+
+    return egoBallPos->toAllo(ownPosInfo->getInformation());
 }
 
 shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()
@@ -210,55 +221,21 @@ bool Ball::ballMovedSiginficantly()
     return false;
 }
 
-void Ball::updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel,
-                         double certainty)
+void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty)
 {
-    InfoTime time = wm->getTime();
-    shared_ptr<geometry::CNPointEgo> ballPosUpdate;
-    if (ballPos != nullptr)
-    {
-        ballPosUpdate = std::make_shared<geometry::CNPointEgo>(ballPos->x, ballPos->y, ballPos->z);
-    }
+    InfoTime time = this->wm->getTime();
+    auto ball = make_shared<InformationElement<geometry::CNPointEgo>>(ballPos, time, this->maxValidity, certainty);
+    this->visionBallPositionBuffer.add(ball);
 
-    shared_ptr<InformationElement<geometry::CNPointEgo>> ball =
-        make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
-    ball->certainty = certainty;
-    ballPosition.add(ball);
-
-    shared_ptr<InformationElement<geometry::CNPointEgo>> ball3D =
-        make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
-    ball->certainty = certainty;
-    ballPoint3D.add(ball3D);
-
-    shared_ptr<geometry::CNVecEgo> ballVelUpdate;
-    if (ballVel != nullptr)
-    {
-        ballVelUpdate = make_shared<geometry::CNVecEgo>(ballVel->x, ballVel->y, ballVel->z);
-    }
-    shared_ptr<InformationElement<geometry::CNVecEgo>> ballV =
-        make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
-    ballV->certainty = certainty;
-    ballVelocity.add(ballV);
-
-    shared_ptr<InformationElement<geometry::CNVecEgo>> ballVelInfo3D =
-        make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
-    ball->certainty = certainty;
-    ballVel3D.add(ballVelInfo3D);
+    auto ballV = make_shared<InformationElement<geometry::CNVecEgo>>(ballVel, time, this->maxValidity, certainty);
+    this->visionBallVelocityBuffer.add(ballV);
 
     updateSharedBall();
     updateHaveBall();
     updateBallPossession();
     updateBallGuess();
 }
-shared_ptr<geometry::CNPoint3D> Ball::getBallPoint3D(int index)
-{
-    auto x = ballPoint3D.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
+
 shared_ptr<geometry::CNPoint3D> Ball::getBallVel3D(int index)
 {
     auto x = ballVel3D.getLast(index);
@@ -500,7 +477,7 @@ void Ball::updateHaveBall()
         // if you lost the ball, further pretend that you have it for at most 2 iterations
         hasBallIteration = max(min(--hasBallIteration, 2), 0);
         //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() <<
-        //endl;
+        // endl;
         return;
     }
 
@@ -826,6 +803,11 @@ Point Ball::allo2Ego(Point p, Position pos)
 
 void Ball::processHypothesis()
 {
+    auto infoBallList = wm->rawSensorData->getBallHypothesisBuffer().getLastValid();
+    if (infoBallList == nullptr)
+    {
+        return;
+    }
     static int noBallCycles = 0;
     bool ballIntegrated = false;
 
@@ -860,40 +842,43 @@ void Ball::processHypothesis()
     ballPos.confidence = 0.0;
     ballPos.valid = false;
     Point3D p;
-    auto ballList = wm->rawSensorData->getBallHypothesisList();
-
-    // Its clearly wring that both have the same time but we don't know anything better here! :(
-    TimeHelper::getInstance()->setVisionTimeDirected(ballList->imageTime);
-    TimeHelper::getInstance()->setVisionTimeOmniCam(ballList->imageTime);
-    if (ballList->hypothesis.size() == 0)
+    // Its clearly wrong that both have the same time but we don't know anything better here! :(
+    auto ballList = infoBallList->getInformation();
+    TimeHelper::getInstance()->setVisionTimeDirected(ballList.imageTime);
+    TimeHelper::getInstance()->setVisionTimeOmniCam(ballList.imageTime);
+    if (ballList.hypothesis.size() == 0)
+    {
         BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
-    auto ownPosition = wm->rawSensorData->getOwnPositionVision();
-    bool inField;
+    }
 
-    for (int i = 0; i < ballList->hypothesis.size(); i++)
+    auto ownPositionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    //TODO was not in itialized before ?
+    bool inField = false;
+    // TODO why do we think the ball is in the field when we don't know its position
+    if (ownPositionInfo == nullptr)
+    {
+        inField = true;
+    }
+
+    auto ownPosition = ownPositionInfo->getInformation();
+
+    for (int i = 0; i < ballList.hypothesis.size(); i++)
     {
         double relFactor = 200;
-        ballPos.x = ballList->hypothesis[i].egoPosition.x;
-        ballPos.y = ballList->hypothesis[i].egoPosition.y;
-        ballPos.z = ballList->hypothesis[i].egoPosition.z;
+        ballPos.x = ballList.hypothesis[i].egoPosition.x;
+        ballPos.y = ballList.hypothesis[i].egoPosition.y;
+        ballPos.z = ballList.hypothesis[i].egoPosition.z;
 
-        if (ownPosition == nullptr)
+        double alloBallPosX = ownPosition.x;
+        double alloBallPosY = ownPosition.y;
+
+        alloBallPosX += cos(ownPosition.theta) * p.x - sin(ownPosition.theta) * p.y;
+        alloBallPosY += sin(ownPosition.theta) * p.x + cos(ownPosition.theta) * p.y;
+
+        if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor &&
+            fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
         {
             inField = true;
-        }
-        else
-        {
-            double alloBallPosX = ownPosition->x;
-            double alloBallPosY = ownPosition->y;
-
-            alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
-            alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
-
-            if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor &&
-                fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
-            {
-                inField = true;
-            }
         }
 
         if (!inField)
@@ -915,8 +900,8 @@ void Ball::processHypothesis()
         }
         // if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
 
-        ballPos.confidence = 0.3 + (ballList->hypothesis[i].errors * 0.1);
-        if (ballList->hypothesis[i].radius > 5)
+        ballPos.confidence = 0.3 + (ballList.hypothesis[i].errors * 0.1);
+        if (ballList.hypothesis[i].radius > 5)
         {
             ballPos.confidence += 0.2;
         }
@@ -964,24 +949,14 @@ void Ball::processHypothesis()
     }
     ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
                                                             currBallBuf->getStartIndex(), currBallBuf->getLastIndex());
-    geometry::CNPoint3D ballPoint;
-    geometry::CNPoint3D ballVelocity;
     MovingObject mv2 = mv;
     mv2.point = allo2Ego(mv.point, BallIntegrator::getInstance()->getRefPosition());
     mv2.velocity = allo2Ego(mv.velocity, BallIntegrator::getInstance()->getRefPosition());
 
     if (op.valid && !noValidPoint)
     {
-        ballPoint.x = (mv2.point.x);
-        ballPoint.y = (mv2.point.y);
-        ballPoint.z = (ze.z);
-        ballVelocity.x = (mv2.velocity.vx);
-        ballVelocity.y = (mv2.velocity.vy);
-        ballVelocity.z = (ze.vz);
-
-        auto pos = make_shared<geometry::CNPoint3D>(ballPoint.x, ballPoint.y, ballPoint.z);
-        auto vel = make_shared<geometry::CNPoint3D>(ballVelocity.x, ballVelocity.y, ballVelocity.z);
-        this->updateBallPos(pos, vel, op.confidence);
+        this->updateBallPos(geometry::CNPointEgo(mv2.point.x, mv2.point.y, ze.z),
+                            geometry::CNVecEgo(mv2.velocity.vx, mv2.velocity.vy, ze.vz), op.confidence);
         // Here you can do something for the z-coordinate, e.g. create a point3d
     }
 }
