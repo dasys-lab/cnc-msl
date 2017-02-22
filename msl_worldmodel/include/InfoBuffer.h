@@ -213,7 +213,7 @@ class InfoBuffer
 
   private:
     mutable std::mutex mtx_;
-    std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
+    std::shared_ptr<const InformationElement<T>> *ringBuffer;       /**< Ring buffer of elements */
     int bufferSize;                                                 /**< number of stored elements */
     int index;                                                      /**< Current index of the last added element */
     unsigned long long infoElementCounter;                          /**< Counter of elements added to the buffer */

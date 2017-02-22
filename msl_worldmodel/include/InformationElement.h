@@ -28,10 +28,6 @@ class InformationElement
         , validityTime(creationTime + validityDuration)
         , certainty(certainty)
     {
-    	if (!information)
-    	{
-    		std::cerr << "InformationElement: Don't create an InformationElement with nullptr as information."<< std::endl;
-    	}
     }
 
     /**
