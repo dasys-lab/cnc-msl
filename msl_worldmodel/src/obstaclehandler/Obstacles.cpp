@@ -5,16 +5,19 @@
  *      Author: Stefan Jakob
  */
 
+#include "obstaclehandler/Obstacles.h"
+
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 #include "obstaclehandler/SimpleCluster.h"
-#include <obstaclehandler/Obstacles.h>
 
 namespace msl
 {
+
+using std::vector;
 
 Obstacles::Obstacles(MSLWorldModel *wm, int ringbufferLength)
     : obstacles(ringbufferLength)
@@ -37,8 +40,6 @@ Obstacles::Obstacles(MSLWorldModel *wm, int ringbufferLength)
     OBSTACLE_MAP_OUT_TOLERANCE =
         (*sc)["PathPlanner"]->get<double>("PathPlanner", "ObHandler", "obstacleMapOutTolerance", NULL);
     LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess", NULL);
-    clusterArray = make_shared<vector<AnnotatedObstacleCluster *>>();
-    newClusterArray = make_shared<vector<AnnotatedObstacleCluster *>>();
     pool = new AnnotatedObstacleClusterPool();
 }
 
@@ -137,7 +138,7 @@ geometry::CNPointEgo Obstacles::getBiggestFreeGoalAreaMidPoint()
     }
 }
 
-void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPoint2D>> myObstacles)
+void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPointEgo>> myObstacles)
 {
 
     auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid(); // TODO: or getLast()?
@@ -154,22 +155,18 @@ void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPoint2D>> myObstac
     // CLUSTERING
     clusterAnnotatedObstacles();
     // CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
-    auto newObsClustersAllo = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
-    auto newObsClustersAlloWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
-    auto newOppEgo =
-        make_shared<vector<geometry::CNPointEgo>>();
-    auto newOppAllo =
-        make_shared<vector<geometry::CNPointAllo>>();
-    auto newTeammatesEgo =
-        make_shared<vector<geometry::CNPointEgo>>();
-    auto newTeammatesAllo =
-        make_shared<vector<geometry::CNPointAllo>>();
+    auto newObsClustersAllo = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+    auto newObsClustersAlloWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+    auto newOppEgo = make_shared<vector<geometry::CNPointEgo>>();
+    auto newOppAllo = make_shared<vector<geometry::CNPointAllo>>();
+    auto newTeammatesEgo = make_shared<vector<geometry::CNPointEgo>>();
+    auto newTeammatesAllo = make_shared<vector<geometry::CNPointAllo>>();
 
     shared_ptr<geometry::CNPointAllo> curAlloPoint = nullptr;
     shared_ptr<geometry::CNPointEgo> curEgoPoint = nullptr;
     for (unsigned long i = 0; i < this->newClusterArray->size(); ++i)
     {
-        auto clusterInfo = make_shared<geometry::CNRobot>();
+        auto clusterInfo = make_shared<geometry::CNRobotAllo>();
         auto current = newClusterArray->at(i);
 
         clusterInfo->id = current->ident;
@@ -211,10 +208,10 @@ void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPoint2D>> myObstac
         }
     }
     // change the vNet references to the new lists
-    auto obstaclesWithMeInfo =
-            make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobot>>>>(newObsClustersAlloWithMe, wm->getTime(), this->maxInfoValidity, 1.0);
-    auto obstaclesInfo =
-        make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobot>>>>(newObsClustersAllo, wm->getTime(), this->maxInfoValidity, 1.0);
+    auto obstaclesWithMeInfo = make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobotAllo>>>>(
+        newObsClustersAlloWithMe, wm->getTime(), this->maxInfoValidity, 1.0);
+    auto obstaclesInfo = make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobotAllo>>>>(
+        newObsClustersAllo, wm->getTime(), this->maxInfoValidity, 1.0);
 
     this->obstaclesAlloClustered.add(obstaclesInfo);
     this->obstaclesAlloClusteredWithMe.add(obstaclesWithMeInfo);
@@ -290,7 +287,8 @@ Obstacles::clusterPoint2D(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ob
     return retList;
 }
 
-void Obstacles::clusterAnnotatedObstacles()
+shared_ptr<vector<AnnotatedObstacleCluster *>>
+Obstacles::clusterAnnotatedObstacles(shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray)
 {
     bool mergedCluster = true;
     while (mergedCluster)
@@ -300,12 +298,12 @@ void Obstacles::clusterAnnotatedObstacles()
         int sndClusterId = -1;
         double minDist = numeric_limits<double>::max();
         double curDist = 0;
-        for (int i = 0; i < this->clusterArray->size(); ++i)
+        for (int i = 0; i < clusterArray->size(); ++i)
         {
-            auto ith = this->clusterArray->at(i);
+            auto ith = clusterArray->at(i);
             for (int j = 0; j < i; ++j)
             {
-                auto jth = this->clusterArray->at(j);
+                auto jth = clusterArray->at(j);
                 if ((ith->ident == EntityType::Opponent || jth->ident == EntityType::Opponent) &&
                     std::find(ith->supporter->begin(), ith->supporter->end(), jth->ident) == ith->supporter->end() &&
                     std::find(jth->supporter->begin(), jth->supporter->end(), ith->ident) == jth->supporter->end())
@@ -328,33 +326,33 @@ void Obstacles::clusterAnnotatedObstacles()
             break;
         }
 
-        mergedCluster = this->clusterArray->at(fstClusterId)
-                            ->checkAndMerge(this->clusterArray->at(sndClusterId), VARIANCE_THRESHOLD);
+        mergedCluster =
+            clusterArray->at(fstClusterId)->checkAndMerge(clusterArray->at(sndClusterId), VARIANCE_THRESHOLD);
         if (mergedCluster)
         {
-            this->clusterArray->erase(this->clusterArray->begin() + sndClusterId);
+            clusterArray->erase(clusterArray->begin() + sndClusterId);
         }
     }
 
-    this->newClusterArray->clear();
-    this->newClusterArray->reserve(this->clusterArray->size());
-    for (int i = 0; i < this->clusterArray->size(); i++)
-    {
-        this->newClusterArray->push_back(this->clusterArray->at(i));
-    }
+    // copy array
+    auto newClusterArray = make_shared<vector<AnnotatedObstacleCluster *>>(*clusterArray);
 
-    std::sort(this->newClusterArray->begin(), this->newClusterArray->end(), AnnotatedObstacleCluster::compareTo);
-    this->clusterArray->clear();
+    // sort clusters
+    std::sort(newClusterArray->begin(), newClusterArray->end(), AnnotatedObstacleCluster::compareTo);
+
+    return newClusterArray;
 }
 
-void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<geometry::CNPointEgo>> ownObs,
-                                        msl_sensor_msgs::CorrectedOdometryInfo myOdo)
+shared_ptr<vector<AnnotatedObstacleCluster *>>
+Obstacles::setupAnnotatedObstacles(shared_ptr<vector<geometry::CNPointEgo>> ownObs,
+                                   msl_sensor_msgs::CorrectedOdometryInfo myOdo)
 {
-    clusterArray->clear();
+    auto clusters = make_shared<vector<AnnotatedObstacleCluster *>>();
+
     AnnotatedObstacleCluster *obs = nullptr;
     int velX = 0;
     int velY = 0;
-    for (auto swmd : wm->robots->sharedWorldModelData)
+    for (auto swmd : wm->robots->getSharedWmDataBuffersMap())
     {
         auto information = swmd.second->getLast();
         if (information == nullptr)
@@ -363,24 +361,23 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<geometry::CNPointEgo>>
         }
 
         auto currentRobot = information->getInformation();
-        auto codo = currentRobot->odom;
+        auto robotOdo = currentRobot.odom;
 
         /* Ignore every robot, which:
          * - is unlocalised
          * - messages are old (25 ms)
          * - I am (the obstacles from the WM are newer)*/
-        if (currentRobot == nullptr || codo.certainty < 0.8 || currentRobot->senderID == wm->getOwnId() ||
-            swmd.second->getLast()->timeStamp + 250000000 < wm->getTime())
+        if (robotOdo.certainty < 0.8 || currentRobot.senderID == wm->getOwnId() ||
+            information->getCreationTime() + 250000000 < wm->getTime())
         {
             continue;
         }
 
         // add all obstacles seen by curRobot
-        vector<msl_msgs::Point2dInfo> &curOppList = currentRobot->obstacles;
-        for (auto ob : curOppList)
+        for (auto ob : currentRobot.obstacles)
         {
             // Nobody knows the positions of obstacles around me better than I do!
-            if (geometry::distance(ob.x, ob.y, myOdo->position.x, myOdo->position.y) < TERRITORY_RADIUS)
+            if (geometry::distance(ob.x, ob.y, myOdo.position.x, myOdo.position.y) < TERRITORY_RADIUS)
             {
                 continue;
             }
@@ -388,60 +385,63 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<geometry::CNPointEgo>>
             if (wm->field->isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
             {
                 obs = AnnotatedObstacleCluster::getNew(this->pool);
-                obs->init(round(ob.x), round(ob.y), // pos
+                obs->init((int)round(ob.x), (int)round(ob.y), // pos
                           DFLT_OB_RADIUS, EntityType::Opponent, swmd.first);
-                clusterArray->push_back(obs);
+                clusters->push_back(obs);
             }
         }
 
         /* add the curRobot itself as an obstacle, to identify teammates */
 
         // Convert ego motion angle to allo motion angle
-        double alloMotionAngle = geometry::normalizeAngle(codo.position.angle + codo.motion.angle);
+        double alloMotionAngle = geometry::normalizeAngle(robotOdo.position.angle + robotOdo.motion.angle);
 
         // Calc x and y the velocity
-        velX = (int)(cos(alloMotionAngle) * codo.motion.translation + 0.5);
-        velY = (int)(sin(alloMotionAngle) * codo.motion.translation + 0.5);
+        velX = (int)(cos(alloMotionAngle) * robotOdo.motion.translation + 0.5);
+        velY = (int)(sin(alloMotionAngle) * robotOdo.motion.translation + 0.5);
 
         // predict the position along the translation
-        double seconds = (double)(wm->getTime() - swmd.second->getLast()->timeStamp) / 1000000000.0;
+        double seconds = (double)(wm->getTime() - information->getCreationTime()) / 1000000000.0;
 
         obs = AnnotatedObstacleCluster::getNew(this->pool);
-        obs->init(round(codo.position.x + seconds * velX), round(codo.position.y + seconds * velY), // pos
-                  DFLT_ROB_RADIUS, velX, velY,                                                      // velocity
+        obs->init((int)round(robotOdo.position.x + seconds * velX),
+                  (int)round(robotOdo.position.y + seconds * velY), // pos
+                  DFLT_ROB_RADIUS, velX, velY,                      // velocity
                   swmd.first, swmd.first);
-        clusterArray->push_back(obs);
+        clusters->push_back(obs);
     }
 
     /* add my own obstacles from the worldmodel (they are egocentric :-( ) */
-    shared_ptr<geometry::CNPoint2D> curPoint = make_shared<geometry::CNPoint2D>();
+
+    auto ownPos = geometry::CNPositionAllo(myOdo.position.x, myOdo.position.y, myOdo.position.angle);
+
     for (int i = 0; i < ownObs->size(); ++i)
     {
-        shared_ptr<geometry::CNPosition> me =
-            make_shared<geometry::CNPosition>(myOdo->position.x, myOdo->position.y, myOdo->position.angle);
-        curPoint = ownObs->at(i)->egoToAllo(*me);
+        auto curPoint = ownObs->at(i).toAllo(ownPos);
         if (wm->field->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
         {
             obs = AnnotatedObstacleCluster::getNew(this->pool);
-            obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent,
+            obs->init((int)(curPoint.x + 0.5), (int)(curPoint.y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent,
                       wm->getOwnId());
-            clusterArray->push_back(obs);
+            clusters->push_back(obs);
         }
     }
 
     /* add my own position: */
 
     // Convert ego motion angle to allo motion angle
-    double alloMotAngle = geometry::normalizeAngle(myOdo->position.angle + myOdo->motion.angle);
+    double alloMotAngle = geometry::normalizeAngle(myOdo.position.angle + myOdo.motion.angle);
 
-    velX = (int)round(myOdo->motion.translation * cos(alloMotAngle));
-    velY = (int)round(myOdo->motion.translation * sin(alloMotAngle));
+    velX = (int)round(myOdo.motion.translation * cos(alloMotAngle));
+    velY = (int)round(myOdo.motion.translation * sin(alloMotAngle));
     obs = AnnotatedObstacleCluster::getNew(this->pool);
-    obs->init((int)(myOdo->position.x + 0.5), (int)(myOdo->position.y + 0.5), myOdo->position.angle, DFLT_ROB_RADIUS,
-              velX, velY, myOdo->motion.rotation, myOdo->position.certainty, wm->getOwnId(), wm->getOwnId());
-    clusterArray->push_back(obs);
+    obs->init((int)(myOdo.position.x + 0.5), (int)(myOdo.position.y + 0.5), myOdo.position.angle, DFLT_ROB_RADIUS, velX,
+              velY, myOdo.motion.rotation, myOdo.position.certainty, wm->getOwnId(), wm->getOwnId());
+    clusters->push_back(obs);
 
-    std::sort(this->clusterArray->begin(), this->clusterArray->end(), AnnotatedObstacleCluster::compareTo);
+    std::sort(clusters->begin(), clusters->end(), AnnotatedObstacleCluster::compareTo);
+
+    return clusters;
 }
 
 void Obstacles::processNegSupporter(geometry::CNPositionAllo myPosition)
@@ -510,14 +510,30 @@ void Obstacles::processNegSupporter(geometry::CNPositionAllo myPosition)
             left = geometry::normalizeAngle(curAngle + dangle);
             right = geometry::normalizeAngle(curAngle - dangle);
             //
-            //									cout << "Cluster Angels: \n\tleft: " << (left * 180) /
-            //M_PI
-            //									                  << "\n\tmiddle: " << (curAngle * 180) /
-            //M_PI
-            //									                  << "\n\tright: " << (right * 180) /
-            //M_PI
-            //									                  << "\n\tdangle: " << (dangle * 180) / M_PI <<
-            //endl;
+            //									cout << "Cluster Angels: \n\tleft: " <<
+            //(left
+            //*
+            // 180)
+            ///
+            // M_PI
+            //									                  << "\n\tmiddle: " <<
+            //(curAngle
+            //*
+            // 180)
+            ///
+            // M_PI
+            //									                  << "\n\tright: " <<
+            //(right
+            //*
+            // 180)
+            ///
+            // M_PI
+            //									                  << "\n\tdangle: " << (dangle *
+            //180)
+            ///
+            // M_PI
+            //<<
+            // endl;
 
             sightIsBlocked = false;
 
@@ -543,7 +559,8 @@ void Obstacles::processNegSupporter(geometry::CNPositionAllo myPosition)
                         left2 = geometry::normalizeAngle(curAngle2 + dangle2);
                         right2 = geometry::normalizeAngle(curAngle2 - dangle2);
                         //
-                        //														cout <<
+                        //														cout
+                        //<<
                         //"Own Obstacle Angels: \n\tleft: " <<
                         //(left2 * 180) / M_PI
                         //														                  <<
@@ -558,22 +575,30 @@ void Obstacles::processNegSupporter(geometry::CNPositionAllo myPosition)
 
                         if (leftOf(left, right2) && !leftOf(left, left2))
                         {
-                            //								cout << "Left of Cluster is behind Obstacle" <<
-                            //endl;
+                            //								cout << "Left of Cluster is
+                            // behind
+                            // Obstacle"
+                            //<<
+                            // endl;
                             sightIsBlocked = true;
                             break;
                         }
 
                         if (leftOf(right, right2) && !leftOf(right, left2))
                         {
-                            //								cout << "Right of Cluster is behind Obstacle" <<
-                            //endl;
+                            //								cout << "Right of Cluster is
+                            // behind
+                            // Obstacle"
+                            //<<
+                            // endl;
                             sightIsBlocked = true;
                             break;
                         }
 
-                        //							cout << "Obstacle does not block the sight!" <<
-                        //endl;
+                        //							cout << "Obstacle does not block the
+                        // sight!"
+                        //<<
+                        // endl;
                     }
                     //						else
                     //						{

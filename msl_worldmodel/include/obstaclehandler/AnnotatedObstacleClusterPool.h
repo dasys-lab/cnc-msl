@@ -1,13 +1,4 @@
-/*
- * AnnotatedObstacleClusterPool.h
- *
- *  Created on: Feb 25, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTERPOOL_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTERPOOL_H_
-
+#pragma once
 
 #include <vector>
 
@@ -26,5 +17,3 @@ class AnnotatedObstacleClusterPool
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTERPOOL_H_ */

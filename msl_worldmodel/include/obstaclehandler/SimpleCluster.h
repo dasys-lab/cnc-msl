@@ -1,12 +1,4 @@
-/*
-* SimpleCluster.h
- *
- *  Created on: Feb 11, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_SIMPLECLUSTER_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_SIMPLECLUSTER_H_
+#pragma once
 
 #include "GeometryCalculator.h"
 #include <memory>
@@ -34,5 +26,3 @@ class SimpleCluster
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_SIMPLECLUSTER_H_ */

@@ -57,4 +57,10 @@ const InfoBuffer<msl_sensor_msgs::SharedWorldInfo> *Robots::getSHWMDataBuffer(in
         return shwmDataBufferIter->second.get();
     }
 }
+
+const std::map<int, shared_ptr<InfoBuffer<msl_sensor_msgs::SharedWorldInfo>>> Robots::getSharedWmDataBuffersMap() const
+{
+    return this->shwmDataBuffers;
+}
+
 } /* namespace msl */

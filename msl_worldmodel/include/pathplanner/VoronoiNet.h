@@ -6,7 +6,7 @@
 #include "pathplanner/evaluator/IPathEvaluator.h"
 
 #include <cnc_geometry/CNPointAllo.h>
-#include <cnc_geometry/CNRobot.h>
+#include <cnc_geometry/CNRobotAllo.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>

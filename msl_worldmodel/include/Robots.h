@@ -6,8 +6,8 @@
 
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 
-#include <memory>
 #include <map>
+#include <memory>
 
 namespace msl
 {
@@ -24,6 +24,8 @@ class Robots
 
     // Data Access Method
     const InfoBuffer<msl_sensor_msgs::SharedWorldInfo> *getSHWMDataBuffer(int robotID) const;
+    const std::map<int, shared_ptr<InfoBuffer<msl_sensor_msgs::SharedWorldInfo>>>
+    getSharedWmDataBuffersMap() const; // TODO: more const?
 
     Teammates teammates;
     Opponents opponents;
