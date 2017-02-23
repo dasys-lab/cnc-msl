@@ -489,6 +489,7 @@ void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
 
 void msl::MSLWorldModel::onGoalDetectionData(msl_msgs::Pose2dStampedPtr msg) {
 
+	rawSensorData->processGoalDetectionData(msg);
 
 }
 } /* namespace msl */
