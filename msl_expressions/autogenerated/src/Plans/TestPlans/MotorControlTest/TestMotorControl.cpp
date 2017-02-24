@@ -25,83 +25,13 @@ namespace alica
     void TestMotorControl::run(void* msg)
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
-        if (terminated)
-        {
-            return;
-        }
 
-        if (count == 0)
-        {
-            cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot
-                    << endl;
-            start = wm->rawSensorData->getOwnPositionMotion();
-            if (start == NULL)
-                return;
-            goal->x = start->x + relGoalX;
-            goal->y = start->y + relGoalY;
-            goal->theta = start->theta + relGoalRot;
-        }
-
-        currentPos = wm->rawSensorData->getOwnPositionMotion();
-        goalPointer = goal - currentPos;
-        angleDistance = goal->theta - currentPos->theta;
-        goalDistance = sqrt(
-                goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
-                        + angleDistance * angleDistance * 500);
-
-        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance
-                << "current x " << currentPos->x << "current y " << currentPos->y << " x " << goalPointer->x << " y "
-                << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
-
-        if (goalDistance > oldGoalDistance + 10)
-        {
-            if (!terminated)
-            {
-                cout << "TestMotorControl::run Reached closest point to target at " << count << " with "
-                        << goalPointer->x << "," << goalPointer->y << "," << angleDistance << endl;
-                msl_actuator_msgs::MotionControl motorMsg;
-                motorMsg.motion.angle = 0;
-                motorMsg.motion.rotation = 0;
-                motorMsg.motion.translation = 0;
-                send(motorMsg);
-                terminated = true;
-            }
-            return;
-        }
-        oldGoalDistance = goalDistance;
-
-        if (count >= abortTime * 30)
-        {
-            if (!terminated)
-            {
-                cerr << "TestMotorControl::run Missed target, terminated by time out" << endl;
-                msl_actuator_msgs::MotionControl motorMsg;
-                motorMsg.motion.angle = 0;
-                motorMsg.motion.rotation = 0;
-                motorMsg.motion.translation = 0;
-                send(motorMsg);
-                terminated = true;
-            }
-            return;
-        }
-
-        count++;
 
         msl_actuator_msgs::MotionControl motorMsg;
         motorMsg.motion.translation = testSpeed;
+        motorMsg.motion.angle = 0;
+        motorMsg.motion.rotation = 0;
 
-        if (straight)
-        {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - currentPos->theta + start->theta;
-            motorMsg.motion.rotation = relGoalRot * testSpeed / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
-        }
-
-        else
-        {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - (relGoalRot / 2);
-            motorMsg.motion.rotation = testSpeed * 2 * sin(relGoalRot / 2)
-                    / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
-        }
         cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
                 << motorMsg.motion.rotation << endl;
         send(motorMsg);
