@@ -9,6 +9,7 @@
 
 using std::shared_ptr;
 using autodiff::TVec;
+using nonstd::optional;
 
 namespace msl
 {
@@ -48,10 +49,12 @@ shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> &poin
 shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>> &players)
 {
     msl::MSLWorldModel *wm = msl::MSLWorldModel::get();
-    shared_ptr<geometry::CNPositionAllo> ownPos = wm->rawSensorData->getOwnPositionVision();
+    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
 
-    if (ownPos == nullptr)
+    if (ownPosInfo == nullptr)
         return autodiff::Term::FALSE;
+
+    auto ownPos = ownPosInfo->getInformation();
 
     // all players have to be in sight radius
     shared_ptr<Term> c = insideSphere(point, detectionRadius, players);
@@ -61,15 +64,15 @@ shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool consider
         shared_ptr<Term> rel = (wm->obstacles->getObstacleRadius() / autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
 
         // consider opponents
-        auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+        auto oppsInfo = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValid(); // TODO: really use lastValid?
 
-        //				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
+        //				List<TrackedOpponent> opps = wm.GetTrackedOpponents(); // TODO: remove??
 
-        if (opps != nullptr && opps->size() > 0)
+        if (oppsInfo != nullptr)
         {
-            for (auto opp : *opps)
+            for (auto opp : oppsInfo->getInformation())
             {
-                shared_ptr<TVec> oppT = make_shared<TVec>(initializer_list<double>{opp->x, opp->y});
+                shared_ptr<TVec> oppT = make_shared<TVec>(initializer_list<double>{opp.x, opp.y});
                 shared_ptr<TVec> p2opp = oppT - point;
 
                 shared_ptr<TVec> oppDistance = alica::ConstraintBuilder::inCoordsOf(p2opp, p2p);
@@ -82,12 +85,12 @@ shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool consider
         }
 
         // consider teammates
-        auto mates = wm->robots->teammates.getTeammatesAlloClustered();
-        if (mates != nullptr && mates->size() > 0)
+        auto matesInfo = wm->robots->teammates.getTeammatesAlloClusteredBuffer().getLastValid(); // TODO: really use lastValid?
+        if (matesInfo != nullptr)
         {
-            for (auto mate : *mates)
+            for (auto mate : matesInfo->getInformation())
             {
-                shared_ptr<TVec> mateT = make_shared<TVec>(initializer_list<double>{mate->x, mate->y});
+                shared_ptr<TVec> mateT = make_shared<TVec>({mate.x, mate.y});
                 shared_ptr<TVec> p2mate = mateT - point;
 
                 shared_ptr<TVec> mateDistance = alica::ConstraintBuilder::inCoordsOf(p2mate, p2p);
@@ -102,7 +105,7 @@ shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool consider
         // consider myself
         if (considerownPos)
         {
-            shared_ptr<TVec> ownPosT = make_shared<TVec>(initializer_list<double>{ownPos->x, ownPos->y});
+            shared_ptr<TVec> ownPosT = make_shared<TVec>({ownPos.x, ownPos.y});
             shared_ptr<TVec> p2ownPos = ownPosT - point;
 
             shared_ptr<TVec> myPosDistance = alica::ConstraintBuilder::inCoordsOf(p2ownPos, p2p);
@@ -208,24 +211,24 @@ shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<geometry::CNPo
     return c;
 }
 
-shared_ptr<Term> MSLConstraintBuilder::insideCorridor(shared_ptr<geometry::CNPointAllo> a, shared_ptr<geometry::CNPointAllo> b, double width,
+shared_ptr<Term> MSLConstraintBuilder::insideCorridor(geometry::CNPointAllo a, geometry::CNPointAllo b, double width,
                                                       vector<shared_ptr<TVec>> &points)
 {
     shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
 
-    shared_ptr<geometry::CNPointAllo> a2b = b - a;
-    shared_ptr<geometry::CNPointAllo> normal = (a2b->rotate(M_PI / 2))->normalize();
+    geometry::CNVecAllo a2b = b - a;
+    geometry::CNVecAllo normal = (a2b.rotateZ(M_PI / 2)).normalize();
 
-    shared_ptr<geometry::CNPointAllo> r1 = a - (normal * width);
-    shared_ptr<geometry::CNPointAllo> r2 = b + (normal * width);
+    geometry::CNPointAllo r1 = a - (normal * width);
+    geometry::CNPointAllo r2 = b + (normal * width);
 
-    shared_ptr<TVec> tvec1 = make_shared<TVec>(initializer_list<double>{r1->x, r1->y});
-    shared_ptr<TVec> tvec2 = make_shared<TVec>(initializer_list<double>{r2->x, r2->y});
+    shared_ptr<TVec> tVec1 = make_shared<TVec>({r1.x, r1.y});
+    shared_ptr<TVec> tVec2 = make_shared<TVec>({r2.x, r2.y});
 
     for (int i = 0; i < points.size(); i++)
     {
         //			cout << "MSLCB: " << TermBuilder::boundedRectangle(points[i], tvec1, tvec2 ,Term::getConstraintSteepness())->toString() << endl;
-        c = c & TermBuilder::boundedRectangle(points[i], tvec1, tvec2, Term::getConstraintSteepness());
+        c = c & TermBuilder::boundedRectangle(points[i], tVec1, tVec2, Term::getConstraintSteepness());
     }
     return c;
 }
@@ -404,14 +407,15 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(Situation situation, int speci
     msl::MSLWorldModel *wm = msl::MSLWorldModel::get();
     shared_ptr<Term> c;
     shared_ptr<TVec> ballT = nullptr;
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    shared_ptr<geometry::CNPointEgo> egoBall = wm->ball->getEgoBallPosition();
-    shared_ptr<geometry::CNPointAllo> alloBall;
-    if (egoBall != nullptr && ownPos != nullptr)
+    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    optional<geometry::CNPointEgo> egoBall = wm->ball->getEgoBallPosition();
+
+    if (egoBall && ownPosInfo != nullptr)
     {
-	alloBall = egoBall->toAllo(*ownPos);
-        ballT = make_shared<TVec>(initializer_list<double>{alloBall->x, alloBall->x});
+	    auto alloBall = egoBall->toAllo(ownPosInfo->getInformation());
+        ballT = make_shared<TVec>({alloBall.x, alloBall.x});
     }
+
     switch (situation)
     {
     case Situation::Start:
@@ -463,7 +467,8 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_
     msl::MSLWorldModel *wm = msl::MSLWorldModel::get();
     shared_ptr<Term> c;
     shared_ptr<TVec> ballT = nullptr;
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
+    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    // TODO: stopped working here
     shared_ptr<geometry::CNPointAllo> ball = wm->ball->getAlloBallPosition();
     if (ball != nullptr && ownPos != nullptr)
     {
