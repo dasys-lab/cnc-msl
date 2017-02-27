@@ -114,7 +114,7 @@ class InfoBuffer
             return nullptr;
         }
 
-        int limit = std::min(this->bufferSize, this->infoElementCounter);
+        int limit = std::min((unsigned long long)this->bufferSize, this->infoElementCounter);
         for (int i = 0; i < limit; i++)
         {
             int index = (this->index - i) % this->bufferSize;
