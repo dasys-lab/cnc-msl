@@ -6,7 +6,10 @@
 #include "ballTracking/TrackingTypes.h"
 
 #include <nonstd/optional.hpp>
-#include <Geometry.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
+#include <cnc_geometry/CNVecAllo.h>
+#include <cnc_geometry/CNVecEgo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 
 #include <map>
@@ -55,7 +58,7 @@ class Ball
     void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel,
                        double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
-    bool getTeamMateBallPossession(int teamMateId, int index = 0);
+    nonstd::optional<bool> getTeamMateBallPossession(int teamMateId);
     bool getOppBallPossession(int index = 0);
     double getBallDiameter();
 
@@ -83,7 +86,6 @@ class Ball
     Velocity allo2Ego(Velocity vel, Position pos);
 
     std::mutex sbMutex;
-    std::vector<BallVoting> sbvotingList;
     int sharedBallSupporters;
 
     ObjectContainer ballBuf;
