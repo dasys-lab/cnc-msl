@@ -38,9 +38,12 @@ namespace msl
 	MotionControl MovementContainer::getBall()
 	{
 		msl::RobotMovement rm;
-		query->reset();
 		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPosition> me;
+
+//		query->reset();
+
+		// check vision
 		if (wm->rawSensorData->getOwnPositionVision() != nullptr)
 		{
 			me = wm->rawSensorData->getOwnPositionVision();
@@ -49,7 +52,10 @@ namespace msl
 		{
 			cerr << "MovementContainer::getBall() -> couldn't get vision data" << endl;
 		}
+
 		shared_ptr<geometry::CNPoint2D> egoBallPos;
+
+		// check ball position
 		if (wm->ball->getAlloBallPosition()->alloToEgo(*me) != nullptr)
 		{
 			egoBallPos = wm->ball->getAlloBallPosition()->alloToEgo(*me);
@@ -57,6 +63,26 @@ namespace msl
 		else
 		{
 			cerr << "MovementContainer::getBall() -> couldn't get own position" << endl;
+		}
+
+		// check obstacles
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obs = wm->obstacles->getAlloObstaclePoints();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
+
+		bool blocked = false;
+
+		for (shared_ptr<geometry::CNPoint2D> ob : *obs)
+		{
+			if (wm->pathPlanner->corridorCheck(ownPos->getPoint(), egoBallPos, ob->alloToEgo(*me)))
+			{
+				blocked = true;
+				break;
+			}
+		}
+
+		if (blocked || checkFieldLines(egoBallPos))
+		{
+			return setZero(mc);
 		}
 
 		query->egoDestinationPoint = egoBallPos;

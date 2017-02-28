@@ -8,50 +8,72 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class DribbleCalibration : public DomainBehaviour
-    {
-    public:
-        DribbleCalibration();
-        virtual ~DribbleCalibration();
-        virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1482339434271) ENABLED START*/ //Add additional public methods here
-        /*PROTECTED REGION END*/
-    protected:
-        virtual void initialiseParameters();
-        /*PROTECTED REGION ID(pro1482339434271) ENABLED START*/ //Add additional protected methods here
-        /*PROTECTED REGION END*/
-    private:
-        /*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
-        bool runForwardCal;
+	class DribbleCalibration : public DomainBehaviour
+	{
+	public:
+		DribbleCalibration();
+		virtual ~DribbleCalibration();
+		virtual void run(void* msg);
+		/*PROTECTED REGION ID(pub1482339434271) ENABLED START*/ //Add additional public methods here
+		/*PROTECTED REGION END*/
+	protected:
+		virtual void initialiseParameters();
+		/*PROTECTED REGION ID(pro1482339434271) ENABLED START*/ //Add additional protected methods here
+		/*PROTECTED REGION END*/
+	private:
+		/*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
+		/**
+		 * if true -> robot will dribble forward in the calibration process
+		 */
+		bool runForwardCal;
+		/**
+		 * if true -> robot will dribble backward in the calibration process
+		 */
+		bool runBackwardCal;
 
-        bool dribbleForward;
-        bool dribbleBackward;
-        bool dribbleRotateLeft;
-        bool dribbleRotateRight;
-        msl::DribbleCalibrationContainer dcc;
-        msl::DribbleCalibrationContainer::Param param;
-        msl::MovementContainer moveCont;
+		/**
+		 * variable for dribble forward parameter detection
+		 */
+		bool dribbleForward;
+		/**
+		 * variable for dribble backward parameter detection
+		 */
+		bool dribbleBackward;
+		/**
+		 * variable for dribble rotation parameter detection
+		 */
+		bool dribbleRotateLeft;
+		/**
+		 * variable for dribble rotation parameter detection
+		 */
+		bool dribbleRotateRight;
 
-        // for speed iterations
-        double startTrans;
-        double endTrans;
-        int speedIter;
-        int moveCount;
-        int getBallCount;
+		msl::DribbleCalibrationContainer dcc;
+		msl::DribbleCalibrationContainer::Param param;
+		msl::MovementContainer moveCont;
 
-        // for movement
-        bool getBallFlag;
-        int haveBallCount;
-        int haveBallWaitingDuration;
-        int collectDataWaitingDuration;
+		// for speed iterations
+		double startTrans;
+		double endTrans;
+		int speedIter;
+		int moveCount;
+		int getBallCount;
 
-        // param adaption stuff
-        int minHaveBallIter;
-        double minHaveBallParamPoint;
-        double maxHaveBallParamPoint;
+		// output flags
+		bool getBallFlag;
+		bool motionCmdFlag;
+		bool transFlag;
 
-        void readConfigParameters();
-        /*PROTECTED REGION END*/};
+		// for movement
+		int haveBallCount;
+		int haveBallWaitingDuration;
+		int collectDataWaitingDuration;
+
+		// param adaption stuff
+		int minHaveBallIter;
+
+		void readConfigParameters();
+		/*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* DribbleCalibration_H_ */

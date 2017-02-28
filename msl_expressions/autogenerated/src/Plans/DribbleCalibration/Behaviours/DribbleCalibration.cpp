@@ -19,6 +19,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
 		runForwardCal = false;
+		runBackwardCal = false;
 		dribbleForward = false;
 		dribbleBackward = false;
 		dribbleRotateLeft = false;
@@ -30,12 +31,12 @@ namespace alica
 		moveCount = 0;
 		getBallCount = 0;
 		getBallFlag = true;
+		motionCmdFlag = true;
+		transFlag = true;
 		haveBallCount = 0;
 		haveBallWaitingDuration = 0;
 		collectDataWaitingDuration = 0;
 		minHaveBallIter = 0;
-		minHaveBallParamPoint = 0;
-		maxHaveBallParamPoint = 0;
 		/*PROTECTED REGION END*/
 	}
 	DribbleCalibration::~DribbleCalibration()
@@ -52,14 +53,20 @@ namespace alica
 			this->setSuccess(true);
 			return;
 		}
+		if (!runBackwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleBackwardParm)
+		{
+			cout << "skipping Backward Calibration!" << endl;
+			this->setSuccess(true);
+			return;
+		}
 
 		// check DribbleControl code and maybe add a new parameter for the orthogonal calculation
 		MotionControl mc;
 		msl::RobotMovement rm;
-//		MovementContainer moveCont;
+
 		// if ball is in kicker
 		if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
-//        if ((moveCount < speedIter))
+//        if ((moveCount < speedIter)) //comment in for testing in simulator
 		{
 			getBallFlag = true;
 			// waiting so we definitely have the ball when we start with the calibration
@@ -99,21 +106,32 @@ namespace alica
 				}
 				else
 				{
+					motionCmdFlag = true;
 					MotionControl m = *mc;
-					cout << "m.motion.translation = " << m.motion.translation << endl;
+					if (transFlag)
+					{
+						cout << "m.motion.translation = " << m.motion.translation << endl;
+						transFlag = false;
+					}
 					send(*mc);
 				}
 			}
 			else
 			{
-				cout << "no MotionControl received!" << endl;
+				if (motionCmdFlag)
+				{
+					cout << "Motion command is 0" << endl;
+					motionCmdFlag = false;
+					return;
+				}
 			}
+
 			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 90)
 			{
 				shared_ptr<BallHandleCmd> bhc = query->getBhc();
 				send(*bhc);
 			}
-			else
+			else if (param != msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
 			{
 				shared_ptr<BallHandleCmd> bhc = query->getBhc();
 				send(*bhc);
@@ -130,7 +148,10 @@ namespace alica
 			if (haveBallCount >= minHaveBallIter)
 			{
 				moveCount++;
-				cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..." << endl;
+				transFlag = true;
+
+				cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..."
+						<< endl;
 
 				haveBallCount = 0;
 
@@ -221,11 +242,13 @@ namespace alica
 		}
 		catch (exception& e)
 		{
-			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly" << "\033[0m\n" << endl;
+			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
+					<< "\033[0m\n" << endl;
 		}
 		if (!success)
 		{
-			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n" << endl;
+			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
+					<< endl;
 		}
 
 		/*PROTECTED REGION END*/
@@ -239,12 +262,14 @@ namespace alica
 		endTrans = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.EndTranslation", NULL);
 		speedIter = floor(endTrans / startTrans);
 
-		haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
+		haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
+				"DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
 
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
 		NULL);
 		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
 		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
+		runBackwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleBackward", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
