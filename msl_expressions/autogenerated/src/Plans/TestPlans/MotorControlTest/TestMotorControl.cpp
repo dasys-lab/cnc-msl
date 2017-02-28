@@ -25,31 +25,29 @@ namespace alica
     void TestMotorControl::run(void* msg)
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
+        if (count > 300)
+        {
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = 0;
+            motorMsg.motion.rotation = 0;
 
-    	if (count > 300)
-    	{
-        msl_actuator_msgs::MotionControl motorMsg;
-        motorMsg.motion.translation = testSpeed;
-        motorMsg.motion.angle = 0;
-        motorMsg.motion.rotation = 0;
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
+            count++;
+        }
 
-        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
-                << motorMsg.motion.rotation << endl;
-        send(motorMsg);
-        count++;
-    	}
+        if (count == 300)
+        {
 
-    	if (count == 300)
-    	{
-
-    		(*sc)["MotorControlTest"]->set<string>(to_string(testSpeed+100),"MotorControlTest.testSpeed");
-    	}
+            (*sc)["MotorControlTest"]->set < string > (to_string(testSpeed + 100), "MotorControlTest.testSpeed");
+        }
         /*PROTECTED REGION END*/
     }
     void TestMotorControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
-
         testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
 
         count = 0;

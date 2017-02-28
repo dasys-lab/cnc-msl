@@ -149,6 +149,8 @@ using namespace std;
 
 #include  "Plans/Defence/ReleaseMid.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/CalcDribbleParams.h"
+
 #include  "Plans/Robotcheck/RobotTest.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
@@ -620,6 +622,11 @@ namespace alica
             case 1458033497042:
 
                 return make_shared<ReleaseMid>();
+                break;
+
+            case 1488286078729:
+
+                return make_shared<CalcDribbleParams>();
                 break;
 
             case 1456756164754:

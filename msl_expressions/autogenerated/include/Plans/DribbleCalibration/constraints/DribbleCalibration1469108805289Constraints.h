@@ -8,7 +8,7 @@ using namespace alica;
 
 namespace alica
 {
-    class ProblemDescriptor;
+    class ConstraintDescriptor;
     class RunningPlan;
 }
 

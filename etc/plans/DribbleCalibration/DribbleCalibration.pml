@@ -8,6 +8,7 @@
     <inTransitions>#1469109279849</inTransitions>
     <inTransitions>#1469284197329</inTransitions>
     <inTransitions>#1485356815055</inTransitions>
+    <inTransitions>#1488285974466</inTransitions>
     <outTransitions>#1469109261763</outTransitions>
   </states>
   <states id="1469108950942" name="Calibration Forward" comment="">
@@ -26,7 +27,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleCalibration.beh#1485355250017</plans>
-    <inTransitions>#1485356843859</inTransitions>
+    <inTransitions>#1488285941209</inTransitions>
     <outTransitions>#1469109066452</outTransitions>
     <outTransitions>#1485356813423</outTransitions>
   </states>
@@ -50,6 +51,12 @@
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleCalibration.beh#1485355187631</plans>
     <inTransitions>#1485356813423</inTransitions>
     <outTransitions>#1485356815055</outTransitions>
+  </states>
+  <states id="1488285909848" name="CalcParams" comment="Stop">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcDribbleParams.beh#1488286078729</plans>
+    <inTransitions>#1485356843859</inTransitions>
+    <outTransitions>#1488285941209</outTransitions>
+    <outTransitions>#1488285974466</outTransitions>
   </states>
   <transitions id="1469109046400" name="MISSING_NAME" comment="Calibration Forward finished" msg="">
     <preCondition id="1469109050023" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -109,7 +116,17 @@
   <transitions id="1485356843859" name="MISSING_NAME" comment="Calibration Backward finished" msg="">
     <preCondition id="1485356846217" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1469108971711</inState>
+    <outState>#1488285909848</outState>
+  </transitions>
+  <transitions id="1488285941209" name="MISSING_NAME" comment="CalcParams finished" msg="">
+    <preCondition id="1488285945177" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1488285909848</inState>
     <outState>#1469108996737</outState>
+  </transitions>
+  <transitions id="1488285974466" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1488285976105" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1488285909848</inState>
+    <outState>#1469108805290</outState>
   </transitions>
   <entryPoints id="1469108805291" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>

@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108805289"/>
-    <value width="1025" height="610"/>
+    <value xPos="-6" yPos="1" width="1100" height="610"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108805291"/>
@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108996737"/>
-    <value xPos="588" yPos="180" width="270" height="134" collapsed="false"/>
+    <value xPos="630" yPos="178" width="270" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469109046400"/>
@@ -132,6 +132,22 @@
   </extensions>
   <extensions>
     <key href="../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1488285909848"/>
+    <value xPos="670" yPos="49" width="94" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1488285941209"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1488285974466"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalcDribbleParams.beh#1488286078729"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

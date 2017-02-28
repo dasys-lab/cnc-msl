@@ -12,264 +12,264 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-	/*PROTECTED REGION ID(staticVars1482339434271) ENABLED START*/ //initialise static variables here
-	/*PROTECTED REGION END*/
-	DribbleCalibration::DribbleCalibration() :
-			DomainBehaviour("DribbleCalibration")
-	{
-		/*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
-		runForwardCal = false;
-		runBackwardCal = false;
-		dribbleForward = false;
-		dribbleBackward = false;
-		dribbleRotateLeft = false;
-		dribbleRotateRight = false;
-		param = msl::DribbleCalibrationContainer::Param::ErrParm;
-		startTrans = 0;
-		endTrans = 0;
-		speedIter = 0;
-		moveCount = 0;
-		getBallCount = 0;
-		getBallFlag = true;
-		motionCmdFlag = true;
-		transFlag = true;
-		haveBallCount = 0;
-		haveBallWaitingDuration = 0;
-		collectDataWaitingDuration = 0;
-		minHaveBallIter = 0;
-		/*PROTECTED REGION END*/
-	}
-	DribbleCalibration::~DribbleCalibration()
-	{
-		/*PROTECTED REGION ID(dcon1482339434271) ENABLED START*/ //Add additional options here
-		/*PROTECTED REGION END*/
-	}
-	void DribbleCalibration::run(void* msg)
-	{
-		/*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
-		if (!runForwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
-		{
-			cout << "skipping Forward Calibration!" << endl;
-			this->setSuccess(true);
-			return;
-		}
-		if (!runBackwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleBackwardParm)
-		{
-			cout << "skipping Backward Calibration!" << endl;
-			this->setSuccess(true);
-			return;
-		}
+    /*PROTECTED REGION ID(staticVars1482339434271) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    DribbleCalibration::DribbleCalibration() :
+            DomainBehaviour("DribbleCalibration")
+    {
+        /*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
+        runForwardCal = false;
+        runBackwardCal = false;
+        dribbleForward = false;
+        dribbleBackward = false;
+        dribbleRotateLeft = false;
+        dribbleRotateRight = false;
+        param = msl::DribbleCalibrationContainer::Param::ErrParm;
+        startTrans = 0;
+        endTrans = 0;
+        speedIter = 0;
+        moveCount = 0;
+        getBallCount = 0;
+        getBallFlag = true;
+        motionCmdFlag = true;
+        transFlag = true;
+        haveBallCount = 0;
+        haveBallWaitingDuration = 0;
+        collectDataWaitingDuration = 0;
+        minHaveBallIter = 0;
+        /*PROTECTED REGION END*/
+    }
+    DribbleCalibration::~DribbleCalibration()
+    {
+        /*PROTECTED REGION ID(dcon1482339434271) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void DribbleCalibration::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
+        if (!runForwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
+        {
+            cout << "skipping Forward Calibration!" << endl;
+            this->setSuccess(true);
+            return;
+        }
+        if (!runBackwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleBackwardParm)
+        {
+            cout << "skipping Backward Calibration!" << endl;
+            this->setSuccess(true);
+            return;
+        }
 
-		// check DribbleControl code and maybe add a new parameter for the orthogonal calculation
-		MotionControl mc;
-		msl::RobotMovement rm;
+        // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
+        MotionControl mc;
+        msl::RobotMovement rm;
 
-		// if ball is in kicker
-		if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
+        // if ball is in kicker
+        if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
 //        if ((moveCount < speedIter)) //comment in for testing in simulator
-		{
-			getBallFlag = true;
-			// waiting so we definitely have the ball when we start with the calibration
-			if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < haveBallWaitingDuration))
-			{
-				haveBallCount++;
-				getBallCount++;
-				return;
-			}
-			else
-			{
-				getBallCount = 0;
-			}
-			haveBallCount++;
+        {
+            getBallFlag = true;
+            // waiting so we definitely have the ball when we start with the calibration
+            if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < haveBallWaitingDuration))
+            {
+                haveBallCount++;
+                getBallCount++;
+                return;
+            }
+            else
+            {
+                getBallCount = 0;
+            }
+            haveBallCount++;
 
 #ifdef DEBUG_DC
-			cout << "DribbleCalibration::run(): haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+            cout << "DribbleCalibration::run(): haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
 #endif
 
-			// translation may not be higher than endTrans
-			int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
+            // translation may not be higher than endTrans
+            int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
 
 #ifdef DEBUG_DC
-			cout << "DribbleCalibration::run(): translation = " << tran << endl;
+            cout << "DribbleCalibration::run(): translation = " << tran << endl;
 #endif
-			// movement
-			shared_ptr<msl::DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
+            // movement
+            shared_ptr < msl::DribbleCalibrationQuery > query = dcc.paramToMove(param, tran);
 
-			//check input for send methods
-			shared_ptr<MotionControl> mc = query->getMc();
-			if (!(mc->motion.translation == 0 && mc->motion.angle == 0 && mc->motion.rotation == 0))
-			{
-				if (mc->motion.translation == NAN)
-				{
-					cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
-					return;
-				}
-				else
-				{
-					motionCmdFlag = true;
-					MotionControl m = *mc;
-					if (transFlag)
-					{
-						cout << "m.motion.translation = " << m.motion.translation << endl;
-						transFlag = false;
-					}
-					send(*mc);
-				}
-			}
-			else
-			{
-				if (motionCmdFlag)
-				{
-					cout << "Motion command is 0" << endl;
-					motionCmdFlag = false;
-					return;
-				}
-			}
+            //check input for send methods
+            shared_ptr < MotionControl > mc = query->getMc();
+            if (!(mc->motion.translation == 0 && mc->motion.angle == 0 && mc->motion.rotation == 0))
+            {
+                if (mc->motion.translation == NAN)
+                {
+                    cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
+                    return;
+                }
+                else
+                {
+                    motionCmdFlag = true;
+                    MotionControl m = *mc;
+                    if (transFlag)
+                    {
+                        cout << "m.motion.translation = " << m.motion.translation << endl;
+                        transFlag = false;
+                    }
+                    send(*mc);
+                }
+            }
+            else
+            {
+                if (motionCmdFlag)
+                {
+                    cout << "Motion command is 0" << endl;
+                    motionCmdFlag = false;
+                    return;
+                }
+            }
 
-			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 90)
-			{
-				shared_ptr<BallHandleCmd> bhc = query->getBhc();
-				send(*bhc);
-			}
-			else if (param != msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
-			{
-				shared_ptr<BallHandleCmd> bhc = query->getBhc();
-				send(*bhc);
-			}
+            if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 90)
+            {
+                shared_ptr < BallHandleCmd > bhc = query->getBhc();
+                send (*bhc);
+            }
+            else if (param != msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
+            {
+                shared_ptr < BallHandleCmd > bhc = query->getBhc();
+                send (*bhc);
+            }
 
-			// waiting some time till we can be sure to only collect correct values
-			if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
-			{
-				// if you want to collect sensor data, this is the point you want to call the method
-				return;
-			}
+            // waiting some time till we can be sure to only collect correct values
+            if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
+            {
+                // if you want to collect sensor data, this is the point you want to call the method
+                return;
+            }
 
-			// if the robot could hold the ball for a long time -> adapt parameter and remember the Point
-			if (haveBallCount >= minHaveBallIter)
-			{
-				moveCount++;
-				transFlag = true;
+            // if the robot could hold the ball for a long time -> adapt parameter and remember the Point
+            if (haveBallCount >= minHaveBallIter)
+            {
+                moveCount++;
+                transFlag = true;
 
-				cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..."
-						<< endl;
+                cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..."
+                        << endl;
 
-				haveBallCount = 0;
+                haveBallCount = 0;
 
-				dcc.saveParameters(param);
-				dcc.adaptParam(param);
+                dcc.saveParameters(param);
+                dcc.adaptParam(param);
 //				adaptParam();
-			}
+            }
 
-		}
-		else if (moveCount >= speedIter)
-		{
-			// end
-			// choose correct value
-			dcc.writeConfigParameres(param);
+        }
+        else if (moveCount >= speedIter)
+        {
+            // end
+            // choose correct value
+            dcc.writeConfigParameres(param);
 //			cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is "
 //					<< orthoDriveFactor << endl;
-			cout << "finished calibration" << endl;
-			this->setSuccess(true);
-			return;
-		}
-		else
-		{
-			if (getBallFlag)
-			{
-				cout << "getting ball" << endl;
-			}
+            cout << "finished calibration" << endl;
+            this->setSuccess(true);
+            return;
+        }
+        else
+        {
+            if (getBallFlag)
+            {
+                cout << "getting ball" << endl;
+            }
 
-			// we need to adapt our weel Speed!
-			if (haveBallCount > 0)
-			{
-				dcc.adaptParam(param);
-			}
+            // we need to adapt our weel Speed!
+            if (haveBallCount > 0)
+            {
+                dcc.adaptParam(param);
+            }
 
-			haveBallCount = 0;
-			mc = moveCont.getBall();
-			if (mc.motion.translation != NAN)
-			{
-				send(mc);
-			}
-			else
-			{
-				cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
-			}
-		}
-		/*PROTECTED REGION END*/
-	}
-	void DribbleCalibration::initialiseParameters()
-	{
-		/*PROTECTED REGION ID(initialiseParameters1482339434271) ENABLED START*/ //Add additional options here
+            haveBallCount = 0;
+            mc = moveCont.getBall();
+            if (mc.motion.translation != NAN)
+            {
+                send(mc);
+            }
+            else
+            {
+                cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
+            }
+        }
+        /*PROTECTED REGION END*/
+    }
+    void DribbleCalibration::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1482339434271) ENABLED START*/ //Add additional options here
 //        MovementContainer moveCont;
-		readConfigParameters();
+        readConfigParameters();
 
-		bool success = false;
-		string tmp;
-		try
-		{
-			// dribble forward
-			if (getParameter("DribbleForward", tmp))
-			{
-				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-				istringstream(tmp) >> std::boolalpha >> dribbleForward;
-				!dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
-				success = true;
-			}
-			else if (getParameter("DribbleBackward", tmp))
-			{
-				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-				istringstream(tmp) >> std::boolalpha >> dribbleBackward;
-				!dribbleBackward ? : param = msl::DribbleCalibrationContainer::Param::DribbleBackwardParm;
-				success = true;
-			}
-			else if (getParameter("DribbleRotateLeft", tmp))
-			{
-				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-				istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
-				!dribbleRotateLeft ? : param = msl::DribbleCalibrationContainer::Param::RotateLeftParm;
-				speedIter = moveCount + 1;
-				success = true;
-			}
-			else if (getParameter("DribbleRotateRight", tmp))
-			{
-				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-				istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
-				!dribbleRotateRight ? : param = msl::DribbleCalibrationContainer::Param::RotateRightPram;
-				speedIter = moveCount + 1;
-				success = true;
-			}
-		}
-		catch (exception& e)
-		{
-			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
-					<< "\033[0m\n" << endl;
-		}
-		if (!success)
-		{
-			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
-					<< endl;
-		}
+        bool success = false;
+        string tmp;
+        try
+        {
+            // dribble forward
+            if (getParameter("DribbleForward", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleForward;
+                !dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
+                success = true;
+            }
+            else if (getParameter("DribbleBackward", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleBackward;
+                !dribbleBackward ? : param = msl::DribbleCalibrationContainer::Param::DribbleBackwardParm;
+                success = true;
+            }
+            else if (getParameter("DribbleRotateLeft", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
+                !dribbleRotateLeft ? : param = msl::DribbleCalibrationContainer::Param::RotateLeftParm;
+                speedIter = moveCount + 1;
+                success = true;
+            }
+            else if (getParameter("DribbleRotateRight", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
+                !dribbleRotateRight ? : param = msl::DribbleCalibrationContainer::Param::RotateRightPram;
+                speedIter = moveCount + 1;
+                success = true;
+            }
+        }
+        catch (exception& e)
+        {
+            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
+                    << "\033[0m\n" << endl;
+        }
+        if (!success)
+        {
+            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
+                    << endl;
+        }
 
-		/*PROTECTED REGION END*/
-	}
-	/*PROTECTED REGION ID(methods1482339434271) ENABLED START*/ //Add additional methods here
-	void DribbleCalibration::readConfigParameters()
-	{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        /*PROTECTED REGION END*/
+    }
+    /*PROTECTED REGION ID(methods1482339434271) ENABLED START*/ //Add additional methods here
+    void DribbleCalibration::readConfigParameters()
+    {
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
-		startTrans = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.StartTranslation", NULL);
-		endTrans = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.EndTranslation", NULL);
-		speedIter = floor(endTrans / startTrans);
+        startTrans = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.StartTranslation", NULL);
+        endTrans = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.EndTranslation", NULL);
+        speedIter = floor(endTrans / startTrans);
 
-		haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
-				"DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
+        haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
 
-		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
-		NULL);
-		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
-		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
-		runBackwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleBackward", NULL);
-	}
+        collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
+                                                                           NULL);
+        minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
+        runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
+        runBackwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleBackward", NULL);
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */
