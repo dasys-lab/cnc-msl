@@ -26,7 +26,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
 
-    	if (count > 300)
+    	if (count < 150)
     	{
         msl_actuator_msgs::MotionControl motorMsg;
         motorMsg.motion.translation = testSpeed;
@@ -39,7 +39,7 @@ namespace alica
         count++;
     	}
 
-    	if (count == 300)
+    	if (count == 150)
     	{
 
     		(*sc)["MotorControlTest"]->set<string>(to_string(testSpeed+100),"MotorControlTest.testSpeed");
