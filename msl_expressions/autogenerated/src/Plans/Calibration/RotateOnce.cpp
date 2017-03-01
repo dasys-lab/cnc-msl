@@ -80,12 +80,12 @@ namespace alica
 		double circDiff = circularDiff(currentBearing, lastBearing);
 		double currentNormedBearing = (currentBearing + M_PI)/ (2*M_PI);
 		double lastNormedBearing = (lastBearing + M_PI)/ (2*M_PI);
-		cout << "lst " << lastBearing << "; ";
+//		cout << "lst " << lastBearing << "; ";
 		cout << "cur " << currentBearing << "; ";
-		cout << "cD " << circDiff << "; ";
+//		cout << "cD " << circDiff << "; ";
 		cout << "rots " << (rotations + currentNormedBearing);
 
-		if (circDiff <= 0 && circDiff > CIRCDIFF_THRESHOLD)
+		if (circDiff <= 0 || circDiff > CIRCDIFF_THRESHOLD)
 		{
 			return 0;
 		}
