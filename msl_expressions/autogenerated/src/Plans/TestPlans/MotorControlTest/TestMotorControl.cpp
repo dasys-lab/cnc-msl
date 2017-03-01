@@ -26,7 +26,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
 
-    	if (count < 60)
+    	if (wm->getTime() < startTime + 3000000000)
 
     	{
         msl_actuator_msgs::MotionControl motorMsg;
@@ -37,10 +37,10 @@ namespace alica
         cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
                 << motorMsg.motion.rotation << endl;
         send(motorMsg);
-        count++;
+
     	}
 
-    	if (count == 60)
+    	if (wm->getTime() == startTime + 3000000000)
 
     	{
 
@@ -53,7 +53,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
 
         testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
-
+        startTime = wm->getTime();
         count = 0;
         /*PROTECTED REGION END*/
     }
