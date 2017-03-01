@@ -90,7 +90,7 @@ shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool consider
         {
             for (auto mate : matesInfo->getInformation())
             {
-                shared_ptr<TVec> mateT = make_shared<TVec>({mate.x, mate.y});
+                shared_ptr<TVec> mateT = make_shared<TVec>(initializer_list<double>{mate.x, mate.y});
                 shared_ptr<TVec> p2mate = mateT - point;
 
                 shared_ptr<TVec> mateDistance = alica::ConstraintBuilder::inCoordsOf(p2mate, p2p);
@@ -105,7 +105,7 @@ shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool consider
         // consider myself
         if (considerownPos)
         {
-            shared_ptr<TVec> ownPosT = make_shared<TVec>({ownPos.x, ownPos.y});
+            shared_ptr<TVec> ownPosT = make_shared<TVec>(initializer_list<double>{ownPos.x, ownPos.y});
             shared_ptr<TVec> p2ownPos = ownPosT - point;
 
             shared_ptr<TVec> myPosDistance = alica::ConstraintBuilder::inCoordsOf(p2ownPos, p2p);
@@ -222,8 +222,8 @@ shared_ptr<Term> MSLConstraintBuilder::insideCorridor(geometry::CNPointAllo a, g
     geometry::CNPointAllo r1 = a - (normal * width);
     geometry::CNPointAllo r2 = b + (normal * width);
 
-    shared_ptr<TVec> tVec1 = make_shared<TVec>({r1.x, r1.y});
-    shared_ptr<TVec> tVec2 = make_shared<TVec>({r2.x, r2.y});
+    shared_ptr<TVec> tVec1 = make_shared<TVec>(initializer_list<double>{r1.x, r1.y});
+    shared_ptr<TVec> tVec2 = make_shared<TVec>(initializer_list<double>{r2.x, r2.y});
 
     for (int i = 0; i < points.size(); i++)
     {
@@ -413,7 +413,7 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(Situation situation, int speci
     if (egoBall && ownPosInfo != nullptr)
     {
 	    auto alloBall = egoBall->toAllo(ownPosInfo->getInformation());
-        ballT = make_shared<TVec>({alloBall.x, alloBall.x});
+        ballT = make_shared<TVec>(initializer_list<double>{alloBall.x, alloBall.x});
     }
 
     switch (situation)
@@ -469,8 +469,8 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_
     shared_ptr<TVec> ballT = nullptr;
     auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     // TODO: stopped working here
-    shared_ptr<geometry::CNPointAllo> ball = wm->ball->getAlloBallPosition();
-    if (ball != nullptr && ownPos != nullptr)
+    optional<geometry::CNPointAllo> ball = wm->ball->getAlloBallPosition();
+    if (ball)
     {
         ballT = make_shared<TVec>(initializer_list<double>{ball->x, ball->y});
     }
@@ -721,7 +721,7 @@ shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, vector<shared_ptr
 {
     shared_ptr<geometry::CNPointAllo> lowerRightCornerP;
     shared_ptr<geometry::CNPointAllo> upperLeftCornerP;
-    resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
+    resolveArea(area, lowerRightCornerP, upperLeftCornerP);
     shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
     shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
     return outsideRectangle(lowerRightCorner, upperLeftCorner, points);
@@ -741,7 +741,7 @@ shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<
         return autodiff::Term::TRUE;
     shared_ptr<geometry::CNPointAllo> lowerRightCornerP;
     shared_ptr<geometry::CNPointAllo> upperLeftCornerP;
-    resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
+    resolveArea(area, lowerRightCornerP, upperLeftCornerP);
     shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
     shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
     return insideRectangle(lowerRightCorner, upperLeftCorner, points);
@@ -749,7 +749,7 @@ shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<
 
 //	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLeftSurCornerP = wm->field.posULSurrounding();
 
-void MSLConstraintBuilder::resolveArea(Areas area, shared_ptr<geometry::CNPointAllo> *lowerRightCorner, shared_ptr<geometry::CNPointAllo> *upperLeftCorner)
+void MSLConstraintBuilder::resolveArea(Areas area, shared_ptr<geometry::CNPointAllo> lowerRightCorner, shared_ptr<geometry::CNPointAllo> upperLeftCorner)
 {
     MSLWorldModel *wm = MSLWorldModel::get();
     switch (area)

@@ -117,10 +117,10 @@ const InfoBuffer<std::vector<geometry::CNPointAllo>> &Teammates::getTeammatesAll
     return this->teammatesAlloClustered;
 }
 
-void msl::Teammates::integrateTeammatesAlloClustered(shared_ptr<vector<geometry::CNPointAllo>> teammatesAlloClustered)
+void msl::Teammates::integrateTeammatesAlloClustered(shared_ptr<const vector<geometry::CNPointAllo>> teammatesAlloClustered)
 {
     auto infoElement = make_shared<InformationElement<vector<geometry::CNPointAllo>>>(
-        teammatesAlloClustered, this->wm->getTime(), this->maxValidity, 1.0);
+        *teammatesAlloClustered, this->wm->getTime(), this->maxValidity, 1.0);
 
     this->teammatesAlloClustered.add(infoElement);
 }
@@ -130,18 +130,17 @@ const InfoBuffer<vector<geometry::CNPointEgo>> &Teammates::getTeammatesEgoCluste
     return this->teammatesEgoClustered;
 }
 
-void Teammates::integrateTeammatesEgoClustered(shared_ptr<vector<geometry::CNPointEgo>> teammatesEgoClustered)
+void Teammates::integrateTeammatesEgoClustered(shared_ptr<const vector<geometry::CNPointEgo>> teammatesEgoClustered)
 {
     auto infoElement = make_shared<InformationElement<vector<geometry::CNPointEgo>>>(
-        teammatesEgoClustered, wm->getTime(), this->maxValidity, 1.0);
+        *teammatesEgoClustered, wm->getTime(), this->maxValidity, 1.0);
 
     this->teammatesEgoClustered.add(infoElement);
 }
 
 void Teammates::integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime)
 {
-    auto sharedCNPositionAllo =
-        make_shared<geometry::CNPositionAllo>(msg->odom.position.x, msg->odom.position.y, msg->odom.position.angle);
+    auto sharedCNPositionAllo = geometry::CNPositionAllo(msg->odom.position.x, msg->odom.position.y, msg->odom.position.angle);
 
     auto infoElement = make_shared<InformationElement<geometry::CNPositionAllo>>(
         sharedCNPositionAllo, creationTime, this->maxValidity, msg->odom.position.certainty);

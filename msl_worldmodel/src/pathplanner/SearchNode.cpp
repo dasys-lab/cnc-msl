@@ -7,6 +7,8 @@
 
 #include "pathplanner/SearchNode.h"
 
+using std::shared_ptr;
+
 namespace msl
 {
 
@@ -137,15 +139,15 @@ VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getIncidentEdges()
     }
 }
 
-shared_ptr<geometry::CNPoint2D> SearchNode::getPoint()
+geometry::CNPointAllo SearchNode::getPoint()
 {
     if (this->initialEdge)
     {
-        return make_shared<geometry::CNPoint2D>(this->vertex->point().x(), this->vertex->point().y());
+        return geometry::CNPointAllo(this->vertex->point().x(), this->vertex->point().y());
     }
     else
     {
-        return make_shared<geometry::CNPoint2D>(this->edge->source()->point().x(), this->edge->source()->point().y());
+        return geometry::CNPointAllo(this->edge->source()->point().x(), this->edge->source()->point().y());
     }
 }
 

@@ -5,6 +5,7 @@
 #include "InformationElement.h"
 #include "MSLEnums.h"
 
+#include <nonstd/optional.hpp>
 #include <msl_msgs/RefBoxCommand.h>
 #include <robot_control/RobotCommand.h>
 #include <ros/ros.h>

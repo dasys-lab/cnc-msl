@@ -83,27 +83,27 @@ const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityVisionBuffe
 
 const InfoBuffer<msl_actuator_msgs::MotionControl> &RawSensorData::getLastMotionCommandBuffer()
 {
-	return this->lastMotionCommand;
+    return this->lastMotionCommand;
 }
 
 const InfoBuffer<int> &RawSensorData::getCompassBuffer()
 {
-	return this->compass;
+    return this->compass;
 }
 
 const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &RawSensorData::getCorrectedOdometryBuffer()
 {
-	return this->correctedOdometry;
+    return this->correctedOdometry;
 }
 
 const InfoBuffer<msl_actuator_msgs::IMUData> &RawSensorData::getImuDataBuffer()
 {
-	return this->imuData;
+    return this->imuData;
 }
 
 const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &RawSensorData::getBallHypothesisBuffer()
 {
-	return this->ballHypothesis;
+    return this->ballHypothesis;
 }
 
 const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommandsBuffer()
@@ -118,7 +118,8 @@ const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommandsB
 void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 {
     auto motion = make_shared<InformationElement<geometry::CNPositionAllo>>(
-        make_shared<geometry::CNPositionAllo>(msg->position.x, msg->position.y, msg->position.angle), wm->getTime());
+        geometry::CNPositionAllo(msg->position.x, msg->position.y, msg->position.angle), wm->getTime(),
+        this->maxValidity, msg->position.certainty);
     ownPositionMotion.add(motion);
 
     auto vel = make_shared<InformationElement<msl_msgs::MotionInfo>>(msl_msgs::MotionInfo(msg->motion), wm->getTime(),
@@ -135,7 +136,7 @@ void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 
     if (msg->robotId == this->ownID)
     {
-    	// TODO: set maxValididititityDuration to 250ms -> constant?
+        // TODO: set maxValididititityDuration to 250ms -> constant?
         auto joyInfo =
             make_shared<InformationElement<msl_msgs::JoystickCommand>>(*msg, wm->getTime(), this->maxValidity, 1.0);
         joystickCommands.add(joyInfo);
@@ -251,7 +252,7 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
  */
 void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi)
 {
-    auto coData = make_shared<geometry::CNPositionAllo>(coi->position.x, coi->position.y, coi->position.angle);
+    auto coData = geometry::CNPositionAllo(coi->position.x, coi->position.y, coi->position.angle);
     auto coInfo = make_shared<InformationElement<geometry::CNPositionAllo>>(coData, wm->getTime(), this->maxValidity,
                                                                             coi->certainty);
     ownPositionVision.add(coInfo);

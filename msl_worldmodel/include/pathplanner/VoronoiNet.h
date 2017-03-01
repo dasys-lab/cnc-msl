@@ -165,17 +165,17 @@ class VoronoiNet
     /**
      * Allo Obstacles for constructing this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloClusteredObsWithMe();
+    shared_ptr<vector<shared_ptr<geometry::CNRobotAllo>>> getAlloClusteredObsWithMe();
 
     /**
      * Artificial Obstacles for construction this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialObstacles();
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getArtificialObstacles();
 
     /**
      * Additional Obstacles for construction this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAdditionalObstacles();
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getAdditionalObstacles();
 
     /**
      * Return vertices teammates voronoi face
@@ -272,9 +272,9 @@ class VoronoiNet
     map<Site_2, int> pointRobotKindMapping;
 
     // DATA for constructing this voronoi net
-    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> alloClusteredObsWithMe;
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> artificialObstacles;
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalObstacles;
+    shared_ptr<vector<shared_ptr<geometry::CNRobotAlo>>> alloClusteredObsWithMe;
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> artificialObstacles;
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> additionalObstacles;
 };
 
 } /* namespace msl */

@@ -21,14 +21,14 @@ class WhiteBoard
     virtual ~WhiteBoard();
     void processPassMsg(msl_helper_msgs::PassMsgPtr msg);
     void processWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
-    shared_ptr<msl_helper_msgs::PassMsg> getPassMsg(int index = 0);
-    shared_ptr<msl_helper_msgs::WatchBallMsg> getWatchBallMsg(int index = 0);
+
+    InfoBuffer<msl_helper_msgs::PassMsg>& getPassMsgBuffer();
+    InfoBuffer<msl_helper_msgs::WatchBallMsg>& getWatchBallMsgBuffer();
 
   private:
     MSLWorldModel *wm;
-    unsigned long maxInformationAge = 1000000000;
-    InfoBuffer<InformationElement<msl_helper_msgs::PassMsg>> passMsgs;
-    InfoBuffer<InformationElement<msl_helper_msgs::WatchBallMsg>> watchBallMsgs;
+    InfoBuffer<msl_helper_msgs::PassMsg> passMsgBuffer;
+    InfoBuffer<msl_helper_msgs::WatchBallMsg> watchBallMsgBuffer;
 };
 
 } /* namespace msl */

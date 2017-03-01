@@ -11,6 +11,9 @@
 #include "Robots.h"
 #include <SystemConfig.h>
 
+using nonstd::optional;
+using nonstd::nullopt;
+
 namespace msl
 {
 
@@ -99,13 +102,7 @@ void Game::onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg)
 {
     // Put the referee box command into the ringbuffer
 
-    /*
-     * In order to convert the boost::shared_ptr to a std::shared_ptr
-     * we use the conversion suggested in this post:
-     * http://stackoverflow.com/questions/12314967/cohabitation-of-boostshared-ptr-and-stdshared-ptr
-     */
-    auto cmd = shared_ptr<msl_msgs::RefBoxCommand>(msg.get(), [msg](msl_msgs::RefBoxCommand *) mutable { msg.reset(); });
-    auto refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime(), this->maxValidity, 1);
+    auto refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(*msg, wm->getTime(), this->maxValidity, 1);
     refBoxCommandBuffer.add(refBoxCmd);
     // Set the current refbox situation
     lock_guard<mutex> lock(refereeMutex);
@@ -355,7 +352,7 @@ void Game::updateGameState()
 {
     // Find robot closest to ball
     auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
-    shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> closestRobot;
+    shared_ptr<pair<int, geometry::CNPositionAllo>> closestRobot;
     double minDist = numeric_limits<double>::max();
     auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
     if (sharedBallPosition == nullptr)
@@ -363,21 +360,21 @@ void Game::updateGameState()
         return;
     }
     bool ballPossession = false;
-    for (shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> shwmData : *robots)
+    for (pair<int, geometry::CNPositionAllo> shwmData : *robots)
     {
-        double currDist = shwmData->second->distanceTo(sharedBallPosition->get());
+        double currDist = shwmData.second.distanceTo(*sharedBallPosition);
         if (closestRobot == nullptr || currDist < minDist)
         {
-            closestRobot = shwmData;
+            closestRobot = make_shared<pair<int, geometry::CNPositionAllo>>(shwmData);
             minDist = currDist;
         }
 
-        auto realShwm = wm->robots->getSHWMData(shwmData->first);
+        auto realShwm = wm->robots->getSHWMDataBuffer(shwmData.first)->getLastValid();
 
         // auto hasball = (  ball.getTeamMateBallPossession(shwmData->first));
         if (realShwm != nullptr)
         {
-            ballPossession |= realShwm->ballInPossession;
+            ballPossession |= realShwm->getInformation().ballInPossession;
         }
     }
 
@@ -386,12 +383,8 @@ void Game::updateGameState()
         cout << "Game::updateGameState(): closestRobot == nullptr -> is this even possible?" << endl;
         return;
     }
-    auto oppposs = wm->ball->getOppBallPossession();
-    bool oppBallPossession = false;
-    if (oppposs != nullptr)
-    {
-        oppBallPossession = *oppposs;
-    }
+
+    bool oppBallPossession = wm->ball->getOppBallPossession();
 
     GameState gs = getGameState();
 
@@ -432,28 +425,25 @@ bool Game::isMayScore()
 
 void Game::setMayScore()
 {
-    shared_ptr<geometry::CNPosition> capturePos = nullptr;
+    optional<geometry::CNPositionAllo> capturePos = nullopt;
     int teamMateWithBallNow = 0;
     auto robotPoses = this->wm->robots->teammates.getPositionsOfTeamMates();
     if (robotPoses != nullptr)
     {
-        for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
+        for (pair<int, geometry::CNPositionAllo> shwmData : *robotPoses)
         {
-            if (shwmData != nullptr)
+            auto teamMateBallPosession = wm->ball->getTeamMateBallPossession(shwmData.first);
+            if (teamMateBallPosession && *teamMateBallPosession)
             {
-                auto ptr = wm->ball->getTeamMateBallPossession(shwmData->first);
-                if (ptr != nullptr && *ptr)
-                {
-                    capturePos = shwmData->second;
-                    teamMateWithBallNow = shwmData->first;
-                }
+                capturePos = shwmData.second;
+                teamMateWithBallNow = shwmData.first;
             }
         }
     }
 
     // update to rule changes 2017: goal valid after dribbling to opp side after pass; not valid after winning duel without passing
 
-    if (capturePos == nullptr || capturePos->x < 0 || !passReceived)
+    if (!capturePos || capturePos->x < 0 || !passReceived)
     {
         mayScore = false;
     }
@@ -464,8 +454,8 @@ void Game::setMayScore()
 
     teamMateWithBall = teamMateWithBallNow;
 
-    auto teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateWithBall);
-    if (teamMatePos != nullptr && teamMatePos->x > 50 && passReceived)
+    auto teamMatePos = wm->robots->teammates.getTeammatePositionBuffer(teamMateWithBall).getLastValid();
+    if (teamMatePos != nullptr && teamMatePos->getInformation().x > 50 && passReceived)
     {
         cout << "tmwb : " << teamMateWithBall << "tmwbn: " << teamMateWithBallNow
              << "=========================================GAME: SETTING MAYSCORE =============================================================" << endl;

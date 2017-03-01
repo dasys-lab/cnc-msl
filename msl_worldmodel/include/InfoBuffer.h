@@ -20,12 +20,34 @@ class InfoBuffer
      * @param bufferSize Number of elements which can be stored within the information buffer
      */
     InfoBuffer(const int bufferSize)
+        : mtx_()
     {
         this->bufferSize = bufferSize;
         this->infoElementCounter = 0;
         this->index = -1;
         this->ringBuffer = new std::shared_ptr<const InformationElement<T>>[this->bufferSize];
     }
+
+    /**
+      * Copy constructor.
+      * YOU SHALL NOT COPY!
+      * Copying the ringbuffer isn't trivial, InformationElement can contain raw objects or shared_pointers...
+      * Also you most likely don't want to copy a whole buffer.
+      * If you REALLY need to copy the buffer, do it by hand.
+      */
+    InfoBuffer(const InfoBuffer &obj) = delete;
+    // TODO: delete?
+    /*InfoBuffer(const InfoBuffer &obj)
+        : mtx_()
+    {
+        // Do not copy the mutex!
+        this->bufferSize = obj.bufferSize;
+        this->infoElementCounter = obj.infoElementCounter;
+        this->index = obj.index;
+
+        auto buffer = new std::shared_ptr<const InformationElement<T>>[this->bufferSize];
+        this->ringBuffer = make_shared<>(*obj.ringBuffer);
+    }*/
 
     /**
      *  Default destructor.
@@ -213,10 +235,10 @@ class InfoBuffer
 
   private:
     mutable std::mutex mtx_;
-    std::shared_ptr<const InformationElement<T>> *ringBuffer;       /**< Ring buffer of elements */
-    int bufferSize;                                                 /**< number of stored elements */
-    int index;                                                      /**< Current index of the last added element */
-    unsigned long long infoElementCounter;                          /**< Counter of elements added to the buffer */
+    std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
+    int bufferSize;                                           /**< number of stored elements */
+    int index;                                                /**< Current index of the last added element */
+    unsigned long long infoElementCounter;                    /**< Counter of elements added to the buffer */
 };
 
 } /* namespace msl */

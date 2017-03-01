@@ -12,8 +12,8 @@ namespace msl
 {
 
 WhiteBoard::WhiteBoard(MSLWorldModel *wm)
-    : passMsgs(10)
-    , watchBallMsgs(10)
+    : passMsgBuffer(10)
+    , watchBallMsgBuffer(10)
 {
     this->wm = wm;
 }
@@ -26,38 +26,26 @@ void WhiteBoard::processPassMsg(msl_helper_msgs::PassMsgPtr msg)
 {
     InfoTime time = wm->getTime();
 
-    shared_ptr<msl_helper_msgs::PassMsg> p = make_shared<msl_helper_msgs::PassMsg>(*msg);
-    shared_ptr<InformationElement<msl_helper_msgs::PassMsg>> passMsg = make_shared<InformationElement<msl_helper_msgs::PassMsg>>(p, time);
-    passMsgs.add(passMsg);
+    auto passMsg = make_shared<InformationElement<msl_helper_msgs::PassMsg>>(*msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
+    passMsgBuffer.add(passMsg);
 }
 
-shared_ptr<msl_helper_msgs::PassMsg> WhiteBoard::getPassMsg(int index)
+InfoBuffer<msl_helper_msgs::PassMsg> &WhiteBoard::getPassMsgBuffer()
 {
-    auto x = passMsgs.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > x->getInformation()->validFor)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->passMsgBuffer;
 }
 
 void WhiteBoard::processWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg)
 {
     InfoTime time = wm->getTime();
 
-    shared_ptr<msl_helper_msgs::WatchBallMsg> p = make_shared<msl_helper_msgs::WatchBallMsg>(*msg);
-    shared_ptr<InformationElement<msl_helper_msgs::WatchBallMsg>> watchMsg = make_shared<InformationElement<msl_helper_msgs::WatchBallMsg>>(p, time);
-    watchBallMsgs.add(watchMsg);
+    auto watchMsg = make_shared<InformationElement<msl_helper_msgs::WatchBallMsg>>(*msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
+    watchBallMsgBuffer.add(watchMsg);
 }
 
-shared_ptr<msl_helper_msgs::WatchBallMsg> WhiteBoard::getWatchBallMsg(int index)
+InfoBuffer<msl_helper_msgs::WatchBallMsg> &WhiteBoard::getWatchBallMsgBuffer()
 {
-    auto x = watchBallMsgs.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > x->getInformation()->validFor)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->watchBallMsgBuffer;
 }
 
 } /* namespace msl */

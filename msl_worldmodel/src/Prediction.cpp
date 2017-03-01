@@ -32,15 +32,18 @@ Prediction::~Prediction()
 void Prediction::monitoring()
 {
     auto wm = MSLWorldModel::get();
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
+    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid();
 
-    if (ownPos && odo)
+    if (ownPosInfo && odoInfo)
     {
+        auto ownPos = ownPosInfo->getInformation();
+        auto odo = odoInfo->getInformation();
+
         // plot '/tmp/angle.txt' u 1:2 w l, '/tmp/angle.txt' u 1:3 w l, '/tmp/angle.txt' u ($1 + 150000000):3 w l
         double angle = wm->prediction->angle(150);
 
-        double alloAngle = ownPos->theta;
+        double alloAngle = ownPos.theta;
         if (alloAngle > M_PI)
             alloAngle -= 2 * M_PI;
         else if (alloAngle < -M_PI)
@@ -48,21 +51,24 @@ void Prediction::monitoring()
 
         debugAngle << wm->getTime() << " " << alloAngle << " " << angle << std::endl << std::flush;
 
-        //  plot '/tmp/anglePos.txt' u 1:2 w l, '/tmp/anglePos.txt' u 1:6 w l, '/tmp/anglePos.txt' u ($1 + 150000000):6 w l
-        //  plot '/tmp/anglePos.txt' u 1:3 w l, '/tmp/anglePos.txt' u 1:7 w l, '/tmp/anglePos.txt' u ($1 + 150000000):7 w l
+        //  plot '/tmp/anglePos.txt' u 1:2 w l, '/tmp/anglePos.txt' u 1:6 w l, '/tmp/anglePos.txt' u ($1 + 150000000):6
+        //  w l
+        //  plot '/tmp/anglePos.txt' u 1:3 w l, '/tmp/anglePos.txt' u 1:7 w l, '/tmp/anglePos.txt' u ($1 + 150000000):7
+        //  w l
         auto anglePos = wm->prediction->angleAndPosition(150);
 
         if (anglePos)
         {
-            double alloAngle = ownPos->theta;
+            double alloAngle = ownPos.theta;
             if (alloAngle > M_PI)
                 alloAngle -= 2 * M_PI;
             else if (alloAngle < -M_PI)
                 alloAngle += 2 * M_PI;
 
-            debugAnglePosition << wm->getTime() << " " << alloAngle << " " << ownPos->x << " " << ownPos->y << " " << odo->motion.translation;
-            debugAnglePosition << " " << anglePos->first->theta << " " << anglePos->first->x << " " << anglePos->first->y << " " << anglePos->second
-                               << std::endl
+            debugAnglePosition << wm->getTime() << " " << alloAngle << " " << ownPos.x << " " << ownPos.y << " "
+                               << odo.motion.translation;
+            debugAnglePosition << " " << anglePos->first->theta << " " << anglePos->first->x << " "
+                               << anglePos->first->y << " " << anglePos->second << std::endl
                                << std::flush;
         }
     }
@@ -72,43 +78,49 @@ double Prediction::rotationVelocity(int ms)
 {
     auto wm = MSLWorldModel::get();
 
-    auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
-    if (false == odo)
+    auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid();
+    if (!odoInfo)
         return 0;
 
+    auto odo = odoInfo->getInformation();
+
     double ret = 0;
-    if (wm->rawSensorData->getLastMotionCommand() == 0)
-        return odo->motion.rotation;
+
+    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+
+    if (motionCommandBuffer.getLast())
+        return odo.motion.rotation;
 
     long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
     int i = 0;
-    auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
-    std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>> cmd;
+    auto motionCommand = motionCommandBuffer.getLast(i);
+    std::vector<msl_actuator_msgs::MotionControl> cmds;
 
     {
         // TODO lock
         //    std::lock_guard<std::mutex>(wm->)
-        while (motionCommand && motionCommand->timestamp > targetTimeMs)
+        while (motionCommand && motionCommand->getInformation().timestamp > targetTimeMs)
         {
-            cmd.push_back(motionCommand);
-            motionCommand = wm->rawSensorData->getLastMotionCommand(i);
+            cmds.push_back(motionCommand->getInformation());
             i++;
+
+            motionCommand = motionCommandBuffer.getLast(i);
+            // TODO: i++ was here
         }
     }
 
-    ret = odo->motion.rotation;
+    ret = odo.motion.rotation;
     long delta;
     double accel;
 
-    for (int i = cmd.size() - 1; i >= 0; --i)
+    for (int i = cmds.size() - 1; i >= 0; --i)
     {
-        auto mc = cmd[i];
-        if (false == mc)
-            continue;
-        delta = mc->timestamp - targetTimeMs;
+        auto mc = cmds[i];
+
+        delta = mc.timestamp - targetTimeMs;
         if (delta < 0)
             continue;
-        accel = (mc->motion.rotation - ret) / delta;
+        accel = (mc.motion.rotation - ret) / delta;
         accel *= this->magicNumber;
         if (accel < 0)
             accel = -1 * min(this->maxRotationAccel, abs(accel));
@@ -126,55 +138,63 @@ double Prediction::angle(int ms)
 {
     auto wm = MSLWorldModel::get();
 
-    auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
-    if (false == odo)
+    auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid();
+    if (!odoInfo)
+    {
         return 0;
+    }
 
-    double velo = 0;
+    auto odo = odoInfo->getInformation();
+
+    double vel = 0;
     double angle = 0;
 
-    if (false == wm->rawSensorData->getLastMotionCommand())
-        return odo->position.angle;
+    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+
+    if (!motionCommandBuffer.getLast())
+        return odo.position.angle;
 
     long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
     int i = 0;
-    auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
-    std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>> cmd;
+    auto motionCommand = motionCommandBuffer.getLast(i);
+    std::vector<msl_actuator_msgs::MotionControl> cmds;
 
     {
         // TODO lock
         //    std::lock_guard<std::mutex>(wm->)
 
-        while (motionCommand && motionCommand->timestamp > targetTimeMs)
+        while (motionCommand && motionCommand->getInformation().timestamp > targetTimeMs)
         {
-            cmd.push_back(motionCommand);
-            motionCommand = wm->rawSensorData->getLastMotionCommand(i);
+            cmds.push_back(motionCommand->getInformation());
             i++;
+
+            motionCommand = motionCommandBuffer.getLast(i);
+            // TODO: i++ was here
         }
     }
 
-    velo = odo->motion.rotation;
-    angle = odo->position.angle;
+    vel = odo.motion.rotation;
+    angle = odo.position.angle;
     long delta;
     double accel;
 
-    for (int i = cmd.size() - 1; i >= 0; --i)
+    for (int i = cmds.size() - 1; i >= 0; --i)
     {
-        auto mc = cmd[i];
-        if (false == mc)
-            continue;
-        delta = mc->timestamp - targetTimeMs;
+        auto mc = cmds[i];
+
+        delta = mc.timestamp - targetTimeMs;
         if (delta < 0)
             continue;
 
-        accel = (mc->motion.rotation - velo) / delta;
+        accel = (mc.motion.rotation - vel) / delta;
         accel *= this->magicNumber;
         if (accel < 0)
             accel = -1 * min(this->maxRotationAccel, abs(accel));
         else
             accel = min(this->maxRotationAccel, abs(accel));
-        angle += velo * (delta / this->magicNumber) + 0.5 * accel * (delta / this->magicNumber) * (delta / this->magicNumber);
-        velo += accel * delta / this->magicNumber;
+        angle += vel * (delta / this->magicNumber) +
+                 0.5 * accel * (delta / this->magicNumber) * (delta / this->magicNumber);
+        vel += accel * delta / this->magicNumber;
 
         targetTimeMs += delta;
     }
@@ -186,40 +206,47 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Predict
 {
     auto wm = MSLWorldModel::get();
 
-    auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
-    if (false == odo)
+    auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid();
+    if (!odoInfo)
+    {
         return nullptr;
+    }
+    auto odo = odoInfo->getInformation();
 
-    double velo = 0;
+    double vel = 0;
     double angle = 0;
     double x, y, trans, transX, transY;
 
-    if (wm->rawSensorData->getLastMotionCommand() == 0)
-        return 0;
+    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+
+    if (!motionCommandBuffer.getLast())
+        return nullptr;
 
     long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
     int i = 0;
-    auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
-    std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>> cmd;
+    auto motionCommand = motionCommandBuffer.getLast(i);
+    std::vector<msl_actuator_msgs::MotionControl> cmds;
 
     {
         // TODO lock
         //    std::lock_guard<std::mutex>(wm->)
 
-        while (motionCommand && motionCommand->timestamp > targetTimeMs)
+        while (motionCommand && motionCommand->getInformation().timestamp > targetTimeMs)
         {
-            cmd.push_back(motionCommand);
-            motionCommand = wm->rawSensorData->getLastMotionCommand(i);
+            cmds.push_back(motionCommand->getInformation());
             i++;
+
+            motionCommand = motionCommandBuffer.getLast(i);
+            // TODO: i++ was here
         }
     }
 
-    velo = odo->motion.rotation;
-    angle = odo->position.angle;
-    double motionAngle = odo->motion.angle;
-    x = odo->position.x; // Al
-    y = odo->position.y; // Al
-    trans = odo->motion.translation;
+    vel = odo.motion.rotation;
+    angle = odo.position.angle;
+    double motionAngle = odo.motion.angle;
+    x = odo.position.x; // Al
+    y = odo.position.y; // Al
+    trans = odo.motion.translation;
     transX = cos(motionAngle) * trans;
     transY = sin(motionAngle) * trans;
 
@@ -227,22 +254,21 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Predict
     double accel;
     geometry::CNPointAllo d;
 
-    for (int i = cmd.size() - 1; i >= 0; --i)
+    for (int i = cmds.size() - 1; i >= 0; --i)
     {
-        auto mc = cmd[i];
-        if (false == mc)
-            continue;
-        delta = mc->timestamp - targetTimeMs;
+        auto mc = cmds[i];
+
+        delta = mc.timestamp - targetTimeMs;
         if (delta < 0)
             continue;
 
-        double rot = mc->motion.rotation;
-        double ang = mc->motion.angle;
-        double tra = mc->motion.translation;
+        double rot = mc.motion.rotation;
+        double ang = mc.motion.angle;
+        double tra = mc.motion.translation;
         double deltaS = ((double)delta) / this->magicNumber;
 
         // Angle by Taker (Hendrik)
-        accel = (rot - velo) / deltaS;
+        accel = (rot - vel) / deltaS;
         if (std::isnan(accel))
             continue;
 
@@ -251,8 +277,8 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Predict
         else
             accel = min(this->maxRotationAccel, abs(accel));
 
-        angle += velo * deltaS + 0.5 * accel * deltaS * deltaS;
-        velo += accel * deltaS;
+        angle += vel * deltaS + 0.5 * accel * deltaS * deltaS;
+        vel += accel * deltaS;
 
         // Position by Taker
         d.x = (cos(ang) * tra - transX) / deltaS;
@@ -285,7 +311,8 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Predict
     angle = geometry::normalizeAngle(angle);
 
     auto pos = make_shared<geometry::CNPositionAllo>(x, y, angle);
-    std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> returnVal(new std::pair<shared_ptr<geometry::CNPositionAllo>, double>(pos, trans));
+    std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> returnVal(
+        new std::pair<shared_ptr<geometry::CNPositionAllo>, double>(pos, trans));
 
     return std::move(returnVal);
 }

@@ -27,8 +27,8 @@ class SearchNode
 {
   public:
     //		SearchNode();
-    SearchNode(VoronoiDiagram::Halfedge_around_vertex_circulator edge, double cost, double heuristic, shared_ptr<SearchNode> predecessor);
-    SearchNode(shared_ptr<Vertex> vertex, double cost, double heuristic, shared_ptr<SearchNode> predecessor);
+    SearchNode(VoronoiDiagram::Halfedge_around_vertex_circulator edge, double cost, double heuristic, std::shared_ptr<SearchNode> predecessor);
+    SearchNode(std::shared_ptr<Vertex> vertex, double cost, double heuristic, std::shared_ptr<SearchNode> predecessor);
     virtual ~SearchNode();
     /**
      * Gets the cost
@@ -55,12 +55,12 @@ class SearchNode
      * Gets the predecessor node
      * @return shared_ptr<SearchNode>
      */
-    shared_ptr<SearchNode> getPredecessor();
+    std::shared_ptr<SearchNode> getPredecessor();
     /**
      * Sets the predecessor node
      * @param shared_ptr<SearchNode> predecessor
      */
-    void setPredecessor(shared_ptr<SearchNode> predecessor);
+    void setPredecessor(std::shared_ptr<SearchNode> predecessor);
     /**
      * Gets the Voronoi Edge
      * @return VoronoiDiagram::Halfedge_around_vertex_circulator
@@ -77,13 +77,13 @@ class SearchNode
      * @param shared_ptr<SearchNode> second
      * @return bool
      */
-    static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
+    static bool compare(std::shared_ptr<SearchNode> first, std::shared_ptr<SearchNode> second);
 
     /**
      * Get starting point of the edge
-     * @return shared_ptr<geometry::CNPoint2D>
+     * @return the starting point of the edge
      */
-    shared_ptr<geometry::CNPoint2D> getPoint();
+    geometry::CNPointAllo getPoint();
 
     /**
      * Gets incident edges to the voronoi vertex
@@ -91,17 +91,17 @@ class SearchNode
      */
     VoronoiDiagram::Halfedge_around_vertex_circulator getIncidentEdges();
 
-    bool matches(shared_ptr<Vertex> vertex);
+    bool matches(std::shared_ptr<Vertex> vertex);
 
   private:
-    shared_ptr<SearchNode> predecessor;
+    std::shared_ptr<SearchNode> predecessor;
 
     double cost;
     double heuristic;
     VoronoiDiagram::Halfedge_around_vertex_circulator edge;
 
     bool initialEdge;
-    shared_ptr<Vertex> vertex;
+    std::shared_ptr<Vertex> vertex;
 };
 
 } /* namespace msl */

@@ -359,7 +359,7 @@ void MSLWorldModel::sendSharedWorldModelData()
     if (ball != nullptr)
     {
         shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(ball->first->x, ball->first->y);
-        auto p = point->egoToAllo(*pos);
+        auto p = point->toAllo(*pos);
         msg.ball.point.x = p->x;
         msg.ball.point.y = p->y;
         msg.ball.confidence = ball->second;
@@ -371,10 +371,10 @@ void MSLWorldModel::sendSharedWorldModelData()
     }
 
     auto sb = this->ball->getAlloSharedBallPositionAndCertaincy();
-    if (sb != nullptr && sb->first != nullptr && this->ball->getSharedBallSupporter() > 1)
+    if (sb != nullptr != nullptr && this->ball->getSharedBallSupporter() > 1)
     {
-        msg.sharedBall.point.x = sb->first->x;
-        msg.sharedBall.point.y = sb->first->y;
+        msg.sharedBall.point.x = sb->first.x;
+        msg.sharedBall.point.y = sb->first.y;
         msg.sharedBall.confidence = sb->second;
         msg.sharedBall.evidence = this->ball->getSharedBallSupporter();
     }

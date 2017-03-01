@@ -78,7 +78,7 @@ optional<geometry::CNPointEgo> Opponents::getClosestToBall(double &distance)
     auto opps = oppsInfo->getInformation();
 
     auto ball = wm->ball->getEgoBallPosition();
-    if (ball == nullptr)
+    if (ball)
         return nullopt;
 
     bool found = false;
@@ -119,10 +119,10 @@ const InfoBuffer<vector<geometry::CNPointAllo>> &Opponents::getOpponentsAlloClus
     return this->opponentsAlloClustered;
 }
 
-void Opponents::integrateOpponentsAlloClustered(shared_ptr<vector<geometry::CNPointAllo>> opponentsAlloClustered)
+void Opponents::integrateOpponentsAlloClustered(shared_ptr<const vector<geometry::CNPointAllo>> opponentsAlloClustered)
 {
-    auto o = make_shared<InformationElement<vector<geometry::CNPointAllo>>>(opponentsAlloClustered, wm->getTime(),
-                                                                            this->maxValidity, 1);
+    auto o = make_shared<InformationElement<vector<geometry::CNPointAllo>>>(*opponentsAlloClustered, wm->getTime(),
+                                                                            this->maxValidity, 1.0);
 
     this->opponentsAlloClustered.add(o);
 }
@@ -132,10 +132,10 @@ const InfoBuffer<vector<geometry::CNPointEgo>> &Opponents::getOpponentsEgoCluste
     return this->opponentsEgoClustered;
 }
 
-void Opponents::integrateOpponentsEgoClustered(shared_ptr<vector<geometry::CNPointEgo>> opponentsEgoClustered)
+void Opponents::integrateOpponentsEgoClustered(shared_ptr<const vector<geometry::CNPointEgo>> opponentsEgoClustered)
 {
-    auto o = make_shared<InformationElement<vector<geometry::CNPointEgo>>>(opponentsEgoClustered, wm->getTime(),
-                                                                           this->maxValidity, 1);
+    auto o = make_shared<InformationElement<vector<geometry::CNPointEgo>>>(*opponentsEgoClustered, wm->getTime(),
+                                                                           this->maxValidity, 1.0);
 
     this->opponentsEgoClustered.add(o);
 }

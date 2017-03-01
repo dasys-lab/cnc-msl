@@ -65,7 +65,7 @@ void Monitoring::monitorSimulator()
 
 void Monitoring::monitorMotion()
 {
-    if (this->isUsingSimulator || wm->rawSensorData->getOwnPositionMotion())
+    if (this->isUsingSimulator || wm->rawSensorData->getOwnPositionMotionBuffer().getLastValid())
     {
         this->setMaySendMessages(true);
     }
@@ -93,10 +93,17 @@ void Monitoring::looseWheel()
 {
     if (!this->isUsingSimulator)
     {
-        if (this->wm->rawSensorData->getOwnPositionMotion() == nullptr || this->wm->rawSensorData->getOwnPositionVision() == nullptr)
+        auto ownPosMotionInfo = this->wm->rawSensorData->getOwnPositionMotionBuffer().getLastValid();
+        auto ownPosVisionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+
+        if(!ownPosMotionInfo || !ownPosVisionInfo)
         {
             return;
         }
+
+        auto ownPosVision = ownPosVisionInfo->getInformation();
+        auto ownPosMotion = ownPosMotionInfo->getInformation();
+
 
         if (wm->getTime() - oldTime >= 1000000000)
         {
@@ -116,10 +123,10 @@ void Monitoring::looseWheel()
                 errorCounter = 0;
             }
             // std::cout << "TESTerrorError: " << this->looseWheelCalc() << std::endl;
-            oldMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
-            oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
-            oldVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-            oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+            oldMotionPosX = ownPosMotion.x;
+            oldMotionPosY = ownPosMotion.y;
+            oldVisionPosX = ownPosVision.x;
+            oldVisionPosY = ownPosVision.y;
             oldTime = wm->getTime();
         }
     }
@@ -127,11 +134,25 @@ void Monitoring::looseWheel()
 
 double Monitoring::looseWheelCalc()
 {
-    return sqrt(
-        (this->wm->rawSensorData->getOwnPositionMotion()->x - this->wm->rawSensorData->getOwnPositionVision()->x - (oldMotionPosX - oldVisionPosX)) *
-            (this->wm->rawSensorData->getOwnPositionMotion()->x - this->wm->rawSensorData->getOwnPositionVision()->x - (oldMotionPosX - oldVisionPosX)) +
-        (this->wm->rawSensorData->getOwnPositionMotion()->y - this->wm->rawSensorData->getOwnPositionVision()->y - (oldMotionPosY - oldVisionPosY)) *
-            (this->wm->rawSensorData->getOwnPositionMotion()->y - this->wm->rawSensorData->getOwnPositionVision()->y - (oldMotionPosY - oldVisionPosY)));
+    auto ownPosMotionInfo = this->wm->rawSensorData->getOwnPositionMotionBuffer().getLastValid();
+    auto ownPosVisionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+
+    if(!ownPosMotionInfo || !ownPosVisionInfo)
+    {
+        return 0.0; // TODO: what to do here?
+    }
+
+    auto ownPosVision = ownPosVisionInfo->getInformation();
+    auto ownPosMotion = ownPosMotionInfo->getInformation();
+
+    return sqrt((ownPosMotion.x -
+                 ownPosVision.x - (oldMotionPosX - oldVisionPosX)) *
+                    (ownPosMotion.x -
+                     ownPosVision.x - (oldMotionPosX - oldVisionPosX)) +
+                (ownPosMotion.y -
+                 ownPosVision.y - (oldMotionPosY - oldVisionPosY)) *
+                    (ownPosMotion.y -
+                     ownPosVision.y - (oldMotionPosY - oldVisionPosY)));
 }
 
 } /* namespace msl */

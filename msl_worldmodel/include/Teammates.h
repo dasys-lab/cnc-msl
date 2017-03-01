@@ -25,8 +25,8 @@ class Teammates
     int teammatesInOwnPenalty();
     int teammatesInOppPenalty();
 
-    void integrateTeammatesAlloClustered(std::shared_ptr<std::vector<geometry::CNPointAllo>> teammatesAlloClustered);
-    void integrateTeammatesEgoClustered(std::shared_ptr<std::vector<geometry::CNPointEgo>> teammatesEgoClustered);
+    void integrateTeammatesAlloClustered(std::shared_ptr<const std::vector<geometry::CNPointAllo>> teammatesAlloClustered);
+    void integrateTeammatesEgoClustered(std::shared_ptr<const std::vector<geometry::CNPointEgo>> teammatesEgoClustered);
     void integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime);
 
     const InfoBuffer<std::vector<geometry::CNPointAllo>> &getTeammatesAlloClusteredBuffer();
