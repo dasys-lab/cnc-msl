@@ -7,6 +7,7 @@
 
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNRobotAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -42,38 +43,38 @@ class PathEvaluator;
 class MSLWorldModel;
 class VoronoiNet
 {
+    // TODO: cleanup and reqork documentation
   public:
     VoronoiNet(MSLWorldModel *wm);
-    VoronoiNet(shared_ptr<VoronoiNet> net);
+    VoronoiNet(std::shared_ptr<VoronoiNet> net);
     virtual ~VoronoiNet();
     bool ownPosAvail;
     /**
-     * Generates a VoronoiDiagram and inserts given points
-     * @param points vector<shared_ptr<geometry::CNPoint2D>>
-     * @return shared_ptr<VoronoiDiagram>
+     * Generates a VoronoiDiagram.
+     * @param ownPosAvail tells the diagram if the own pos is available
      */
     void generateVoronoiDiagram(bool ownPosAvail);
     /**
      * Gets the SearchNode with lowest dist to goal
-     * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
-     * @return shared_ptr<SearchNode>
+     * @param open std::shared_ptr<std::vector<std::shared_ptr<SearchNode>>>
+     * @return std::shared_ptr<SearchNode>
      */
-    //		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
+    //		std::shared_ptr<SearchNode> getMin(std::shared_ptr<std::vector<std::shared_ptr<SearchNode>>> open);
     /**
      * Gets the closest vertex to a given point
-     * @param ownPos shared_ptr<geometry::CNPoint2D>
-     * @return shared_ptr<VoronoiDiagram::Vertex>
+     * @param ownPos std::shared_ptr<geometry::CNPoint2D>
+     * @return std::shared_ptr<VoronoiDiagram::Vertex>
      */
-    //		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> ownPos);
+    //		std::shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(std::shared_ptr<geometry::CNPoint2D> ownPos);
 
     /**
      * Return the sites near an egde defined by 2 points
-     * @param v1 shared_ptr<geometry::CNPoint2D>
-     * @param v2 shared_ptr<geometry::CNPoint2D>
-     * @return pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>>
+     * @param v1 std::shared_ptr<geometry::CNPoint2D>
+     * @param v2 std::shared_ptr<geometry::CNPoint2D>
+     * @return pair<pair<std::shared_ptr<geometry::CNPoint2D>, int>, pair<std::shared_ptr<geometry::CNPoint2D>, int>>
      */
-    // pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<Vertex> v1,
-    // shared_ptr<Vertex> v2);
+    // pair<pair<std::shared_ptr<geometry::CNPoint2D>, int>, pair<std::shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(std::shared_ptr<Vertex> v1,
+    // std::shared_ptr<Vertex> v2);
     /**
      * Print the voronoi diagrams sites
      */
@@ -89,23 +90,23 @@ class VoronoiNet
 
     /**
      * Locates face of point and returns vertices
-     * @param point shared_ptr<geometry::CNPoint2D>
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @param point geometry::CNPoint2D
+     * @return std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      */
-    shared_ptr<vector<shared_ptr<Vertex>>> getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point);
+    std::shared_ptr<std::vector<Vertex>> getVerticesOfFace(geometry::CNPointAllo point);
 
     /**
      * Inserts sites into the Voronoi Diagram
-     * @param points vector<Site_2>
+     * @param points std::vector<Site_2>
      */
-    void insertPoints(vector<Site_2> points);
+    void insertPoints(std::vector<Site_2> points);
 
     /**
      * Insert additional points into the Voronoi Diagram
-     * @param points shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @param points std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      * @param type EntityType type of obstacle to insert
      */
-    void insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points, EntityType type);
+    void insertAdditionalPoints(std::shared_ptr<std::vector<geometry::CNPointAllo>> points, EntityType type);
 
     /**
      * Deletes sites from Voronoi Net and clears pointRobotKindMapping
@@ -114,93 +115,93 @@ class VoronoiNet
 
     /**
      * Gets the voronoi net
-     * @return shared_ptr<VoronoiDiagram>
+     * @return std::shared_ptr<VoronoiDiagram>
      */
-    shared_ptr<VoronoiDiagram> getVoronoi();
+    std::shared_ptr<VoronoiDiagram> getVoronoi();
     /**
      * Sets the voronoi net
-     * @param voronoi shared_ptr<VoronoiDiagram>
+     * @param voronoi std::shared_ptr<VoronoiDiagram>
      */
-    void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
+    void setVoronoi(std::shared_ptr<VoronoiDiagram> voronoi);
     /**
      * Find the face in which the point is situated
      * @param point VoronoiDiagram::Point_2
-     * @return shared_ptr<VoronoiDiagram::Site_2>
+     * @return std::shared_ptr<VoronoiDiagram::Site_2>
      */
-    shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
+    VoronoiDiagram::Site_2 getSiteOfFace(VoronoiDiagram::Point_2 point);
 
     /**
      * Check if an edge belongs to face of given point
-     * @param pos shared_ptr<geometry::CNPoint2D>
-     * @param currentNode shared_ptr<SearchNode>
-     * @param nextNode shared_ptr<SearchNode>
+     * @param pos std::shared_ptr<geometry::CNPoint2D>
+     * @param currentNode std::shared_ptr<SearchNode>
+     * @param nextNode std::shared_ptr<SearchNode>
      * @return bool
      */
-    //		bool isOwnCellEdge(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+    //		bool isOwnCellEdge(std::shared_ptr<geometry::CNPoint2D> pos, std::shared_ptr<SearchNode> currentNode, std::shared_ptr<SearchNode> nextNode);
 
     /**
      * Return the teammate positions
-     * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
+     * @return std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > >
      */
-    // shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
+    // std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
 
     /**
      * Return the obstacle positions
-     * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
+     * @return std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > >
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getObstaclePositions();
 
     /**
      * Return the Opponent positions
-     * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
+     * @return std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > >
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getOpponentPositions();
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getOpponentPositions();
 
     /**
      * Return the site positions
-     * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
+     * @return std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > >
      */
-    //		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
+    //		std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
 
     /**
      * Allo Obstacles for constructing this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNRobotAllo>>> getAlloClusteredObsWithMe();
+    std::shared_ptr<std::vector<geometry::CNRobotAllo>> getAlloClusteredObsWithMe();
 
     /**
      * Artificial Obstacles for construction this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getArtificialObstacles();
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getArtificialObstacles();
 
     /**
      * Additional Obstacles for construction this Voronoi Diagram
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getAdditionalObstacles();
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getAdditionalObstacles();
 
     /**
      * Return vertices teammates voronoi face
      * @param teamMateId int
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @return std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      */
-    //		shared_ptr<vector<shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
+    //		std::shared_ptr<std::vector<std::shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
 
     /**
      * Return Vertices of teammates Voronoi Face
      * @param teamMateId int
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @return std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVerticesCNPoint2D(int teamMateId);
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getTeamMateVerticesCNPoint2D(int teamMateId);
     /**
      * Removes given sites from Voronoi Diagram
-     * @param shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites to remove
+     * @param std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>> sites to remove
      */
-    void removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites);
+    void removeSites(std::shared_ptr<std::vector<geometry::CNPointAllo>> sites);
 
     /**
      * Removes given sites from Voronoi Diagram
-     * @param shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites to remove
+     * @param std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int>>> sites to remove
      */
-    void removeSites(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites);
+    void removeSites(std::shared_ptr<std::vector<std::pair<geometry::CNPointAllo, int>>> sites);
 
     /**
      * Block opponent penalty area
@@ -229,17 +230,17 @@ class VoronoiNet
 
     /**
      * Block circle shaped area
-     * @param shared_ptr<geometry::CNPoint2D> centerPoint
-     * @param double radius
+     * @param centerPoint center of blocking area
+     * @param radius radius of blocking area
      */
-    void blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
+    void blockCircle(geometry::CNPointAllo centerPoint, double radius);
 
     /**
      * Block opponent penalty area
-     * @param shared_ptr<geometry::CNPoint2D> upLeftCorner
-     * @param shared_ptr<geometry::CNPoint2D> lowRightCorner
+     * @param upLeftCorner upper left corner
+     * @param lowRightCorner lower right corner
      */
-    void blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
+    void blockRectangle(geometry::CNPointAllo upLeftCorner, geometry::CNPointAllo lowRightCorner);
 
     /**
      * Checks type of Voronoi Site (artificial, team, opponent)
@@ -249,32 +250,32 @@ class VoronoiNet
 
   private:
     /**
-     * Checks if a SearchNode is part of a vector
-     * @param shared_ptr<vector<shared_ptr<SearchNode>>>
-     * @param shared_ptr<SearchNode>
+     * Checks if a SearchNode is part of a std::vector
+     * @param std::shared_ptr<std::vector<std::shared_ptr<SearchNode>>>
+     * @param std::shared_ptr<SearchNode>
      * @return bool ture if SearchNode is in
      */
-    bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
+    bool contains(std::shared_ptr<std::vector<SearchNode>> vector, SearchNode vertex);
 
   protected:
     Kernel kernel;
     DelaunayTriangulation delaunayTriangulation;
     DelaunayAdaptionTraits delaunayTraits;
     DelaunayAdaptionPolicy delaunayPolicy;
-    shared_ptr<VoronoiDiagram> voronoi;
+    std::shared_ptr<VoronoiDiagram> voronoi;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
     mutex netMutex;
     /**
      * team = robot id, obstacle = -1, artificial obstacle = -2
      */
-    // map<shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
-    map<Site_2, int> pointRobotKindMapping;
+    // std::map<std::shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
+    std::map<Site_2, int> pointRobotKindMapping;
 
     // DATA for constructing this voronoi net
-    shared_ptr<vector<shared_ptr<geometry::CNRobotAlo>>> alloClusteredObsWithMe;
-    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> artificialObstacles;
-    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> additionalObstacles;
+    std::shared_ptr<std::vector<geometry::CNRobotAllo>> alloClusteredObsWithMe;
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> artificialObstacles;
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> additionalObstacles;
 };
 
 } /* namespace msl */

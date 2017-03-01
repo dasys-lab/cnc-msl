@@ -86,7 +86,7 @@ double Prediction::rotationVelocity(int ms)
 
     double ret = 0;
 
-    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+    auto& motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
 
     if (motionCommandBuffer.getLast())
         return odo.motion.rotation;
@@ -149,7 +149,7 @@ double Prediction::angle(int ms)
     double vel = 0;
     double angle = 0;
 
-    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+    auto& motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
 
     if (!motionCommandBuffer.getLast())
         return odo.position.angle;
@@ -217,7 +217,7 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Predict
     double angle = 0;
     double x, y, trans, transX, transY;
 
-    auto motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
+    auto& motionCommandBuffer = wm->rawSensorData->getLastMotionCommandBuffer();
 
     if (!motionCommandBuffer.getLast())
         return nullptr;
