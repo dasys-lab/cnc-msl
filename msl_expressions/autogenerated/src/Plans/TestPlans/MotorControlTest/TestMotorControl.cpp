@@ -40,10 +40,10 @@ namespace alica
 
     	}
 
-    	if (wm->getTime() == startTime + 3000000000)
+    	if (wm->getTime() > startTime + 3000000000 && count == 0)
 
     	{
-
+		count++;
     		(*sc)["MotorControlTest"]->set<string>(to_string(testSpeed+100),"MotorControlTest.testSpeed");
     	}
         /*PROTECTED REGION END*/
