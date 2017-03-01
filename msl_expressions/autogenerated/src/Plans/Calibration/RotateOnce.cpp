@@ -80,13 +80,15 @@ namespace alica
 		double circDiff = circularDiff(currentBearing, lastBearing);
 		double currentNormedBearing = (currentBearing + M_PI)/ (2*M_PI);
 		double lastNormedBearing = (lastBearing + M_PI)/ (2*M_PI);
+		lastBearing = currentBearing;
+
 //		cout << "lst " << lastBearing << "; ";
 		cout << "cur " << currentBearing << "; ";
-//		cout << "cD " << circDiff << "; ";
+		cout << "cD " << circDiff << "; ";
 		cout << "rots " << (rotations + currentNormedBearing);
 
-		if (circDiff <= 0 || circDiff > CIRCDIFF_THRESHOLD)
-		{
+		if (circDiff < 0 || circDiff > CIRCDIFF_THRESHOLD)
+		{cout << " NOPE ";
 			return 0;
 		}
 
@@ -94,8 +96,6 @@ namespace alica
 		{
 			rotations++;
 		}
-
-		lastBearing = currentBearing;
 
 		return 0;
 	}
@@ -113,15 +113,17 @@ namespace alica
 	double RotateOnce::circularDiff(double a, double b)
 	{
 		double diff = a - b;
-		if(diff == 0)
+		if(abs(diff) > M_PI)
 		{
-			return 0;
+			diff = 2*M_PI - diff;
+			while(diff > M_PI)
+			{
+				diff -= 2 * M_PI;
+			}
+			diff *= -1;
 		}
 
-		double sign = diff / abs(diff);
-		double absDiff = abs(diff);
-		double atMost180 = min(2 * M_PI - absDiff, absDiff);
-		return atMost180 * sign;
+		return diff;
 	}
 
 	double RotateOnce::getLimitedRotationSpeed(double desiredSpeed)
