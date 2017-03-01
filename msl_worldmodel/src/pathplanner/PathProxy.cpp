@@ -227,7 +227,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(shared_ptr<ve
     {
         for (auto current : *net->getAlloClusteredObsWithMe())
         {
-            if (current->id == wm->getOwnId())
+            if (current.id == wm->getOwnId())
             {
                 continue;
             }
@@ -286,16 +286,16 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
     for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
     {
         msl_msgs::Point2dInfo info;
-        info.x = cluster->x;
-        info.y = cluster->y;
+        info.x = cluster.x;
+        info.y = cluster.y;
         netMsg.sites.push_back(info);
     }
 
     for (auto ob : *voronoi->getArtificialObstacles())
     {
         msl_msgs::Point2dInfo info;
-        info.x = ob->x;
-        info.y = ob->y;
+        info.x = ob.x;
+        info.y = ob.y;
         netMsg.sites.push_back(info);
     }
 
