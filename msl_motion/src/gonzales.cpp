@@ -162,6 +162,7 @@ void gonz_calc_odometry() { //TODO: Optimise!
     for (i=0; i<4; i++) {
         gonz_state.actualMotion.rotation += ep->ActualRPM(i);
     }
+    //Umrechnung von 4*RPM auf mm/s -> RobotRadius in mm, 60 s/min
     gonz_state.actualMotion.rotation *= (0.25 * 1024.0  * wheelcirc * current_settings.gear_ratio_nominator/ (current_settings.gear_ratio_denominator * current_settings.robotRadius * 60.0));
     gonz_state.actualMotion.x =  -ep->ActualRPM(0);
     gonz_state.actualMotion.x += -ep->ActualRPM(1);
