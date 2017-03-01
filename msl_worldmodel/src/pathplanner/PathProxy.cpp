@@ -7,7 +7,6 @@
 
 #include "pathplanner/PathProxy.h"
 #include "RawSensorData.h"
-#include "container/CNPosition.h"
 #include "msl_msgs/PathPlanner.h"
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/PathPlanner.h"
@@ -72,21 +71,21 @@ PathProxy::~PathProxy()
  * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> (OPTIONAL, default is nullptr)
  * @return std::shared_ptr<geometry::CNPoint2D>
  */
-shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
-                                                           shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+                                                           shared_ptr<vector<geometry::CNPointAllo>> additionalPoints)
 {
     // save target
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
     shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
-    shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData->getOwnPositionVision();
-    if (net == nullptr || !net->ownPosAvail || ownPos == nullptr)
+    auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
         // We are not localized (or have no vNet), so we can't plan a path.
         return nullptr;
     }
-
+    auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
     if (additionalPoints != nullptr)
     {
@@ -94,26 +93,26 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
     }
 
     // plan
-    shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
-    auto alloTarget = egoTarget->egoToAllo(*ownPos);
-    auto path = this->wm->pathPlanner->plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
+    geometry::CNPointAllo alloRetPoint = nullptr;
+    auto alloTarget = egoTarget.toAllo(ownPos);
+    auto path = this->wm->pathPlanner->plan(net, ownPos.getPoint(), alloTarget, pathEvaluator);
 
     if (path != nullptr && path->size() > 0)
     {
         // get first point of returned path
         if (path->size() < 3)
         {
-            retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+            alloRetPoint = path->at(0);
         }
         else
         {
             path = applyShortcut(path, ownPos, net);
-            retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+            alloRetPoint = path->at(0);
         }
         // send debug msgs
         if (pathPlannerDebug)
         {
-            path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
+            path->insert(path->begin(), ownPos.getPoint());
             sendPathPlannerMsg(path);
             sendVoronoiNetMsg(net);
         }
@@ -125,29 +124,29 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
         net->removeSites(additionalPoints);
     }
 
-    if (retPoint == nullptr)
+    if (alloRetPoint == nullptr)
     {
         return nullptr;
     }
 
-    //		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
-    return retPoint->alloToEgo(*ownPos);
+    //cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
+    return alloRetPoint.toEgo(ownPos);
 }
 
-shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
                                                            shared_ptr<PathPlannerQuery> query)
 {
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
     shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
-    shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData->getOwnPositionVision();
-    if (net == nullptr || !net->ownPosAvail || ownPos == nullptr)
+    auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
         // We are not localized (or have no vNet), so we can't plan a path.
         return nullptr;
     }
-
+    auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
     if (query->additionalPoints != nullptr)
     {
@@ -185,44 +184,44 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
     }
 
     // plan
-    shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
-    auto alloTarget = egoTarget->egoToAllo(*ownPos);
-    auto path = this->wm->pathPlanner->plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
+    geometry::CNPointAllo alloRetPoint = nullptr;
+    auto alloTarget = egoTarget.toAllo(ownPos);
+    auto path = this->wm->pathPlanner->plan(net, ownPos.getPoint(), alloTarget, pathEvaluator);
 
     if (path != nullptr && path->size() > 0)
     {
         // get first point of returned path
         if (path->size() < 3)
         {
-            retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+            alloRetPoint = path->at(0);
         }
         else
         {
             path = applyShortcut(path, ownPos, net);
-            retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+            alloRetPoint = path->at(0);
         }
         // send debug msgs
         if (pathPlannerDebug)
         {
-            path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
+            path->insert(path->begin(), ownPos.getPoint());
             sendPathPlannerMsg(path);
             sendVoronoiNetMsg(net);
         }
     }
 
-    if (retPoint == nullptr)
+    if (alloRetPoint == nullptr)
     {
         return nullptr;
     }
 
     //		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
-    return retPoint->alloToEgo(*ownPos);
+    return alloRetPoint.toEgo(ownPos);
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathProxy::applyShortcut(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path,
-                                                                             shared_ptr<geometry::CNPosition> ownPos, shared_ptr<VoronoiNet> net)
+shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(shared_ptr<vector<geometry::CNPointAllo>> path,
+                                                                             geometry::CNPositionAllo ownPos, shared_ptr<VoronoiNet> net)
 {
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = path;
+    shared_ptr<vector<geometry::CNPointAllo>> ret = path;
     bool shortcutBlocked = false;
     for (int i = path->size() - 2; i >= 0; i--)
     {
@@ -233,11 +232,11 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathProxy::applyShortcut(sha
                 continue;
             }
             shortcutBlocked =
-                shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
+                shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
         }
         for (auto current : *net->getAdditionalObstacles())
         {
-            shortcutBlocked = shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
+            shortcutBlocked = shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
         }
         if (!shortcutBlocked)
         {
@@ -261,15 +260,15 @@ PathProxy *PathProxy::getInstance()
  * send debug msg with pathplanner path
  * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
  */
-void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path)
+void PathProxy::sendPathPlannerMsg(shared_ptr<vector<geometry::CNPointAllo>> path)
 {
     msl_msgs::PathPlanner pathMsg;
     pathMsg.senderId = this->wm->getOwnId();
     for (int i = 0; i < path->size(); i++)
     {
         msl_msgs::Point2dInfo info;
-        info.x = path->at(i)->x;
-        info.y = path->at(i)->y;
+        info.x = path->at(i).x;
+        info.y = path->at(i).y;
         pathMsg.pathPoints.push_back(info);
     }
     pathPub.publish(pathMsg);
@@ -300,12 +299,12 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
         netMsg.sites.push_back(info);
     }
 
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> linePoints = calculateCroppedVoronoi(voronoi);
+    shared_ptr<vector<geometry::CNPointAllo>> linePoints = calculateCroppedVoronoi(voronoi);
     for (int i = 0; i < linePoints->size(); i++)
     {
         msl_msgs::Point2dInfo info;
-        info.x = linePoints->at(i)->x;
-        info.y = linePoints->at(i)->y;
+        info.x = linePoints->at(i).x;
+        info.y = linePoints->at(i).y;
         netMsg.linePoints.push_back(info);
     }
     voroniPub.publish(netMsg);
@@ -316,10 +315,10 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
  * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  * @param voronoi shared_ptr<VoronoiNet>
  */
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathProxy::calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi)
+shared_ptr<vector<geometry::CNPointAllo>> PathProxy::calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi)
 {
     // create bounding box around field with additional 3m distance
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    shared_ptr<vector<geometry::CNPointAllo>> ret = make_shared<vector<geometry::CNPointAllo>>();
     Iso_rectangle_2 bbox(-wm->field->getFieldLength() / 2 - 3000, -wm->field->getFieldWidth() / 2 - 3000, wm->field->getFieldLength() / 2 + 3000,
                          wm->field->getFieldWidth() / 2 + 3000);
     // create cropped voronoi
@@ -335,8 +334,8 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathProxy::calculateCroppedV
         if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x()) && !std::isnan(it->target().y()))
         {
             // push back source and target
-            ret->push_back(make_shared<geometry::CNPoint2D>(it->source().x(), it->source().y()));
-            ret->push_back(make_shared<geometry::CNPoint2D>(it->target().x(), it->target().y()));
+            ret->push_back(geometry::CNPointAllo(it->source().x(), it->source().y()));
+            ret->push_back(geometry::CNPointAllo(it->target().x(), it->target().y()));
         }
     }
     return ret;

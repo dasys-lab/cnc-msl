@@ -272,7 +272,7 @@ class VoronoiNet
     map<Site_2, int> pointRobotKindMapping;
 
     // DATA for constructing this voronoi net
-    shared_ptr<vector<shared_ptr<geometry::CNRobotAlo>>> alloClusteredObsWithMe;
+    shared_ptr<vector<shared_ptr<geometry::CNRobotAllo>>> alloClusteredObsWithMe;
     shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> artificialObstacles;
     shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> additionalObstacles;
 };
