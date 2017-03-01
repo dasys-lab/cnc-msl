@@ -37,6 +37,7 @@ typedef Kernel::Line_2 Line_2;
 #include <memory>
 #include <pathplanner/PathPlannerQuery.h>
 #include <ros/ros.h>
+#include <nonstd/optional.hpp>
 
 namespace msl
 {
@@ -55,8 +56,8 @@ class PathProxy
      * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> point to add as artificial obstacles to the Voronoi Diagram
      * @return shared_ptr<geometry::CNPoint2D> containing first waypoint of the calculated path
      */
-    geometry::CNPointEgo getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
-                                                    shared_ptr<vector<geometry::CNPointAllo>> additionalPoints = nullptr);
+    nonstd::optional<geometry::CNPointEgo> getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+                                                           nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints = nonstd::nullopt);
 
     /**
      * Get ego direction form path planner
@@ -65,7 +66,7 @@ class PathProxy
      * @param query shared_ptr<PathPlannerQuery> encalsulates information given to the path planner
      * @return shared_ptr<geometry::CNPoint2D> containing first waypoint of the calculated path
      */
-    geometry::CNPointEgo getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+    nonstd::optional<geometry::CNPointEgo> getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
                                                     shared_ptr<PathPlannerQuery> query);
 
     /**
@@ -91,7 +92,7 @@ class PathProxy
     shared_ptr<vector<geometry::CNPointAllo>> calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi);
 
   private:
-    shared_ptr<geometry::CNPoint2D> lastPathTarget;
+    geometry::CNPointEgo lastPathTarget;
     MSLWorldModel *wm;
     ros::NodeHandle n;
     ros::Publisher pathPub;

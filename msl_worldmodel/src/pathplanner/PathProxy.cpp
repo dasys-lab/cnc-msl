@@ -13,6 +13,9 @@
 #include "pathplanner/PathPlannerQuery.h"
 #include "pathplanner/VoronoiNet.h"
 
+using nonstd::nullopt;
+
+
 namespace msl
 {
 
@@ -71,8 +74,8 @@ PathProxy::~PathProxy()
  * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> (OPTIONAL, default is nullptr)
  * @return std::shared_ptr<geometry::CNPoint2D>
  */
-geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
-                                                           shared_ptr<vector<geometry::CNPointAllo>> additionalPoints)
+nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+                                                                  nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints)
 {
     // save target
     lastPathTarget = egoTarget;
@@ -83,17 +86,17 @@ geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, 
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
         // We are not localized (or have no vNet), so we can't plan a path.
-        return nullptr;
+        return nullopt;
     }
     auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
-    if (additionalPoints != nullptr)
+    if (additionalPoints != nullopt)
     {
-        net->insertAdditionalPoints(additionalPoints, EntityType::Obstacle);
+        net->insertAdditionalPoints(*additionalPoints, EntityType::Obstacle);
     }
 
     // plan
-    geometry::CNPointAllo alloRetPoint = nullptr;
+    nonstd::optional<geometry::CNPointAllo> alloRetPoint;
     auto alloTarget = egoTarget.toAllo(ownPos);
     auto path = this->wm->pathPlanner->plan(net, ownPos.getPoint(), alloTarget, pathEvaluator);
 
@@ -124,16 +127,16 @@ geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, 
         net->removeSites(additionalPoints);
     }
 
-    if (alloRetPoint == nullptr)
+    if (alloRetPoint == nullopt)
     {
-        return nullptr;
+        return nullopt;
     }
 
     //cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
-    return alloRetPoint.toEgo(ownPos);
+    return alloRetPoint->toEgo(ownPos);
 }
 
-geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
+nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
                                                            shared_ptr<PathPlannerQuery> query)
 {
     lastPathTarget = egoTarget;
@@ -144,13 +147,13 @@ geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, 
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
         // We are not localized (or have no vNet), so we can't plan a path.
-        return nullptr;
+        return nullopt;
     }
     auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
-    if (query->additionalPoints != nullptr)
+    if (query->additionalPoints != nullopt)
     {
-        net->insertAdditionalPoints(query->additionalPoints, EntityType::Obstacle);
+        net->insertAdditionalPoints(*query->additionalPoints, EntityType::Obstacle);
     }
 
     // block specific field areas
@@ -174,17 +177,17 @@ geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, 
     {
         net->blockOwnGoalArea();
     }
-    if (query->circleRadius != -1 && query->circleCenterPoint != nullptr)
+    if (query->circleRadius != -1 && query->circleCenterPoint != nullopt)
     {
-        net->blockCircle(query->circleCenterPoint, query->circleRadius);
+        net->blockCircle(*query->circleCenterPoint, query->circleRadius);
     }
-    if (query->rectangleLowerRightCorner != nullptr && query->rectangleUpperLeftCorner != nullptr)
+    if (query->rectangleLowerRightCorner != nullopt && query->rectangleUpperLeftCorner != nullopt)
     {
-        net->blockRectangle(query->rectangleUpperLeftCorner, query->rectangleLowerRightCorner);
+        net->blockRectangle(*query->rectangleUpperLeftCorner, *query->rectangleLowerRightCorner);
     }
 
     // plan
-    geometry::CNPointAllo alloRetPoint = nullptr;
+    nonstd::optional<geometry::CNPointAllo> alloRetPoint = nullopt;
     auto alloTarget = egoTarget.toAllo(ownPos);
     auto path = this->wm->pathPlanner->plan(net, ownPos.getPoint(), alloTarget, pathEvaluator);
 
@@ -209,13 +212,13 @@ geometry::CNPointEgo PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, 
         }
     }
 
-    if (alloRetPoint == nullptr)
+    if (alloRetPoint == nullopt)
     {
-        return nullptr;
+        return nullopt;
     }
 
     //		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
-    return alloRetPoint.toEgo(ownPos);
+    return alloRetPoint->toEgo(ownPos);
 }
 
 shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(shared_ptr<vector<geometry::CNPointAllo>> path,
@@ -232,7 +235,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(shared_ptr<ve
                 continue;
             }
             shortcutBlocked =
-                shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
+                shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current.getPoint(), wm->pathPlanner->getRobotRadius());
         }
         for (auto current : *net->getAdditionalObstacles())
         {

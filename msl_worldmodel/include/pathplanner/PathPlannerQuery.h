@@ -8,9 +8,10 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_PATHPLANNERQUERY_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_PATHPLANNERQUERY_H_
 
-#include <container/CNPoint2D.h>
 #include <memory>
 #include <vector>
+#include <cnc_geometry/CNPointAllo.h>
+#include <nonstd/optional.hpp>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ class PathPlannerQuery
     /**
      * Add  additional artificial obstacles
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
+    nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints;
     /**
      * Radius for arbitrary circle block
      */
@@ -56,15 +57,15 @@ class PathPlannerQuery
     /**
      * Center for arbitrary circle block
      */
-    shared_ptr<geometry::CNPoint2D> circleCenterPoint;
+    nonstd::optional<geometry::CNPointAllo> circleCenterPoint;
     /**
      * Upper left corner for arbitrary rectangle block in allo coordinates
      */
-    shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
+    nonstd::optional<geometry::CNPointAllo> rectangleUpperLeftCorner;
     /**
      * Lower right corner for arbitrary rectangle block in allo coordinates
      */
-    shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
+    nonstd::optional<geometry::CNPointAllo> rectangleLowerRightCorner;
 };
 
 } /* namespace msl */

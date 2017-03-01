@@ -7,6 +7,8 @@
 
 #include <pathplanner/PathPlannerQuery.h>
 
+using nonstd::nullopt;
+
 namespace msl
 {
 
@@ -17,11 +19,11 @@ PathPlannerQuery::PathPlannerQuery()
     this->blockOwnPenaltyArea = false;
     this->blockOwnGoalArea = false;
     this->block3MetersAroundBall = false;
-    this->additionalPoints = nullptr;
-    this->circleCenterPoint = nullptr;
+    this->additionalPoints = nullopt;
+    this->circleCenterPoint = nullopt;
     this->circleRadius = -1;
-    this->rectangleLowerRightCorner = nullptr;
-    this->rectangleUpperLeftCorner = nullptr;
+    this->rectangleLowerRightCorner = nullopt;
+    this->rectangleUpperLeftCorner = nullopt;
 }
 
 PathPlannerQuery::~PathPlannerQuery()
