@@ -30,9 +30,9 @@ typedef Kernel::Line_2 Line_2;
 #include "MSLWorldModel.h"
 #include "SystemConfig.h"
 #include "VoronoiNet.h"
-#include <geometry/CNPointEgo.h>
-#include <geometry/CNPointAllo.h>
-#include <geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include <memory>
 #include <pathplanner/PathPlannerQuery.h>

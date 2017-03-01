@@ -43,7 +43,7 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include <memory>
 #include <mutex>
 #include <vector>
-#include <geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
 
 /**
  * Calculates path from given startpoint to a given goalpoint, while avoiding Obstacles.
