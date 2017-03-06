@@ -181,7 +181,7 @@ namespace alica
         //correcting desired ball velocity towards robot to guarantee grib
         if (velX <= staticUpperBound && velX >= staticLowerBound)
             velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation) * rBallRobot;
+        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
         return sqrt(velX * velX + velY * velY);
     }
@@ -193,7 +193,7 @@ namespace alica
         double velY = -sin(angle) * translation + rotation * rBallRobot;
         if (velX <= staticUpperBound && velX >= staticLowerBound)
             velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation) * rBallRobot;
+        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
         double ballAngle = 0;
         ballAngle = atan2(velY, velX);
