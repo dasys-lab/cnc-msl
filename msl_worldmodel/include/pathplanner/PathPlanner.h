@@ -1,19 +1,20 @@
 #pragma once
 
+#include "MSLEnums.h"
+#include "MSLFootballField.h"
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
-#include "MSLEnums.h"
-#include "MSLFootballField.h"
 
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPositionAllo.h>
+#include <nonstd/optional.hpp>
 
-#include <ros/ros.h>
 #include <msl_msgs/CorridorCheck.h>
 #include <msl_msgs/Point2dInfo.h>
 #include <msl_sensor_msgs/WorldModelData.h>
+#include <ros/ros.h>
 
 // includes for CGAL
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -23,7 +24,8 @@
 #include <CGAL/Voronoi_diagram_2.h>
 
 /**
- * typedefs to short CGAL's class names e.g.CGAL::Voronoi_diagram_2<CGAL::Delaunay_triangulation_2<CGAL::Exact_predicates_inexact_constructions_kernel>,
+ * typedefs to short CGAL's class names
+ e.g.CGAL::Voronoi_diagram_2<CGAL::Delaunay_triangulation_2<CGAL::Exact_predicates_inexact_constructions_kernel>,
  CGAL::Delaunay_triangulation_adaptation_traits_2<CGAL::Delaunay_triangulation_2<CGAL::Exact_predicates_inexact_constructions_kernel>>,
  CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<CGAL::Delaunay_triangulation_2<CGAL::Exact_predicates_inexact_constructions_kernel>>>
  to VoronoiDiagram
@@ -43,7 +45,6 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include <memory>
 #include <mutex>
 #include <vector>
-#include <cnc_geometry/CNPointAllo.h>
 
 /**
  * Calculates path from given startpoint to a given goalpoint, while avoiding Obstacles.
@@ -67,8 +68,8 @@ class PathPlanner
      * @param goal Point_2 Destination Point
      * @return shared_ptr<vector<shared_ptr<Point_2>>> Path leading to the goal. Points represent Voronoi Vertices.
      */
-    shared_ptr<vector<geometry::CNPointAllo>> plan(shared_ptr<VoronoiNet> voronoi, geometry::CNPointAllo startPos,
-                                                             geometry::CNPointAllo goal, shared_ptr<IPathEvaluator> eval);
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> plan(const VoronoiNet &voronoi, geometry::CNPointAllo startPos,
+                                                             geometry::CNPointAllo goal, const IPathEvaluator &eval);
 
     /**
      * Generate new Voronoi Diagram with artificial Surrounding and own position if available.
@@ -78,62 +79,68 @@ class PathPlanner
      * Get all saved Voronoi Diagrams
      * @return vector<shared_ptr<VoronoiNet>>
      */
-    vector<shared_ptr<VoronoiNet>> getVoronoiNets();
+    std::vector<std::shared_ptr<const VoronoiNet>> getVoronoiNets() const;
     /**
      * Get latest accessible Voronoi Diagram
      * @return shared_ptr<VoronoiNet>
      */
-    shared_ptr<VoronoiNet> getCurrentVoronoiNet();
+    std::shared_ptr<const VoronoiNet> getCurrentVoronoiNet() const;
 
     /**
      * Gets robot diameter in mm
      * @return double
      */
-    double getRobotRadius();
+    double getRobotRadius() const;
     /**
      * Gets pathDeviationWeight (PathPlanner.conf) used to punish deviation of two paths
      * @return double
      */
-    double getPathDeviationWeight();
+    double getPathDeviationWeight() const;
     /**
      * Gets dribbleAngleTolerance (PathPlanner.conf) used define angle tolerance for dribbling
      * @return double
      */
-    double getDribbleAngleTolerance();
+    double getDribbleAngleTolerance() const;
     /**
      * Gets dribbleRotationWeight (PathPlanner.conf) used to punish high angle deviation between two paths
      * @return double
      */
-    double getDribbleRotationWeight();
+    double getDribbleRotationWeight() const;
     /**
      * Gets additionalCorridorWidth (PathPlanner.conf) used to increase corridor check size
      * @return double
      */
-    double getAdditionalCorridorWidth();
+    double getAdditionalCorridorWidth() const;
     /**
      * Inserts a searchnode into a sorted vector
      */
-    static void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
+    static void insert(std::vector<SearchNode> &vect, std::shared_ptr<SearchNode> currentNode);
     /**
      * Gets the base voronoi net with artificial field surrounding
      * @return shared_ptr<VoronoiNet>
      */
-    shared_ptr<VoronoiNet> getArtificialObjectNet();
+    std::shared_ptr<const VoronoiNet> getArtificialObjectNet() const;
+
+    /**
+     * Gets the base voronoi net with artificial field surrounding as mutable
+     * @return shared_ptr<VoronoiNet>
+     */
+    std::shared_ptr<VoronoiNet> getArtificialObjectNet();
     /**
      * Gets artificial obstacles surrounding the field
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @return shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>>
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialFieldSurroundingObs();
+    std::shared_ptr<const std::vector<geometry::CNPointAllo>> getArtificialFieldSurroundingObs() const;
     /**
      * Gets last returned path
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+     * @return shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>>
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getLastPath();
+    std::shared_ptr<const std::vector<geometry::CNPointAllo>> getLastPath() const;
     /**
      * Gets last destination point to check if two path lead to the same goal
-     * @return shared_ptr<geometry::CNPoint2D>
+     * @return shared_ptr<geometry::CNPointAllo>
      */
-    shared_ptr<geometry::CNPoint2D> getLastTarget();
+    nonstd::optional<geometry::CNPointAllo> getLastTarget() const;
 
     /**
      * Checks if a Voronoi Edge is part of the path
@@ -141,62 +148,64 @@ class PathPlanner
      * @param edge VoronoiDiagram::Halfedge_around_vertex_circulator edge to check
      * @return bool true if the edge is part of the path
      */
-    bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, VoronoiDiagram::Halfedge_around_vertex_circulator edge);
+    static bool contains(const std::vector<SearchNode> &vector,
+                         VoronoiDiagram::Halfedge_around_vertex_circulator edge);
 
     /**
      * Checks if the Voronoi Edge should not be expanded
      * @param incidentHalfEdge VoronoiDiagram::Halfedge_around_vertex_circulator edge to check if admissible
-     * @param startPos shared_ptr<geometry::CNPoint2D> start position of the path
+     * @param startPos shared_ptr<geometry::CNPointAllo> start position of the path
      * @param voronoi shared_ptr<VoronoiNet> Voronoi Diagram to use
      * @return bool true if admissible
      */
-    bool isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circulator incidentHalfEdge, shared_ptr<geometry::CNPoint2D> startPos,
-                          shared_ptr<VoronoiNet> voronoi);
+    bool isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circulator incidentHalfEdge,
+                          geometry::CNPointAllo startPos, const VoronoiNet& voronoi) const;
     /**
      * Expands a SearchNode used in the A*-Algorithm
      * @param currentNode shared_ptr<SearchNode>
      * @param open shared_ptr<vector<shared_ptr<SearchNode>>> searchnodes to check
      * @param closed shared_ptr<vector<shared_ptr<SearchNode>>> searchnodes checked
-     * @param startPos shared_ptr<geometry::CNPoint2D>
-     * @param goal shared_ptr<geometry::CNPoint2D>
+     * @param startPos shared_ptr<geometry::CNPointAllo>
+     * @param goal shared_ptr<geometry::CNPointAllo>
      * @param eval shared_ptr<PathEvaluator>
      */
-    void expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open, shared_ptr<vector<shared_ptr<SearchNode>>> closed,
-                    shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> eval,
-                    shared_ptr<VoronoiNet> voronoi);
+    void expandNode(std::shared_ptr<SearchNode> currentNode, std::vector<SearchNode> &open,
+                    const std::vector<SearchNode> &closed, geometry::CNPointAllo startPos,
+                    geometry::CNPointAllo goal, const IPathEvaluator &eval,
+                    const VoronoiNet &voronoi);
 
     /**
      * Checks if an Opponent is close to the ball
      * @param voronoi shared_ptr<VoronoiNet>
-     * @param currentPos shared_ptr<geometry::CNPoint2D>
-     * @param goal shared_ptr<geometry::CNPoint2D>
-     * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
+     * @param currentPos shared_ptr<geometry::CNPointAllo>
+     * @param goal shared_ptr<geometry::CNPointAllo>
+     * @param obstaclePoint shared_ptr<geometry::CNPointAllo>
      * @return bool true if there is an Opponent close to the ball
      */
-    bool closeOppToBallCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos, shared_ptr<geometry::CNPoint2D> goal,
-                             shared_ptr<geometry::CNPoint2D> obstaclePoint);
+    bool closeOppToBallCheck(const VoronoiNet &voronoi, geometry::CNPointAllo currentPos,
+                             geometry::CNPointAllo goal, geometry::CNPointAllo obstaclePoint);
 
     /**
      * Checks if there is an obstacle inside the corridor
      * @param voronoi shared_ptr<VoronoiNet>
-     * @param currentPos shared_ptr<geometry::CNPoint2D>
-     * @param goal shared_ptr<geometry::CNPoint2D>
-     * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
+     * @param currentPos shared_ptr<geometry::CNPointAllo>
+     * @param goal shared_ptr<geometry::CNPointAllo>
+     * @param obstaclePoint shared_ptr<geometry::CNPointAllo>
      * @return bool true if an obstacle is inside the corridor
      */
-    bool corridorCheck(geometry::CNPointAllo currentPos, geometry::CNPointAllo goal, geometry::CNPointAllo obstaclePoint,
-                       double obstacleRadius = 0.0);
+    bool corridorCheck(geometry::CNPointAllo currentPos, geometry::CNPointAllo goal,
+                       geometry::CNPointAllo obstaclePoint, double obstacleRadius = 0.0);
 
     /**
      * Checks if there is an obstacle inside the corridor (smaller corridor size for ball)
      * @param voronoi shared_ptr<VoronoiNet>VoronoiNet*
-     * @param currentPos shared_ptr<geometry::CNPoint2D>
-     * @param goal shared_ptr<geometry::CNPoint2D>
-     * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
+     * @param currentPos shared_ptr<geometry::CNPointAllo>
+     * @param goal shared_ptr<geometry::CNPointAllo>
+     * @param obstaclePoint shared_ptr<geometry::CNPointAllo>
      * @return bool true if an obstacle is inside corridor
      */
-    bool corridorCheckBall(geometry::CNPointAllo CNPointAllo, geometry::CNPointAllo goal, geometry::CNPointAllo obstaclePoint,
-                           double obstacleRadius = 0.0);
+    bool corridorCheckBall(geometry::CNPointAllo CNPointAllo, geometry::CNPointAllo goal,
+                           geometry::CNPointAllo obstaclePoint, double obstacleRadius = 0.0);
 
   private:
     /**
@@ -209,27 +218,29 @@ class PathPlanner
      * @param second shared_ptr<SearchNode>
      * @return bool true if sum of cost and heuristic of first niode is smaller
      */
-    static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
+    static bool compare(std::shared_ptr<const SearchNode> first, std::shared_ptr<const SearchNode> second);
     /**
      * Checks if vertices of goal face are reached
-     * @param closestVerticesToGoal shared_ptr<vector<shared_ptr<Vertex> > > vertices of Voronoi face containing the goal point
+     * @param closestVerticesToGoal shared_ptr<vector<shared_ptr<Vertex> > > vertices of Voronoi face containing the
+     * goal point
      * @param currentNode shared_ptr<SearchNode>
      * @return bool true if goal Voronoi Face reached
      */
-    bool checkGoalVerticesReached(shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal, shared_ptr<SearchNode> currentNode);
+    bool checkGoalVerticesReached(const std::vector<Vertex> &closestVerticesToGoal,
+                                  SearchNode &currentNode);
     /**
      * Helping method to debug the corridor check (send Corridor check as msg)
-     * @param points vector<shared_ptr<geometry::CNPoint2D>> vertex point of the corridor check
+     * @param points vector<shared_ptr<geometry::CNPointAllo>> vertex point of the corridor check
      */
-    void sendCorridorCheck(vector<geometry::CNPointAllo> points);
+    void sendCorridorCheck(std::vector<geometry::CNPointAllo> points);
 
     /**
      * Calculate distance between point and Voronoi Vertex
-     * @param v1 shared_ptr<geometry::CNPoint2D>
+     * @param v1 shared_ptr<geometry::CNPointAllo>
      * @param v2 shared_ptr<Vertex>
      * @return double
      */
-    double distanceTo(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<Vertex> v2);
+    double distanceTo(geometry::CNPointAllo v1, Vertex v2);
 
     /**
      * A*-Search on a VoronoiDiagram
@@ -238,8 +249,9 @@ class PathPlanner
      * @param goal Point_2
      * @return shared_ptr<vector<shared_ptr<Point_2>>> resulting optimal path regarding the Pathevaluator
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos,
-                                                                    shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> pathEvaluator);
+    std::shared_ptr<std::vector<geometry::CNPointAllo>>
+    aStarSearch(const VoronoiNet &voronoi, geometry::CNPointAllo startPos, geometry::CNPointAllo goal,
+                const IPathEvaluator &pathEvaluator);
 
   protected:
     /**
@@ -257,10 +269,10 @@ class PathPlanner
     /**
      * Guards the Voronoi Diagram vector
      */
-    mutex voronoiMutex;
-    vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
+    mutable mutex voronoiMutex;
+    std::vector<std::shared_ptr<VoronoiNet>> voronoiDiagrams;
     double robotRadius;
-    shared_ptr<VoronoiNet> artificialObjectNet;
+    std::shared_ptr<VoronoiNet> artificialObjectNet;
     double pathDeviationWeight;
     double dribble_rotationWeight;
     double dribble_angleTolerance;
@@ -269,25 +281,27 @@ class PathPlanner
     bool pathPlannerDebug;
     double marginToBlockedArea;
     double additionalCorridorWidth;
-    shared_ptr<SearchNode> lastClosestNode;
+    nonstd::optional<SearchNode> lastClosestNode;
     double snapDistance;
     double additionalBallCorridorWidth;
     double corridorWidthDivisorBall;
 
     ros::NodeHandle n;
     ros::Publisher corridorPub;
-    shared_ptr<geometry::CNPoint2D> lastClosestPointToBlock;
-    shared_ptr<geometry::CNPointAllo> lastTarget;
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
+    nonstd::optional<geometry::CNPointAllo> lastClosestPointToBlock;
+    nonstd::optional<geometry::CNPointAllo> lastTarget;
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> lastPath;
     /**
      * Check if the goal vertices are reached and if there is a corridor leading to the goal
      * @param voronoi shared_ptr<VoronoiNet>
      * @param currentNode shared_ptr<SearchNode>
-     * @param closestVerticesToGoal shared_ptr<vector<shared_ptr<Vertex>>> vertices of Voronoi face containing the goal point
-     * @param goal shared_ptr<geometry::CNPoint2D>
+     * @param closestVerticesToGoal shared_ptr<vector<shared_ptr<Vertex>>> vertices of Voronoi face containing the goal
+     * point
+     * @param goal shared_ptr<geometry::CNPointAllo>
      * @return bool true if goal is reachable
      */
-    bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal,
-                            shared_ptr<geometry::CNPoint2D> goal);
+    bool checkGoalReachable(const VoronoiNet &voronoi, SearchNode &currentNode,
+                            const std::vector<Vertex> &closestVerticesToGoal,
+                            geometry::CNPointAllo goal);
 };
 } /* namespace msl */

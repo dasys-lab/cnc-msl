@@ -34,7 +34,7 @@ class SearchNode
      * Gets the cost
      * @return double
      */
-    double getCost();
+    double getCost() const;
     /**
      * Sets the cost
      * @param double cost
@@ -45,7 +45,7 @@ class SearchNode
      * Gets the heuristic vlaue
      * @return double
      */
-    double getHeuristic();
+    double getHeuristic() const;
     /**
      * Sets the heuristic value
      * @param double heuristic
@@ -55,7 +55,7 @@ class SearchNode
      * Gets the predecessor node
      * @return shared_ptr<SearchNode>
      */
-    std::shared_ptr<SearchNode> getPredecessor();
+    std::shared_ptr<const SearchNode> getPredecessor() const;
     /**
      * Sets the predecessor node
      * @param shared_ptr<SearchNode> predecessor
@@ -65,7 +65,7 @@ class SearchNode
      * Gets the Voronoi Edge
      * @return VoronoiDiagram::Halfedge_around_vertex_circulator
      */
-    VoronoiDiagram::Halfedge_around_vertex_circulator getEdge();
+    VoronoiDiagram::Halfedge_around_vertex_circulator getEdge() const;
     /**
      * Sets the Voronoi Edge
      * @param VoronoiDiagram::Halfedge_around_vertex_circulator
@@ -77,7 +77,7 @@ class SearchNode
      * @param shared_ptr<SearchNode> second
      * @return bool
      */
-    static bool compare(std::shared_ptr<SearchNode> first, std::shared_ptr<SearchNode> second);
+    static bool compare(std::shared_ptr<const SearchNode> first, std::shared_ptr<const SearchNode> second);
 
     /**
      * Get starting point of the edge
@@ -91,7 +91,7 @@ class SearchNode
      */
     VoronoiDiagram::Halfedge_around_vertex_circulator getIncidentEdges();
 
-    bool matches(std::shared_ptr<Vertex> vertex);
+    bool matches(const Vertex &vertex);
 
   private:
     std::shared_ptr<SearchNode> predecessor;

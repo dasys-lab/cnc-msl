@@ -5,8 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_
+# pragma once
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -31,10 +30,6 @@ namespace supplementary
 {
 class SystemConfig;
 }
-namespace geometry
-{
-class CNPoint2D;
-}
 namespace msl
 {
 class VoronoiNet;
@@ -44,12 +39,14 @@ class PathEvaluator : public IPathEvaluator
   public:
     PathEvaluator();
     virtual ~PathEvaluator();
-    virtual pair<double, double> eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-                                      VoronoiNet *voronoi);
 
-    virtual pair<double, double> evalInitial(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> nextNode,
-                                             VoronoiNet *voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath,
-                                             shared_ptr<geometry::CNPoint2D> lastTarget);
+    virtual std::pair<double, double> eval(geometry::CNPointAllo goal, std::shared_ptr<SearchNode> currentNode,
+                                           std::shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi) const;
+
+    virtual std::pair<double, double> evalInitial(geometry::CNPointAllo startPos, geometry::CNPointAllo goal,
+                                                  std::shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi,
+                                                  std::shared_ptr<const std::vector<geometry::CNPointAllo>> lastPath,
+                                                  nonstd::optional<geometry::CNPointAllo> lastTarget) const;
 
   protected:
     /**
@@ -83,4 +80,3 @@ class PathEvaluator : public IPathEvaluator
 
 } /* namespace msl */
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_ */

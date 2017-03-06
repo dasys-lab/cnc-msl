@@ -14,7 +14,7 @@
 #include "pathplanner/VoronoiNet.h"
 
 using nonstd::nullopt;
-
+using std::shared_ptr;
 
 namespace msl
 {
@@ -32,7 +32,8 @@ struct Cropped_voronoi_from_delaunay
     {
     }
 
-    template <class RSL> void crop_and_extract_segment(const RSL &rsl)
+    template <class RSL>
+    void crop_and_extract_segment(const RSL &rsl)
     {
         CGAL::Object obj = CGAL::intersection(rsl, m_bbox);
         const Segment_2 *s = CGAL::object_cast<Segment_2>(&obj);
@@ -67,21 +68,17 @@ PathProxy::~PathProxy()
 {
 }
 
-/**
- * get ego direction form path planner
- * @param egoTarget shared_ptr<geometry::CNPoint2D>
- * @param eval shared_ptr<PathEvaluator>
- * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> (OPTIONAL, default is nullptr)
- * @return std::shared_ptr<geometry::CNPoint2D>
- */
-nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
-                                                                  nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints)
+nonstd::optional<geometry::CNPointEgo>
+PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, const IPathEvaluator &pathEvaluator,
+                           shared_ptr<const vector<geometry::CNPointAllo>> additionalPoints)
 {
     // save target
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
-    shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
+    // TODO: was not copied before
+    auto net = make_shared<VoronoiNet>(*this->wm->pathPlanner->getCurrentVoronoiNet());
+
     auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
@@ -90,7 +87,7 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
     }
     auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
-    if (additionalPoints != nullopt)
+    if (additionalPoints != nullptr)
     {
         net->insertAdditionalPoints(*additionalPoints, EntityType::Obstacle);
     }
@@ -109,15 +106,15 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
         }
         else
         {
-            path = applyShortcut(path, ownPos, net);
+            path = applyShortcut(*path, ownPos, net);
             alloRetPoint = path->at(0);
         }
         // send debug msgs
         if (pathPlannerDebug)
         {
             path->insert(path->begin(), ownPos.getPoint());
-            sendPathPlannerMsg(path);
-            sendVoronoiNetMsg(net);
+            sendPathPlannerMsg(*path);
+            sendVoronoiNetMsg(*net);
         }
     }
 
@@ -132,17 +129,20 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
         return nullopt;
     }
 
-    //cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
+    // cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
     return alloRetPoint->toEgo(ownPos);
 }
 
-nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, shared_ptr<IPathEvaluator> pathEvaluator,
-                                                           shared_ptr<PathPlannerQuery> query)
+nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget,
+                                                                  const IPathEvaluator &pathEvaluator,
+                                                                  const PathPlannerQuery &query)
 {
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
-    shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
+    // TODO: was not copied before
+    auto net = make_shared<VoronoiNet>(*this->wm->pathPlanner->getCurrentVoronoiNet());
+
     auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
     {
@@ -151,39 +151,39 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
     }
     auto ownPos = ownPosInfo->getInformation();
     // if there are additional points insert them into the voronoi diagram
-    if (query->additionalPoints != nullopt)
+    if (query.additionalPoints != nullopt)
     {
-        net->insertAdditionalPoints(*query->additionalPoints, EntityType::Obstacle);
+        net->insertAdditionalPoints(*query.additionalPoints, EntityType::Obstacle);
     }
 
     // block specific field areas
-    if (query->block3MetersAroundBall)
+    if (query.block3MetersAroundBall)
     {
         net->blockThreeMeterAroundBall();
     }
-    if (query->blockOppPenaltyArea)
+    if (query.blockOppPenaltyArea)
     {
         net->blockOppPenaltyArea();
     }
-    if (query->blockOwnPenaltyArea)
+    if (query.blockOwnPenaltyArea)
     {
         net->blockOwnPenaltyArea();
     }
-    if (query->blockOppGoalArea && !query->blockOppPenaltyArea)
+    if (query.blockOppGoalArea && !query.blockOppPenaltyArea)
     {
         net->blockOppGoalArea();
     }
-    if (query->blockOwnGoalArea && !query->blockOwnPenaltyArea)
+    if (query.blockOwnGoalArea && !query.blockOwnPenaltyArea)
     {
         net->blockOwnGoalArea();
     }
-    if (query->circleRadius != -1 && query->circleCenterPoint != nullopt)
+    if (query.circleRadius != -1 && query.circleCenterPoint != nullopt)
     {
-        net->blockCircle(*query->circleCenterPoint, query->circleRadius);
+        net->blockCircle(*query.circleCenterPoint, query.circleRadius);
     }
-    if (query->rectangleLowerRightCorner != nullopt && query->rectangleUpperLeftCorner != nullopt)
+    if (query.rectangleLowerRightCorner != nullopt && query.rectangleUpperLeftCorner != nullopt)
     {
-        net->blockRectangle(*query->rectangleUpperLeftCorner, *query->rectangleLowerRightCorner);
+        net->blockRectangle(*query.rectangleUpperLeftCorner, *query.rectangleLowerRightCorner);
     }
 
     // plan
@@ -200,15 +200,15 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
         }
         else
         {
-            path = applyShortcut(path, ownPos, net);
+            path = applyShortcut(*path, ownPos, net);
             alloRetPoint = path->at(0);
         }
         // send debug msgs
         if (pathPlannerDebug)
         {
             path->insert(path->begin(), ownPos.getPoint());
-            sendPathPlannerMsg(path);
-            sendVoronoiNetMsg(net);
+            sendPathPlannerMsg(*path);
+            sendVoronoiNetMsg(*net);
         }
     }
 
@@ -221,25 +221,29 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
     return alloRetPoint->toEgo(ownPos);
 }
 
-shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(shared_ptr<vector<geometry::CNPointAllo>> path,
-                                                                             geometry::CNPositionAllo ownPos, shared_ptr<VoronoiNet> net)
+shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(const vector<geometry::CNPointAllo> &path,
+                                                                   geometry::CNPositionAllo ownPos,
+                                                                   const VoronoiNet &net)
 {
-    shared_ptr<vector<geometry::CNPointAllo>> ret = path;
+    auto ret = make_shared<vector<geometry::CNPointAllo>>(path);
     bool shortcutBlocked = false;
-    for (int i = path->size() - 2; i >= 0; i--)
+    for (int i = path.size() - 2; i >= 0; i--)
     {
-        for (auto current : *net->getAlloClusteredObsWithMe())
+        for (auto current : *net.getAlloClusteredObsWithMe())
         {
             if (current.id == wm->getOwnId())
             {
                 continue;
             }
-            shortcutBlocked =
-                shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current.getPoint(), wm->pathPlanner->getRobotRadius());
+            shortcutBlocked = shortcutBlocked ||
+                              wm->pathPlanner->corridorCheck(ownPos.getPoint(), path.at(i), current.getPoint(),
+                                                             wm->pathPlanner->getRobotRadius());
         }
-        for (auto current : *net->getAdditionalObstacles())
+        for (auto current : *net.getAdditionalObstacles())
         {
-            shortcutBlocked = shortcutBlocked || wm->pathPlanner->corridorCheck(ownPos.getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
+            shortcutBlocked = shortcutBlocked ||
+                              wm->pathPlanner->corridorCheck(ownPos.getPoint(), path.at(i), current,
+                                                             wm->pathPlanner->getRobotRadius());
         }
         if (!shortcutBlocked)
         {
@@ -263,18 +267,18 @@ PathProxy *PathProxy::getInstance()
  * send debug msg with pathplanner path
  * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
  */
-void PathProxy::sendPathPlannerMsg(shared_ptr<vector<geometry::CNPointAllo>> path)
+void PathProxy::sendPathPlannerMsg(const vector<geometry::CNPointAllo> &path)
 {
     msl_msgs::PathPlanner pathMsg;
     pathMsg.senderId = this->wm->getOwnId();
-    for (int i = 0; i < path->size(); i++)
+    for (int i = 0; i < path.size(); i++)
     {
         msl_msgs::Point2dInfo info;
-        info.x = path->at(i).x;
-        info.y = path->at(i).y;
+        info.x = path.at(i).x;
+        info.y = path.at(i).y;
         pathMsg.pathPoints.push_back(info);
     }
-    pathPub.publish(pathMsg);
+    this->pathPub.publish(pathMsg);
 }
 
 /**
@@ -282,11 +286,11 @@ void PathProxy::sendPathPlannerMsg(shared_ptr<vector<geometry::CNPointAllo>> pat
  * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  * @param voronoi shared_ptr<VoronoiNet>
  */
-void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
+void PathProxy::sendVoronoiNetMsg(const VoronoiNet &voronoi)
 {
     msl_msgs::VoronoiNetInfo netMsg;
     netMsg.senderId = this->wm->getOwnId();
-    for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
+    for (auto cluster : *voronoi.getAlloClusteredObsWithMe())
     {
         msl_msgs::Point2dInfo info;
         info.x = cluster.x;
@@ -294,7 +298,7 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
         netMsg.sites.push_back(info);
     }
 
-    for (auto ob : *voronoi->getArtificialObstacles())
+    for (auto ob : *voronoi.getArtificialObstacles())
     {
         msl_msgs::Point2dInfo info;
         info.x = ob.x;
@@ -310,7 +314,7 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
         info.y = linePoints->at(i).y;
         netMsg.linePoints.push_back(info);
     }
-    voroniPub.publish(netMsg);
+    this->voroniPub.publish(netMsg);
 }
 
 /**
@@ -318,23 +322,24 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
  * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  * @param voronoi shared_ptr<VoronoiNet>
  */
-shared_ptr<vector<geometry::CNPointAllo>> PathProxy::calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi)
+shared_ptr<vector<geometry::CNPointAllo>> PathProxy::calculateCroppedVoronoi(const VoronoiNet &voronoi)
 {
     // create bounding box around field with additional 3m distance
     shared_ptr<vector<geometry::CNPointAllo>> ret = make_shared<vector<geometry::CNPointAllo>>();
-    Iso_rectangle_2 bbox(-wm->field->getFieldLength() / 2 - 3000, -wm->field->getFieldWidth() / 2 - 3000, wm->field->getFieldLength() / 2 + 3000,
-                         wm->field->getFieldWidth() / 2 + 3000);
+    Iso_rectangle_2 bbox(-wm->field->getFieldLength() / 2 - 3000, -wm->field->getFieldWidth() / 2 - 3000,
+                         wm->field->getFieldLength() / 2 + 3000, wm->field->getFieldWidth() / 2 + 3000);
     // create cropped voronoi
     Cropped_voronoi_from_delaunay vor(bbox);
     // get delaunay
-    DelaunayTriangulation dt = voronoi->getVoronoi()->dual();
+    DelaunayTriangulation dt = voronoi.getVoronoi()->dual();
     dt.draw_dual(vor);
     // get sites
     for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
     {
         // check if source and target exist
         // if there is no source or target the edge is connected to point at infinity
-        if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x()) && !std::isnan(it->target().y()))
+        if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x()) &&
+            !std::isnan(it->target().y()))
         {
             // push back source and target
             ret->push_back(geometry::CNPointAllo(it->source().x(), it->source().y()));

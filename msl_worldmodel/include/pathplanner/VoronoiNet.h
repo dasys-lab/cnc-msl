@@ -7,6 +7,7 @@
 
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNRobotAllo.h>
+#include <nonstd/optional.hpp>
 
 
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -93,7 +94,7 @@ class VoronoiNet
      * @param point geometry::CNPoint2D
      * @return std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      */
-    std::shared_ptr<std::vector<Vertex>> getVerticesOfFace(geometry::CNPointAllo point);
+    std::shared_ptr<std::vector<Vertex>> getVerticesOfFace(geometry::CNPointAllo point) const;
 
     /**
      * Inserts sites into the Voronoi Diagram
@@ -106,7 +107,7 @@ class VoronoiNet
      * @param points std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      * @param type EntityType type of obstacle to insert
      */
-    void insertAdditionalPoints(std::vector<geometry::CNPointAllo> points, EntityType type);
+    void insertAdditionalPoints(const std::vector<geometry::CNPointAllo>  &points, EntityType type);
 
     /**
      * Deletes sites from Voronoi Net and clears pointRobotKindMapping
@@ -114,10 +115,16 @@ class VoronoiNet
     void clearVoronoiNet();
 
     /**
+    * Gets the voronoi net as mutable
+    * @return std::shared_ptr<VoronoiDiagram>
+    */
+    std::shared_ptr<VoronoiDiagram> getVoronoi();
+
+    /**
      * Gets the voronoi net
      * @return std::shared_ptr<VoronoiDiagram>
      */
-    std::shared_ptr<VoronoiDiagram> getVoronoi();
+    std::shared_ptr<const VoronoiDiagram> getVoronoi() const;
     /**
      * Sets the voronoi net
      * @param voronoi std::shared_ptr<VoronoiDiagram>
@@ -128,7 +135,7 @@ class VoronoiNet
      * @param point VoronoiDiagram::Point_2
      * @return std::shared_ptr<VoronoiDiagram::Site_2>
      */
-    VoronoiDiagram::Site_2 getSiteOfFace(VoronoiDiagram::Point_2 point);
+    nonstd::optional<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point) const;
 
     /**
      * Check if an edge belongs to face of given point
@@ -166,17 +173,17 @@ class VoronoiNet
     /**
      * Allo Obstacles for constructing this Voronoi Diagram
      */
-    std::shared_ptr<std::vector<geometry::CNRobotAllo>> getAlloClusteredObsWithMe();
+    std::shared_ptr<const std::vector<geometry::CNRobotAllo>> getAlloClusteredObsWithMe() const;
 
     /**
      * Artificial Obstacles for construction this Voronoi Diagram
      */
-    std::shared_ptr<std::vector<geometry::CNPointAllo>> getArtificialObstacles();
+    std::shared_ptr<const std::vector<geometry::CNPointAllo>> getArtificialObstacles() const;
 
     /**
      * Additional Obstacles for construction this Voronoi Diagram
      */
-    std::shared_ptr<std::vector<geometry::CNPointAllo>> getAdditionalObstacles();
+    std::shared_ptr<const std::vector<geometry::CNPointAllo>> getAdditionalObstacles() const;
 
     /**
      * Return vertices teammates voronoi face
@@ -195,13 +202,13 @@ class VoronoiNet
      * Removes given sites from Voronoi Diagram
      * @param std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>> sites to remove
      */
-    void removeSites(std::shared_ptr<std::vector<geometry::CNPointAllo>> sites);
+    void removeSites(std::shared_ptr<const std::vector<geometry::CNPointAllo>> sites);
 
     /**
      * Removes given sites from Voronoi Diagram
      * @param std::shared_ptr<std::vector<pair<std::shared_ptr<geometry::CNPoint2D>, int>>> sites to remove
      */
-    void removeSites(std::shared_ptr<std::vector<std::pair<geometry::CNPointAllo, int>>> sites);
+    void removeSites(std::shared_ptr<const std::vector<std::pair<geometry::CNPointAllo, int>>> sites);
 
     /**
      * Block opponent penalty area
@@ -246,7 +253,7 @@ class VoronoiNet
      * Checks type of Voronoi Site (artificial, team, opponent)
      * @return int type of Site
      */
-    int getTypeOfSite(Site_2 site);
+    int getTypeOfSite(Site_2 site) const;
 
   private:
     /**

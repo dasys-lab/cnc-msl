@@ -16,6 +16,8 @@
 using std::vector;
 using std::shared_ptr;
 using std::pair;
+using nonstd::optional;
+using nonstd::nullopt;
 
 namespace msl
 {
@@ -38,19 +40,19 @@ VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
     this->voronoi = make_shared<VoronoiDiagram>();
     this->ownPosAvail = net->ownPosAvail;
 
-    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
     for (auto cluster : *net->getAlloClusteredObsWithMe())
     {
         this->alloClusteredObsWithMe->push_back(cluster);
     }
 
-    this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPointAllo>>>();
+    this->artificialObstacles = make_shared<vector<geometry::CNPointAllo>>();
     for (auto obs : *net->getArtificialObstacles())
     {
         this->artificialObstacles->push_back(obs);
     }
 
-    this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPointAllo>>>();
+    this->additionalObstacles = make_shared<vector<geometry::CNPointAllo>>();
     for (auto obs : *net->getAdditionalObstacles())
     {
         this->additionalObstacles->push_back(obs);
@@ -64,7 +66,7 @@ VoronoiNet::~VoronoiNet()
 {
 }
 
-int VoronoiNet::getTypeOfSite(Site_2 site)
+int VoronoiNet::getTypeOfSite(Site_2 site) const
 {
     auto result = this->pointRobotKindMapping.find(site);
     if (result != this->pointRobotKindMapping.end())
@@ -128,7 +130,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
 
     // insert allo obstacles (including me) into voronoi diagram
     vector<Site_2> sites;
-    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
 
     auto alloObsInfo = wm->obstacles->getObstaclesAlloClusteredWithMeBuffer().getLastValid();
 
@@ -195,7 +197,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
 //		return false;
 //	}
 
-void VoronoiNet::insertAdditionalPoints(vector<geometry::CNPointAllo> points, EntityType type)
+void VoronoiNet::insertAdditionalPoints(const vector<geometry::CNPointAllo> &points, EntityType type)
 {
     // TODO: does not delete points outside the field from param points like before (points was shared_ptr)
     lock_guard<mutex> lock(netMutex);
@@ -250,7 +252,7 @@ shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getTeamMateVerticesCNPoint
     return ret;
 }
 
-void VoronoiNet::removeSites(shared_ptr<vector<pair<geometry::CNPointAllo, int>>> sites)
+void VoronoiNet::removeSites(shared_ptr<const vector<pair<geometry::CNPointAllo, int>>> sites)
 {
     for (int i = 0; i < sites->size(); i++)
     {
@@ -266,6 +268,23 @@ void VoronoiNet::removeSites(shared_ptr<vector<pair<geometry::CNPointAllo, int>>
         }
     }
 }
+
+void VoronoiNet::removeSites(shared_ptr<const vector<geometry::CNPointAllo>> sites)
+{
+    for (int i = 0; i < sites->size(); i++)
+    {
+        // locate point
+        VoronoiDiagram::Point_2 point(sites->at(i).x, sites->at(i).y);
+        VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+        // if location is face
+        if (VoronoiDiagram::Face_handle *handle = boost::get<VoronoiDiagram::Face_handle>(&loc))
+        {
+            // delete it from delaunay graph
+            ((DelaunayTriangulation) this->voronoi->dual()).remove((*handle)->dual());
+        }
+    }
+}
+
 
 void VoronoiNet::clearVoronoiNet()
 {
@@ -345,7 +364,7 @@ void VoronoiNet::clearVoronoiNet()
 //	}
 
 
-shared_ptr<vector<Vertex>> VoronoiNet::getVerticesOfFace(geometry::CNPointAllo point)
+shared_ptr<vector<Vertex>> VoronoiNet::getVerticesOfFace(geometry::CNPointAllo point) const
 {
     auto ret = make_shared<vector<Vertex>>();
     // locate point
@@ -371,7 +390,13 @@ shared_ptr<vector<Vertex>> VoronoiNet::getVerticesOfFace(geometry::CNPointAllo p
     return ret;
 }
 
+
 shared_ptr<VoronoiDiagram> VoronoiNet::getVoronoi()
+{
+    return voronoi;
+}
+
+shared_ptr<const VoronoiDiagram> VoronoiNet::getVoronoi() const
 {
     return voronoi;
 }
@@ -381,7 +406,7 @@ void VoronoiNet::setVoronoi(shared_ptr<VoronoiDiagram> voronoi)
     this->voronoi = voronoi;
 }
 
-shared_ptr<VoronoiDiagram::Site_2> VoronoiNet::getSiteOfFace(VoronoiDiagram::Point_2 point)
+optional<VoronoiDiagram::Site_2> VoronoiNet::getSiteOfFace(VoronoiDiagram::Point_2 point) const
 {
     // locate point
     VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
@@ -390,9 +415,9 @@ shared_ptr<VoronoiDiagram::Site_2> VoronoiNet::getSiteOfFace(VoronoiDiagram::Poi
     {
         // get site from delaunay
         VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-        return make_shared<VoronoiDiagram::Site_2>(handle->dual()->point());
+        return VoronoiDiagram::Site_2(handle->dual()->point());
     }
-    return nullptr;
+    return nullopt;
 }
 
 
@@ -449,33 +474,17 @@ shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getOpponentPositions()
     return ret;
 }
 
-void VoronoiNet::removeSites(shared_ptr<vector<geometry::CNPointAllo>> sites)
-{
-    for (int i = 0; i < sites->size(); i++)
-    {
-        // locate point
-        VoronoiDiagram::Point_2 point(sites->at(i).x, sites->at(i).y);
-        VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
-        // if location is face
-        if (VoronoiDiagram::Face_handle *handle = boost::get<VoronoiDiagram::Face_handle>(&loc))
-        {
-            // delete it from delaunay graph
-            ((DelaunayTriangulation) this->voronoi->dual()).remove((*handle)->dual());
-        }
-    }
-}
-
-shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getArtificialObstacles()
+shared_ptr<const vector<geometry::CNPointAllo>> VoronoiNet::getArtificialObstacles() const
 {
     return this->artificialObstacles;
 }
 
-shared_ptr<vector<geometry::CNRobotAllo>> VoronoiNet::getAlloClusteredObsWithMe()
+shared_ptr<const vector<geometry::CNRobotAllo>> VoronoiNet::getAlloClusteredObsWithMe() const
 {
     return this->alloClusteredObsWithMe;
 }
 
-shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getAdditionalObstacles()
+shared_ptr<const vector<geometry::CNPointAllo>> VoronoiNet::getAdditionalObstacles() const
 {
     return this->additionalObstacles;
 }
@@ -657,7 +666,7 @@ void VoronoiNet::blockThreeMeterAroundBall()
     auto ret = vector<geometry::CNPointAllo>();
     // get ball pos
     auto alloBall = wm->ball->getAlloBallPosition();
-    if (alloBall == nullptr)
+    if (alloBall == nullopt)
     {
         return;
     }

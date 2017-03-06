@@ -47,7 +47,7 @@ SearchNode::~SearchNode()
  * gets the cost
  * @return double
  */
-double SearchNode::getCost()
+double SearchNode::getCost() const
 {
     return cost;
 }
@@ -65,7 +65,7 @@ void SearchNode::setCost(double cost)
  * gets the heuristic
  * @return double
  */
-double SearchNode::getHeuristic()
+double SearchNode::getHeuristic() const
 {
     return heuristic;
 }
@@ -83,7 +83,7 @@ void SearchNode::setHeuristic(double heuristic)
  * gets the predecessor node
  * @return shared_ptr<SearchNode>
  */
-shared_ptr<SearchNode> SearchNode::getPredecessor()
+shared_ptr<const SearchNode> SearchNode::getPredecessor() const
 {
     return predecessor;
 }
@@ -101,20 +101,22 @@ void SearchNode::setPredecessor(shared_ptr<SearchNode> predecessor)
  * gets the edge
  * @return VoronoiDiagram::Halfedge_around_vertex_circulator
  */
-VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getEdge()
+VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getEdge() const
 {
     return edge;
 }
 
-bool SearchNode::matches(shared_ptr<Vertex> vertex)
+bool SearchNode::matches(const Vertex &vertex)
 {
+    // can't be const because CGAL sucks!
+
     if (initialEdge)
     {
-        return (*this->vertex) == (*vertex);
+        return (*this->vertex) == vertex;
     }
     else
     {
-        return (*this->edge->source()) == (*vertex);
+        return (*this->edge->source()) == vertex;
     }
 }
 
@@ -129,6 +131,8 @@ void SearchNode::setEdge(VoronoiDiagram::Halfedge_around_vertex_circulator edge)
 
 VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getIncidentEdges()
 {
+    // can't be const because CGAL sucks!
+
     if (this->initialEdge)
     {
         return this->vertex->incident_halfedges();
@@ -141,6 +145,8 @@ VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getIncidentEdges()
 
 geometry::CNPointAllo SearchNode::getPoint()
 {
+    // can't be const because CGAL sucks!
+
     if (this->initialEdge)
     {
         return geometry::CNPointAllo(this->vertex->point().x(), this->vertex->point().y());
@@ -157,7 +163,7 @@ geometry::CNPointAllo SearchNode::getPoint()
  * @param second shared_ptr<SearchNode>
  * @return bool
  */
-bool SearchNode::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
+bool SearchNode::compare(shared_ptr<const SearchNode> first, shared_ptr<const SearchNode> second)
 {
     return (first->cost < second->cost);
 }
