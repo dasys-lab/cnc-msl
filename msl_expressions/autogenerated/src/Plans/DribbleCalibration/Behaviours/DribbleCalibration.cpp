@@ -78,10 +78,10 @@ namespace alica
             cout << "DribbleCalibration::run(): translation = " << tran << endl;
 #endif
             // movement
-            shared_ptr<msl::DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
+            shared_ptr < msl::DribbleCalibrationQuery > query = dcc.paramToMove(param, tran);
 
             //check input for send methods
-            shared_ptr<MotionControl> mc = query->getMc();
+            shared_ptr < MotionControl > mc = query->getMc();
             if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
             {
                 if (mc->motion.translation == NAN)
@@ -99,8 +99,8 @@ namespace alica
                 cout << "no MotionControl received!" << endl;
             }
 
-            shared_ptr<BallHandleCmd> bhc = query->getBhc();
-            send(*bhc);
+            shared_ptr < BallHandleCmd > bhc = query->getBhc();
+            send (*bhc);
 
             // waiting some time till we can be sure to only collect correct values
             if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
@@ -229,7 +229,7 @@ namespace alica
                 "DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
 
         collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
-        NULL);
+                                                                           NULL);
         minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
     }
 /*PROTECTED REGION END*/
