@@ -13,6 +13,10 @@
 #include "pathplanner/PathPlanner.h"
 #include <SystemConfig.h>
 
+using std::vector;
+using std::shared_ptr;
+using std::pair;
+
 namespace msl
 {
 
@@ -22,9 +26,9 @@ VoronoiNet::VoronoiNet(MSLWorldModel *wm)
     this->sc = supplementary::SystemConfig::getInstance();
     this->voronoi = make_shared<VoronoiDiagram>();
     this->ownPosAvail = false;
-    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
-    this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-    this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
+    this->artificialObstacles = make_shared<vector<geometry::CNPointAllo>>();
+    this->additionalObstacles = make_shared<vector<geometry::CNPointAllo>>();
 }
 
 VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
@@ -34,19 +38,19 @@ VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
     this->voronoi = make_shared<VoronoiDiagram>();
     this->ownPosAvail = net->ownPosAvail;
 
-    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
+    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
     for (auto cluster : *net->getAlloClusteredObsWithMe())
     {
         this->alloClusteredObsWithMe->push_back(cluster);
     }
 
-    this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPointAllo>>>();
     for (auto obs : *net->getArtificialObstacles())
     {
         this->artificialObstacles->push_back(obs);
     }
 
-    this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPointAllo>>>();
     for (auto obs : *net->getAdditionalObstacles())
     {
         this->additionalObstacles->push_back(obs);
@@ -138,14 +142,16 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
 
     // insert allo obstacles (including me) into voronoi diagram
     vector<Site_2> sites;
-    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
-    auto alloObs = wm->obstacles->getAlloObstaclesWithMe();
-    if (alloObs != nullptr)
+    this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+
+    auto alloObsInfo = wm->obstacles->getObstaclesAlloClusteredWithMeBuffer().getLastValid();
+
+    if (alloObsInfo != nullptr)
     {
-        for (auto cluster : *alloObs)
+        for (auto cluster : *alloObsInfo->getInformation())
         {
-            Site_2 site(cluster->x, cluster->y);
-            pointRobotKindMapping[site] = cluster->id;
+            Site_2 site(cluster.x, cluster.y);
+            this->pointRobotKindMapping[site] = cluster.id;
             sites.push_back(site);
             this->alloClusteredObsWithMe->push_back(cluster);
         }
@@ -157,7 +163,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
     auto iter = wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_begin();
     do
     {
-        pointRobotKindMapping[*iter] = EntityType::ArtificialObstacle;
+        this->pointRobotKindMapping[*iter] = EntityType::ArtificialObstacle;
     } while (++iter != wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_end());
 
     this->voronoi->insert(wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_begin(),
@@ -213,48 +219,27 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
  * insert additional points into the voronoi diagram
  * @param points shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
  */
-void VoronoiNet::insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points, EntityType type)
+void VoronoiNet::insertAdditionalPoints(vector<geometry::CNPointAllo> points, EntityType type)
 {
+    // TODO: does not delete points outside the field from param points like before (points was shared_ptr)
     lock_guard<mutex> lock(netMutex);
     vector<Site_2> sites;
 
-    for (auto point = points->begin(); point != points->end();)
+    for (auto point : points)
     {
-
-        if (!wm->field->isInsideField(*point))
+        if(this->wm->field->isInsideField(point))
         {
-            point = points->erase(point);
-        }
-        else
-        {
-            Site_2 site((*point)->x, (*point)->y);
+            Site_2 site(point.x, point.y);
             this->pointRobotKindMapping[site] = type;
             sites.push_back(site);
 
             if (type == EntityType::Obstacle)
-                this->additionalObstacles->push_back(*point);
+                this->additionalObstacles->push_back(point);
             else if (type == EntityType::ArtificialObstacle)
-                this->artificialObstacles->push_back(*point);
-
-            ++point;
+                this->artificialObstacles->push_back(point);
         }
     }
-    //		for (auto point : *points)
-    //		{
-    //			if(!this->field->isInsideField(point)) {
-    //
-    //			} else {
-    //
-    //				Site_2 site(point->x, point->y);
-    //				this->pointRobotKindMapping[site] = type;
-    //				sites.push_back(site);
-    //
-    //				if (type == EntityType::Opponent)
-    //						this->additionalObstacles->push_back(point);
-    //				else if (type == EntityType::ArtificialObstacle)
-    //						this->artificialObstacles->push_back(point);
-    //			}
-    //		}
+
     this->voronoi->insert(sites.begin(), sites.end());
 }
 
@@ -274,20 +259,22 @@ void VoronoiNet::insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::C
 //
 //	}
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
+shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
 {
     // locate teammate
-    shared_ptr<geometry::CNPosition> teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
+    auto teamMatePosInfo = wm->robots->teammates.getTeammatePositionBuffer(teamMateId).getLastValid();
 
-    if (teamMatePos == nullptr)
+    if (teamMatePosInfo == nullptr)
         return nullptr;
 
+    auto teamMatePos = teamMatePosInfo->getInformation();
+
     // get vertices
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-    auto vertices = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
+    auto vertices = this->getVerticesOfFace(teamMatePos.getPoint());
     for (int i = 0; i < vertices->size(); i++)
     {
-        ret->push_back(make_shared<geometry::CNPoint2D>(vertices->at(i)->point().x(), vertices->at(i)->point().y()));
+        ret->push_back(geometry::CNPointAllo(vertices->at(i).point().x(), vertices->at(i).point().y()));
     }
     return ret;
 }
@@ -296,11 +283,11 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getTeamMateVerti
  * removes given sites from voronoi net
  * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  */
-void VoronoiNet::removeSites(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites)
+void VoronoiNet::removeSites(shared_ptr<vector<pair<geometry::CNPointAllo, int>>> sites)
 {
     for (int i = 0; i < sites->size(); i++)
     {
-        VoronoiDiagram::Point_2 point(sites->at(i).first->x, sites->at(i).first->y);
+        VoronoiDiagram::Point_2 point(sites->at(i).first.x, sites->at(i).first.y);
         // locate site
         VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
         if (loc.which() == 0)
@@ -398,11 +385,11 @@ void VoronoiNet::clearVoronoiNet()
  * @param point shared_ptr<geometry::CNPoint2D>
  * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
  */
-shared_ptr<vector<shared_ptr<Vertex>>> VoronoiNet::getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point)
+shared_ptr<vector<Vertex>> VoronoiNet::getVerticesOfFace(geometry::CNPointAllo point)
 {
-    shared_ptr<vector<shared_ptr<Vertex>>> ret = make_shared<vector<shared_ptr<Vertex>>>();
+    auto ret = make_shared<vector<Vertex>>();
     // locate point
-    VoronoiDiagram::Point_2 p(point->x, point->y);
+    VoronoiDiagram::Point_2 p(point.x, point.y);
     VoronoiDiagram::Locate_result loc = this->voronoi->locate(p);
     // if its a face
     if (loc.which() == 0)
@@ -416,7 +403,7 @@ shared_ptr<vector<shared_ptr<Vertex>>> VoronoiNet::getVerticesOfFace(shared_ptr<
             // if the edge has a sourcesave the vertex
             if (edge->has_source())
             {
-                ret->push_back(make_shared<VoronoiDiagram::Vertex>(*(edge->source())));
+                ret->push_back(VoronoiDiagram::Vertex(*(edge->source())));
             }
             edge = edge->next();
         } while (edge != begin);
@@ -482,15 +469,17 @@ shared_ptr<VoronoiDiagram::Site_2> VoronoiNet::getSiteOfFace(VoronoiDiagram::Poi
  * return the obstacle positions
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
  */
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getObstaclePositions()
+vector<geometry::CNPointAllo> VoronoiNet::getObstaclePositions()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
+    // TODO: continue work here
+    return *this->alloClusteredObsWithMe;
     for (auto ob : *this->alloClusteredObsWithMe)
     {
         // obstacles have negative ids
-        if (ob->id < 0)
+        if (ob.id < 0)
         {
-            ret->push_back(ob->getPoint());
+            ret->push_back(ob.getPoint());
         }
     }
     return ret;
@@ -514,14 +503,14 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getObstaclePosit
  * return the site positions
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
  */
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getOpponentPositions()
+shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getOpponentPositions()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
     for (auto cluster : *alloClusteredObsWithMe)
     {
-        if (cluster->id == EntityType::Opponent)
+        if (cluster.id == EntityType::Opponent)
         {
-            ret->push_back(cluster->getPoint());
+            ret->push_back(cluster.getPoint());
         }
     }
     return ret;
@@ -531,12 +520,12 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getOpponentPosit
  * removes given sites from voronoi net
  * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
  */
-void VoronoiNet::removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites)
+void VoronoiNet::removeSites(shared_ptr<vector<geometry::CNPointAllo>> sites)
 {
     for (int i = 0; i < sites->size(); i++)
     {
         // locate point
-        VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
+        VoronoiDiagram::Point_2 point(sites->at(i).x, sites->at(i).y);
         VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
         // if location is face
         if (VoronoiDiagram::Face_handle *handle = boost::get<VoronoiDiagram::Face_handle>(&loc))
@@ -547,17 +536,17 @@ void VoronoiNet::removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
     }
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getArtificialObstacles()
+shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getArtificialObstacles()
 {
     return this->artificialObstacles;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNRobot>>> VoronoiNet::getAlloClusteredObsWithMe()
+shared_ptr<vector<geometry::CNRobotAllo>> VoronoiNet::getAlloClusteredObsWithMe()
 {
     return this->alloClusteredObsWithMe;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getAdditionalObstacles()
+shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getAdditionalObstacles()
 {
     return this->additionalObstacles;
 }
@@ -568,7 +557,7 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getAdditionalObs
  */
 void VoronoiNet::blockOppPenaltyArea()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
 
     // get cornerpoints of opp penalty area
     auto upLeftCorner = wm->field->posULOppPenaltyArea();
@@ -576,12 +565,12 @@ void VoronoiNet::blockOppPenaltyArea()
     auto lowRightCorner = wm->field->posLROppPenaltyArea();
     ret->push_back(lowRightCorner);
     // get field length and width
-    int penaltyWidth = wm->field->getGoalAreaWidth();
-    int penaltyLength = wm->field->getGoalAreaLength();
+    int penaltyWidth = (int)wm->field->getGoalAreaWidth();
+    int penaltyLength = (int)wm->field->getGoalAreaLength();
     // calculate missing points
-    auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
+    auto upRightCorner = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y);
     ret->push_back(upRightCorner);
-    auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
+    auto lowLeftCorner = geometry::CNPointAllo(lowRightCorner.x, upLeftCorner.y);
     ret->push_back(lowLeftCorner);
     // calculate point count to block space in width
     int pointCount = penaltyWidth / 500;
@@ -590,8 +579,8 @@ void VoronoiNet::blockOppPenaltyArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x + i * pointDist, lowRightCorner->y);
-        auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x + i * pointDist, lowLeftCorner->y);
+        auto temp = geometry::CNPointAllo(lowRightCorner.x + i * pointDist, lowRightCorner.y);
+        auto temp2 = geometry::CNPointAllo(lowLeftCorner.x + i * pointDist, lowLeftCorner.y);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -602,7 +591,7 @@ void VoronoiNet::blockOppPenaltyArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x, lowRightCorner->y + i * pointDist);
+        auto temp = geometry::CNPointAllo(lowRightCorner.x, lowRightCorner.y + i * pointDist);
         ret->push_back(temp);
     }
     // insert them into the voronoi diagram
@@ -615,7 +604,7 @@ void VoronoiNet::blockOppPenaltyArea()
  */
 void VoronoiNet::blockOppGoalArea()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
 
     // get cornerpoints of opp goal area
     auto upLeftCorner = wm->field->posULOppGoalArea();
@@ -623,12 +612,12 @@ void VoronoiNet::blockOppGoalArea()
     auto lowRightCorner = wm->field->posLROppGoalArea();
     ret->push_back(lowRightCorner);
     // get field length and width
-    int penaltyWidth = wm->field->getPenaltyAreaWidth();
-    int penaltyLength = wm->field->getPenaltyAreaLength();
+    int penaltyWidth = (int)wm->field->getPenaltyAreaWidth();
+    int penaltyLength = (int)wm->field->getPenaltyAreaLength();
     // calculate missing points
-    auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
+    auto upRightCorner = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y);
     ret->push_back(upRightCorner);
-    auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
+    auto lowLeftCorner = geometry::CNPointAllo(lowRightCorner.x, upLeftCorner.y);
     ret->push_back(lowLeftCorner);
     // calculate point count to block space in width
     int pointCount = penaltyWidth / 500;
@@ -637,8 +626,8 @@ void VoronoiNet::blockOppGoalArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x + i * pointDist, lowRightCorner->y);
-        auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x + i * pointDist, lowLeftCorner->y);
+        auto temp = geometry::CNPointAllo(lowRightCorner.x + i * pointDist, lowRightCorner.y);
+        auto temp2 = geometry::CNPointAllo(lowLeftCorner.x + i * pointDist, lowLeftCorner.y);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -649,7 +638,7 @@ void VoronoiNet::blockOppGoalArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x, lowRightCorner->y + i * pointDist);
+        auto temp = geometry::CNPointAllo(lowRightCorner.x, lowRightCorner.y + i * pointDist);
         ret->push_back(temp);
     }
     // insert them into the voronoi diagram
@@ -662,7 +651,7 @@ void VoronoiNet::blockOppGoalArea()
  */
 void VoronoiNet::blockOwnPenaltyArea()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
 
     // get cornerpoints of own penalty area
     auto upLeftCorner = wm->field->posULOwnPenaltyArea();
@@ -670,12 +659,12 @@ void VoronoiNet::blockOwnPenaltyArea()
     auto lowRightCorner = wm->field->posLROwnPenaltyArea();
     ret->push_back(lowRightCorner);
     // get field length and width
-    int penaltyWidth = wm->field->getGoalAreaWidth();
-    int penaltyLength = wm->field->getGoalAreaLength();
+    int penaltyWidth = (int)wm->field->getGoalAreaWidth();
+    int penaltyLength = (int)wm->field->getGoalAreaLength();
     // calculate missing points
-    auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
+    auto upRightCorner = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y);
     ret->push_back(upRightCorner);
-    auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
+    auto lowLeftCorner = geometry::CNPointAllo(lowRightCorner.x, upLeftCorner.y);
     ret->push_back(lowLeftCorner);
     // calculate point count to block space in width
     int pointCount = penaltyWidth / 500;
@@ -684,8 +673,8 @@ void VoronoiNet::blockOwnPenaltyArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x - i * pointDist, lowRightCorner->y);
-        auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x - i * pointDist, lowLeftCorner->y);
+        auto temp = geometry::CNPointAllo(upRightCorner.x - i * pointDist, lowRightCorner.y);
+        auto temp2 = geometry::CNPointAllo(upLeftCorner.x - i * pointDist, lowLeftCorner.y);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -696,7 +685,7 @@ void VoronoiNet::blockOwnPenaltyArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y + i * pointDist);
+        auto temp = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y + i * pointDist);
         ret->push_back(temp);
     }
     // insert them into the voronoi diagram
@@ -709,7 +698,7 @@ void VoronoiNet::blockOwnPenaltyArea()
  */
 void VoronoiNet::blockOwnGoalArea()
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
 
     // get cornerpoints of own goal area
     auto upLeftCorner = wm->field->posULOwnGoalArea();
@@ -717,12 +706,12 @@ void VoronoiNet::blockOwnGoalArea()
     auto lowRightCorner = wm->field->posLROwnGoalArea();
     ret->push_back(lowRightCorner);
     // get field length and width
-    int penaltyWidth = wm->field->getPenaltyAreaWidth();
-    int penaltyLength = wm->field->getPenaltyAreaLength();
+    int penaltyWidth = (int)wm->field->getPenaltyAreaWidth();
+    int penaltyLength = (int)wm->field->getPenaltyAreaLength();
     // calculate missing points
-    auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
+    auto upRightCorner = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y);
     ret->push_back(upRightCorner);
-    auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
+    auto lowLeftCorner = geometry::CNPointAllo(lowRightCorner.x, upLeftCorner.y);
     ret->push_back(lowLeftCorner);
     // calculate point count to block space in width
     int pointCount = penaltyWidth / 500;
@@ -731,8 +720,8 @@ void VoronoiNet::blockOwnGoalArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x - i * pointDist, lowRightCorner->y);
-        auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x - i * pointDist, lowLeftCorner->y);
+        auto temp = geometry::CNPointAllo(upRightCorner.x - i * pointDist, lowRightCorner.y);
+        auto temp2 = geometry::CNPointAllo(upLeftCorner.x - i * pointDist, lowLeftCorner.y);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -743,7 +732,7 @@ void VoronoiNet::blockOwnGoalArea()
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x, lowRightCorner->y + i * pointDist);
+        auto temp = geometry::CNPointAllo(upRightCorner.x, lowRightCorner.y + i * pointDist);
         ret->push_back(temp);
     }
     // insert them into the voronoi diagram
@@ -768,7 +757,7 @@ void VoronoiNet::blockThreeMeterAroundBall()
     // calculate perimeter
     double perimeter = 2 * M_PI * radius;
     // calculate point count on perimeter
-    int pointCount = perimeter / 500 + 0.5;
+    int pointCount = (int)ceil(perimeter / 500);
     // calculate agle between slices of the circle
     double slice = 2 * M_PI / pointCount;
     // calculate points to block area
@@ -790,13 +779,13 @@ void VoronoiNet::blockThreeMeterAroundBall()
  * @param radious double
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  */
-void VoronoiNet::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius)
+void VoronoiNet::blockCircle(geometry::CNPointAllo centerPoint, double radius)
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
     // calculate perimeter
     double perimeter = 2 * M_PI * radius;
     // calculate point count on perimeter
-    int pointCount = perimeter / 500 + 0.5;
+    int pointCount = (int)ceil(perimeter / 500);
     // calculate agle between slices of the circle
     double slice = 2 * M_PI / pointCount;
     // calculate points to block area
@@ -805,9 +794,9 @@ void VoronoiNet::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double
     {
         // calculate point
         double angle = slice * i;
-        int newX = (int)(centerPoint->x + radius * cos(angle));
-        int newY = (int)(centerPoint->y + radius * sin(angle));
-        ret->push_back(make_shared<geometry::CNPoint2D>(newX, newY));
+        int newX = (int)(centerPoint.x + radius * cos(angle));
+        int newY = (int)(centerPoint.y + radius * sin(angle));
+        ret->push_back(geometry::CNPointAllo(newX, newY));
     }
     // insert them into the voronoi diagram
     insertAdditionalPoints(ret, EntityType::ArtificialObstacle);
@@ -819,19 +808,19 @@ void VoronoiNet::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double
  * @param lowRightCorner shared_ptr<geometry::CNPoint2D>
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
  */
-void VoronoiNet::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner)
+void VoronoiNet::blockRectangle(geometry::CNPointAllo upLeftCorner, geometry::CNPointAllo lowRightCorner)
 {
-    auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    auto ret = make_shared<vector<geometry::CNPointAllo>>();
 
     ret->push_back(upLeftCorner);
     ret->push_back(lowRightCorner);
     // calculate missing points
-    auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
+    auto upRightCorner = geometry::CNPointAllo(upLeftCorner.x, lowRightCorner.y);
     ret->push_back(upRightCorner);
-    auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
+    auto lowLeftCorner = geometry::CNPointAllo(lowRightCorner.x, upLeftCorner.y);
     ret->push_back(lowLeftCorner);
-    int width = upLeftCorner->distanceTo(lowLeftCorner);
-    int length = upLeftCorner->distanceTo(upRightCorner);
+    int width = (int)upLeftCorner.distanceTo(lowLeftCorner);
+    int length = (int)upLeftCorner.distanceTo(upRightCorner);
     // calculate point count to block space in width
     int pointCount = width / 500;
     double rest = width % 500;
@@ -839,8 +828,8 @@ void VoronoiNet::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, sh
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x - i * pointDist, lowRightCorner->y);
-        auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x - i * pointDist, lowLeftCorner->y);
+        auto temp = geometry::CNPointAllo(lowRightCorner.x - i * pointDist, lowRightCorner.y);
+        auto temp2 = geometry::CNPointAllo(lowLeftCorner.x - i * pointDist, lowLeftCorner.y);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -851,8 +840,8 @@ void VoronoiNet::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, sh
     // calculate points to block area
     for (int i = 1; i < pointCount; i++)
     {
-        auto temp = make_shared<geometry::CNPoint2D>(lowLeftCorner->x, upLeftCorner->y + i * pointDist);
-        auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x, upRightCorner->y - i * pointDist);
+        auto temp = geometry::CNPointAllo(lowLeftCorner.x, upLeftCorner.y + i * pointDist);
+        auto temp2 = geometry::CNPointAllo(upLeftCorner.x, upRightCorner.y - i * pointDist);
         ret->push_back(temp);
         ret->push_back(temp2);
     }
@@ -901,6 +890,5 @@ string VoronoiNet::toString()
     }
     return ss.str();
 }
-}
 
-/* namespace msl */
+}/* namespace msl */

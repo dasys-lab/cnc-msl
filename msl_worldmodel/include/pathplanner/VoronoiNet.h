@@ -106,7 +106,7 @@ class VoronoiNet
      * @param points std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>>
      * @param type EntityType type of obstacle to insert
      */
-    void insertAdditionalPoints(std::shared_ptr<std::vector<geometry::CNPointAllo>> points, EntityType type);
+    void insertAdditionalPoints(std::vector<geometry::CNPointAllo> points, EntityType type);
 
     /**
      * Deletes sites from Voronoi Net and clears pointRobotKindMapping

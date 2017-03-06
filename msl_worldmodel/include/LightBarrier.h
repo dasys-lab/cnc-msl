@@ -5,10 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_LIGHTBARRIER_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_LIGHTBARRIER_H_
+#pragma once
 
 #include "SystemConfig.h"
+
+#include <nonstd/optional.hpp>
 
 namespace msl
 {
@@ -19,7 +20,7 @@ class LightBarrier
   public:
     LightBarrier(MSLWorldModel *wm);
     virtual ~LightBarrier();
-    bool getLightBarrier(int index = 0);
+    nonstd::optional<bool> getLightBarrier();
     bool mayUseLightBarrier();
 
   private:
@@ -29,5 +30,3 @@ class LightBarrier
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_LIGHTBARRIER_H_ */

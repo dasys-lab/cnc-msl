@@ -8,6 +8,10 @@
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
 #include <LightBarrier.h>
+
+using nonstd::optional;
+using nonstd::nullopt;
+
 namespace msl
 {
 
@@ -22,9 +26,16 @@ LightBarrier::~LightBarrier()
 {
 }
 
-bool LightBarrier::getLightBarrier(int index)
+optional<bool> LightBarrier::getLightBarrier()
 {
-    return this->wm->rawSensorData->getLightBarrier(index);
+    auto lbInfo = this->wm->rawSensorData->getLightBarrierBuffer().getLastValid();
+
+    if (lbInfo)
+    {
+        return lbInfo->getInformation();
+    }
+
+    return nullopt;
 }
 
 bool LightBarrier::mayUseLightBarrier()
