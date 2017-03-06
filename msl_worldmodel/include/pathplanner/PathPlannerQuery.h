@@ -5,15 +5,12 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_PATHPLANNERQUERY_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_PATHPLANNERQUERY_H_
+#pragma once
 
-#include <memory>
-#include <vector>
 #include <cnc_geometry/CNPointAllo.h>
+#include <memory>
 #include <nonstd/optional.hpp>
-
-using namespace std;
+#include <vector>
 
 namespace msl
 {
@@ -49,7 +46,7 @@ class PathPlannerQuery
     /**
      * Add  additional artificial obstacles
      */
-    nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints;
+    nonstd::optional<std::vector<geometry::CNPointAllo>> additionalPoints;
     /**
      * Radius for arbitrary circle block
      */
@@ -69,5 +66,3 @@ class PathPlannerQuery
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_PATHPLANNERQUERY_H_ */
