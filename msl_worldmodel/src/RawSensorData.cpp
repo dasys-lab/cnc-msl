@@ -385,6 +385,10 @@ void RawSensorData::processGoalDetectionData(msl_msgs::Pose2dStampedPtr msg) {
 
 	pose->pose.x = msg->pose.x;
 	pose->pose.y = msg->pose.y;
+	pose->leftGoalPost.x = msg->leftGoalPost.x;
+	pose->leftGoalPost.y = msg->leftGoalPost.y;
+	pose->rightGoalPost.x = msg->rightGoalPost.x;
+	pose->rightGoalPost.y = msg->rightGoalPost.y;
 	pose->pose.theta = msg->pose.theta;
 
 	shared_ptr<InformationElement<msl_msgs::Pose2dStamped>> elem = make_shared<InformationElement<msl_msgs::Pose2dStamped>>(pose, wm->getTime());
