@@ -138,6 +138,7 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd msgback;
         msgback.leftMotor = left;
         msgback.rightMotor = right;
+	cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
         send(msgback);
 
 //        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
