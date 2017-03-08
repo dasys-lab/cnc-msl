@@ -25,8 +25,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
-        static constexpr double MAX_ROTATION_SPEED = 1.0;
-        static constexpr double ACCELERATION = 0.05;
+        static constexpr double MAX_ROTATION_SPEED = 1.5;
+        static constexpr double ACCELERATION = 0.1;
         double robotRadius;
 
         int motionRotations = 0;
