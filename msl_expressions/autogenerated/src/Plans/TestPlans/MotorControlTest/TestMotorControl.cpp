@@ -27,12 +27,12 @@ namespace alica
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
 
 
-    	if (wm->getTime() < startTime + 2000000000)
+    	if (wm->getTime() < startTime + 1000000000)
 
         {
             msl_actuator_msgs::MotionControl motorMsg;
             motorMsg.motion.translation = testSpeed;
-            motorMsg.motion.angle = angle;
+            motorMsg.motion.angle = (double)angle/180*M_PI;
             motorMsg.motion.rotation = 0;
 
 
@@ -43,12 +43,12 @@ namespace alica
         }
 
 
-    	else if (wm->getTime() < startTime + 4000000000)
+    	else if (wm->getTime() < startTime + 2000000000)
 
     	    	{
     	        msl_actuator_msgs::MotionControl motorMsg;
     	        motorMsg.motion.translation = testSpeed;
-    	        motorMsg.motion.angle = angle + 120;
+    	        motorMsg.motion.angle = (double)(angle + 120)/180*M_PI;
     	        motorMsg.motion.rotation = 0;
 
     	        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
@@ -56,12 +56,12 @@ namespace alica
     	        send(motorMsg);
 
     	    	}
-    	else if (wm->getTime() < startTime + 6000000000)
+    	else if (wm->getTime() < startTime + 3000000000)
 
     	    	{
     	        msl_actuator_msgs::MotionControl motorMsg;
     	        motorMsg.motion.translation = testSpeed;
-    	        motorMsg.motion.angle = angle + 240;
+    	        motorMsg.motion.angle = (double)(angle + 240)/180*M_PI;
     	        motorMsg.motion.rotation = 0;
 
     	        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
