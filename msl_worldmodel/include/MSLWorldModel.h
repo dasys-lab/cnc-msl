@@ -5,10 +5,7 @@
  *      Author: Andreas Witsch
  */
 
-#ifndef MSLWORLDMODEL_H_
-#define MSLWORLDMODEL_H_
-
-using namespace std;
+#pragma once
 
 #include <iostream>
 #include <list>
@@ -174,5 +171,3 @@ class MSLWorldModel
 };
 
 } /* namespace msl */
-
-#endif /* MSLWORLDMODEL_H_ */

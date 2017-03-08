@@ -29,7 +29,7 @@ TimeHelper::TimeHelper()
     : sc()
 {
 
-    this->sc = SystemConfig::getInstance();
+    this->sc = supplementary::SystemConfig::getInstance();
 }
 
 TimeHelper::~TimeHelper()

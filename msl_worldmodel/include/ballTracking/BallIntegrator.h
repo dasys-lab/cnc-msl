@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef BallIntegrator_H
-#define BallIntegrator_H
+
+#pragma once
 
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
@@ -61,5 +61,3 @@ class BallIntegrator
     double increaseCertainty(double certainty);
     double decreaseCertainty(double certainty);
 };
-
-#endif

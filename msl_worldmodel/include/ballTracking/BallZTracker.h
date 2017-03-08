@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef BallZTracker_H
-#define BallZTracker_H
+
+#pragma once
 
 #include "ballTracking/TrackingTypes.h"
 #include <stdlib.h>
@@ -40,5 +40,3 @@ class BallZTracker
     void init();
     void cleanup();
 };
-
-#endif

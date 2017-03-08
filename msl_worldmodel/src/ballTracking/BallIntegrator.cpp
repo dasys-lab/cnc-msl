@@ -28,7 +28,8 @@
 
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
-#include <container/CNPoint2D.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
 
 BallIntegrator *BallIntegrator::instance_ = NULL;
 
@@ -115,17 +116,17 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold)
 {
     bool found = false;
     ObservedPoint p = p_;
-    geometry::CNPoint2D egoPoint;
+    geometry::CNPointEgo egoPoint;
     egoPoint.x = p_.x;
     egoPoint.y = p_.y;
-    auto posPtr = msl::MSLWorldModel::get()->rawSensorData->getOwnPositionVision(); // In a time far far away this was from the motionbuffer!?
-    geometry::CNPosition integrationPos;
-    if (posPtr != nullptr)
+    auto ownPosInfo = msl::MSLWorldModel::get()->rawSensorData->getOwnPositionVisionBuffer().getLastValid(); // In a time far far away this was from the motionbuffer!?
+    geometry::CNPositionAllo integrationPos;
+    if (ownPosInfo != nullptr)
     {
-        integrationPos = *posPtr;
+        integrationPos = ownPosInfo->getInformation();
     }
     // RawOdometryHelper::getInstance()->getPositionData(p.timestamp);
-    geometry::CNPoint2D alloPoint = *egoPoint.egoToAllo(integrationPos);
+    geometry::CNPointAllo alloPoint = egoPoint.toAllo(integrationPos);
 
     p.x = alloPoint.x;
     p.y = alloPoint.y;

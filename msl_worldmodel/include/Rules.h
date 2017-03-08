@@ -5,14 +5,9 @@
  *      Author: labpc1
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_RULES_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_RULES_H_
+#pragma once
 
-#include "SystemConfig.h"
-
-using namespace supplementary;
-
-using namespace std;
+#include <SystemConfig.h>
 
 namespace msl
 {
@@ -32,7 +27,7 @@ class Rules
     unsigned long getPenaltyTimeForShot();
 
   private:
-    SystemConfig *sc;
+    supplementary::SystemConfig *sc;
 
     double ballRadius;
     double robotRadius;
@@ -49,5 +44,3 @@ class Rules
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_RULES_H_ */

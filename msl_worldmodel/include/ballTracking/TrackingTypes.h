@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef Types_H
-#define Types_H
+
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -248,5 +248,3 @@ class KinectCluster
         pixels.push_back(p);
     }
 };
-
-#endif

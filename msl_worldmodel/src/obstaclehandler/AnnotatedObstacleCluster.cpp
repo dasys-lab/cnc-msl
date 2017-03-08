@@ -29,7 +29,7 @@ AnnotatedObstacleCluster::AnnotatedObstacleCluster()
     this->linearSumY = 0;
     this->squareSum = 0;
     this->angle = 0;
-    this->rotation = 0;
+    this->rotationVel = 0;
     this->certainty = 0;
     this->numObs = 0;
     this->supporter = make_shared<vector<int>>();
@@ -70,7 +70,7 @@ void AnnotatedObstacleCluster::init(int x, int y, double radius, int velX, int v
     this->init(x, y, 0.0, radius, velX, velY, 0.0, 0.0, ident, supId);
 }
 
-void AnnotatedObstacleCluster::init(int x, int y, double angle, double radius, int velX, int velY, double rotation, double certainty, int ident, int supId)
+void AnnotatedObstacleCluster::init(int x, int y, double angle, double radius, int velX, int velY, double rotationVel, double certainty, int ident, int supId)
 {
     this->x = x;
     this->y = y;
@@ -78,7 +78,7 @@ void AnnotatedObstacleCluster::init(int x, int y, double angle, double radius, i
     this->radius = radius;
     this->velX = velX;
     this->velY = velY;
-    this->rotation = rotation;
+    this->rotationVel = rotationVel;
     this->certainty = certainty;
     this->ident = ident;
     this->numObs = 1;
@@ -163,7 +163,7 @@ bool AnnotatedObstacleCluster::checkAndMerge(AnnotatedObstacleCluster *cluster, 
             this->velX = cluster->velX;
             this->velY = cluster->velY;
             this->certainty = cluster->certainty;
-            this->rotation = cluster->rotation;
+            this->rotationVel = cluster->rotationVel;
         }
         return true;
     }

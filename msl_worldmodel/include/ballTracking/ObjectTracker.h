@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef ObjectTracker_H
-#define ObjectTracker_H
+
+#pragma once
 
 #include "ballTracking/TrackingTypes.h"
 #include <stdlib.h>
@@ -39,5 +39,3 @@ class ObjectTracker
     void init();
     void cleanup();
 };
-
-#endif

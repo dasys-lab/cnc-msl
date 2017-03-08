@@ -14,12 +14,14 @@
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 #include "obstaclehandler/SimpleCluster.h"
 
-namespace msl
-{
-
 using std::vector;
 using std::shared_ptr;
 using std::make_shared;
+using nonstd::nullopt;
+using nonstd::optional;
+
+namespace msl
+{
 
 Obstacles::Obstacles(MSLWorldModel *wm, int ringbufferLength)
     : obstacles(ringbufferLength)
@@ -86,7 +88,7 @@ double Obstacles::getDistanceToObstacle(geometry::CNPointEgo target)
     return 0.0;
 }
 
-geometry::CNPointEgo Obstacles::getBiggestFreeGoalAreaMidPoint()
+optional<geometry::CNPointEgo> Obstacles::getBiggestFreeGoalAreaMidPoint()
 {
     auto leftPost = wm->field->posLeftOppGoalPost();
     auto rightPost = wm->field->posRightOppGoalPost();
@@ -94,7 +96,7 @@ geometry::CNPointEgo Obstacles::getBiggestFreeGoalAreaMidPoint()
 
     auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     if (ownPosInfo == nullptr)
-        return nullptr;
+        return nullopt;
 
     auto ownPos = ownPosInfo->getInformation();
 
@@ -126,7 +128,7 @@ geometry::CNPointEgo Obstacles::getBiggestFreeGoalAreaMidPoint()
     // Console.WriteLine("wurst left : " + left + " right : " + right);
     if (abs(right - left) < 5)
     {
-        return nullptr;
+        return nullopt;
     }
     else if (right > left)
     {
@@ -144,7 +146,7 @@ geometry::CNPointEgo Obstacles::getBiggestFreeGoalAreaMidPoint()
  * Clusters and saves the given obstacles
  * @param myObstacles the new obstacles to process
  */
-void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPointEgo>> myObstacles)
+void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> myObstacles)
 {
 
     auto odoInfo = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValid(); // TODO: or getLast()?
@@ -161,8 +163,8 @@ void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPointEgo>> myObsta
     // CLUSTERING
     auto clusteredObstacles = clusterAnnotatedObstacles(annotatedObstacles);
     // CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
-    auto newObsClustersAllo = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
-    auto newObsClustersAlloWithMe = make_shared<vector<shared_ptr<geometry::CNRobotAllo>>>();
+    auto newObsClustersAllo = make_shared<vector<geometry::CNRobotAllo>>();
+    auto newObsClustersAlloWithMe = make_shared<vector<geometry::CNRobotAllo>>();
     auto newOppEgo = make_shared<vector<geometry::CNPointEgo>>();
     auto newOppAllo = make_shared<vector<geometry::CNPointAllo>>();
     auto newTeammatesEgo = make_shared<vector<geometry::CNPointEgo>>();
@@ -170,20 +172,20 @@ void Obstacles::handleObstacles(shared_ptr<vector<geometry::CNPointEgo>> myObsta
 
     for (unsigned long i = 0; i < clusteredObstacles->size(); ++i)
     {
-        auto clusterInfo = make_shared<geometry::CNRobotAllo>();
+        auto clusterInfo = geometry::CNRobotAllo();
         auto current = clusteredObstacles->at(i);
 
-        clusterInfo->id = current->ident;
-        clusterInfo->radius = current->radius;
-        clusterInfo->x = current->x;
-        clusterInfo->y = current->y;
-        clusterInfo->theta = current->angle;
-        clusterInfo->velocity.x = current->velX;
-        clusterInfo->velocity.y = current->velY;
-        clusterInfo->opposer = current->opposer;
-        clusterInfo->supporter = current->supporter;
-        clusterInfo->certainty = current->certainty;
-        clusterInfo->rotation = current->rotation;
+        clusterInfo.id = current->ident;
+        clusterInfo.radius = current->radius;
+        clusterInfo.x = current->x;
+        clusterInfo.y = current->y;
+        clusterInfo.theta = current->angle;
+        clusterInfo.velocity.x = current->velX;
+        clusterInfo.velocity.y = current->velY;
+        clusterInfo.opposer = current->opposer;
+        clusterInfo.supporter = current->supporter;
+        clusterInfo.certainty = current->certainty;
+        clusterInfo.rotationVel = current->rotationVel;
         if (current->ident != wm->getOwnId())
         {
             newObsClustersAllo->push_back(clusterInfo);
@@ -352,7 +354,7 @@ Obstacles::clusterAnnotatedObstacles(shared_ptr<vector<AnnotatedObstacleCluster 
 }
 
 shared_ptr<vector<AnnotatedObstacleCluster *>>
-Obstacles::setupAnnotatedObstacles(shared_ptr<vector<geometry::CNPointEgo>> ownObs,
+Obstacles::setupAnnotatedObstacles(shared_ptr<const vector<geometry::CNPointEgo>> ownObs,
                                    msl_sensor_msgs::CorrectedOdometryInfo myOdo)
 {
     auto clusters = make_shared<vector<AnnotatedObstacleCluster *>>();
@@ -796,10 +798,14 @@ void Obstacles::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 {
     InfoTime time = wm->getTime();
 
-    auto o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(data->obstacles, time);
+    auto o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(
+        data->obstacles, time, this->maxInfoValidity, 1.0); // TODO: certainty?
     this->obstacles.add(o);
 
-    auto obstaclesPtr = make_shared<vector<geometry::CNPointEgo>>(data->obstacles);
+    auto obstaclesPtr = make_shared<vector<geometry::CNPointEgo>>(data->obstacles.size());
+    for(auto ob : data->obstacles) {
+        obstaclesPtr->push_back(geometry::CNPointEgo(ob.x, ob.y));
+    }
     handleObstacles(obstaclesPtr);
 }
 

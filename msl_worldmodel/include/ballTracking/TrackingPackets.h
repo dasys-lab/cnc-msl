@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef Packets_H
-#define Packets_H
+
+#pragma once
 
 #define EPOCH_ADJUST ((unsigned long long)62135596800LL)
 
@@ -67,5 +67,3 @@ struct OdometryPacket
     double translation;
     double rotation;
 };
-
-#endif

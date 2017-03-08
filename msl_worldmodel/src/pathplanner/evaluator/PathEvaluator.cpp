@@ -5,13 +5,16 @@
  *      Author: Stefan Jakob
  */
 
-#include "GeometryCalculator.h"
+#include <cnc_geometry/Calculator.h>
+
 #include "MSLEnums.h"
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/VoronoiNet.h"
-#include <SystemConfig.h>
 #include <pathplanner/evaluator/PathEvaluator.h>
+
+using nonstd::optional;
+
 namespace msl
 {
 
@@ -19,9 +22,11 @@ PathEvaluator::PathEvaluator()
 {
     this->sc = supplementary::SystemConfig::getInstance();
     voronoiPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
-    this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "additionalCorridorWidth", NULL);
+    this->additionalCorridorWidth =
+        (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "additionalCorridorWidth", NULL);
     this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
-    this->obstacleDistanceWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "obstacleDistanceWeight", NULL);
+    this->obstacleDistanceWeight =
+        (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "obstacleDistanceWeight", NULL);
     this->pathAngleWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathAngleWeight", NULL);
     this->pathLengthWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathLengthWeight", NULL);
     this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
@@ -31,23 +36,24 @@ PathEvaluator::~PathEvaluator()
 {
 }
 
-pair<double, double> PathEvaluator::evalInitial(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> nextNode,
-                                                VoronoiNet *voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath,
-                                                shared_ptr<geometry::CNPoint2D> lastTarget)
+pair<double, double> PathEvaluator::evalInitial(geometry::CNPointAllo startPos, geometry::CNPointAllo goal,
+                                                shared_ptr<SearchNode> nextNode, shared_ptr<const VoronoiNet> voronoi,
+                                                shared_ptr<const vector<geometry::CNPointAllo>> lastPath,
+                                                optional<geometry::CNPointAllo> lastTarget) const
 {
     auto curPoint = nextNode->getPoint();
 
-    double cost = pathLengthWeight * startPos->distanceTo(curPoint);
-    double heuristic = pathLengthWeight * curPoint->distanceTo(goal);
+    double cost = pathLengthWeight * startPos.distanceTo(curPoint);
+    double heuristic = pathLengthWeight * curPoint.distanceTo(goal);
 
     // if we are in the first node, there has been a path before and the goal changed
-    if (lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr && lastTarget->distanceTo(goal) < 250)
+    if (lastPath != nullptr && lastPath->size() > 1 && lastTarget && lastTarget->distanceTo(goal) < 250)
     {
         // calculate angle between the first edge of the current path and the last path
-        double a = startPos->x - curPoint->x;
-        double b = startPos->y - curPoint->y;
-        double c = lastPath->at(0)->x - lastPath->at(1)->x;
-        double d = lastPath->at(0)->y - lastPath->at(1)->y;
+        double a = startPos.x - curPoint.x;
+        double b = startPos.y - curPoint.y;
+        double c = lastPath->at(0).x - lastPath->at(1).x;
+        double d = lastPath->at(0).y - lastPath->at(1).y;
 
         double mag_v1 = sqrt(a * a + b * b);
         double mag_v2 = sqrt(c * c + d * d);
@@ -66,18 +72,19 @@ pair<double, double> PathEvaluator::evalInitial(shared_ptr<geometry::CNPoint2D> 
 /**
  * Calculates the cost for a voronoi vertex
  */
-pair<double, double> PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-                                         VoronoiNet *voronoi)
+pair<double, double> PathEvaluator::eval(geometry::CNPointAllo goal, shared_ptr<SearchNode> currentNode,
+                                         shared_ptr<SearchNode> nextNode, shared_ptr<const VoronoiNet> voronoi) const
 {
     auto curPoint = currentNode->getPoint();
     auto nextPoint = nextNode->getPoint();
 
     double cost = currentNode->getCost();
-    double heuristic = pathLengthWeight * nextPoint->distanceTo(goal);
+    double heuristic = pathLengthWeight * nextPoint.distanceTo(goal);
 
-    cost += pathLengthWeight * nextPoint->distanceTo(curPoint);
+    cost += pathLengthWeight * nextPoint.distanceTo(curPoint);
 
-    if (voronoi != nullptr)
+    // TODO: what should be done if voronoi is null??? This is just a quick guess
+    if(voronoi != nullptr)
     {
         // get sites next to voronoi edge
         int upType = voronoi->getTypeOfSite(nextNode->getEdge()->up()->point());
@@ -89,12 +96,14 @@ pair<double, double> PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> goal, s
         }
 
         // calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-        double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(), nextNode->getEdge()->up()->point().y(), curPoint->x,
-                                                              curPoint->y, nextPoint->x, nextPoint->y);
+        double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(),
+                                                              nextNode->getEdge()->up()->point().y(), curPoint.x,
+                                                              curPoint.y, nextPoint.x, nextPoint.y);
         // calculate weighted dist to both objects
 
         // Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
-        if ((upType > 0 && downType > 0) || (upType > 0 && downType != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
+        if ((upType > 0 && downType > 0) ||
+            (upType > 0 && downType != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
             || (downType > 0 && upType != EntityType::ArtificialObstacle))
         {
             cost += (obstacleDistanceWeight * (1.0 / distobs));
@@ -109,10 +118,10 @@ pair<double, double> PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> goal, s
     // if the path is longer then one vertex add cost for the angle
     if (currentNode->getPredecessor() != nullptr)
     {
-        double dx21 = nextPoint->x - curPoint->x;
-        double dx31 = currentNode->getPredecessor()->getPoint()->x - curPoint->x;
-        double dy21 = nextPoint->y - curPoint->y;
-        double dy31 = currentNode->getPredecessor()->getPoint()->y - curPoint->y;
+        double dx21 = nextPoint.x - curPoint.x;
+        double dx31 = currentNode->getPredecessor()->getPoint().x - curPoint.x;
+        double dy21 = nextPoint.y - curPoint.y;
+        double dy31 = currentNode->getPredecessor()->getPoint().y - curPoint.y;
         double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
         double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
         double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));

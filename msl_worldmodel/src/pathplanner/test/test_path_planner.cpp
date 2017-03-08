@@ -20,7 +20,6 @@
 #include "container/CNPoint2D.h"
 #include "pathplanner/PathPlanner.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
-using namespace std;
 
 class PathPlannerTest : public ::testing::Test
 {

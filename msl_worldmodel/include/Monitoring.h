@@ -5,8 +5,7 @@
  *      Author: Stephan Opfer
  */
 
-#ifndef SRC_MONITORING_H_
-#define SRC_MONITORING_H_
+#pragma once
 
 namespace std
 {
@@ -47,5 +46,3 @@ class Monitoring
 };
 
 } /* namespace msl */
-
-#endif /* SRC_MONITORING_H_ */

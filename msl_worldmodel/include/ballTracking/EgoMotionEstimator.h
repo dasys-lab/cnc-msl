@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef EgoMotionEstimator_H
-#define EgoMotionEstimator_H
+
+#pragma once
 
 #include "ballTracking/TrackingTypes.h"
 #include <stdlib.h>
@@ -39,5 +39,3 @@ class EgoMotionEstimator
     void init();
     void cleanup();
 };
-
-#endif

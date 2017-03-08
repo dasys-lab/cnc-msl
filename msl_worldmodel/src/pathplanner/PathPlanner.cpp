@@ -7,6 +7,9 @@
 
 using nonstd::optional;
 using nonstd::nullopt;
+using std::vector;
+using std::shared_ptr;
+using std::make_shared;
 
 namespace msl
 {
@@ -212,7 +215,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathPlanner::plan(const VoronoiNet &vo
      * our surrounding voronoi vertices.
      */
 
-    ret = make_shared<vector<shared_ptr<geometry::CNPointAllo>>>();
+    ret = make_shared<vector<geometry::CNPointAllo>>();
     shared_ptr<Vertex> bestVertex = nullptr;
     double bestDist = 0;
     // find vertex of robots voronoi face and which has maximum distance
@@ -260,7 +263,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathPlanner::aStarSearch(const Voronoi
         // TODO create the right initial costs
         auto node = make_shared<SearchNode>(vertice, 0, 0, nullptr);
         pair<double, double> costHeuristicPair =
-            pathEvaluator.evalInitial(startPos, goal, node, voronoi, this->lastPath, this->lastTarget);
+                pathEvaluator.evalInitial(startPos, goal, node, voronoi, this->lastPath, this->lastTarget);
         node->setCost(costHeuristicPair.first);
         node->setHeuristic(costHeuristicPair.second);
         insert(*open, node);
@@ -330,9 +333,9 @@ bool PathPlanner::isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circul
     }
 
     double distToEdge = geometry::distancePointToLineSegment(
-        incidentHalfEdge->up()->point().x(), incidentHalfEdge->up()->point().y(),
-        incidentHalfEdge->source()->point().x(), incidentHalfEdge->source()->point().y(),
-        incidentHalfEdge->target()->point().x(), incidentHalfEdge->target()->point().y());
+            incidentHalfEdge->up()->point().x(), incidentHalfEdge->up()->point().y(),
+            incidentHalfEdge->source()->point().x(), incidentHalfEdge->source()->point().y(),
+            incidentHalfEdge->target()->point().x(), incidentHalfEdge->target()->point().y());
 
     return distToEdge > this->minEdgeWidth;
 }
@@ -374,9 +377,9 @@ void PathPlanner::expandNode(shared_ptr<SearchNode> currentNode, vector<SearchNo
     }
 }
 
-bool PathPlanner::contains(const vector<SearchNode> &vector, VoronoiDiagram::Halfedge_around_vertex_circulator edge)
+bool PathPlanner::contains(const vector<SearchNode> &nodes, VoronoiDiagram::Halfedge_around_vertex_circulator edge)
 {
-    for (auto node : vector)
+    for (auto node : nodes)
     {
         if (edge == node.getEdge())
         {
@@ -389,14 +392,15 @@ bool PathPlanner::contains(const vector<SearchNode> &vector, VoronoiDiagram::Hal
 void PathPlanner::insert(vector<SearchNode> &vect, shared_ptr<SearchNode> currentNode)
 {
     vector<SearchNode>::iterator it =
-        std::upper_bound(vect.begin(), vect.end(), currentNode,
+        std::upper_bound(vect.begin(), vect.end(), *currentNode,
                          PathPlanner::compare); // find proper position in descending order
+
     vect.insert(it, *currentNode);              // insert before iterator it
 }
 
-bool PathPlanner::compare(shared_ptr<const SearchNode> first, shared_ptr<const SearchNode> second)
+bool PathPlanner::compare(const SearchNode &first, const SearchNode &second)
 {
-    if (first->getCost() + first->getHeuristic() < second->getCost() + second->getHeuristic())
+    if (first.getCost() + first.getHeuristic() < second.getCost() + second.getHeuristic())
     {
         return true;
     }
@@ -603,14 +607,14 @@ shared_ptr<const VoronoiNet> PathPlanner::getArtificialObjectNet() const
     return artificialObjectNet;
 }
 
-vector<shared_ptr<const VoronoiNet>> PathPlanner::getVoronoiNets() const
+vector<shared_ptr<VoronoiNet>> PathPlanner::getVoronoiNets() const
 {
     // TODO: stopped working here
     lock_guard<mutex> lock(this->voronoiMutex);
     return this->voronoiDiagrams;
 }
 
-shared_ptr<const VoronoiNet> PathPlanner::getCurrentVoronoiNet() const
+shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 {
     lock_guard<mutex> lock(this->voronoiMutex);
     if (this->currentVoronoiPos == -1)
@@ -635,7 +639,7 @@ double PathPlanner::getDribbleRotationWeight() const
     return dribble_rotationWeight;
 }
 
-shared_ptr<vector<geometry::CNPointAllo>> PathPlanner::getArtificialFieldSurroundingObs()
+shared_ptr<vector<geometry::CNPointAllo>> PathPlanner::getArtificialFieldSurroundingObs() const
 {
     shared_ptr<vector<geometry::CNPointAllo>> toInsert = make_shared<vector<geometry::CNPointAllo>>();
     int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);

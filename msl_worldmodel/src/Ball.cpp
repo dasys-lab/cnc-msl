@@ -24,6 +24,7 @@ using std::cos;
 using std::make_shared;
 using nonstd::nullopt;
 using nonstd::optional;
+using supplementary::SystemConfig;
 
 namespace msl
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cnc_geometry/CNPointAllo.h>
+#include <nonstd/optional.hpp>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -28,7 +29,7 @@ class SearchNode
   public:
     //		SearchNode();
     SearchNode(VoronoiDiagram::Halfedge_around_vertex_circulator edge, double cost, double heuristic, std::shared_ptr<SearchNode> predecessor);
-    SearchNode(std::shared_ptr<Vertex> vertex, double cost, double heuristic, std::shared_ptr<SearchNode> predecessor);
+    SearchNode(Vertex vertex, double cost, double heuristic, std::shared_ptr<SearchNode> predecessor);
     virtual ~SearchNode();
     /**
      * Gets the cost
@@ -56,6 +57,12 @@ class SearchNode
      * @return shared_ptr<SearchNode>
      */
     std::shared_ptr<const SearchNode> getPredecessor() const;
+
+    /**
+     * Gets the predecessor node
+     * @return shared_ptr<SearchNode>
+     */
+    std::shared_ptr<SearchNode> getPredecessor();
     /**
      * Sets the predecessor node
      * @param shared_ptr<SearchNode> predecessor
@@ -101,7 +108,7 @@ class SearchNode
     VoronoiDiagram::Halfedge_around_vertex_circulator edge;
 
     bool initialEdge;
-    std::shared_ptr<Vertex> vertex;
+    nonstd::optional<Vertex> vertex;
 };
 
 } /* namespace msl */

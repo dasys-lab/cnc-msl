@@ -53,8 +53,7 @@ namespace msl
 {
 
 class MSLWorldModel;
-class VoronoiNet;
-class PathEvaluator;
+
 class PathPlanner
 {
   public:
@@ -79,12 +78,12 @@ class PathPlanner
      * Get all saved Voronoi Diagrams
      * @return vector<shared_ptr<VoronoiNet>>
      */
-    std::vector<std::shared_ptr<const VoronoiNet>> getVoronoiNets() const;
+    std::vector<std::shared_ptr<VoronoiNet>> getVoronoiNets() const;
     /**
      * Get latest accessible Voronoi Diagram
      * @return shared_ptr<VoronoiNet>
      */
-    std::shared_ptr<const VoronoiNet> getCurrentVoronoiNet() const;
+    std::shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
     /**
      * Gets robot diameter in mm
@@ -130,7 +129,7 @@ class PathPlanner
      * Gets artificial obstacles surrounding the field
      * @return shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>>
      */
-    std::shared_ptr<const std::vector<geometry::CNPointAllo>> getArtificialFieldSurroundingObs() const;
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getArtificialFieldSurroundingObs() const;
     /**
      * Gets last returned path
      * @return shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>>
@@ -216,9 +215,9 @@ class PathPlanner
      * Compares two search nodes
      * @param first shared_ptr<SearchNode>
      * @param second shared_ptr<SearchNode>
-     * @return bool true if sum of cost and heuristic of first niode is smaller
+     * @return bool true if sum of cost and heuristic of first node is smaller
      */
-    static bool compare(std::shared_ptr<const SearchNode> first, std::shared_ptr<const SearchNode> second);
+    static bool compare(const SearchNode &first, const SearchNode &second);
     /**
      * Checks if vertices of goal face are reached
      * @param closestVerticesToGoal shared_ptr<vector<shared_ptr<Vertex> > > vertices of Voronoi face containing the

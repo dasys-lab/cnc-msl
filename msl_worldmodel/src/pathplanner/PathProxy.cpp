@@ -76,8 +76,7 @@ PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, const IPathEvaluator 
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
-    // TODO: was not copied before
-    auto net = make_shared<VoronoiNet>(*this->wm->pathPlanner->getCurrentVoronoiNet());
+    auto net = this->wm->pathPlanner->getCurrentVoronoiNet();
 
     auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)
@@ -140,8 +139,7 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
     lastPathTarget = egoTarget;
 
     // get voronoi diagram, which is ready to be used
-    // TODO: was not copied before
-    auto net = make_shared<VoronoiNet>(*this->wm->pathPlanner->getCurrentVoronoiNet());
+    auto net = this->wm->pathPlanner->getCurrentVoronoiNet();
 
     auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     if (net == nullptr || !net->ownPosAvail || ownPosInfo == nullptr)

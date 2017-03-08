@@ -20,12 +20,10 @@
  *
  * <description>
  */
-#ifndef TimeHelper_H
-#define TimeHelper_H
+
+#pragma once
 
 #include <SystemConfig.h>
-
-using namespace supplementary;
 
 class TimeHelper
 {
@@ -44,7 +42,7 @@ class TimeHelper
     static unsigned long long getTimeDiff(unsigned long long time1, unsigned long long time2);
 
   private:
-    SystemConfig *sc;
+    supplementary::SystemConfig *sc;
 
     static TimeHelper *instance;
     TimeHelper();
@@ -53,5 +51,3 @@ class TimeHelper
     unsigned long long visionTimeOmniCam;
     unsigned long long visionTimeDirected;
 };
-
-#endif

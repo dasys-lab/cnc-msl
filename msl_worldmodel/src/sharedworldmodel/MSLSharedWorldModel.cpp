@@ -9,8 +9,6 @@
 #include "MSLWorldModel.h"
 #include <ios>
 
-using namespace std;
-
 namespace msl
 {
 

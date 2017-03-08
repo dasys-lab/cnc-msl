@@ -8,6 +8,8 @@
 #include <SystemConfig.h>
 #include <pathplanner/evaluator/Evaluator.h>
 
+using nonstd::optional;
+
 namespace msl
 {
 
@@ -24,9 +26,9 @@ Evaluator::~Evaluator()
 {
 }
 
-double Evaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode,
-                       shared_ptr<SearchNode> nextNode, VoronoiNet *voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path,
-                       shared_ptr<geometry::CNPoint2D> lastTarget)
+double Evaluator::eval(geometry::CNPointAllo startPos, geometry::CNPointAllo goal, shared_ptr<SearchNode> currentNode,
+                       shared_ptr<SearchNode> nextNode, shared_ptr<const VoronoiNet> voronoi, shared_ptr<vector<geometry::CNPointAllo>> path,
+                       optional<geometry::CNPointAllo> lastTarget)
 {
     //		//CALCULATE COST FUNCTION AND HEURISTIC FUNCTION
     //

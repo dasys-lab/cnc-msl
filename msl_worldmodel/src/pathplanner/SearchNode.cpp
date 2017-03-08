@@ -30,7 +30,7 @@ SearchNode::SearchNode(VoronoiDiagram::Halfedge_around_vertex_circulator edge, d
     this->predecessor = predecessor;
 }
 
-SearchNode::SearchNode(shared_ptr<Vertex> vertex, double cost, double heuristic, shared_ptr<SearchNode> predecessor)
+SearchNode::SearchNode(Vertex vertex, double cost, double heuristic, shared_ptr<SearchNode> predecessor)
 {
     this->initialEdge = true;
     this->vertex = vertex;
@@ -43,64 +43,41 @@ SearchNode::~SearchNode()
 {
 }
 
-/**
- * gets the cost
- * @return double
- */
 double SearchNode::getCost() const
 {
     return cost;
 }
 
-/**
- * sets the cost
- * @param cost double
- */
 void SearchNode::setCost(double cost)
 {
     this->cost = cost;
 }
 
-/**
- * gets the heuristic
- * @return double
- */
 double SearchNode::getHeuristic() const
 {
     return heuristic;
 }
 
-/**
- * sets the heuristic
- * @param heuristic double
- */
 void SearchNode::setHeuristic(double heuristic)
 {
     this->heuristic = heuristic;
 }
 
-/**
- * gets the predecessor node
- * @return shared_ptr<SearchNode>
- */
 shared_ptr<const SearchNode> SearchNode::getPredecessor() const
 {
     return predecessor;
 }
 
-/**
- * sets the predecessor node
- * @param predecessor shared_ptr<SearchNode>
- */
+shared_ptr<SearchNode> SearchNode::getPredecessor()
+{
+    return predecessor;
+}
+
 void SearchNode::setPredecessor(shared_ptr<SearchNode> predecessor)
 {
     this->predecessor = predecessor;
 }
 
-/**
- * gets the edge
- * @return VoronoiDiagram::Halfedge_around_vertex_circulator
- */
 VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getEdge() const
 {
     return edge;
@@ -120,10 +97,6 @@ bool SearchNode::matches(const Vertex &vertex)
     }
 }
 
-/**
- * sets the edge
- * @param VoronoiDiagram::Halfedge_around_vertex_circulator
- */
 void SearchNode::setEdge(VoronoiDiagram::Halfedge_around_vertex_circulator edge)
 {
     this->edge = edge;
@@ -157,12 +130,6 @@ geometry::CNPointAllo SearchNode::getPoint()
     }
 }
 
-/**
- * compares two SearchNodes, true if first has lower cost
- * @param first shared_ptr<SearchNode>
- * @param second shared_ptr<SearchNode>
- * @return bool
- */
 bool SearchNode::compare(shared_ptr<const SearchNode> first, shared_ptr<const SearchNode> second)
 {
     return (first->cost < second->cost);

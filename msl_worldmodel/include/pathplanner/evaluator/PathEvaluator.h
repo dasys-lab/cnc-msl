@@ -41,10 +41,10 @@ class PathEvaluator : public IPathEvaluator
     virtual ~PathEvaluator();
 
     virtual std::pair<double, double> eval(geometry::CNPointAllo goal, std::shared_ptr<SearchNode> currentNode,
-                                           std::shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi) const;
+                                           std::shared_ptr<SearchNode> nextNode, std::shared_ptr<const VoronoiNet> voronoi) const;
 
     virtual std::pair<double, double> evalInitial(geometry::CNPointAllo startPos, geometry::CNPointAllo goal,
-                                                  std::shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi,
+                                                  std::shared_ptr<SearchNode> nextNode, std::shared_ptr<const VoronoiNet> voronoi,
                                                   std::shared_ptr<const std::vector<geometry::CNPointAllo>> lastPath,
                                                   nonstd::optional<geometry::CNPointAllo> lastTarget) const;
 

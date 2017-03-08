@@ -1,6 +1,5 @@
 #include "MSLWorldModel.h"
 #include "Ball.h"
-#include "EventTrigger.h"
 #include "Game.h"
 #include "InformationElement.h"
 #include "LightBarrier.h"
@@ -16,11 +15,10 @@
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "InformationElement.h"
 
-#include <cnc_geometry/Calculator.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/Calculator.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -41,7 +39,7 @@ namespace msl
 
 using std::make_shared;
 using std::vector;
-    using std::shared_ptr;
+using std::shared_ptr;
 
 MSLWorldModel *MSLWorldModel::get()
 {
@@ -81,22 +79,28 @@ MSLWorldModel::MSLWorldModel()
 
     wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData, (MSLWorldModel *)this);
 
-    wmBallListSub = n.subscribe("/CNVision/BallHypothesisList", 10, &MSLWorldModel::onBallHypothesisList, (MSLWorldModel *)this);
+    wmBallListSub =
+        n.subscribe("/CNVision/BallHypothesisList", 10, &MSLWorldModel::onBallHypothesisList, (MSLWorldModel *)this);
 
     motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst, (MSLWorldModel *)this);
 
-    simWorldModelSub = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel, (MSLWorldModel *)this);
+    simWorldModelSub =
+        n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel, (MSLWorldModel *)this);
 
-    gazeboWorldModelSub = n.subscribe("/gazebo/model_states", 10, &MSLWorldModel::onGazeboModelState, (MSLWorldModel *)this);
+    gazeboWorldModelSub =
+        n.subscribe("/gazebo/model_states", 10, &MSLWorldModel::onGazeboModelState, (MSLWorldModel *)this);
 
     sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
-    sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel *)this);
+    sharedWorldSub =
+        n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel *)this);
 
     passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel *)this);
-    watchBallMsgSub = n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg, (MSLWorldModel *)this);
+    watchBallMsgSub =
+        n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg, (MSLWorldModel *)this);
 
-    correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel *)this);
+    correctedOdometrySub =
+        n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel *)this);
     lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo, (MSLWorldModel *)this);
     imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel *)this);
 
@@ -165,7 +169,8 @@ void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
             wmsim->odometry.locType.type = msl_sensor_msgs::LocalizationType::ErrorMin;
             wmsim->odometry.position.certainty = 1.0;
 
-            tf::Quaternion q(msg->pose[i].orientation.x, msg->pose[i].orientation.y, msg->pose[i].orientation.z, msg->pose[i].orientation.w);
+            tf::Quaternion q(msg->pose[i].orientation.x, msg->pose[i].orientation.y, msg->pose[i].orientation.z,
+                             msg->pose[i].orientation.w);
             tf::Matrix3x3 m(q);
             double roll, pitch, yaw;
             m.getRPY(roll, pitch, yaw);
@@ -174,12 +179,14 @@ void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
             wmsim->odometry.position.x = msg->pose[i].position.x * 1000.0;
             wmsim->odometry.position.y = msg->pose[i].position.y * 1000.0;
             wmsim->odometry.motion.angle = atan2(msg->twist[i].linear.y, msg->twist[i].linear.x);
-            wmsim->odometry.motion.translation =
-                sqrt(msg->twist[i].linear.x * msg->twist[i].linear.x + msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
+            wmsim->odometry.motion.translation = sqrt(msg->twist[i].linear.x * msg->twist[i].linear.x +
+                                                      msg->twist[i].linear.y * msg->twist[i].linear.y) *
+                                                 1000.0;
             wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
         }
-        else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0 && msg->name[i].compare("left_goal") != 0 &&
-                 msg->name[i].compare("right_goal") != 0 && msg->name[i].compare("football") != 0)
+        else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0 &&
+                 msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0 &&
+                 msg->name[i].compare("football") != 0)
         {
             msl_sensor_msgs::ObstacleInfo obsInfo;
             obsInfo.diameter = 500.0;
@@ -348,21 +355,28 @@ void MSLWorldModel::sendSharedWorldModelData()
     {
         return;
     }
+
+    // construct message
     msl_sensor_msgs::SharedWorldInfo msg;
     msg.senderID = this->ownID;
-    auto ball = this->ball->getVisionBallPositionAndCertaincy();
-    auto pos = rawSensorData->getOwnPositionVision();
-    if (pos == nullptr)
+
+    // get own position
+    auto ownPosInfo = this->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    if (ownPosInfo == nullptr)
     {
         return;
     }
-    if (ball != nullptr)
+    auto ownPos = ownPosInfo->getInformation();
+
+    // add ball info
+    auto ballPosInfo = this->ball->getVisionBallPositionBuffer().getLastValid();
+    if (ballPosInfo != nullptr)
     {
-        shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(ball->first->x, ball->first->y);
-        auto p = point->toAllo(*pos);
-        msg.ball.point.x = p->x;
-        msg.ball.point.y = p->y;
-        msg.ball.confidence = ball->second;
+        auto egoPoint = ballPosInfo->getInformation();
+        auto alloPoint = egoPoint.toAllo(ownPos);
+        msg.ball.point.x = alloPoint.x;
+        msg.ball.point.y = alloPoint.y;
+        msg.ball.confidence = ballPosInfo->getCertainty();
         msg.ballInPossession = this->ball->closeToTheBall();
     }
     else
@@ -370,15 +384,16 @@ void MSLWorldModel::sendSharedWorldModelData()
         msg.ballInPossession = false;
     }
 
+    // add shared ball
     auto sb = this->ball->getAlloSharedBallPositionAndCertaincy();
-    if (sb != nullptr != nullptr && this->ball->getSharedBallSupporter() > 1)
+    if (sb != nullptr && this->ball->getSharedBallSupporter() > 1)
     {
         msg.sharedBall.point.x = sb->first.x;
         msg.sharedBall.point.y = sb->first.y;
         msg.sharedBall.confidence = sb->second;
         msg.sharedBall.evidence = this->ball->getSharedBallSupporter();
     }
-    else if (sb == nullptr || sb->first == nullptr)
+    else if (sb == nullptr)
     {
         // if sb == nullptr send ballguess
         auto guess = this->ball->getAlloBallGuessPosition();
@@ -391,59 +406,60 @@ void MSLWorldModel::sendSharedWorldModelData()
         }
     }
 
-    auto ballVel = this->ball->getVisionBallVelocity();
-    if (ballVel != nullptr)
+    // add ball velocity
+    auto ballVelInfo = this->ball->getVisionBallVelocityBuffer().getLastValid();
+    if (ballVelInfo != nullptr)
     {
-
-        msg.ball.velocity.vx = ballVel->x;
-        msg.ball.velocity.vy = ballVel->y;
+        auto ballVel = ballVelInfo->getInformation();
+        msg.ball.velocity.vx = ballVel.x;
+        msg.ball.velocity.vy = ballVel.y;
     }
 
-    auto ownPos = rawSensorData->getOwnPositionVisionAndCertaincy();
-    if (ownPos != nullptr)
+    // add own position
+    // TODO: should this really be vision position?
+    msg.odom.position.x = ownPos.x;
+    msg.odom.position.y = ownPos.y;
+    msg.odom.position.angle = ownPos.theta;
+    msg.odom.certainty = ownPosInfo->getCertainty();
+
+    // add own velocity
+    auto ownVelInfo = this->rawSensorData->getOwnVelocityVisionBuffer().getLastValid();
+    if (ownVelInfo != nullptr)
     {
-        msg.odom.position.x = ownPos->first->x;
-        msg.odom.position.y = ownPos->first->y;
-        msg.odom.position.angle = ownPos->first->theta;
-        msg.odom.certainty = ownPos->second;
+        auto ownVel = ownVelInfo->getInformation();
+        msg.odom.motion.angle = ownVel.angle;
+        msg.odom.motion.rotation = ownVel.rotation;
+        msg.odom.motion.translation = ownVel.translation;
     }
 
-    auto ownVel = rawSensorData->getOwnVelocityVision();
-    if (ownVel != nullptr)
+    // add obstacles
+    auto obsInfo = this->obstacles->getEgoObstaclesBuffer().getLastValid();
+    if (obsInfo != nullptr)
     {
-        msg.odom.motion.angle = ownVel->angle;
-        msg.odom.motion.rotation = ownVel->rotation;
-        msg.odom.motion.translation = ownVel->translation;
-    }
+        auto obs = obsInfo->getInformation();
 
-    auto obs = obstacles->getEgoVisionObstacles();
-    {
-        if (obs != nullptr)
+        msg.obstacles.reserve(obs.size());
+        for (auto &ob : obs)
         {
-            msg.obstacles.reserve(obs->size());
-            for (auto &x : *obs)
-            {
-                shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
-                auto p = point->egoToAllo(*pos);
-                msl_msgs::Point2dInfo info;
-                info.x = p->x;
-                info.y = p->y;
-                msg.obstacles.push_back(info);
-            }
+            auto egoPoint = geometry::CNPointEgo(ob.x, ob.y);
+            auto alloPoint = egoPoint.toAllo(ownPos);
+            msl_msgs::Point2dInfo info;
+            info.x = alloPoint.x;
+            info.y = alloPoint.y;
+            msg.obstacles.push_back(info);
         }
     }
-    if (ownPos != nullptr)
-    {
-        msg.participating = true;
-        sharedWorldPub.publish(msg);
-    }
+
+    // send message
+    msg.participating = true;
+    this->sharedWorldPub.publish(msg);
 }
 
 void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 {
-    robots->processSharedWorldModelData(msg);
-    ball->processSharedWorldModelData(*msg);
-    game->updateGameState();
+    this->robots->processSharedWorldModelData(msg, getTime()); // TODO: use real creation time
+    this->ball->processSharedWorldModelData(*msg);
+    this->game->updateGameState();
 }
 
 int MSLWorldModel::getRingBufferLength()

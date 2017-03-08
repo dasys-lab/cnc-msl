@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef ObjectContainer_H
-#define ObjectContainer_H
+
+#pragma once
 
 #include "ballTracking/TrackingTypes.h"
 #include <stdlib.h>
@@ -53,5 +53,3 @@ class ObjectContainer
     int lastValidIndex;
     int validCounter;
 };
-
-#endif

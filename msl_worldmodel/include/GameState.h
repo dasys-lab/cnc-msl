@@ -5,11 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAMESTATE_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAMESTATE_H_
+#pragma once
 
 namespace msl
 {
+
 enum GameState
 {
     Duel,
@@ -18,6 +18,5 @@ enum GameState
     NobodyInBallPossession
     // former:  Melee, Attack, Defend, Conflict
 };
-}
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAMESTATE_H_ */
+} /* namespace msl */

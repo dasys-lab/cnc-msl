@@ -37,7 +37,7 @@ class AnnotatedObstacleCluster
     double certainty; // just for teammates
     int velX;
     int velY;
-    double rotation; // just for teammates
+    double rotationVel; // just for teammates
 
     // FOR CLUSTERING
     int numObs = 0;

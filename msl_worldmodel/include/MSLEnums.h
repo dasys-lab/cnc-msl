@@ -5,11 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_
+#pragma once
 
 namespace msl
 {
+
 enum Situation
 {
     Undefined = 0,
@@ -49,8 +49,8 @@ enum Situation
 
     Joystick = 254,
 
-    //              OwnGoal=24,
-    //              OppGoal=25,
+    //OwnGoal=24,
+    //OppGoal=25,
 
     RemoteControl = 28,
     RemoteControlEnd = 29,
@@ -84,6 +84,5 @@ enum EntityType
     Obstacle = -3,
     UndefinedEntity = -4
 };
-}
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_ */
+} /* namespace msl */

@@ -5,8 +5,7 @@
  *      Author: tobi
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_SHAREDWORLDMODEL_MSLSHAREDWORLDMODEL_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_SHAREDWORLDMODEL_MSLSHAREDWORLDMODEL_H_
+#pragma once
 
 #include "SystemConfig.h"
 #include <ros/ros.h>
@@ -34,5 +33,3 @@ class MSLSharedWorldModel
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_SHAREDWORLDMODEL_MSLSHAREDWORLDMODEL_H_ */

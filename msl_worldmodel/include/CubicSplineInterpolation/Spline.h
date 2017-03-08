@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TK_SPLINE_H
-#define TK_SPLINE_H
+#pragma once
 
 #include <algorithm>
 #include <cassert>
@@ -108,5 +107,3 @@ class spline
 };
 
 } // namespace tk
-
-#endif /* TK_SPLINE_H */

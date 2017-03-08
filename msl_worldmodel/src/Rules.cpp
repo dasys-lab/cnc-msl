@@ -7,8 +7,11 @@
 
 #include "Rules.h"
 
+using supplementary::SystemConfig;
+
 namespace msl
 {
+
 Rules *Rules::getInstance()
 {
     static Rules instance;

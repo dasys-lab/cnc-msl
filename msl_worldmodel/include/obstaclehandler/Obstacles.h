@@ -9,6 +9,7 @@
 #include <cnc_geometry/CNPointEgo.h>
 #include <cnc_geometry/CNRobotAllo.h>
 #include <cnc_geometry/CNRobotEgo.h>
+#include <nonstd/optional.hpp>
 
 #include <memory>
 #include <msl_msgs/Point2dInfo.h>
@@ -32,7 +33,7 @@ class Obstacles
      * behaviours, delaunay generator etc.)
      * @param myObstacles A @see List of ego centric obstacles. (usual from the worldmodel).
      */
-    void handleObstacles(std::shared_ptr<std::vector<geometry::CNPointEgo>> myObstacles);
+    void handleObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> myObstacles);
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
     //std::shared_ptr<std::vector<geometry::CNPoint2D>>
     //clusterPoint2D(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>> obstacles,
@@ -56,14 +57,14 @@ class Obstacles
     //std::shared_ptr<std::vector<geometry::CNPointEgo>> getEgoVisionObstaclePoints(int index = 0);
     double getObstacleRadius();
 
-    geometry::CNPointEgo getBiggestFreeGoalAreaMidPoint();
+    nonstd::optional<geometry::CNPointEgo> getBiggestFreeGoalAreaMidPoint();
     double getDistanceToObstacle(geometry::CNPointEgo target);
 
   private:
     shared_ptr<vector<AnnotatedObstacleCluster *>>
     clusterAnnotatedObstacles(shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray);
     shared_ptr<vector<AnnotatedObstacleCluster *>>
-    setupAnnotatedObstacles(std::shared_ptr<std::vector<geometry::CNPointEgo>> ownObs,
+    setupAnnotatedObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> ownObs,
                             msl_sensor_msgs::CorrectedOdometryInfo myOdo);
     //void processNegSupporter(geometry::CNPositionAllo myPosition); // TODO: remove?
     bool leftOf(double angle1, double angle2);

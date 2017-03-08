@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef SharedMemoryHelper_H
-#define SharedMemoryHelper_H
+
+#pragma one
 
 #include <string.h>
 #include <sys/ipc.h>
@@ -42,8 +42,6 @@
 
 #define KEY_CO_SHM 5682
 #define KEY_CO_SEM 5683
-
-using namespace supplementary;
 
 class SharedMemoryHelper
 {
@@ -67,7 +65,7 @@ class SharedMemoryHelper
 
     static SharedMemoryHelper *instance_;
 
-    SystemConfig *sc;
+    supplementary::SystemConfig *sc;
 
     void init();
     void cleanup();
@@ -173,5 +171,3 @@ class SharedMemoryHelper
     ShmInfo<CorrectedOdometry, KEY_CO_SHM, KEY_CO_SEM> coShmInfo;
     CorrectedOdometry co[1];
 };
-
-#endif
