@@ -32,7 +32,7 @@ namespace alica
         {
             msl_actuator_msgs::MotionControl motorMsg;
             motorMsg.motion.translation = testSpeed;
-            motorMsg.motion.angle = 0;
+            motorMsg.motion.angle = angle;
             motorMsg.motion.rotation = 0;
 
 
@@ -48,7 +48,7 @@ namespace alica
     	    	{
     	        msl_actuator_msgs::MotionControl motorMsg;
     	        motorMsg.motion.translation = testSpeed;
-    	        motorMsg.motion.angle = 120;
+    	        motorMsg.motion.angle = angle + 120;
     	        motorMsg.motion.rotation = 0;
 
     	        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
@@ -61,7 +61,7 @@ namespace alica
     	    	{
     	        msl_actuator_msgs::MotionControl motorMsg;
     	        motorMsg.motion.translation = testSpeed;
-    	        motorMsg.motion.angle = 240;
+    	        motorMsg.motion.angle = angle + 240;
     	        motorMsg.motion.rotation = 0;
 
     	        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
@@ -83,6 +83,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
         testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
+        angle = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.angle", NULL);
         startTime = wm->getTime();
         count = 0;
         /*PROTECTED REGION END*/
