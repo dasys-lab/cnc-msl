@@ -47,11 +47,11 @@ namespace alica
 		double currentMotionBearing = getMotionBearing();
 		double circDiff = circularDiff(currentIMUBearing, lastIMUBearing);
 
-		cout << "IMU: ";
-		updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations);
-		cout << " | Motion: ";
-		updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations);
-		cout << endl;
+		double imuRotations = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations);
+		cout << ";";
+		double motionRotations = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations);
+		cout << ";";
+		cout << imuRotations-motionRotations << endl;
 
 		// cout << "buffer" << endl;
 //		double endAngle = wm->rawOdometry->position.angle;
@@ -83,21 +83,22 @@ namespace alica
 		lastBearing = currentBearing;
 
 //		cout << "lst " << lastBearing << "; ";
-		cout << "cur " << currentBearing << "; ";
-		cout << "cD " << circDiff << "; ";
-		cout << "rots " << (rotations + currentNormedBearing);
+//		cout << "cur " << currentBearing << "; ";
+//		cout << "cD " << circDiff << "; ";
+//		cout << "rots " << (rotations + currentNormedBearing);
 
 		if (circDiff < 0 || circDiff > CIRCDIFF_THRESHOLD)
-		{cout << " NOPE ";
+		{
 			return 0;
 		}
 
 		if (lastNormedBearing > currentNormedBearing)
 		{
 			rotations++;
+			cout << "1";
 		}
 
-		return 0;
+		return rotations + currentNormedBearing;
 	}
 
 	double RotateOnce::getMotionBearing()
