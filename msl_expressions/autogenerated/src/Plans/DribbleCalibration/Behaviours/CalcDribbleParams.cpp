@@ -2,6 +2,10 @@ using namespace std;
 #include "Plans/DribbleCalibration/Behaviours/CalcDribbleParams.h"
 
 /*PROTECTED REGION ID(inccpp1489492250448) ENABLED START*/ //Add additional includes here
+#include <boost/lexical_cast.hpp>
+#include <Configuration.h>
+#include <SystemConfig.h>
+#include <string>
 /*PROTECTED REGION END*/
 namespace alica
 {
