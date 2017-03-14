@@ -53,6 +53,7 @@
     <outTransitions>#1485356815055</outTransitions>
   </states>
   <states id="1488285909848" name="CalcParams" comment="Stop">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcDribbleParams.beh#1489492271847</plans>
     <inTransitions>#1485356843859</inTransitions>
     <outTransitions>#1488285941209</outTransitions>
     <outTransitions>#1488285974466</outTransitions>
