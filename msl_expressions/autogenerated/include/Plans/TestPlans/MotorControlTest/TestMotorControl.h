@@ -7,6 +7,7 @@
 #include <Configuration.h>
 #include <limits>
 #include "container/CNPosition.h"
+#include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,6 +27,8 @@ namespace alica
         /*PROTECTED REGION ID(prv1482163964536) ENABLED START*/ //Add additional private methods here
         int count;
         int testSpeed;
+        int angle;
+        msl::InfoTime startTime;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

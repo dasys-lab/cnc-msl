@@ -66,6 +66,8 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
+#include  "Plans/TestPlans/MotorControlTest/PointToPoint1489068076224.h"
+
 #include  "Plans/Standards/Own/Corner/CornerExecBounceShot1459362028865.h"
 
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"
@@ -957,6 +959,18 @@ namespace alica
             case 1457173948942:
 
                 return make_shared<RunTimeCondition1457173948942>();
+
+                break;
+
+            case 1489068108429:
+
+                return make_shared<TransitionCondition1489068108429>();
+
+                break;
+
+            case 1489068110424:
+
+                return make_shared<TransitionCondition1489068110424>();
 
                 break;
 

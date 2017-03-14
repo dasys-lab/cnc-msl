@@ -51,6 +51,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
 
+#include  "Plans/TestPlans/MotorControlTest/PointToPoint.h"
+
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
@@ -148,8 +150,6 @@ using namespace std;
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/Defence/ReleaseMid.h"
-
-#include  "Plans/DribbleCalibration/Behaviours/CalcDribbleParams.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
@@ -349,6 +349,11 @@ namespace alica
             case 1465474190742:
 
                 return make_shared<Pos2Penalty>();
+                break;
+
+            case 1489068194261:
+
+                return make_shared<PointToPoint>();
                 break;
 
             case 1455537928849:
@@ -622,11 +627,6 @@ namespace alica
             case 1458033497042:
 
                 return make_shared<ReleaseMid>();
-                break;
-
-            case 1488286078729:
-
-                return make_shared<CalcDribbleParams>();
                 break;
 
             case 1456756164754:

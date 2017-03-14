@@ -25,31 +25,61 @@ namespace alica
     void TestMotorControl::run(void* msg)
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
-        if (count > 300)
+        if (wm->getTime() < startTime + 1000000000)
+
         {
             msl_actuator_msgs::MotionControl motorMsg;
             motorMsg.motion.translation = testSpeed;
-            motorMsg.motion.angle = 0;
+            motorMsg.motion.angle = (double)angle / 180 * M_PI;
             motorMsg.motion.rotation = 0;
 
             cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
                     << motorMsg.motion.rotation << endl;
             send(motorMsg);
-            count++;
+
         }
 
-        if (count == 300)
+        else if (wm->getTime() < startTime + 2000000000)
+
         {
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = (double)(angle + 120) / 180 * M_PI;
+            motorMsg.motion.rotation = 0;
 
-            (*sc)["MotorControlTest"]->set < string > (to_string(testSpeed + 100), "MotorControlTest.testSpeed");
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
+
         }
+        else if (wm->getTime() < startTime + 3000000000)
+
+        {
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = (double)(angle + 240) / 180 * M_PI;
+            motorMsg.motion.rotation = 0;
+
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
+
+        }
+
+        else
+
+        {
+            startTime = wm->getTime();
+        }
+
         /*PROTECTED REGION END*/
     }
     void TestMotorControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
         testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
-
+        angle = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.angle", NULL);
+        startTime = wm->getTime();
         count = 0;
         /*PROTECTED REGION END*/
     }
