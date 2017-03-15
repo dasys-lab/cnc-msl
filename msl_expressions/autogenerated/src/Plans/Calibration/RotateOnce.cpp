@@ -48,8 +48,10 @@ namespace alica
 		double circDiff = circularDiff(currentIMUBearing, lastIMUBearing);
 		double iR, mR;
 
+		cout << currentIMUBearing << ";";
 		iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations);
 		cout << ";";
+		cout << currentMotionBearing  << ";";
 		mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations);
 		cout << ";";
 		cout << iR-mR << endl;
