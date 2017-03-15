@@ -111,6 +111,10 @@ namespace alica
 			ofstr.flush();
 			ofstr.close();
 
+			new gnuplot stirnmtg
+
+			gnuplot -persist -e "f(x) = a*x; fit f(x) '/home/cn/data.csv' u 1:($0 +1) via a,b; plot '/home/cn/data.csv' , f(x), 0; print sprintf('robotRadius=%f',a)"
+
 		}
 
 		cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";

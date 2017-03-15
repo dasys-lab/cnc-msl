@@ -39,12 +39,12 @@ namespace alica
 
         double circularDiff(double a, double b);
         double getLimitedRotationSpeed(double desiredSpeed);
-        void logCalibrationResult(double currentRadius, double calibError);
+        void logIMUMotionDifference(double imuMotionDifference);
 
 		double getMotionBearing();
 		double getIMUBearing();
 
-		double updateRotationCount(double currentBearing, double &lastBearing, int &rotations);
+		double updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation);
 		/*PROTECTED REGION END*/
 	};
 } /* namespace alica */

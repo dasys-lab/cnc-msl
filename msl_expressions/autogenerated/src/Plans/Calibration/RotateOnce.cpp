@@ -47,14 +47,20 @@ namespace alica
 		double currentMotionBearing = getMotionBearing();
 		double circDiff = circularDiff(currentIMUBearing, lastIMUBearing);
 		double iR, mR;
+		bool isFullIMURotation = false;
+		bool isFullMotionRotation = false;
 
 		cout << currentIMUBearing << ";";
-		iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations);
+		iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations, isFullIMURotation);
 		cout << ";";
 		cout << currentMotionBearing  << ";";
-		mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations);
+		mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations, isFullMotionRotation);
 		cout << ";";
 		cout << iR-mR << endl;
+
+		if (isFullIMURotation) {
+			logIMUMotionDifference(iR-mR);
+		}
 
 		// cout << "buffer" << endl;
 //		double endAngle = wm->rawOdometry->position.angle;
@@ -78,7 +84,7 @@ namespace alica
 	/**
 	 * TODO needs doc
 	 */
-	double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations)
+	double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation)
 	{
 		double circDiff = circularDiff(currentBearing, lastBearing);
 		double currentNormedBearing = (currentBearing + M_PI)/ (2*M_PI);
@@ -97,8 +103,11 @@ namespace alica
 
 		if (lastNormedBearing > currentNormedBearing)
 		{
+			isfullRotation = true;
 			rotations++;
 			cout << "1";
+		} else {
+			isfullRotation = false;
 		}
 
 		return rotations + currentNormedBearing;
@@ -134,14 +143,12 @@ namespace alica
 	{
 		return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
 	}
-	void RotateOnce::logCalibrationResult(double currentRadius, double calibError)
+	void RotateOnce::logIMUMotionDifference(double imuMotionDifference)
 	{
-		cout << currentRadius << endl;
 		// TODO why don't we use the already defined sc for adjusting the robot radius?
 		std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
 		ofstream os(logfilePath, ios_base::out | ios_base::app);
-		std::time_t result = std::time(nullptr);
-		os << currentRadius << "\t" << calibError << "\t" << ctime(&result) << endl;
+		os << imuMotionDifference << endl;
 		os.flush();
 		os.close();
 
