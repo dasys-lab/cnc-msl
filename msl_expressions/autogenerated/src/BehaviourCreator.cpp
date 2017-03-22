@@ -195,6 +195,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/CalcCalib.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/CalcDribbleParams.h"
+
 #include  "Plans/Robotcheck/RobotTest.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
@@ -775,6 +777,11 @@ namespace alica
             case 1446036391317:
 
                 return make_shared<CalcCalib>();
+                break;
+
+            case 1488286078729:
+
+                return make_shared<CalcDribbleParams>();
                 break;
 
             case 1456756164754:
