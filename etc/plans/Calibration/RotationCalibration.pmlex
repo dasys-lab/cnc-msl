@@ -38,26 +38,20 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470237789517"/>
-    <value xPos="288" yPos="196" width="212" height="86" collapsed="false"/>
+    <value xPos="228" yPos="149" width="341" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470237803234"/>
-    <value/>
+    <value>
+      <bendpoints xPos="619" yPos="227"/>
+    </value>
   </extensions>
   <extensions>
     <key href="RestartMotion.beh#1472657588489"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="RotationCalibration.pml#1475074211872"/>
-    <value xPos="601" yPos="211" width="319" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="RotationCalibrationCalculation.beh#1475074454339"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="RotationCalibration.pml#1475074486547"/>
     <value/>
   </extensions>
   <extensions>
@@ -66,6 +60,8 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1480520547022"/>
-    <value/>
+    <value>
+      <bendpoints xPos="630" yPos="208"/>
+    </value>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

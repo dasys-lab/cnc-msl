@@ -16,6 +16,10 @@ namespace alica
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1467397900274) ENABLED START*/ //Add additional public methods here
         double const CIRCDIFF_THRESHOLD = 0.5; //TODO tweak
+
+        static int const MIN_ROTATIONS = 3; // don't calculate a regression unless we rotated for MIN_ROTATIONS rotations
+        static int const MAX_ROTATIONS = 30; // finish calibration after reaching MAX_ROTATIONS without hitting MIN_BEARING_DIFF_FOR_REGRESSION
+        static double constexpr MIN_BEARING_DIFF_FOR_REGRESSION = 0.2; // start regression calculation as soon as motion/imu rotation counter difference reaches MIN_BEARING_DIFF_FOR_REGRESSION
         static int logCounter;
 
         /*PROTECTED REGION END*/
@@ -41,12 +45,13 @@ namespace alica
         double getLimitedRotationSpeed(double desiredSpeed);
         void logIMUMotionDifference(double imuMotionDifference);
 
-		double getMotionBearing();
-		double getIMUBearing();
+        double getMotionBearing();
+        double getIMUBearing();
 
-		double updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation);
-		/*PROTECTED REGION END*/
-	};
+        double updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation);
+
+        void calculateRadius();
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* RotateOnce_H_ */

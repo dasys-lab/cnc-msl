@@ -12,7 +12,7 @@ namespace alica
             DomainBehaviour("RestartMotion")
     {
         /*PROTECTED REGION ID(con1472657511112) ENABLED START*/ //Add additional options here
-    	uninitializedMotionCounter = 0;
+        uninitializedMotionCounter = 0;
         /*PROTECTED REGION END*/
     }
     RestartMotion::~RestartMotion()
@@ -23,10 +23,11 @@ namespace alica
     void RestartMotion::run(void* msg)
     {
         /*PROTECTED REGION ID(run1472657511112) ENABLED START*/ //Add additional options here
-        if (this->isSuccess()) {
-        	return;
+        if (this->isSuccess())
+        {
+            return;
         }
-    	uninitializedMotionCounter++;
+        uninitializedMotionCounter++;
 
         if (uninitializedMotionCounter == 200)
         {

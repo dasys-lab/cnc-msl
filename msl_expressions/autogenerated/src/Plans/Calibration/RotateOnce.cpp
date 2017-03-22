@@ -9,6 +9,7 @@ using namespace std;
 #include <ctime>
 #include <SystemConfig.h>
 #include <FileSystem.h>
+#include "ConsoleCommandHelper.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -53,13 +54,26 @@ namespace alica
 		cout << currentIMUBearing << ";";
 		iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations, isFullIMURotation);
 		cout << ";";
-		cout << currentMotionBearing  << ";";
+		cout << currentMotionBearing << ";";
 		mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations, isFullMotionRotation);
 		cout << ";";
-		cout << iR-mR << endl;
+		cout << iR - mR << endl;
 
-		if (isFullIMURotation) {
-			logIMUMotionDifference(iR-mR);
+		if (isFullIMURotation)
+		{
+			logIMUMotionDifference(iR - mR);
+		}
+
+		if (mR > MAX_ROTATIONS)
+		{
+			// MAX_ROTATIONS reached - calibration finished!
+			this->setSuccess(true);
+		}
+		else if (mR > MIN_ROTATIONS && abs(iR - mR) > MIN_BEARING_DIFF_FOR_REGRESSION)
+		{
+			// MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
+			calculateRadius();
+			this->setFailure(true);
 		}
 
 		// cout << "buffer" << endl;
@@ -80,15 +94,94 @@ namespace alica
 		lastIMUBearing = getIMUBearing();
 		/*PROTECTED REGION END*/
 	}
+
 	/*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
+	void RotateOnce::calculateRadius()
+	{
+		stringstream cmd;
+		string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+
+		ifstream infile(logfile);
+		string firstLine;
+		// TODO needed?
+//		std::getline(infile, firstLine);
+//		std::getline(infile, firstLine);
+		string fileContent;
+		string lineCppString;
+		while (std::getline(infile, lineCppString).eof() == false)
+		{
+			fileContent += lineCppString;
+			fileContent += "\n";
+		}
+		fileContent += lineCppString;
+		infile.close();
+		ofstream ofstr(logfile);
+		ofstr << fileContent;
+		ofstr.flush();
+		ofstr.close();
+
+//		cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
+//		cmd << logfile;
+//		cmd << "\\\" u 1:2 via a,b; plot \\\"";
+//		cmd << logfile;
+//		cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
+
+		cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) '";
+		cmd << logfile;
+		cmd << "' u (column(0)):1 via a,b; plot '";
+		cmd << logfile;
+		cmd << "' , f(x), 0; print sprintf('slope=%f',a)\" 2>&1";
+
+		cout << cmd.str() << endl;
+		string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
+		// cout << "gnuplotReturn: " << gnuplotReturn << endl;
+
+		/* I like C!
+		 * I don't */
+		// match plotted value
+		const int max_line_size = 400;
+		const int output_size = gnuplotReturn.size() + 1;
+		const char *ret = gnuplotReturn.c_str();
+		char output[output_size];
+		char *line;
+		char *lastline;
+		char *slopeStr;
+
+		strncpy(output, gnuplotReturn.c_str(), output_size);
+
+		// Get last line
+		line = strtok(output, "\n");
+		while ((line = strtok(NULL, "\n")) != NULL)
+			lastline = line;
+
+		// Get the radius as string
+		strtok(lastline, "="); // eats slope
+		slopeStr = strtok(NULL, "=");
+		if (slopeStr == NULL)
+		{
+			cerr << "ERROR parsing gnuplot output" << endl;
+			this->setSuccess(true); // not really tho
+			return;
+		}
+
+		// Convert it to double
+		double calculatedSlope = strtod(slopeStr, NULL);
+		double newRadius = robotRadius * (1 - calculatedSlope);
+		cout << "old radius: " << robotRadius << endl;
+		cout << "new radius: " << newRadius << endl;
+		robotRadius = newRadius;
+		wm->setRobotRadius(newRadius);
+	}
+
 	/**
 	 * TODO needs doc
 	 */
-	double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation)
+	double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations,
+											bool &isfullRotation)
 	{
 		double circDiff = circularDiff(currentBearing, lastBearing);
-		double currentNormedBearing = (currentBearing + M_PI)/ (2*M_PI);
-		double lastNormedBearing = (lastBearing + M_PI)/ (2*M_PI);
+		double currentNormedBearing = (currentBearing + M_PI) / (2 * M_PI);
+		double lastNormedBearing = (lastBearing + M_PI) / (2 * M_PI);
 		lastBearing = currentBearing;
 
 //		cout << "lst " << lastBearing << "; ";
@@ -101,13 +194,12 @@ namespace alica
 			return 0;
 		}
 
-		if (lastNormedBearing > currentNormedBearing)
+		isfullRotation = lastNormedBearing > currentNormedBearing;
+
+		if (isfullRotation)
 		{
-			isfullRotation = true;
 			rotations++;
 			cout << "1";
-		} else {
-			isfullRotation = false;
 		}
 
 		return rotations + currentNormedBearing;
@@ -126,10 +218,10 @@ namespace alica
 	double RotateOnce::circularDiff(double a, double b)
 	{
 		double diff = a - b;
-		if(abs(diff) > M_PI)
+		if (abs(diff) > M_PI)
 		{
-			diff = 2*M_PI - diff;
-			while(diff > M_PI)
+			diff = 2 * M_PI - diff;
+			while (diff > M_PI)
 			{
 				diff -= 2 * M_PI;
 			}
