@@ -15,13 +15,13 @@ namespace alica
             DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
-    	calibOldPosMotionX = 0;
-    	calibOldPosMotionY = 0;
-    	oldCalibCoefficientX = 0;
-    	oldCalibCoefficientY = 0;
-    	correctedPosX = 0;
-    	correctedPosY = 0;
-    	calibCounter = 0;
+        calibOldPosMotionX = 0;
+        calibOldPosMotionY = 0;
+        oldCalibCoefficientX = 0;
+        oldCalibCoefficientY = 0;
+        correctedPosX = 0;
+        correctedPosY = 0;
+        calibCounter = 0;
         /*PROTECTED REGION END*/
     }
     CalcCalib::~CalcCalib()
@@ -35,6 +35,7 @@ namespace alica
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
 
+        //Odometry corrections to compensate the difference between motion and vision angle
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
                 * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
                         - this->wm->rawSensorData->getOwnPositionMotion()->theta)
@@ -94,7 +95,8 @@ namespace alica
 
         if (calibCounter >= 1)
         {
-            // mit Mittelwert
+            // with average value
+            //sequence of the calibCounter corresponds to the sequence of the PlanDesigner states (calibCounter must be adjusted to the changes in the PlanDesigner!)
             if (calibCounter == 1)
             {
                 if (oldCalibCoefficientX > 0)
@@ -164,9 +166,9 @@ namespace alica
 
             }
         }
-        // mit Mittelwert Ende
+        // end: with average value
 
-        // ohne Mittelwert
+        // without average value
         /*
          //if (abs(correctedPosX - oldCorrectedPosX) > 500){
          //if (correctedPosX > oldCorrectedPosX){
@@ -198,7 +200,8 @@ namespace alica
          }
          //}
          */
-        // Ohne Mittelwert Ende
+        // end: without average value
+        //limits of the calibCoefficients
         if (calibCoefficientX < 0.3)
         {
             calibCoefficientX = 0.3;
@@ -228,39 +231,42 @@ namespace alica
         calibCoeff.calibCoefficientY = calibCoefficientY;
         calibCoeff_pub.publish(calibCoeff);
 
-	switch (calibCounter)
-	{
-	case 1:
-		std::cout << "Difference X: " << diffX << " (" << (diffX/lengthSegment)*100 << " %)\n" << std::endl;
-		break;
+        switch (calibCounter)
+        {
+            case 1:
+                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)\n" << std::endl;
+                break;
 
-	case 2: 
-		std::cout << "Difference X: " << diffX << " (" << (diffX/lengthSegment)*100 << " %)" << std::endl;
-		std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
-		break;
+            case 2:
+                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)" << std::endl;
+                std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
+                break;
 
-	case 3:
-                std::cout << "Difference Y: " << diffY << " (" << (diffY/lengthSegment)*100 << " %)\n" << std::endl;
-		break;
+            case 3:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)\n" << std::endl;
+                break;
 
-        case 4:
-                std::cout << "Difference Y: " << diffY << " (" << (diffY/lengthSegment)*100 << " %)" << std::endl;
+            case 4:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)" << std::endl;
                 std::cout << "new calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
-		break;
+                break;
 
-	default:
-		std::cout << "\nold calibration coefficient X: " << calibCoefficientX << "\nold calibration coefficient Y: "<< calibCoefficientY << "\n" <<std::endl;
-	}
-       /* std::cout << "Differenzen: " << std::endl;
-        std::cout << "X: " << diffX << std::endl;
-        std::cout << "Y: " << diffY << std::endl;
-        std::cout << "FaktorX: " << calibCoefficientX << std::endl;
-        std::cout << "FaktorY: " << calibCoefficientY << std::endl;
+            default:
+                std::cout << "\nold calibration coefficient X: " << calibCoefficientX
+                        << "\nold calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+        }
+        /* std::cout << "Differenzen: " << std::endl;
+         std::cout << "X: " << diffX << std::endl;
+         std::cout << "Y: " << diffY << std::endl;
+         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
+         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
 
-        std::cout << "" << std::endl;*/
+         std::cout << "" << std::endl;*/
 
         lengthSegment = 0;
         calibCounter++;
+
+        // to calculate the calibCoefficient only in the current section, the correctedPos is set to the Vision position
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
