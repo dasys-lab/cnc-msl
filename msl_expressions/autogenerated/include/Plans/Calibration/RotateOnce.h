@@ -33,8 +33,8 @@ namespace alica
         static constexpr double ACCELERATION = 0.1;
         double robotRadius;
 
-        int motionRotations = 0;
-        int imuRotations = 0;
+        int motionRotations;
+        int imuRotations;
         double lastIMUBearing;
         double lastMotionBearing;
 

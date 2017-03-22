@@ -51,27 +51,29 @@ namespace alica
         bool isFullIMURotation = false;
         bool isFullMotionRotation = false;
 
-        cout << currentIMUBearing << ";";
+        cout << currentIMUBearing << "\t";
         iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations, isFullIMURotation);
-        cout << ";";
-        cout << currentMotionBearing << ";";
+        cout << "\t";
+        cout << currentMotionBearing << "\t";
         mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations, isFullMotionRotation);
-        cout << ";";
-        cout << iR - mR << endl;
+        cout << "\t";
+        cout << iR << "\t" << mR << "\t" << iR - mR << endl;
 
         if (isFullIMURotation)
         {
             logIMUMotionDifference(iR - mR);
         }
 
-        if (mR > MAX_ROTATIONS)
+        if (iR > MAX_ROTATIONS)
         {
             // MAX_ROTATIONS reached - calibration finished!
+            cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
             this->setSuccess(true);
         }
-        else if (mR > MIN_ROTATIONS && abs(iR - mR) > MIN_BEARING_DIFF_FOR_REGRESSION)
+        else if (iR > MIN_ROTATIONS && abs(iR - mR) > MIN_BEARING_DIFF_FOR_REGRESSION)
         {
             // MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
+            cout << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on" << endl;
             calculateRadius();
             this->setFailure(true);
         }
@@ -92,6 +94,8 @@ namespace alica
         rotationSpeed = ACCELERATION;
         lastMotionBearing = getMotionBearing();
         lastIMUBearing = getIMUBearing();
+        imuRotations = 0;
+        motionRotations = 0;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
