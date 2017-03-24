@@ -4,29 +4,29 @@
     <outTransitions>#1442919801497</outTransitions>
   </states>
   <states id="1442919790374" name="MoveInX" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278292264</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:Behaviour">DriveToPointCalib.beh#1474278292264</plans>
     <inTransitions>#1442919801497</inTransitions>
     <outTransitions>#1442921106318</outTransitions>
     <outTransitions>#1474288535134</outTransitions>
   </states>
   <states id="1442921032957" name="MoveToMiddle" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278926472</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:Behaviour">DriveToPointCalib.beh#1474278926472</plans>
     <inTransitions>#1442921106318</inTransitions>
     <outTransitions>#1443003805912</outTransitions>
     <outTransitions>#1474288537777</outTransitions>
   </states>
   <states id="1443003793160" name="MoveInY" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278968035</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:Behaviour">DriveToPointCalib.beh#1474278968035</plans>
     <inTransitions>#1443003805912</inTransitions>
     <outTransitions>#1443003845234</outTransitions>
     <outTransitions>#1464350167678</outTransitions>
   </states>
   <states id="1443003834928" name="Stop" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/Stop.beh#1413992604875</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/CalcCalib.beh#1446033354004</plans>
     <inTransitions>#1443003845234</inTransitions>
     <inTransitions>#1464350170546</inTransitions>
     <inTransitions>#1474288535134</inTransitions>
@@ -37,8 +37,8 @@
     <inTransitions>#1443522261454</inTransitions>
   </states>
   <states id="1464350100818" name="MoveToMiddle2" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278926472</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:Behaviour">DriveToPointCalib.beh#1474278926472</plans>
     <inTransitions>#1464350167678</inTransitions>
     <outTransitions>#1464350170546</outTransitions>
   </states>

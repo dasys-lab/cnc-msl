@@ -5,7 +5,7 @@
     <outTransitions>#1458033410354</outTransitions>
   </states>
   <states id="1458033385978" name="ReleaseMid" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">ReleaseMid.beh#1458033497042</plans>
+    <plans xsi:type="alica:Behaviour">ReleaseMid.beh#1458033497042</plans>
     <inTransitions>#1458033410354</inTransitions>
     <inTransitions>#1458033412731</inTransitions>
     <outTransitions>#1458033411608</outTransitions>

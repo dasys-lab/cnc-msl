@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434045709191" name="AttackPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="1.0E-7" destinationPath="Plans/Attack" priority="0.0" minCardinality="2" maxCardinality="4">
-  <conditions xsi:type="alica:RuntimeCondition" id="1434112519736" name="NewRuntimeCondition" comment="true" conditionString="" pluginName="DefaultPlugin">
+  <runtimeCondition xsi:type="alica:RuntimeCondition" id="1434112519736" name="NewRuntimeCondition" comment="true" conditionString="" pluginName="DefaultPlugin">
     <vars>#1457002241973</vars>
     <vars>#1457002247256</vars>
-  </conditions>
+  </runtimeCondition>
   <vars id="1457002241973" name="TargetX" comment="" Type=""/>
   <vars id="1457002247256" name="TargetY" comment="" Type=""/>
   <states id="1434045709193" name="Attack" comment="" entryPoint="1434045709194">
@@ -15,46 +15,46 @@
     <outTransitions>#1436536098621</outTransitions>
   </states>
   <states id="1434045870617" name="Defend" comment="" entryPoint="1434045723977">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/BackroomDefence.beh#1454507819086</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/BackroomDefence.beh#1454507819086</plans>
   </states>
   <states id="1434112762535" name="Release" comment="" entryPoint="1434112675755">
     <parametrisation id="1457002264498" name="MISSING_NAME" comment="">
-      <subplan xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1456997097907</subplan>
+      <subplan xsi:type="alica:Behaviour">Behaviours/MoveToPointDynamic.beh#1456997097907</subplan>
       <subvar>Behaviours/MoveToPointDynamic.beh#1457000421766</subvar>
       <var>#1457002241973</var>
     </parametrisation>
     <parametrisation id="1457002272819" name="MISSING_NAME" comment="">
-      <subplan xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1456997097907</subplan>
+      <subplan xsi:type="alica:Behaviour">Behaviours/MoveToPointDynamic.beh#1456997097907</subplan>
       <subvar>Behaviours/MoveToPointDynamic.beh#1457000426918</subvar>
       <var>#1457002247256</var>
     </parametrisation>
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1456997097907</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/MoveToPointDynamic.beh#1456997097907</plans>
     <inTransitions>#1436536160346</inTransitions>
     <outTransitions>#1436536148908</outTransitions>
   </states>
   <states id="1436536084172" name="ApproachPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:Behaviour">CatchPass.beh#1440754543898</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536098621</inTransitions>
     <inTransitions>#1436536101847</inTransitions>
     <outTransitions>#1436536100248</outTransitions>
     <outTransitions>#1436536103266</outTransitions>
   </states>
   <states id="1436536085953" name="InterceptPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536100248</inTransitions>
     <outTransitions>#1436536101847</outTransitions>
   </states>
   <states id="1436536121614" name="InterceptPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536150744</inTransitions>
     <outTransitions>#1436536151770</outTransitions>
   </states>
   <states id="1436536123918" name="ApproachPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:Behaviour">CatchPass.beh#1440754543898</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536148908</inTransitions>
     <inTransitions>#1436536151770</inTransitions>
     <outTransitions>#1436536150744</outTransitions>

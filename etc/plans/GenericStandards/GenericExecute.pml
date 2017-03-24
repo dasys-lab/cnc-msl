@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.075" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="4">
-  <conditions xsi:type="alica:RuntimeCondition" id="1457955744730" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
+  <runtimeCondition xsi:type="alica:RuntimeCondition" id="1457955744730" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1457955764912" name="MISSING_NAME" comment="" scope="1431523395534">
       <sorts>x</sorts>
       <sorts>y</sorts>
@@ -13,33 +13,33 @@
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
-  </conditions>
-  <conditions xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation not start" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+  </runtimeCondition>
+  <preCondition xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation not start" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
   <states id="1431522155979" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">StandardAlignAndGrab.beh#1455888617961</plans>
+    <plans xsi:type="alica:Behaviour">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1433949706015</inTransitions>
     <inTransitions>#1435761866545</inTransitions>
     <outTransitions>#1431522782044</outTransitions>
   </states>
   <states id="1431522297705" name="AlignReceiver" comment="" entryPoint="1431522269326">
-    <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1433950043262</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:Behaviour">StandardAlignToPoint.beh#1433950043262</plans>
+    <plans xsi:type="alica:Behaviour">StandardActuate.beh#1435766278023</plans>
     <outTransitions>#1431522920716</outTransitions>
   </states>
   <states id="1431522763494" name="Pass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">GenericExecutePass.beh#1465040471344</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:Behaviour">GenericExecutePass.beh#1465040471344</plans>
     <inTransitions>#1431522782044</inTransitions>
     <outTransitions>#1431524869870</outTransitions>
     <outTransitions>#1435761866545</outTransitions>
   </states>
   <states id="1431522912251" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Intercept.beh#1458757193843</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Intercept.beh#1458757193843</plans>
+    <plans xsi:type="alica:Behaviour">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
   </states>
@@ -47,18 +47,18 @@
     <inTransitions>#1431523011459</inTransitions>
   </states>
   <states id="1431523482646" name="Block" comment="" entryPoint="1431523395534">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1431524014799" name="Defend" comment="" entryPoint="1431523422152">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1431524769489" name="SpatialDefend" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
     <inTransitions>#1431524869870</inTransitions>
   </states>
   <states id="1433949667740" name="AlignExecutor" comment="" entryPoint="1431522155980">
-    <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1435155363994</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1433949706015</outTransitions>
   </states>
   <transitions id="1431522782044" name="MISSING_NAME" comment="grab ball success" msg="">

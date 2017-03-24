@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1466936775181" name="OwnInGamePenalty" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/Penalty/InGame" priority="0.0" minCardinality="1" maxCardinality="4">
   <states id="1466936775182" name="MoveBehindBall" comment="" entryPoint="1466936775183">
-    <plans xsi:type="alica:BehaviourConfiguration">Standards/Own/Penalty/PenaltyPosExecuter.beh#1466940432683</plans>
+    <plans xsi:type="alica:Behaviour">Standards/Own/Penalty/PenaltyPosExecuter.beh#1466940432683</plans>
     <outTransitions>#1466936848368</outTransitions>
   </states>
   <states id="1466936786859" name="Grab Ball" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:Behaviour">GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1466936849764</inTransitions>
     <inTransitions>#1466936851417</inTransitions>
     <outTransitions>#1466936850672</outTransitions>
   </states>
   <states id="1466936788188" name="Wait4Start" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/Stop.beh#1413992604875</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1466936848368</inTransitions>
     <outTransitions>#1466936849764</outTransitions>
   </states>
   <states id="1466936790118" name="AlignAndShoot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Standards/Own/Penalty/PenaltyShoot.beh#1466940268216</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:Behaviour">Standards/Own/Penalty/PenaltyShoot.beh#1466940268216</plans>
     <inTransitions>#1466936850672</inTransitions>
     <outTransitions>#1466936851417</outTransitions>
     <outTransitions>#1466936861165</outTransitions>
   </states>
   <states id="1466936792646" name="Pos4Rebounce" comment="" entryPoint="1466936799335">
-    <plans xsi:type="alica:BehaviourConfiguration">Pos4PenaltyRebounce.beh#1466976004315</plans>
+    <plans xsi:type="alica:Behaviour">Pos4PenaltyRebounce.beh#1466976004315</plans>
   </states>
   <states xsi:type="alica:SuccessState" id="1466936854348" name="PenaltySuccess" comment="">
     <inTransitions>#1466936861165</inTransitions>
   </states>
   <states id="1466972478368" name="Defend" comment="" entryPoint="1466972404622">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/BackroomDefence.beh#1454507819086</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/BackroomDefence.beh#1454507819086</plans>
   </states>
   <transitions id="1466936848368" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1466936849620" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>

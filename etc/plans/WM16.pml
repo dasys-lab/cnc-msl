@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1413992564408" name="WM16" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1413992564409" name="Stop" comment="" entryPoint="1413992564410">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/Stop.beh#1413992604875</plans>
     <inTransitions>#1426692315498</inTransitions>
     <inTransitions>#1426692322651</inTransitions>
     <inTransitions>#1426692324690</inTransitions>
@@ -36,8 +36,8 @@
     <outTransitions>#1426692326813</outTransitions>
   </states>
   <states id="1426692070119" name="Joystick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Joystick.beh#1421854995808</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Joystick.beh#1421854975890</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1449742071382</plans>
     <inTransitions>#1426692077573</inTransitions>
     <outTransitions>#1426692322651</outTransitions>
   </states>

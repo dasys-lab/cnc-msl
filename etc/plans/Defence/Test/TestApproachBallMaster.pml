@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1430324312981" name="TestApproachBallMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Defence/Test" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1430324312982" name="Stop" comment="" entryPoint="1430324312983">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/Stop.beh#1413992604875</plans>
     <inTransitions>#1431012024235</inTransitions>
     <inTransitions>#1431528885520</inTransitions>
     <inTransitions>#1431528887705</inTransitions>
@@ -12,7 +12,7 @@
     <outTransitions>#1431528884169</outTransitions>
   </states>
   <states id="1430324405240" name="AttackOpp" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/AttackOpp.beh#1430324680117</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/AttackOpp.beh#1430324680117</plans>
     <inTransitions>#1430324473378</inTransitions>
     <outTransitions>#1431012024235</outTransitions>
   </states>

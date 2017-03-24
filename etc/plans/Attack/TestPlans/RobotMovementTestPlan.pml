@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462969665131" name="RobotMovementTestPlan" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack/TestPlans" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1462969665132" name="Stop" comment="" entryPoint="1462969665133">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/Stop.beh#1413992604875</plans>
     <inTransitions>#1462969786619</inTransitions>
     <outTransitions>#1462969759156</outTransitions>
   </states>
   <states id="1462969884284" name="dribbleTest" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/RobotMovementDribbleTest.beh#1462969753310</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/RobotMovementDribbleTest.beh#1462969753310</plans>
+    <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1449742071382</plans>
     <inTransitions>#1462969759156</inTransitions>
     <outTransitions>#1462969786619</outTransitions>
   </states>

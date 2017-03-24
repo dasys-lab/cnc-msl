@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1417620189234" name="ShootTwoHoledWall" comment="notHaveBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TwoHoledWall" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1417620209050" name="GrabBall" comment="" entryPoint="1417620209051">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:Behaviour">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1417620327753</inTransitions>
     <outTransitions>#1417620267846</outTransitions>
   </states>
   <states id="1417620225739" name="AlignAndShoot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">AlignAndShootTwoHoledWall.beh#1417620730939</plans>
+    <plans xsi:type="alica:Behaviour">AlignAndShootTwoHoledWall.beh#1417620730939</plans>
     <inTransitions>#1417620267846</inTransitions>
     <outTransitions>#1417620285804</outTransitions>
     <outTransitions>#1417620327753</outTransitions>

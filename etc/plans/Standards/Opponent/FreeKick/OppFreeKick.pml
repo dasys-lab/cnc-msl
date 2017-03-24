@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1445411471122" name="OppFreeKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.075" destinationPath="Plans/Standards/Opponent/FreeKick" priority="0.0" minCardinality="1" maxCardinality="4">
-  <conditions xsi:type="alica:RuntimeCondition" id="1445442215438" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
+  <runtimeCondition xsi:type="alica:RuntimeCondition" id="1445442215438" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1445442232032" name="MISSING_NAME" comment="" scope="1454663055945">
       <sorts>x</sorts>
       <sorts>y</sorts>
@@ -13,9 +13,9 @@
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
-  </conditions>
+  </runtimeCondition>
   <states id="1445411471123" name="PosDefDefender" comment="" entryPoint="1445411471124">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
     <outTransitions>#1447875673956</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1447875657650" name="Success" comment="">
@@ -24,11 +24,11 @@
     <inTransitions>#1454663210633</inTransitions>
   </states>
   <states id="1454663055945" name="PosDefBlocker" comment="" entryPoint="1454663032454">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
     <outTransitions>#1454663208360</outTransitions>
   </states>
   <states id="1454663058990" name="PosDefAttacker" comment="" entryPoint="1454663045348">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/Pos4Def.beh#1445438204426</plans>
     <outTransitions>#1454663210633</outTransitions>
   </states>
   <transitions id="1447875673956" name="MISSING_NAME" comment="any children success" msg="">

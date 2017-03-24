@@ -8,7 +8,7 @@
   </states>
   <states id="1457015292860" name="WatchBall" comment="">
     <plans xsi:type="alica:PlanType">OppStandardWatchBallType.pty#1457015489608</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">TeamWatchBall.beh#1457015565562</plans>
+    <plans xsi:type="alica:Behaviour">TeamWatchBall.beh#1457015565562</plans>
     <inTransitions>#1457015308829</inTransitions>
     <inTransitions>#1458555993363</inTransitions>
     <outTransitions>#1457015478636</outTransitions>

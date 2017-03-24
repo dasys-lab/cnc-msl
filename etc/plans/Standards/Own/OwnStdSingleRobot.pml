@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1467383326416" name="OwnStdSingleRobot" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own" priority="0.0" minCardinality="1" maxCardinality="1">
   <states id="1467384083266" name="Position" comment="" entryPoint="1467384083267">
-    <plans xsi:type="alica:BehaviourConfiguration">StdAlignSingleRobot.beh#1467385818398</plans>
+    <plans xsi:type="alica:Behaviour">StdAlignSingleRobot.beh#1467385818398</plans>
     <outTransitions>#1467384202351</outTransitions>
   </states>
   <states id="1467384130052" name="GetBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardAlignAndGrab.beh#1467436134025</plans>
+    <plans xsi:type="alica:Behaviour">GenericStandards/StandardAlignAndGrab.beh#1467436134025</plans>
     <inTransitions>#1467384202351</inTransitions>
     <outTransitions>#1467384215357</outTransitions>
   </states>
   <states id="1467384133137" name="Kick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">SingleRobotKickIntoOppHalf.beh#1467436318706</plans>
+    <plans xsi:type="alica:Behaviour">SingleRobotKickIntoOppHalf.beh#1467436318706</plans>
     <inTransitions>#1467384215357</inTransitions>
     <outTransitions>#1467384963126</outTransitions>
   </states>

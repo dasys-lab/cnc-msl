@@ -5,7 +5,7 @@
     <outTransitions>#1473862896106</outTransitions>
   </states>
   <states id="1473862820126" name="Test" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/RobotMovementTest.beh#1473862892543</plans>
+    <plans xsi:type="alica:Behaviour">Behaviours/RobotMovementTest.beh#1473862892543</plans>
     <inTransitions>#1473862896106</inTransitions>
     <outTransitions>#1473865277226</outTransitions>
   </states>
