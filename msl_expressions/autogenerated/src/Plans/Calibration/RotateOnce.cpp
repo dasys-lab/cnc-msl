@@ -24,6 +24,8 @@ namespace alica
         robotRadius = wm->getRobotRadius();
         lastMotionBearing = 0;
         lastIMUBearing = 0;
+        imuRotations = 0;
+        motionRotations = 0;
         rotationSpeed = 0;
         diffOffset = 0;
         diffOffsetInitialized = false;
@@ -37,7 +39,8 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-        if (this->isSuccess())
+    	cout.precision(5);
+    	if (this->isSuccess())
         {
             return;
         }
