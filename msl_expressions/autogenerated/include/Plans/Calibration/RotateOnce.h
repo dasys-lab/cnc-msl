@@ -35,6 +35,8 @@ namespace alica
 
         int motionRotations;
         int imuRotations;
+        double diffOffset;
+        bool diffOffsetInitialized;
         double lastIMUBearing;
         double lastMotionBearing;
 
