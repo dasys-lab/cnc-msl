@@ -39,7 +39,7 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-    	cout.precision(5);
+    	cout.precision(4);
     	if (this->isSuccess())
         {
             return;
@@ -56,24 +56,25 @@ namespace alica
         bool isFullIMURotation = false;
         bool isFullMotionRotation = false;
 
-        cout << currentIMUBearing << "\t";
         iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations, isFullIMURotation);
-        cout << "\t";
-        cout << currentMotionBearing << "\t";
         mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations, isFullMotionRotation);
-        cout << "\t";
-        cout << iR << "\t" << mR << "\t" << iR - mR << endl;
 
-        if (isFullIMURotation)
+	if (isFullIMURotation)
         {
-        	// diffOffset is 0 initially
-        	double currentDiff = (iR - diffOffset) - mR;
+		// if this is the first full IMU rotation, initialize the IMU rotation offset
+                if(!diffOffsetInitialized) {
+                        diffOffset = iR - mR;
+                        cout << "set diffOffset to " << diffOffset << endl;
+                        diffOffsetInitialized = true;
+                }
 
-        	// if this is the first full IMU rotation, initialize the IMU rotation offset
-        	if(!diffOffsetInitialized) {
-        		diffOffset = currentDiff;
-        		diffOffsetInitialized = true;
-        	}
+		double currentDiff = (iR - diffOffset) - mR;
+
+                cout << currentIMUBearing << "\t";
+		cout << "\t";
+		cout << currentMotionBearing << "\t";
+		cout << "\t";
+		cout << iR << "\t" << mR << "\t" << currentDiff << endl;
 
         	logIMUMotionDifference(currentDiff);
 
@@ -218,8 +219,10 @@ namespace alica
         if (isfullRotation)
         {
             rotations++;
-            cout << "1";
+            // cout << "1";
         }
+
+	// cout << "\t";
 
         return rotations + currentNormedBearing;
     }
