@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1473862711641" name="RobotMovementTest" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans/RobotMovement" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1473862711641" name="RobotMovementTest" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans/RobotMovement" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1473862711642" name="Stop" comment="" entryPoint="1473862711643">
     <inTransitions>#1473865277226</inTransitions>
     <outTransitions>#1473862896106</outTransitions>

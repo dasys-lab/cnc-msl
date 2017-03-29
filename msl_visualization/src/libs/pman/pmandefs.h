@@ -23,11 +23,10 @@
 #ifndef CAMDEFS_H_INCLUDED
 #define CAMDEFS_H_INCLUDED
 
-
 #define SHMEM_FCAM_PMAN_KEY 0x9010 /* Shared memory key, PMAN, front camera */
 #define SHMEM_OCAM_PMAN_KEY 0x9011 /* Shared memory key, PMAN, omnidirectional camera */
-#define SEM_FCAM_PMAN_KEY   0x9010 /* Semaphore key for PMAN primitives, front camera */
-#define SEM_OCAM_PMAN_KEY   0x9011 /* Semaphore key for PMAN primitives, omni camera */
+#define SEM_FCAM_PMAN_KEY 0x9010   /* Semaphore key for PMAN primitives, front camera */
+#define SEM_OCAM_PMAN_KEY 0x9011   /* Semaphore key for PMAN primitives, omni camera */
 
 // SHMEM and SEM can have the same key
 //#define PMAN_SHARED_KEY(_seed)   (0x9100 + 2*_seed)

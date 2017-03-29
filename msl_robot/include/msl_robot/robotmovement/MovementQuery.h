@@ -8,108 +8,154 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_
 
-#include "msl_actuator_msgs/MotionControl.h"
-#include "GeometryCalculator.h"
-#include "SystemConfig.h"
 #include "Ball.h"
+#include "GeometryCalculator.h"
 #include "RobotMovement.h"
+#include "SystemConfig.h"
+#include "msl_actuator_msgs/MotionControl.h"
 
 using namespace std;
 using namespace msl_actuator_msgs;
 namespace msl
 {
-	class MSLWorldModel;
-	class MSLRobot;
-	class IPathEvaluator;
-	class PathPlannerQuery;
-	class MovementQuery
-	{
-		friend class msl::RobotMovement;
-	public:
-		MovementQuery();
-		virtual ~MovementQuery();
-		shared_ptr<geometry::CNPoint2D> egoAlignPoint;
-		shared_ptr<geometry::CNPoint2D> egoDestinationPoint;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
-		bool fast;
-		bool dribble;
-		double snapDistance;
-		double angleTolerance;
-		shared_ptr<geometry::CNPoint2D> alloTeamMatePosition;
+class MSLWorldModel;
+class MSLRobot;
+class IPathEvaluator;
+class PathPlannerQuery;
+class MovementQuery
+{
+    friend class msl::RobotMovement;
 
-		//for Voronoi Stuff
+  public:
+    MovementQuery();
+    virtual ~MovementQuery();
+    /**
+     * Define the alignment at the egoDestinationPoint
+     */
+    shared_ptr<geometry::CNPoint2D> egoAlignPoint;
+    /**
+     * Point the robot is supposed to reach
+     */
+    shared_ptr<geometry::CNPoint2D> egoDestinationPoint;
+    /**
+     * Obstacles added to the PathPlanner’s Voronoi Diagram
+     */
+    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
+    /**
+     * FastTranslation or DefaultTranslation (Motion.conf)
+     */
+    bool fast;
+    /**
+     * Robot is dribbeling the ball
+     */
+    bool dribble;
+    /**
+     * Distance when the goal is reached
+     */
+    double snapDistance;
+    /**
+     * Angle tolerance for Alignment
+     */
+    double angleTolerance;
+    /**
+     * Passing Teammate position for moving into free space
+     */
+    shared_ptr<geometry::CNPoint2D> alloTeamMatePosition;
 
-		shared_ptr<IPathEvaluator> pathEval;
+    /**
+     * PathEvaluator supposed to be used in the A*-Algorithm
+     */
+    shared_ptr<IPathEvaluator> pathEval;
 
-		bool blockOppPenaltyArea;
-		bool blockOppGoalArea;
-		bool blockOwnPenaltyArea;
-		bool blockOwnGoalArea;
-		bool block3MetersAroundBall;
-		/**
-		 * bolck circle shaped area
-		 * @param centerPoint shared_ptr<geometry::CNPoint2D>
-		 * @param radious double
-		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
-		 */
-		void blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
+    /**
+     * Block opponent penalty area with artificial obstacles
+     */
+    bool blockOppPenaltyArea;
+    /**
+     * Block opponent Goal area with artificial obstacles
+     */
+    bool blockOppGoalArea;
+    /**
+     * Block own penalty area with artificial obstacles
+     */
+    bool blockOwnPenaltyArea;
+    /**
+     * Block own goal area with artificial obstacles
+     */
+    bool blockOwnGoalArea;
+    /**
+     * Block 3 meter circle around the ball during Standards
+     */
+    bool block3MetersAroundBall;
+    /**
+     * Block circle shaped area
+     * @param centerPoint shared_ptr<geometry::CNPoint2D>
+     * @param radius double
+     */
+    void blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
 
-		/**
-		 * bolck opponent penalty area
-		 * @param upLeftCorner shared_ptr<geometry::CNPoint2D>
-		 * @param lowRightCorner shared_ptr<geometry::CNPoint2D>
-		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
-		 */
-		void blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
+    /**
+     * Block rectangular penalty area
+     * @param upLeftCorner shared_ptr<geometry::CNPoint2D>
+     * @param lowRightCorner shared_ptr<geometry::CNPoint2D>
+     */
+    void blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
 
-		//for RobotMovement::alignTo() stuff
-		bool rotateAroundTheBall;
+    /**
+     * Rotate orthogonally around the ball
+     */
+    bool rotateAroundTheBall;
 
-		void reset();
+    /**
+     * Resets all parameters.
+     */
+    void reset();
 
-		shared_ptr<PathPlannerQuery> getPathPlannerQuery();
+    /**
+     * Create PathPlannerQuery from fields of this class
+     */
+    shared_ptr<PathPlannerQuery> getPathPlannerQuery();
 
-	protected:
+  protected:
+    double circleRadius;
+    shared_ptr<geometry::CNPoint2D> circleCenterPoint;
+    shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
+    shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
+    void resetAllPIDParameters();
+    void resetRotationPDParameters();
+    void resetTransaltionPIParameters();
+    double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
+    double translationPIForDribble(double transOrt);
+    double angleCalcForDribble(double transOrt);
 
-		double circleRadius;
-		shared_ptr<geometry::CNPoint2D> circleCenterPoint;
-		shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
-		shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
-		void resetAllPIDParameters();
-		void resetRotationPDParameters();
-		void resetTransaltionPIParameters();
-		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
-		double translationPIForDribble(double transOrt);
-		double angleCalcForDribble(double transOrt);
+    void setRotationPDParameters(double pParam, double dParam);
+    void setTranslationPIParameters(double pParam, double iParam);
 
-		void setRotationPDParameters(double pParam, double dParam);
-		void setTranslationPIParameters(double pParam, double iParam);
+    double curRotDribble;
+    double curTransDribble;
 
-		double curRotDribble;
-		double curTransDribble;
+  private:
+    MSLWorldModel *wm;
+    MSLRobot *robot;
 
-	private:
-		MSLWorldModel* wm;
-		MSLRobot* robot;
+    // PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
+    double pRot;
+    double dRot;
+    double rotAccStep;
+    double maxRot;
+    double lastRotDribbleErr;
 
-// PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
-		double pRot;
-		double dRot;
-		double rotAccStep;
-		double maxRot;
-		double lastRotDribbleErr;
+    // PD variables for RobotMovement::moveToPoint() and RobotMovement::translationDribblePD()
+    double maxVel;
+    double angleDeadBand;
+    double iTrans;
+    double transControlIntegralMax;
+    double pTrans;
+    double transAccStep;
+    double transDecStep;
+    double transControlIntegralDribble;
 
-// PD variables for RobotMovement::moveToPoint() and RobotMovement::translationDribblePD()
-		double maxVel;
-		double angleDeadBand;
-		double iTrans;
-		double transControlIntegralMax;
-		double pTrans;
-		double transAccStep;
-		double transDecStep;
-		double transControlIntegralDribble;
-
-		void readConfigParameters();
-	};
+    void readConfigParameters();
+};
 }
 #endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_ */

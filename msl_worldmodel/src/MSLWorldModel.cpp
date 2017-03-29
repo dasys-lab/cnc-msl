@@ -32,7 +32,7 @@
 #include "Robots.h"
 #include "Ball.h"
 #include "Game.h"
-#include "Kicker.h"
+//#include "Kicker.h"
 #include "WhiteBoard.h"
 #include "MSLFootballField.h"
 #include "EventTrigger.h"
@@ -567,4 +567,3 @@ namespace msl
 		processCommandPub.publish(command);
 	}
 } /* namespace msl */
-

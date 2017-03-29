@@ -39,8 +39,8 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-    	cout.precision(4);
-    	if (this->isSuccess())
+        cout.precision(4);
+        if (this->isSuccess())
         {
             return;
         }
@@ -59,39 +59,42 @@ namespace alica
         iR = updateRotationCount(currentIMUBearing, lastIMUBearing, imuRotations, isFullIMURotation);
         mR = updateRotationCount(currentMotionBearing, lastMotionBearing, motionRotations, isFullMotionRotation);
 
-	if (isFullIMURotation)
+        if (isFullIMURotation)
         {
-		// if this is the first full IMU rotation, initialize the IMU rotation offset
-                if(!diffOffsetInitialized) {
-                        diffOffset = iR - mR;
-                        cout << "set diffOffset to " << diffOffset << endl;
-                        diffOffsetInitialized = true;
-                }
+            // if this is the first full IMU rotation, initialize the IMU rotation offset
+            if (!diffOffsetInitialized)
+            {
+                diffOffset = iR - mR;
+                cout << "set diffOffset to " << diffOffset << endl;
+                diffOffsetInitialized = true;
+            }
 
-		double currentDiff = (iR - diffOffset) - mR;
+            double currentDiff = (iR - diffOffset) - mR;
 
-                cout << currentIMUBearing << "\t";
-		cout << "\t";
-		cout << currentMotionBearing << "\t";
-		cout << "\t";
-		cout << iR << "\t" << mR << "\t" << currentDiff << endl;
+            cout << currentIMUBearing << "\t";
+            cout << "\t";
+            cout << currentMotionBearing << "\t";
+            cout << "\t";
+            cout << iR << "\t" << mR << "\t" << currentDiff << endl;
 
-        	logIMUMotionDifference(currentDiff);
+            logIMUMotionDifference(currentDiff);
 
-			if (iR > MAX_ROTATIONS)
-			{
-				// MAX_ROTATIONS reached - calibration finished!
-				cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
-				this->setSuccess(true);
-			}
-			else if (iR > MIN_ROTATIONS && abs(currentDiff) > MIN_BEARING_DIFF_FOR_REGRESSION)
-			{
-				// MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
-				cout << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on" << endl;
-				calculateRadius();
-				this->setFailure(true);
-			}
-		}
+            if (iR > MAX_ROTATIONS)
+            {
+                // MAX_ROTATIONS reached - calibration finished!
+                cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
+                this->setSuccess(true);
+            }
+            else if (iR > MIN_ROTATIONS && abs(currentDiff) > MIN_BEARING_DIFF_FOR_REGRESSION)
+            {
+                // MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
+                cout
+                        << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on"
+                        << endl;
+                calculateRadius();
+                this->setFailure(true);
+            }
+        }
 
         // cout << "buffer" << endl;
 //		double endAngle = wm->rawOdometry->position.angle;
@@ -222,7 +225,7 @@ namespace alica
             // cout << "1";
         }
 
-	// cout << "\t";
+        // cout << "\t";
 
         return rotations + currentNormedBearing;
     }
@@ -239,9 +242,9 @@ namespace alica
 
     double RotateOnce::circularDiff(double a, double b)
     {
-    	// DEFINITELY SELF DOCUMENTING CODE
-    	// (maybe not)
-    	// TODO
+        // DEFINITELY SELF DOCUMENTING CODE
+        // (maybe not)
+        // TODO
 
         double diff = a - b;
         if (abs(diff) > M_PI)

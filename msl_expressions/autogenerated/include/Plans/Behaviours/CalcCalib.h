@@ -16,39 +16,23 @@ namespace alica
         virtual ~CalcCalib();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
-        double calibPosMotionY = 0;
-        double calibPosMotionX = 0;
-        double calibOldPosMotionX = 0;
-        double calibOldPosMotionY = 0;
+        double calibPosMotionY;
+        double calibPosMotionX;
+        double calibOldPosMotionX;
+        double calibOldPosMotionY;
         double calibCoefficientX;
         double calibCoefficientY;
-        double oldCalibCoefficientX = 0;
-        double oldCalibCoefficientY = 0;
-        double correctedWayX = 0;
-        double correctedWayY = 0;
-        double correctedPosX = 0;
-        double correctedPosY = 0;
-        double oldCorrectedPosX = 0;
-        double oldCorrectedPosY = 0;
+        double oldCalibCoefficientX;
+        double oldCalibCoefficientY;
+        double correctedWayX;
+        double correctedWayY;
+        double correctedPosX;
+        double correctedPosY;
         double diffX;
         double diffY;
-        double length = 0; //löschen???
-        double lengthSegment = 0;
+        double lengthSegment;
+        int calibCounter;
         CalibrationCoefficient calibCoeff;
-        int calibCounter = 0; //evtl für Richtung
-
-        //------------------------------
-
-        double errorTestMotionPosX = 0;
-        double errorTestMotionPosY = 0;
-        double errorTestVisionPosX = 0;
-        double errorTestVisionPosY = 0;
-        double oldErrorTestMotionPosX = 0;
-        double oldErrorTestMotionPosY = 0;
-        double oldErrorTestVisionPosX = 0;
-        double oldErrorTestVisionPosY = 0;
-        int errorCounter = 0;
-        int timeCounter = 0;
 
         /*PROTECTED REGION END*/
     protected:

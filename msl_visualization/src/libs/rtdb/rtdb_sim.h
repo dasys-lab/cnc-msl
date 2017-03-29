@@ -36,15 +36,15 @@ extern "C" {
 //		0 = OK
 //		-1 = erro
 //
-int DB_init_all (int _second_rtdb);
+int DB_init_all(int _second_rtdb);
 
-void DB_free_all (int _second_rtdb);
+void DB_free_all(int _second_rtdb);
 
-int DB_put_in (int _agent, int _to_agent, int _id, void *_value, int life);
+int DB_put_in(int _agent, int _to_agent, int _id, void *_value, int life);
 
-int DB_get_from (int _agent, int _from_agent, int _id, void *_value);
+int DB_get_from(int _agent, int _from_agent, int _id, void *_value);
 
-void DB_set_config_file(const char* cf);
+void DB_set_config_file(const char *cf);
 
 #ifdef __cplusplus
 }

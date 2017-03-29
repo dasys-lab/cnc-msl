@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="PenaltyMaster.pml#1466973051874"/>
-    <value xPos="69" yPos="21" width="142" height="86"/>
+    <value xPos="69" yPos="21" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="PenaltyMaster.pml#1466973051873"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="PenaltyMaster.pml#1466973070716"/>
-    <value xPos="232" yPos="24" width="185" height="86"/>
+    <value xPos="232" yPos="24" width="185" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="PenaltyMaster.pml#1466973076640"/>

@@ -34,103 +34,106 @@ namespace alica
         // 4 changing translation angle
         // 5 increasing speed
         // default forth and back
-        switch (testBehaviour)
-        {
-            case 1:
+        /*        switch (testBehaviour)
+         {
+         case 1:
 
-                testSpeed = 0;
-                if (testCount >= 60)
-                {
-                    testRot += M_PI / 3;
-                }
-                break;
+         testSpeed = 0;
+         if (testCount >= 60)
+         {
+         testRot += M_PI / 3;
+         }
+         break;
 
-            case 2:
-                if (testCount2 >= 10)
-                {
-                    testCount2 = 0;
-                    testSpeed -= 1000;
-                    testRot += M_PI / 3;
-                }
-                if (testCount >= 60)
-                {
-                    testCount = 0;
-                    testCount2++;
-                    testSpeed += 100;
-                }
-                break;
+         case 2:
+         if (testCount2 >= 10)
+         {
+         testCount2 = 0;
+         testSpeed -= 1000;
+         testRot += M_PI / 3;
+         }
+         if (testCount >= 60)
+         {
+         testCount = 0;
+         testCount2++;
+         testSpeed += 100;
+         }
+         break;
 
-            case 3:
+         case 3:
 
-                if (testCount >= 60)
-                {
-                    testCount = 0;
-                    testAngle += M_PI / 8;
-                }
-                break;
+         if (testCount >= 60)
+         {
+         testCount = 0;
+         testAngle += M_PI / 8;
+         }
+         break;
 
-            case 4:
+         case 4:
 
-                if (testCount2 >= 2)
-                {
-                    testCount2 = 0;
-                    testRot += M_PI / 12;
-                }
-                if (testCount >= 60)
-                {
-                    testCount = 0;
-                    testCount2++;
-                    testAngle += M_PI;
-                }
-                break;
+         if (testCount2 >= 2)
+         {
+         testCount2 = 0;
+         testRot += M_PI / 12;
+         }
+         if (testCount >= 60)
+         {
+         testCount = 0;
+         testCount2++;
+         testAngle += M_PI;
+         }
+         break;
 
-            case 5:
+         case 5:
 
-                if (testCount >= 60)
-                {
-                    testCount = 0;
-                    testSpeed += 100;
-                    testAngle += M_PI;
-                }
-                break;
+         if (testCount >= 60)
+         {
+         testCount = 0;
+         testSpeed += 100;
+         testAngle += M_PI;
+         }
+         break;
 
-            default:
+         default:
 
-                if (testCount >= 200)
-                {
-                    testCount = 0;
-                    testAngle += M_PI;
-                }
-                break;
-        }
+         if (testCount >= 200)
+         {
+         testCount = 0;
+         testAngle += M_PI;
+         }
+         break;
+         }
 
-        //fill message for MotionControl as defined in switch
-        //drive only in time step 6-49
-        //pause in 1-5 and 50-60, repeat
-        msl_actuator_msgs::MotionControl motorMsg;
-        if (testCount < 50 && testCount > 5)
-        {
-            motorMsg.motion.angle = testAngle;
-            motorMsg.motion.rotation = testRot;
-            motorMsg.motion.translation = testSpeed;
-        }
-        else
-        {
-            motorMsg.motion.angle = 0;
-            motorMsg.motion.rotation = 0;
-            motorMsg.motion.translation = 0;
-        }
-        send(motorMsg);
-        testCount++;
-
+         //fill message for MotionControl as defined in switch
+         //drive only in time step 6-49
+         //pause in 1-5 and 50-60, repeat
+         msl_actuator_msgs::MotionControl motorMsg;
+         if (testCount < 50 && testCount > 5)
+         {
+         motorMsg.motion.angle = testAngle;
+         motorMsg.motion.rotation = testRot;
+         motorMsg.motion.translation = testSpeed;
+         }
+         else
+         {
+         motorMsg.motion.angle = 0;
+         motorMsg.motion.rotation = 0;
+         motorMsg.motion.translation = 0;
+         }
+         send(motorMsg);
+         testCount++;
+         */
         auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        auto robotRot = odom->rotation;
+        auto robotRot = (double)odom->rotation / 1024.0;
 
         auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
         auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
+
+        cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
+        cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
 
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
@@ -138,10 +141,11 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd msgback;
         msgback.leftMotor = left;
         msgback.rightMotor = right;
+        cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
         send(msgback);
 
-        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
-                << ballAngle << "  " << left << " " << right << endl;
+//        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
+//                << ballAngle << "  " << left << " " << right << endl;
 
         /*PROTECTED REGION END*/
     }
@@ -181,7 +185,7 @@ namespace alica
         //correcting desired ball velocity towards robot to guarantee grib
         if (velX <= staticUpperBound && velX >= staticLowerBound)
             velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation) * rBallRobot;
+        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
         return sqrt(velX * velX + velY * velY);
     }
@@ -193,7 +197,7 @@ namespace alica
         double velY = -sin(angle) * translation + rotation * rBallRobot;
         if (velX <= staticUpperBound && velX >= staticLowerBound)
             velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation) * rBallRobot;
+        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
         double ballAngle = 0;
         ballAngle = atan2(velY, velX);

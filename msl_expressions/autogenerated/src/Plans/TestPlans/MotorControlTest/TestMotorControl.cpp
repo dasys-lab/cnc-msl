@@ -25,114 +25,62 @@ namespace alica
     void TestMotorControl::run(void* msg)
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
-        if (terminated)
+        if (wm->getTime() < startTime + 1000000000)
+
         {
-            return;
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = (double)angle / 180 * M_PI;
+            motorMsg.motion.rotation = 0;
+
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
+
         }
 
-        if (count == 0)
+        else if (wm->getTime() < startTime + 2000000000)
+
         {
-            cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot
-                    << endl;
-            start = wm->rawSensorData->getOwnPositionMotion();
-            if (start == NULL)
-                return;
-            goal->x = start->x + relGoalX;
-            goal->y = start->y + relGoalY;
-            goal->theta = start->theta + relGoalRot;
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = (double)(angle + 120) / 180 * M_PI;
+            motorMsg.motion.rotation = 0;
+
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
+
         }
+        else if (wm->getTime() < startTime + 3000000000)
 
-        currentPos = wm->rawSensorData->getOwnPositionMotion();
-        goalPointer = goal - currentPos;
-        angleDistance = goal->theta - currentPos->theta;
-        goalDistance = sqrt(
-                goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
-                        + angleDistance * angleDistance * 500);
-
-        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance
-                << "current x " << currentPos->x << "current y " << currentPos->y << " x " << goalPointer->x << " y "
-                << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
-
-        if (goalDistance > oldGoalDistance + 10)
         {
-            if (!terminated)
-            {
-                cout << "TestMotorControl::run Reached closest point to target at " << count << " with "
-                        << goalPointer->x << "," << goalPointer->y << "," << angleDistance << endl;
-                msl_actuator_msgs::MotionControl motorMsg;
-                motorMsg.motion.angle = 0;
-                motorMsg.motion.rotation = 0;
-                motorMsg.motion.translation = 0;
-                send(motorMsg);
-                terminated = true;
-            }
-            return;
-        }
-        oldGoalDistance = goalDistance;
+            msl_actuator_msgs::MotionControl motorMsg;
+            motorMsg.motion.translation = testSpeed;
+            motorMsg.motion.angle = (double)(angle + 240) / 180 * M_PI;
+            motorMsg.motion.rotation = 0;
 
-        if (count >= abortTime * 30)
-        {
-            if (!terminated)
-            {
-                cerr << "TestMotorControl::run Missed target, terminated by time out" << endl;
-                msl_actuator_msgs::MotionControl motorMsg;
-                motorMsg.motion.angle = 0;
-                motorMsg.motion.rotation = 0;
-                motorMsg.motion.translation = 0;
-                send(motorMsg);
-                terminated = true;
-            }
-            return;
-        }
+            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                    << motorMsg.motion.rotation << endl;
+            send(motorMsg);
 
-        count++;
-
-        msl_actuator_msgs::MotionControl motorMsg;
-        motorMsg.motion.translation = testSpeed;
-
-        if (straight)
-        {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - currentPos->theta + start->theta;
-            motorMsg.motion.rotation = relGoalRot * testSpeed / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
         }
 
         else
+
         {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - (relGoalRot / 2);
-            motorMsg.motion.rotation = testSpeed * 2 * sin(relGoalRot / 2)
-                    / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
+            startTime = wm->getTime();
         }
-        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
-                << motorMsg.motion.rotation << endl;
-        send(motorMsg);
 
         /*PROTECTED REGION END*/
     }
     void TestMotorControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
-        relGoalX = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalX", NULL);
-        relGoalY = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalY", NULL);
-        relGoalRot = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalRot", NULL) * M_PI;
-
-        while (relGoalRot > M_PI)
-        {
-            relGoalRot -= 2 * M_PI;
-        }
-        while (relGoalRot <= -M_PI)
-        {
-            relGoalRot += 2 * M_PI;
-        }
-
-        straight = (*sc)["MotorControlTest"]->get<bool>("MotorControlTest.straight", NULL);
         testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
-
-        abortTime = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.abortTime", NULL)
-                * sqrt(relGoalX * relGoalX + relGoalY * relGoalY) / testSpeed;
-
+        angle = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.angle", NULL);
+        startTime = wm->getTime();
         count = 0;
-        terminated = false;
-        goal = make_shared<geometry::CNPosition>();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1482163964536) ENABLED START*/ //Add additional methods here

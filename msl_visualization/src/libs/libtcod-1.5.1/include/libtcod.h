@@ -37,7 +37,7 @@
 /* os identification
    TCOD_WINDOWS : OS is windows
    TCOD_LINUX : OS is Linux
-   TCOD_MACOSX : OS is Mac OS X 
+   TCOD_MACOSX : OS is Mac OS X
    TCOD_HAIKU : OS is Haiku */
 
 /* compiler identification
@@ -52,46 +52,46 @@
    TCOD_LINUX64 : 64 bits Linux
    TCOD_LINUX32 : 32 bits Linux */
 
-#if defined( _MSC_VER )
-#  define TCOD_VISUAL_STUDIO
-#  define TCOD_WINDOWS
-#  ifdef _WIN64
-#    define TCOD_WIN64
-#    define TCOD_64BITS
-#  else
-#    define TCOD_WIN32
-#  endif
-#elif defined( __MINGW32__ )
-#  define TCOD_WINDOWS
-#  define TCOD_MINGW32
-#  define TCOD_WIN32
-#elif defined( __HAIKU__ )
-#  define TCOD_HAIKU
-#  define TCOD_GCC
-#  if __WORDSIZE == 64
-#    define TCOD_64BITS
-#  endif
-#elif defined( __linux )
-#  define TCOD_LINUX
-#  define TCOD_GCC
-#  if __WORDSIZE == 64
-#    define TCOD_LINUX64
-#    define TCOD_64BITS
-#  else
-#    define TCOD_LINUX32
-#  endif
-#elif defined( __FreeBSD__ )
-#  define TCOD_FREEBSD
-#  define TCOD_GCC
-#  if __WORDSIZE == 64
-#    define TCOD_FREEBSD64
-#    define TCOD_64BITS
-#  else
-#    define TCOD_FREEBSD32
-#  endif
-#elif defined (__APPLE__) && defined (__MACH__)
-#  define TCOD_MACOSX
-#  define TCOD_GCC
+#if defined(_MSC_VER)
+#define TCOD_VISUAL_STUDIO
+#define TCOD_WINDOWS
+#ifdef _WIN64
+#define TCOD_WIN64
+#define TCOD_64BITS
+#else
+#define TCOD_WIN32
+#endif
+#elif defined(__MINGW32__)
+#define TCOD_WINDOWS
+#define TCOD_MINGW32
+#define TCOD_WIN32
+#elif defined(__HAIKU__)
+#define TCOD_HAIKU
+#define TCOD_GCC
+#if __WORDSIZE == 64
+#define TCOD_64BITS
+#endif
+#elif defined(__linux)
+#define TCOD_LINUX
+#define TCOD_GCC
+#if __WORDSIZE == 64
+#define TCOD_LINUX64
+#define TCOD_64BITS
+#else
+#define TCOD_LINUX32
+#endif
+#elif defined(__FreeBSD__)
+#define TCOD_FREEBSD
+#define TCOD_GCC
+#if __WORDSIZE == 64
+#define TCOD_FREEBSD64
+#define TCOD_64BITS
+#else
+#define TCOD_FREEBSD32
+#endif
+#elif defined(__APPLE__) && defined(__MACH__)
+#define TCOD_MACOSX
+#define TCOD_GCC
 #endif
 
 /* unicode rendering functions support */
@@ -102,7 +102,7 @@
 /* This is a hack. SDL by default want you to rename your main statement, and insert it's own first
    It does that to handle some init code. However, libtcod handles that for you. If we did this
    wrappers like libtcod-net would be hosed, since there is no main statement there. */
-#ifdef TCOD_MACOSX 
+#ifdef TCOD_MACOSX
 #define _SDL_main_h
 #include "SDL/SDL.h"
 #endif
@@ -126,8 +126,8 @@ typedef unsigned long uintptr;
 #ifndef __cplusplus
 #ifndef bool
 typedef uint8 bool;
-#define false ((bool)0)
-#define true ((bool)1)
+#define false((bool) 0)
+#define true((bool) 1)
 #endif
 #else
 /* in C++ all C functions prototypes should use uint8 instead of bool */
@@ -155,7 +155,7 @@ TCODLIB_API int TCOD_strcasecmp(const char *s1, const char *s2);
 TCODLIB_API int TCOD_strncasecmp(const char *s1, const char *s2, size_t n);
 
 #if defined(TCOD_WINDOWS)
-char *strcasestr (const char *haystack, const char *needle);
+char *strcasestr(const char *haystack, const char *needle);
 #endif
 #if defined(TCOD_LINUX) || defined(TCOD_HAIKU) || defined(TCOD_FREEBSD) || defined(TCOD_MACOSX)
 #define vsnwprintf vswprintf
@@ -167,31 +167,31 @@ char *strcasestr (const char *haystack, const char *needle);
 /******************************************
  utility macros
  ******************************************/
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
-#define ABS(a) ((a)<0?-(a):(a))
-#define CLAMP(a, b, x)		((x) < (a) ? (a) : ((x) > (b) ? (b) : (x)))
-#define LERP(a, b, x) ( a + x * (b - a) )
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+#define MIN(a, b) ((a) > (b) ? (b) : (a))
+#define ABS(a) ((a) < 0 ? -(a) : (a))
+#define CLAMP(a, b, x) ((x) < (a) ? (a) : ((x) > (b) ? (b) : (x)))
+#define LERP(a, b, x) (a + x * (b - a))
 
-#include "list.h"
+#include "bresenham.h"
+#include "bsp.h"
 #include "color.h"
 #include "console.h"
-#include "image.h"
-#include "mouse.h"
-#include "sys.h"
-#include "mersenne.h"
-#include "bresenham.h"
-#include "noise.h"
 #include "fov.h"
-#include "path.h"
-#include "lex.h"
-#include "parser.h"
-#include "tree.h"
-#include "bsp.h"
 #include "heightmap.h"
-#include "zip.h"
+#include "image.h"
+#include "lex.h"
+#include "list.h"
+#include "mersenne.h"
+#include "mouse.h"
 #include "namegen.h"
+#include "noise.h"
+#include "parser.h"
+#include "path.h"
+#include "sys.h"
+#include "tree.h"
 #include "txtfield.h"
+#include "zip.h"
 #ifdef __cplusplus
 #undef bool
 }

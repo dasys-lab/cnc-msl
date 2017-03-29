@@ -3,7 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1469109429392) ENABLED START*/ //Add additional includes here
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationContainer.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,12 +18,14 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
+        bool runBehaviour;
+
         // consts for checkBallRotation()
         enum Rotation
         {
             RotateCorrect, RotateLeft, RotateRight, RotateTooSlow, RotateErr
         };
-        DribbleCalibrationContainer dcc;
+        msl::DribbleCalibrationContainer dcc;
 
         bool ballRotateCorrect;
         bool ballHoldCorrect;

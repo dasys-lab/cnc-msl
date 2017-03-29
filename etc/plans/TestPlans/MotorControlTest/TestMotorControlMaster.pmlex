@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="TestMotorControlMaster.pml#1482163489122"/>
-    <value xPos="121" yPos="127" width="82" height="67" collapsed="false"/>
+    <value xPos="121" yPos="127" width="82" height="67"/>
   </extensions>
   <extensions>
     <key href="TestMotorControlMaster.pml#1482163489121"/>
@@ -32,6 +32,10 @@
   </extensions>
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1482165487602"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

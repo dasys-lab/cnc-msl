@@ -5,6 +5,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/MotionControl.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
@@ -19,7 +20,9 @@ namespace alica
         /*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
         dribbleForward = false;
         dribbleBackward = false;
-        param = DribbleCalibrationContainer::Param::ErrParm;
+        dribbleRotateLeft = false;
+        dribbleRotateRight = false;
+        param = msl::DribbleCalibrationContainer::Param::ErrParm;
         startTrans = 0;
         endTrans = 0;
         speedIter = 0;
@@ -44,12 +47,11 @@ namespace alica
         /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
         // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
         MotionControl mc;
-        RobotMovement rm;
+        msl::RobotMovement rm;
 //		MovementContainer moveCont;
-
         // if ball is in kicker
-//		if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
-        if ((moveCount < speedIter))
+        if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
+//        if ((moveCount < speedIter))
         {
             getBallFlag = true;
             // waiting so we definitely have the ball when we start with the calibration
@@ -65,30 +67,45 @@ namespace alica
             }
             haveBallCount++;
 
-            // drive to the left
 #ifdef DEBUG_DC
-            cout << "DribbleCalibration::run() haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+            cout << "DribbleCalibration::run(): haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
 #endif
 
             // translation may not be higher than endTrans
             int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
 
-            mc = dcc.paramToMove(param, tran);
+#ifdef DEBUG_DC
+            cout << "DribbleCalibration::run(): translation = " << tran << endl;
+#endif
+            // movement
+            shared_ptr < msl::DribbleCalibrationQuery > query = dcc.paramToMove(param, tran);
 
-            // checking for error values
-            if (mc.motion.translation == NAN)
+            //check input for send methods
+            shared_ptr < MotionControl > mc = query->getMc();
+            if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
             {
-                cerr << "motion command == NAN" << endl;
-                return;
+                if (mc->motion.translation == NAN)
+                {
+                    cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
+                    return;
+                }
+                else
+                {
+                    send(*mc);
+                }
             }
             else
             {
-                send(mc);
+                cout << "no MotionControl received!" << endl;
             }
+
+            shared_ptr < BallHandleCmd > bhc = query->getBhc();
+            send (*bhc);
 
             // waiting some time till we can be sure to only collect correct values
             if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
             {
+                // if you want to collect sensor data, this is the point you want to call the method
                 return;
             }
 
@@ -101,17 +118,8 @@ namespace alica
 
                 haveBallCount = 0;
 
-//				if (minHaveBallParamPoint == 0)
-//				{
-//					cout << "setting minimum parameter value to " << orthoDriveFactor << "..." << endl;
-//					minHaveBallParamPoint = orthoDriveFactor;
-//				}
-//				else
-//				{
-//					cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
-//					maxHaveBallParamPoint = orthoDriveFactor;
-//				}
-//
+                dcc.saveParameters(param);
+                dcc.adaptParam(param);
 //				adaptParam();
             }
 
@@ -137,7 +145,6 @@ namespace alica
             // we need to adapt our weel Speed!
             if (haveBallCount > 0)
             {
-//				adaptParam();
                 dcc.adaptParam(param);
             }
 
@@ -149,7 +156,7 @@ namespace alica
             }
             else
             {
-                cerr << "motion command is NAN!" << endl;
+                cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
             }
         }
         /*PROTECTED REGION END*/
@@ -160,35 +167,51 @@ namespace alica
 //        MovementContainer moveCont;
         readConfigParameters();
 
-        bool success = true;
+        bool success = false;
         string tmp;
         try
         {
             // dribble forward
-            success &= getParameter("DribbleForward", tmp);
-            if (success)
+            if (getParameter("DribbleForward", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleForward;
-                !dribbleForward ? : param = DribbleCalibrationContainer::Param::DribbleForwardParm;
+                !dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
+                success = true;
             }
-
-            // dribble backward
-            success &= getParameter("DribbleBackward", tmp);
-            if (success)
+            else if (getParameter("DribbleBackward", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleBackward;
-                !dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
+                !dribbleBackward ? : param = msl::DribbleCalibrationContainer::Param::DribbleBackwardParm;
+                success = true;
+            }
+            else if (getParameter("DribbleRotateLeft", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
+                !dribbleRotateLeft ? : param = msl::DribbleCalibrationContainer::Param::RotateLeftParm;
+                speedIter = moveCount + 1;
+                success = true;
+            }
+            else if (getParameter("DribbleRotateRight", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
+                !dribbleRotateRight ? : param = msl::DribbleCalibrationContainer::Param::RotateRightPram;
+                speedIter = moveCount + 1;
+                success = true;
             }
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
+                    << "\033[0m\n" << endl;
         }
         if (!success)
         {
-            cerr << "DC: Parameter does not exist" << endl;
+            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
+                    << endl;
         }
 
         /*PROTECTED REGION END*/

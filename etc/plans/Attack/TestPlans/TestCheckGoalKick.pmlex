@@ -44,4 +44,12 @@
     <key href="../../Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

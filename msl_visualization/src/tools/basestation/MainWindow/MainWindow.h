@@ -30,59 +30,49 @@
 #include <iostream>
 #include <string>
 
-
-
 using namespace std;
 
-
-class MWind : public QMainWindow , public Ui::MainWindow
+class MWind : public QMainWindow, public Ui::MainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
+  public:
+    MWind(QMainWindow *parent = 0);
+    ~MWind();
 
-public:
-	MWind(QMainWindow *parent=0);
-	~MWind();
+    // LMOTA
+    void incrementOurGoals()
+    {
+    }
+    void incrementTheirGoals()
+    {
+    }
 
+    /*const WSColor ourColor() const{
+      assert(db_coach_info!=NULL);
+      return db_coach_info->TeamColor;}
+    const WSColor theirColor() const{assert(db_coach_info!=NULL);
+      return (db_coach_info->TeamColor==Magenta?Cyan:Magenta);}*/
 
-	//LMOTA
-	void incrementOurGoals(){
+  private:
+    bool fullscreenflag;         // indica se a janela se encontra no modo fullscreen
+    QMainWindow *mwind;          // ponteiro para o mainwindow pai (parent*)
+    QMainWindow *fullinfowindow; // ponteiro para a fullinfowindow
+    QTimer *UpdateTimer;
 
-	}
-	void incrementTheirGoals(){}
+  protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 
+  public Q_SLOTS:
+    void TeamColorChanged(int team);
+    void RobotVisChanged(int team, int robot_id);
+    void GoalColorChanged(int goal);
 
-
-	/*const WSColor ourColor() const{
-	  assert(db_coach_info!=NULL);
-	  return db_coach_info->TeamColor;}
-	const WSColor theirColor() const{assert(db_coach_info!=NULL);
-	  return (db_coach_info->TeamColor==Magenta?Cyan:Magenta);}*/
-
-
-private:
-	bool fullscreenflag; 		//indica se a janela se encontra no modo fullscreen
-	QMainWindow *mwind;  		//ponteiro para o mainwindow pai (parent*)
-	QMainWindow *fullinfowindow;	//ponteiro para a fullinfowindow
-	QTimer *UpdateTimer;
-
-
-protected:
-	bool eventFilter(QObject *obj, QEvent *event);
-
-
-public Q_SLOTS:
-	void TeamColorChanged(int team);
-	void RobotVisChanged(int team, int robot_id);
-	void GoalColorChanged(int goal);
-
-
-	void UpdateGameTime(void);
+    void UpdateGameTime(void);
     void UpdateGameParameters(void);
-private Q_SLOTS:
-
+  private Q_SLOTS:
 };
 
-extern MWind * wind;
+extern MWind *wind;
 
 #endif

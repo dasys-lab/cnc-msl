@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="PointToPoint.pml#1489068076225"/>
+    <value xPos="107" yPos="2" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.pml#1489068076224"/>
+    <value width="629" height="387"/>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.pml#1489068076226"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.pml#1489068089407"/>
+    <value xPos="252" yPos="179" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.pml#1489068107311"/>
+    <value>
+      <bendpoints xPos="296" yPos="199"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.pml#1489068108605"/>
+    <value>
+      <bendpoints xPos="392" yPos="136"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="PointToPoint.beh#1489068194261"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

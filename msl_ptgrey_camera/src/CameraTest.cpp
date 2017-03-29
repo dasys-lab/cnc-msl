@@ -14,21 +14,20 @@ using namespace std;
 namespace msl_ptgrey_camera
 {
 
-	CameraTest::CameraTest()
-	{
-		// TODO Auto-generated constructor stub
+CameraTest::CameraTest()
+{
+    // TODO Auto-generated constructor stub
+}
 
-	}
-
-	CameraTest::~CameraTest()
-	{
-		// TODO Auto-generated destructor stub
-	}
+CameraTest::~CameraTest()
+{
+    // TODO Auto-generated destructor stub
+}
 
 } /* namespace msl_ptgrey_camera */
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	cout << "Test" << endl;
-	return 0;
+    cout << "Test" << endl;
+    return 0;
 }

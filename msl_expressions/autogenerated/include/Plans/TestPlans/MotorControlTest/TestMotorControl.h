@@ -7,6 +7,7 @@
 #include <Configuration.h>
 #include <limits>
 #include "container/CNPosition.h"
+#include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -24,24 +25,10 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1482163964536) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPosition> start;
-        shared_ptr<geometry::CNPosition> goal;
-        shared_ptr<geometry::CNPosition> currentPos;
-        double relGoalX;
-        double relGoalY;
-        double relGoalRot;
-        bool straight;
         int count;
         int testSpeed;
-
-        double abortTime;
-
-        shared_ptr<geometry::CNPoint2D> goalPointer;
-        double goalDistance = 0;
-        double oldGoalDistance = std::numeric_limits<double>::max();
-        double angleDistance;
-
-        bool terminated;
+        int angle;
+        msl::InfoTime startTime;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

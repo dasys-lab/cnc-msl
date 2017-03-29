@@ -15,6 +15,13 @@ namespace alica
             DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
+        calibOldPosMotionX = 0;
+        calibOldPosMotionY = 0;
+        oldCalibCoefficientX = 0;
+        oldCalibCoefficientY = 0;
+        correctedPosX = 0;
+        correctedPosY = 0;
+        calibCounter = 0;
         /*PROTECTED REGION END*/
     }
     CalcCalib::~CalcCalib()
@@ -28,6 +35,7 @@ namespace alica
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
 
+        //Odometry corrections to compensate the difference between motion and vision angle
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
                 * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
                         - this->wm->rawSensorData->getOwnPositionMotion()->theta)
@@ -45,58 +53,9 @@ namespace alica
         correctedPosY = correctedPosY + correctedWayY;
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
-
-        //----------------------------------------------------------------------------------------------------------
-        /*
-         //Detektion loses/kaputtes Rad
-         errorTestMotionPosX = correctedPosX;
-         errorTestMotionPosY = correctedPosY;
-         errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-         errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
-
-         if(timeCounter == 30)
-         {
-         if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>750)
-         {
-         std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
-         errorCounter++;
-
-         if(errorCounter >= 3)
-         {
-         std::cout << "error detected" <<std::endl;
-         }
-         }
-         else
-         {
-         errorCounter = 0;
-         }
-
-         std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
-
-         oldErrorTestMotionPosX = errorTestMotionPosX;
-         oldErrorTestMotionPosY = errorTestMotionPosY;
-         oldErrorTestVisionPosX = errorTestVisionPosX;
-         oldErrorTestVisionPosY = errorTestVisionPosY;
-
-
-         timeCounter = 0;
-         }
-
-         timeCounter++;
-         */
 
         /*PROTECTED REGION END*/
     }
@@ -136,9 +95,8 @@ namespace alica
 
         if (calibCounter >= 1)
         {
-            // mit Mittelwert
-            //if (abs(correctedPosX - oldCorrectedPosX) > 500){
-            //if (correctedPosX > oldCorrectedPosX){
+            // with average value
+            //sequence of the calibCounter corresponds to the sequence of the PlanDesigner states (calibCounter must be adjusted to the changes in the PlanDesigner!)
             if (calibCounter == 1)
             {
                 if (oldCalibCoefficientX > 0)
@@ -156,7 +114,6 @@ namespace alica
 
             }
 
-            //if (correctedPosX < oldCorrectedPosX){
             if (calibCounter == 2)
             {
                 if (oldCalibCoefficientX > 0)
@@ -173,9 +130,7 @@ namespace alica
                 }
 
             }
-            //}
-            //if (abs(correctedPosY - oldCorrectedPosY) > 500){
-            // if (correctedPosY > oldCorrectedPosY){
+
             if (calibCounter == 3)
             {
                 if (oldCalibCoefficientY > 0)
@@ -193,7 +148,6 @@ namespace alica
 
             }
 
-            //if (correctedPosY < oldCorrectedPosY){
             if (calibCounter == 4)
             {
                 if (oldCalibCoefficientY > 0)
@@ -212,9 +166,9 @@ namespace alica
 
             }
         }
-        // mit Mittelwert Ende
+        // end: with average value
 
-        // ohne Mittelwert
+        // without average value
         /*
          //if (abs(correctedPosX - oldCorrectedPosX) > 500){
          //if (correctedPosX > oldCorrectedPosX){
@@ -246,20 +200,8 @@ namespace alica
          }
          //}
          */
-        // Ohne Mittelwert Ende
-//Hinter Abfrage der gültigen calibWerte setzen?!
-        /*    string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-         ofstream saveToCalibData;
-         saveToCalibData.open(filename);
-         saveToCalibData << calibCoefficientX << "\n";
-         saveToCalibData << calibCoefficientY;
-         saveToCalibData.close();
-
-         calibCoeff.calibCoefficientX = calibCoefficientX;
-         calibCoeff.calibCoefficientY = calibCoefficientY;
-         calibCoeff_pub.publish(calibCoeff);
-         }*/
-
+        // end: without average value
+        //limits of the calibCoefficients
         if (calibCoefficientX < 0.3)
         {
             calibCoefficientX = 0.3;
@@ -289,28 +231,42 @@ namespace alica
         calibCoeff.calibCoefficientY = calibCoefficientY;
         calibCoeff_pub.publish(calibCoeff);
 
-        std::cout << "Differenzen: " << std::endl;
-        std::cout << "X: " << diffX << std::endl;
-        std::cout << "Y: " << diffY << std::endl;
-        std::cout << "FaktorX: " << calibCoefficientX << std::endl;
-        std::cout << "FaktorY: " << calibCoefficientY << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
-        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
-        std::cout << "correctedPosX : " << correctedPosX << std::endl;
-        std::cout << "correctedPosY : " << correctedPosY << std::endl;
-        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
-        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
-        std::cout << "lengthSegment: " << lengthSegment << std::endl;
-        std::cout << "oldCoeffX: " << oldCalibCoefficientX << std::endl;
-        std::cout << "oldCoeffY: " << oldCalibCoefficientY << std::endl;
-        std::cout << "calibCounter: " << calibCounter << std::endl;
+        switch (calibCounter)
+        {
+            case 1:
+                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)\n" << std::endl;
+                break;
 
-        std::cout << "" << std::endl;
+            case 2:
+                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)" << std::endl;
+                std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
+                break;
+
+            case 3:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)\n" << std::endl;
+                break;
+
+            case 4:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)" << std::endl;
+                std::cout << "new calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+                break;
+
+            default:
+                std::cout << "\nold calibration coefficient X: " << calibCoefficientX
+                        << "\nold calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+        }
+        /* std::cout << "Differenzen: " << std::endl;
+         std::cout << "X: " << diffX << std::endl;
+         std::cout << "Y: " << diffY << std::endl;
+         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
+         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
+
+         std::cout << "" << std::endl;*/
 
         lengthSegment = 0;
         calibCounter++;
-        oldCorrectedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-        oldCorrectedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+
+        // to calculate the calibCoefficient only in the current section, the correctedPos is set to the Vision position
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 

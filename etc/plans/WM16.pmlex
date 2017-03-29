@@ -17,18 +17,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="Behaviours/DribbleToPoint.beh#1414752423981"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/GoalKick.beh#1415205578139"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="WM16.pml#1426691835473"/>
     <value xPos="479" yPos="289" width="82" height="67" collapsed="false"/>
   </extensions>
@@ -178,6 +166,10 @@
   </extensions>
   <extensions>
     <key href="GenericStandards/GenericOwnStandards.pml#1430924951132"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -37,12 +37,11 @@
 #define _ERR_ASSIGNMENT_ "Atribuição mal declarada! À espera de \"schema =\", \"agents =\" ou \"}\""
 #define _ERR_AGENTSLIST_ "Atribuição mal declarada! À espera de uma lista de agentes válida!"
 
-
 /* Parsing Errors handling function */
-void raiseError (unsigned, char*);
+void raiseError(unsigned, char *);
 
 /* Structure definitions Errors handling function */
-void abortOnError(char*);
+void abortOnError(char *);
 
 #endif
 

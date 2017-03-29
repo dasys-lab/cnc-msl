@@ -28,13 +28,13 @@
 #ifndef _TCOD_PATH_H
 #define _TCOD_PATH_H
 
-typedef float (*TCOD_path_func_t)( int xFrom, int yFrom, int xTo, int yTo, void *user_data );
+typedef float (*TCOD_path_func_t)(int xFrom, int yFrom, int xTo, int yTo, void *user_data);
 typedef void *TCOD_path_t;
 
 TCODLIB_API TCOD_path_t TCOD_path_new_using_map(TCOD_map_t map, float diagonalCost);
 TCODLIB_API TCOD_path_t TCOD_path_new_using_function(int map_width, int map_height, TCOD_path_func_t func, void *user_data, float diagonalCost);
 
-TCODLIB_API bool TCOD_path_compute(TCOD_path_t path, int ox,int oy, int dx, int dy);
+TCODLIB_API bool TCOD_path_compute(TCOD_path_t path, int ox, int oy, int dx, int dy);
 TCODLIB_API bool TCOD_path_walk(TCOD_path_t path, int *x, int *y, bool recalculate_when_needed);
 TCODLIB_API bool TCOD_path_is_empty(TCOD_path_t path);
 TCODLIB_API int TCOD_path_size(TCOD_path_t path);
@@ -48,16 +48,16 @@ TCODLIB_API void TCOD_path_delete(TCOD_path_t path);
 
 typedef void *TCOD_dijkstra_t;
 
-TCODLIB_API TCOD_dijkstra_t TCOD_dijkstra_new (TCOD_map_t map, float diagonalCost);
+TCODLIB_API TCOD_dijkstra_t TCOD_dijkstra_new(TCOD_map_t map, float diagonalCost);
 TCODLIB_API TCOD_dijkstra_t TCOD_dijkstra_new_using_function(int map_width, int map_height, TCOD_path_func_t func, void *user_data, float diagonalCost);
-TCODLIB_API void TCOD_dijkstra_compute (TCOD_dijkstra_t dijkstra, int root_x, int root_y);
-TCODLIB_API float TCOD_dijkstra_get_distance (TCOD_dijkstra_t dijkstra, int x, int y);
-TCODLIB_API bool TCOD_dijkstra_path_set (TCOD_dijkstra_t dijkstra, int x, int y);
+TCODLIB_API void TCOD_dijkstra_compute(TCOD_dijkstra_t dijkstra, int root_x, int root_y);
+TCODLIB_API float TCOD_dijkstra_get_distance(TCOD_dijkstra_t dijkstra, int x, int y);
+TCODLIB_API bool TCOD_dijkstra_path_set(TCOD_dijkstra_t dijkstra, int x, int y);
 TCODLIB_API bool TCOD_dijkstra_is_empty(TCOD_dijkstra_t path);
 TCODLIB_API int TCOD_dijkstra_size(TCOD_dijkstra_t path);
 TCODLIB_API void TCOD_dijkstra_reverse(TCOD_dijkstra_t path);
 TCODLIB_API void TCOD_dijkstra_get(TCOD_dijkstra_t path, int index, int *x, int *y);
-TCODLIB_API bool TCOD_dijkstra_path_walk (TCOD_dijkstra_t dijkstra, int *x, int *y);
-TCODLIB_API void TCOD_dijkstra_delete (TCOD_dijkstra_t dijkstra);
+TCODLIB_API bool TCOD_dijkstra_path_walk(TCOD_dijkstra_t dijkstra, int *x, int *y);
+TCODLIB_API void TCOD_dijkstra_delete(TCOD_dijkstra_t dijkstra);
 
 #endif

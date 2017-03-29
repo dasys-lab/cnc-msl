@@ -27,6 +27,7 @@
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "std_msgs/Bool.h"
 #include "msl_actuator_msgs/IMUData.h"
+#include "RingBuffer.h"
 
 using namespace std;
 
