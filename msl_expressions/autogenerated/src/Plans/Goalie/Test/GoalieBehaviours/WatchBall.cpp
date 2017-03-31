@@ -86,6 +86,15 @@ namespace alica
 			alloGoalRight = make_shared<geometry::CNPoint2D>(
 					goalDetectionData->rightGoalPost.x, goalDetectionData->rightGoalPost.y)->alloToEgo(*ownPos);
 			alloGoalRight->y = alloGoalRight->y + goalieSize / 2;
+		} else {
+			//no goal detection data, reset to footballfield
+			//TODO use last known position if data has been available
+			auto goalMid = wm->field->posOwnGoalMid();
+			alloGoalMid = make_shared<geometry::CNPoint2D>(goalMid->x, goalMid->y);
+			alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+															wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
+			alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+																wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 		}
 
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball->getAlloBallPosition();
