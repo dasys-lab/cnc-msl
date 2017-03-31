@@ -9,6 +9,6 @@ source $ROS_SETUP
 source $WORKSPACE_SETUP
 
 export DOMAIN_FOLDER="$WORKSPACE/src"
-export DOMAIN_CONFIG_FOLDER="$WORKSPACE/src/etc"
+export DOMAIN_CONFIG_FOLDER="$WORKSPACE/src/cnc-msl/etc"
 
 rosrun msl_beagle_board_black_udp msl_beagle_board_black_udp
