@@ -127,14 +127,17 @@ namespace alica
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        auto robotRot = odom->rotation / 1024;
+        auto robotRot = (double)odom->rotation / 1024.0;
 
         auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
         auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
 
+	cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
+	cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
+
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
-
+	
         msl_actuator_msgs::BallHandleCmd msgback;
         msgback.leftMotor = left;
         msgback.rightMotor = right;
@@ -183,8 +186,8 @@ namespace alica
         if (velX <= staticUpperBound && velX >= staticLowerBound)
             velX -= staticNegVelX;
         velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
-
-        return sqrt(velX * velX + velY * velY);
+        
+	return sqrt(velX * velX + velY * velY);
     }
 
     //returns values [pi,-pi[
