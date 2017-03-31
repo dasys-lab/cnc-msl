@@ -132,7 +132,8 @@ namespace alica
 
 //		auto robotAngle = 0;
 //		auto robotVel = 0;
-//		auto robotRot = -1.49;
+//		auto robotRot = 1.49;
+//		auto robotRot = 0;
 
 		auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
 		auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
@@ -206,6 +207,9 @@ namespace alica
 		velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
 		double ballAngle = 0;
+		cout << "velY = " << velY << endl;
+		cout << "velX = " << velX << endl;
+
 		ballAngle = atan2(velY, velX);
 
 		return ballAngle;
@@ -225,14 +229,16 @@ namespace alica
 
 		double angleConst = 0;
 
+		cout << "sec6 = " << sec6 << endl;
+		cout << "sec7 = " << sec7 << endl;
+
 		//linear interpolation of the constants in the 8 sectors
 
 		if (ballAngle <= sec1)
 		{
 			// rotate right
 			cout << "sec0" << endl;
-//			angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
-			angleConst = (ballAngle - sec1) * (-forwConst) / (sec1 - sec0);
+			angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
 		}
 		else if (ballAngle <= sec2)
 		{
@@ -322,8 +328,7 @@ namespace alica
 		else if (ballAngle >= sec7)
 		{
 			// rotate left
-//			angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
-			angleConst = (ballAngle - sec7) * (forwConst) / (sec8 - sec7);
+			angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
 		}
 
 		cout << "angleConst right = " << angleConst << endl;
