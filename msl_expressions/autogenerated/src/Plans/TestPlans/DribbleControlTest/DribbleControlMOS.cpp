@@ -125,13 +125,14 @@ namespace alica
 		 */
 		auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
-//        auto robotAngle = odom->angle;
-//        auto robotVel = odom->translation;
+        auto robotAngle = odom->angle;
+        auto robotVel = odom->translation;
 //        auto robotRot = (double)odom->rotation / 1024.0;
+		auto robotRot = (double)odom->rotation;
 
-		auto robotAngle = 0;
-		auto robotVel = 0;
-		auto robotRot = -1.49;
+//		auto robotAngle = 0;
+//		auto robotVel = 0;
+//		auto robotRot = -1.49;
 
 		auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
 		auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
@@ -147,6 +148,7 @@ namespace alica
 		msgback.rightMotor = right;
 		cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
 		send(msgback);
+
 
 //        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
 //                << ballAngle << "  " << left << " " << right << endl;
