@@ -1,0 +1,8 @@
+[Unit]
+Description=beagleboard-udp script launcher
+
+[Service]
+ExecStart=/usr/local/bin/start-beagleboard-udp
+
+[Install]
+WantedBy=multi-user.target
