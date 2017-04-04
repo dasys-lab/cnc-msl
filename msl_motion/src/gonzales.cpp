@@ -23,7 +23,17 @@ double wheelcirc;
 double robotcirc;
 double finfactor;
 
-
+double stepHeight;
+double decayFactor;
+double oldMotionGoal[3];
+double newMotionGoal[3];
+double oldMotorGoal[4];
+double newMotorGoal[4];
+double accMotion[3];
+double accMotor[4];
+double lengthAccMotor;
+double lengthDiffMotorGoal;
+double dynamicCorrection[4];
 
 struct timeval odotime_last;
 struct timeval odotime_cur;
@@ -48,6 +58,8 @@ void gonz_init() {
     gonz_state.currentPosition.x = 0;
     gonz_state.currentPosition.y = 0;
     gonz_state.currentPosition.angle = 0;
+
+    decayFactor = 0;
 
 }
 void gonz_set_mode(int mode) {
@@ -102,28 +114,125 @@ void gonz_control() { //controller comes in here
         gonz_emergency_stop();
         return;
     }
+
+    unsigned char i;
+
+    //dynamic correction is necessary
+    if (decayFactor != 0){
+
+    	//first iteration after step
+    	if(decayFactor == 1){
+
+    		//kinematic part
+    		newMotorGoal[0] = -cosphi * newMotionGoal[0];
+    		newMotorGoal[0] += sinphi * newMotionGoal[1];
+
+    		newMotorGoal[1] = -cosphi * newMotionGoal[0];
+    		newMotorGoal[1] += -sinphi * newMotionGoal[1];
+
+    		newMotorGoal[2] = cosphi * newMotionGoal[0];
+    		newMotorGoal[2] += -sinphi * newMotionGoal[1];
+
+    		newMotorGoal[3] = cosphi * newMotionGoal[0];
+    		newMotorGoal[3] += sinphi * newMotionGoal[1];
+
+    		for (i=0; i < 4; i++) {
+    			newMotorGoal[i] += (newMotionGoal[2]*current_settings.robotRadius)/1024.0;
+                newMotorGoal[i] *= finfactor;
+            }
+
+    		oldMotorGoal[0] = -cosphi * oldMotionGoal[0];
+    		oldMotorGoal[0] += sinphi * oldMotionGoal[1];
+
+  	  		oldMotorGoal[1] = -cosphi * oldMotionGoal[0];
+    		oldMotorGoal[1] += -sinphi * oldMotionGoal[1];
+
+    		oldMotorGoal[2] = cosphi * oldMotionGoal[0];
+    		oldMotorGoal[2] += -sinphi * oldMotionGoal[1];
+
+    		oldMotorGoal[3] = cosphi * oldMotionGoal[0];
+    		oldMotorGoal[3] += sinphi * oldMotionGoal[1];
+
+    		for (i=0; i < 4; i++) {
+    		   	oldMotorGoal[i] += (oldMotionGoal[2]*current_settings.robotRadius)/1024.0;
+    		    oldMotorGoal[i] *= finfactor;
+    		    }
+
+    		//dynamic part
+    		accMotion[0] = newMotionGoal[0]-oldMotionGoal[0];
+    		accMotion[1] = newMotionGoal[0]-oldMotionGoal[1];
+    		accMotion[2] = newMotionGoal[0]-oldMotionGoal[2];
+
+    			//direction of wheel force vector
+    		accMotor[0] = -accMotion[0]/11.5 + accMotion[1]/9.65 + accMotion[2]/204;
+    		accMotor[1] = -accMotion[0]/11.5 - accMotion[1]/9.65 + accMotion[2]/204;
+    		accMotor[2] = accMotion[0]/11.5 - accMotion[1]/9.65 + accMotion[2]/204;
+    		accMotor[3] = accMotion[0]/11.5 + accMotion[1]/9.65 + accMotion[2]/204;
+
+    		lengthAccMotor = sqrt(accMotor[0]*accMotor[0]+accMotor[1]*accMotor[1]+accMotor[2]*accMotor[2]+accMotor[3]*accMotor[3]);
+    		lengthDiffMotorGoal = sqrt((newMotorGoal[0]-oldMotorGoal[0])*(newMotorGoal[0]-oldMotorGoal[0])+(newMotorGoal[1]-oldMotorGoal[1])*(newMotorGoal[1]-oldMotorGoal[1])+(newMotorGoal[2]-oldMotorGoal[2])*(newMotorGoal[2]-oldMotorGoal[2])+(newMotorGoal[3]-oldMotorGoal[3])*(newMotorGoal[3]-oldMotorGoal[3]));
+
+    		//change length of wheel force vector to fit the velocity difference vector length for consistent values
+    		dynamicCorrection[0] = accMotor[0]/lengthAccMotor*lengthDiffMotorGoal + oldMotorGoal[0];
+    		dynamicCorrection[1] = accMotor[1]/lengthAccMotor*lengthDiffMotorGoal + oldMotorGoal[1];
+    		dynamicCorrection[2] = accMotor[2]/lengthAccMotor*lengthDiffMotorGoal + oldMotorGoal[2];
+    		dynamicCorrection[3] = accMotor[3]/lengthAccMotor*lengthDiffMotorGoal + oldMotorGoal[3];
+    	}
+
+    	//update in case the goal changed beneath treshold during the decay (happens earliest after 7 iterations, as behaviours have smaller frequency)
+		newMotorGoal[0] = -cosphi * gonz_state.currentMotionGoal.x;
+		newMotorGoal[0] += sinphi * gonz_state.currentMotionGoal.y;
+
+		newMotorGoal[1] = -cosphi * gonz_state.currentMotionGoal.x;
+		newMotorGoal[1] += -sinphi * gonz_state.currentMotionGoal.y;
+
+		newMotorGoal[2] = cosphi * gonz_state.currentMotionGoal.x;
+		newMotorGoal[2] += -sinphi * gonz_state.currentMotionGoal.y;
+
+		newMotorGoal[3] = cosphi * gonz_state.currentMotionGoal.x;
+		newMotorGoal[3] += sinphi * gonz_state.currentMotionGoal.y;
+
+		for (i=0; i < 4; i++) {
+		    		   	newMotorGoal[i] += (gonz_state.currentMotionGoal.rotation*current_settings.robotRadius)/1024.0;
+		    		    newMotorGoal[i] *= finfactor;
+		    		    }
+
+		//combination of dynamic and kinematic
+    	gonz_state.currentMotorGoal[0] = decayFactor*dynamicCorrection[0] + (1-decayFactor)*newMotorGoal[0];
+    	gonz_state.currentMotorGoal[1] = decayFactor*dynamicCorrection[1] + (1-decayFactor)*newMotorGoal[1];
+    	gonz_state.currentMotorGoal[2] = decayFactor*dynamicCorrection[2] + (1-decayFactor)*newMotorGoal[2];
+    	gonz_state.currentMotorGoal[3] = decayFactor*dynamicCorrection[3] + (1-decayFactor)*newMotorGoal[3];
+
+    	//decay in 10 steps
+    	decayFactor -= 0.1;
+    }
+
+    else{
+
     //Calculate Wheel Goal from Motion Goal:
 
-        unsigned char i;
+		gonz_state.currentMotorGoal[0] = -cosphi * gonz_state.currentMotionGoal.x;
+		gonz_state.currentMotorGoal[0] += sinphi * gonz_state.currentMotionGoal.y;
 
-    gonz_state.currentMotorGoal[0] = -cosphi * gonz_state.currentMotionGoal.x;
-    gonz_state.currentMotorGoal[0] += sinphi * gonz_state.currentMotionGoal.y;
+		gonz_state.currentMotorGoal[1] = -cosphi * gonz_state.currentMotionGoal.x;
+		gonz_state.currentMotorGoal[1] += -sinphi * gonz_state.currentMotionGoal.y;
 
-    gonz_state.currentMotorGoal[1] = -cosphi * gonz_state.currentMotionGoal.x;
-    gonz_state.currentMotorGoal[1] += -sinphi * gonz_state.currentMotionGoal.y;
+		gonz_state.currentMotorGoal[2] = cosphi * gonz_state.currentMotionGoal.x;
+		gonz_state.currentMotorGoal[2] += -sinphi * gonz_state.currentMotionGoal.y;
 
-    gonz_state.currentMotorGoal[2] = cosphi * gonz_state.currentMotionGoal.x;
-    gonz_state.currentMotorGoal[2] += -sinphi * gonz_state.currentMotionGoal.y;
-
-    gonz_state.currentMotorGoal[3] = cosphi * gonz_state.currentMotionGoal.x;
-    gonz_state.currentMotorGoal[3] += sinphi * gonz_state.currentMotionGoal.y;
+		gonz_state.currentMotorGoal[3] = cosphi * gonz_state.currentMotionGoal.x;
+		gonz_state.currentMotorGoal[3] += sinphi * gonz_state.currentMotionGoal.y;
 
 //printf("Vx: %d\t cospi %f\t finfactor: %f\n",gonz_state.currentMotionGoal.x,cosphi,finfactor);
 
-    for (i=0; i < 4; i++) {
-        gonz_state.currentMotorGoal[i] += (gonz_state.currentMotionGoal.rotation*current_settings.robotRadius)/1024.0;
-        gonz_state.currentMotorGoal[i] *= finfactor;
+		for (i = 0; i < 4; i++)
+		{
+			gonz_state.currentMotorGoal[i] += (gonz_state.currentMotionGoal.rotation * current_settings.robotRadius)
+					/ 1024.0;
+			gonz_state.currentMotorGoal[i] *= finfactor;
+		}
     }
+
 	if (current_settings.slipControlEnabled > 0  && fabs(gonz_state.currentSlip) > 1.0) {
 		double setSlip = current_settings.slipControlP*gonz_state.currentSlip + current_settings.slipControlI*gonz_state.slipI;
 		gonz_state.currentMotorGoal[0] -= setSlip;
@@ -356,10 +465,24 @@ void gonz_reset() {
 }
 
 void gonz_set_motion_request(double angle, double trans, double rot) {
-	gonz_state.currentMotionGoal.rotation=(
-		MIN(current_settings.maxRotation,fabs(rot))*((double)SIGN2(rot)*1024.0)
-	);
+
 	trans = ((double)SIGN2(trans))*MIN(current_settings.maxTranslation,fabs(trans));
+
+	//check if dynamic control is necessary (high acceleration jump in x and y)
+	stepHeight= sqrt((trans*cos(angle)-gonz_state.currentMotionGoal.x)*(trans*cos(angle)-gonz_state.currentMotionGoal.x)+(trans*sin(angle)-gonz_state.currentMotionGoal.y)*(trans*sin(angle)-gonz_state.currentMotionGoal.y));
+	if (stepHeight >= 1000){
+		decayFactor = 1;
+		oldMotionGoal(0) = gonz_state.currentMotionGoal.x;
+		oldMotionGoal(1) = gonz_state.currentMotionGoal.y;
+		oldMotionGoal(2) = gonz_state.currentMotionGoal.rotation;
+		newMotionGoal(0) = trans*cos(angle);
+		newMotionGoal(1) = trans*sin(angle);
+		newMotionGoal(2) = (MIN(current_settings.maxRotation,fabs(rot))*((double)SIGN2(rot)*1024.0));
+	}
+
+	gonz_state.currentMotionGoal.rotation=(
+			MIN(current_settings.maxRotation,fabs(rot))*((double)SIGN2(rot)*1024.0)
+		);
 	gonz_state.currentMotionGoal.x=(trans*cos(angle));
 	gonz_state.currentMotionGoal.y=(trans*sin(angle));
 
