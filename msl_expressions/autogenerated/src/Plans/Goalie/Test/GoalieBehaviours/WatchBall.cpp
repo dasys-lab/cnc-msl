@@ -87,6 +87,7 @@ namespace alica
 					goalDetectionData->rightGoalPost.x, goalDetectionData->rightGoalPost.y)->alloToEgo(*ownPos);
 			alloGoalRight->y = alloGoalRight->y + goalieSize / 2;
 		} else {
+			cout << "WATCHBALL NO LASERDATA" << endl;
 			//no goal detection data, reset to footballfield
 			//TODO use last known position if data has been available
 			auto goalMid = wm->field->posOwnGoalMid();
