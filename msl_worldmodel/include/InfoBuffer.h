@@ -2,6 +2,8 @@
 
 #include "InformationElement.h"
 
+#include <nonstd/optional.hpp>
+
 #include <memory>
 #include <mutex>
 #include <typeinfo>
@@ -124,6 +126,7 @@ class InfoBuffer
 
     /**
      * Gets the last valid element
+     * If you only need the content of the InformationElement you can use @see InfoBuffer::getLastValidContent()
      * @see InformationElement::isValid()
      * @return a shared_ptr to the element, nullptr if none found
      */
@@ -146,6 +149,22 @@ class InfoBuffer
             }
         }
         return nullptr;
+    }
+
+    /**
+     * Gets the content of the last valid element
+     * @see InformationElement::isValid()
+     * @return optional with the content of the last valid element, nullopt if none found
+     */
+    const nonstd::optional<T> getLastValidContent() const
+    {
+        auto lastValid = this->getLastValid();
+
+        if(lastValid == nullptr) {
+            return nonstd::nullopt;
+        }
+
+       return lastValid->getInformation();
     }
 
     /**

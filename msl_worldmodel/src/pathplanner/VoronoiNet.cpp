@@ -132,13 +132,13 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
     vector<Site_2> sites;
     this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
 
-    auto alloObsInfo = wm->obstacles->getObstaclesAlloClusteredWithMeBuffer().getLastValid();
+    auto alloObs = wm->obstacles->getClusteredObstaclesAlloWithMeBuffer().getLastValidContent();
 
-    if (alloObsInfo != nullptr)
+    if (alloObs)
     {
-        for (auto cluster : *alloObsInfo->getInformation())
+        for (auto cluster : *(*alloObs))
         {
-            Site_2 site(cluster.x, cluster.y);
+            Site_2 site(cluster.position.x, cluster.position.y);
             this->pointRobotKindMapping.at(site) = cluster.id;
             sites.push_back(site);
             this->alloClusteredObsWithMe->push_back(cluster);
@@ -444,7 +444,7 @@ shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getObstaclePositions()
     {
         if (cluster.id == EntityType::Obstacle)
         {
-            ret->push_back(cluster.getPoint());
+            ret->push_back(cluster.position.getPoint());
         }
     }
     return ret;
@@ -468,7 +468,7 @@ shared_ptr<vector<geometry::CNPointAllo>> VoronoiNet::getOpponentPositions()
     {
         if (cluster.id == EntityType::Opponent)
         {
-            ret->push_back(cluster.getPoint());
+            ret->push_back(cluster.position.getPoint());
         }
     }
     return ret;

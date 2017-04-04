@@ -140,7 +140,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathPlanner::plan(const VoronoiNet &vo
         }
 
         // if there is an obstacle inside the corridor the goal is not reachable
-        auto point = cluster.getPoint();
+        auto point = cluster.position.getPoint();
         if (corridorCheck(startPos, goal, point, this->robotRadius))
         {
             reachable = false;

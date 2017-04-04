@@ -66,6 +66,7 @@ class CNPositionAllo;
 
 namespace msl
 {
+
 class RawSensorData;
 class Robots;
 class Ball;
@@ -78,6 +79,7 @@ class LightBarrier;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
+
 class MSLWorldModel
 {
   public:
@@ -112,17 +114,21 @@ class MSLWorldModel
 
     bool isUsingSimulator();
 
-    Monitoring *monitoring;
+    // Raw Sensor Data
     RawSensorData *rawSensorData;
+
+    // Processed Sensor Data
+    Monitoring *monitoring;
     Robots *robots;
     Ball *ball;
     Game *game;
-    MSLFootballField *field;
-    PathPlanner *pathPlanner;
-    WhiteBoard *whiteBoard;
     Obstacles *obstacles;
     Prediction *prediction;
     LightBarrier *lightBarrier;
+
+    PathPlanner *pathPlanner;
+    MSLFootballField *field;
+    WhiteBoard *whiteBoard;
 
     supplementary::EventTrigger visionTrigger;
     InfoTime timeLastSimMsgReceived;

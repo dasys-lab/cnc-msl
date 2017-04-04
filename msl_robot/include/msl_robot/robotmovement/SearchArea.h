@@ -5,13 +5,14 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_SEARCHAREA_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_SEARCHAREA_H_
+#pragma once
 
 using namespace std;
 
-#include <GeometryCalculator.h>
 #include <MSLFootballField.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/Calculator.h>
 #include <memory>
 
 namespace msl
@@ -22,14 +23,14 @@ class SearchArea
   public:
     virtual ~SearchArea();
 
-    shared_ptr<geometry::CNPoint2D> midP;
+    geometry::CNPointAllo midP;
     double langle;
     double hangle;
     double minDist;
     double maxDist;
     double val;
-    shared_ptr<geometry::CNPoint2D> center;
-    shared_ptr<geometry::CNPosition> ownPos;
+    geometry::CNPointAllo center;
+    geometry::CNPositionAllo ownPos;
     // static int compareTo(shared_ptr<SearchArea> a);
     static bool compareTo(shared_ptr<SearchArea> a, shared_ptr<SearchArea> b);
     virtual shared_ptr<vector<shared_ptr<SearchArea>>> expand() = 0;
@@ -37,11 +38,10 @@ class SearchArea
 
   protected:
     SearchArea();
-    SearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center, shared_ptr<geometry::CNPosition> ownPos);
+    SearchArea(double langle, double hangle, double minDist, double maxDist, geometry::CNPointAllo center,
+               geometry::CNPositionAllo ownPos);
     static int counter;
     static int maxNum;
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_SEARCHAREA_H_ */

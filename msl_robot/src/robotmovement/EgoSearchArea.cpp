@@ -5,8 +5,6 @@
  *      Author: Stefan Jakob
  */
 
-using namespace std;
-
 #include "msl_robot/robotmovement/EgoSearchArea.h"
 #include <MSLWorldModel.h>
 
@@ -32,8 +30,8 @@ void EgoSearchArea::init()
     counter = 0;
 }
 
-shared_ptr<EgoSearchArea> EgoSearchArea::getAnArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center,
-                                                   shared_ptr<geometry::CNPosition> ownPos)
+shared_ptr<EgoSearchArea> EgoSearchArea::getAnArea(double lAngle, double hAngle, double minDist, double maxDist, geometry::CNPointEgo center,
+                                                   geometry::CNPositionAllo ownPos)
 {
     shared_ptr<EgoSearchArea> ret = daList->at(counter);
     counter = (counter + 1) % maxNum;
@@ -41,7 +39,7 @@ shared_ptr<EgoSearchArea> EgoSearchArea::getAnArea(double langle, double hangle,
     ret->hangle = hangle;
     ret->minDist = minDist;
     ret->maxDist = maxDist;
-    ret->center = center;
+    ret->center = center.toAllo(ownPos);
     ret->ownPos = ownPos;
     ret->midP->x = center->x;
     ret->midP->y = center->y;

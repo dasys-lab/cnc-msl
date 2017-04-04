@@ -7,7 +7,7 @@
 
 #include <Ball.h>
 #include <Game.h>
-#include <GeometryCalculator.h>
+#include <cnc_geometry/Calculator.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <msl_robot/kicker/Kicker.h>

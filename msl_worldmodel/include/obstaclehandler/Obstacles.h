@@ -1,6 +1,5 @@
 #pragma once
 
-#include "InformationElement.h"
 #include "MSLEnums.h"
 #include "MSLFootballField.h"
 #include <InfoBuffer.h>
@@ -28,49 +27,38 @@ class Obstacles
   public:
     Obstacles(MSLWorldModel *wm, int ringbufferLength);
     virtual ~Obstacles();
-    /**
-     * Merges all obstacles into lists which are required by different Modules (path planner, standard situation
-     * behaviours, delaunay generator etc.)
-     * @param myObstacles A @see List of ego centric obstacles. (usual from the worldmodel).
-     */
-    void handleObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> myObstacles);
-    void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
-    //std::shared_ptr<std::vector<geometry::CNPoint2D>>
-    //clusterPoint2D(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>> obstacles,
-    //               double varianceThreshold);
 
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> &getObstaclesEgoClusteredBuffer();
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &getObstaclesAlloClusteredBuffer();
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &getObstaclesAlloClusteredWithMeBuffer();
+    /* ===== Data integration ===== */
 
-    const InfoBuffer<std::vector<msl_sensor_msgs::ObstacleInfo>> &getEgoObstaclesBuffer();
+    void processWorldModelData(msl_sensor_msgs::WorldModelData &data);
 
-    // TODO: remove?
-    //std::shared_ptr<std::vector<geometry::CNRobotAllo>> getAlloObstacles(int index = 0);
+    /* ===== Buffer access ===== */
 
-    //std::shared_ptr<std::vector<geometry::CNRobotAllo>> getAlloObstaclesWithMe(int index = 0);
-    //std::shared_ptr<std::vector<geometry::CNRobotEgo>> getEgoObstacles(int index = 0);
-    //std::shared_ptr<std::vector<geometry::CNPointAllo>> getAlloObstaclePoints(int index = 0);
-    //std::shared_ptr<std::vector<geometry::CNPointEgo>> getEgoObstaclePoints(int index = 0);
-    // TODO change to raw
-    //std::shared_ptr<std::vector<msl_sensor_msgs::ObstacleInfo>> getEgoVisionObstacles(int index = 0);
-    //std::shared_ptr<std::vector<geometry::CNPointEgo>> getEgoVisionObstaclePoints(int index = 0);
-    double getObstacleRadius();
+    // Raw Info
+    const InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> &getObstaclesInfoBuffer() const;
 
-    nonstd::optional<geometry::CNPointEgo> getBiggestFreeGoalAreaMidPoint();
-    double getDistanceToObstacle(geometry::CNPointEgo target);
+    // Raw Obstacles
+    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> &getRawObstaclesAlloBuffer() const;
+    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> &getRawObstaclesEgoBuffer() const;
+
+    // Clustered
+    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &
+    getClusteredObstaclesAlloBuffer() const;
+    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &
+    getClusteredObstaclesAlloWithMeBuffer() const;
+    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> &getClusteredObstaclesEgoBuffer() const;
+
+    /* ===== Other functions ===== */
+
+    double getObstacleRadius() const;
+    nonstd::optional<geometry::CNPointEgo> getBiggestFreeGoalAreaMidPoint() const;
+    double getDistanceToObstacle(geometry::CNPointEgo target) const;
 
   private:
-    shared_ptr<vector<AnnotatedObstacleCluster *>>
-    clusterAnnotatedObstacles(shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray);
-    shared_ptr<vector<AnnotatedObstacleCluster *>>
-    setupAnnotatedObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> ownObs,
-                            msl_sensor_msgs::CorrectedOdometryInfo myOdo);
-    //void processNegSupporter(geometry::CNPositionAllo myPosition); // TODO: remove?
-    bool leftOf(double angle1, double angle2);
+    // Worldmodel
+    MSLWorldModel *wm;
 
-    InfoBuffer<std::vector<msl_sensor_msgs::ObstacleInfo>> obstacles;
-
+    // Config
     supplementary::SystemConfig *sc;
     double DENSITY;
     double VARIANCE_THRESHOLD;
@@ -83,13 +71,36 @@ class Obstacles
     double DFLT_ROB_RADIUS;
     double OBSTACLE_MAP_OUT_TOLERANCE;
     double LOCALIZATION_SUCCESS_CONFIDENCE;
-    MSLWorldModel *wm;
-    AnnotatedObstacleClusterPool *pool;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> obstaclesEgoClustered;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> obstaclesAlloClustered;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> obstaclesAlloClusteredWithMe;
 
-    // TODO: add constant for each InfoBuffer
+    void handleObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> myObstacles);
+
+    shared_ptr<vector<AnnotatedObstacleCluster *>>
+    clusterAnnotatedObstacles(shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray);
+    shared_ptr<vector<AnnotatedObstacleCluster *>>
+    setupAnnotatedObstacles(std::shared_ptr<const std::vector<geometry::CNPointEgo>> ownObs,
+                            msl_sensor_msgs::CorrectedOdometryInfo myOdo);
+    // void processNegSupporter(geometry::CNPositionAllo myPosition); // TODO: remove?
+    bool leftOf(double angle1, double angle2) const;
+
+    AnnotatedObstacleClusterPool *pool;
+
+    /* ===== Buffers ===== */
+
+    // Raw Info
+    InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> obstaclesInfoBuffer;
+
+    // Raw Obstacles
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> rawObstaclesAlloBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> rawObstaclesEgoBuffer;
+
+    // Clustered Obstacles
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> clusteredObstaclesAlloBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> clusteredObstaclesAlloWithMeBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> clusteredObstaclesEgoBuffer;
+
+    /* ===== Validity Durations ===== */
+
+    // TODO: add constant for each InfoBuffer (and add to Config?)
     InfoTime maxInfoValidity = 1000000000;
 };
 

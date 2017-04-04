@@ -5,21 +5,16 @@
  *      Author: tobi
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_
+#pragma once
 
 #include "DateTime.h"
 #include "SystemConfig.h"
 #include "msl_actuator_msgs/MotionControl.h"
+
+#include <cnc_geometry/CNPointAllo.h>
+#include <nonstd/optional.hpp>
+
 #include <memory>
-
-namespace geometry
-{
-class CNPoint2D;
-class CNPosition;
-}
-
-using namespace std;
 
 namespace msl
 {
@@ -40,19 +35,19 @@ class RobotMovement
     // TODO query was const before check
     /**
      * Move to a given point regarding the information given
-     * @param m_Query shared_ptr<MovementQuery> encapsulated information needed to move to the given point
+     * @param query std::shared_ptr<MovementQuery> encapsulated information needed to move to the given point
      * @return msl_actuator_msgs::MotionControl msg containing the motion information, NaN if anything went wrong
      */
-    msl_actuator_msgs::MotionControl moveToPoint(shared_ptr<MovementQuery> m_Query);
+    msl_actuator_msgs::MotionControl moveToPoint(MovementQuery &query);
     /**
      * Rotate towards given point
-     * @param m_Query shared_ptr<MovementQuery> encapsulated information needed to rotate to the given point
+     * @param query std::shared_ptr<MovementQuery> encapsulated information needed to rotate to the given point
      * @return msl_actuator_msgs::MotionControl msg containing the motion information, NaN if anything went wrong
      */
-    msl_actuator_msgs::MotionControl alignTo(shared_ptr<MovementQuery> m_Query);
+    msl_actuator_msgs::MotionControl alignTo(MovementQuery &query);
     /**
      * Check if the robot is violation any rule and react respectively
-     * @param m_Query shared_ptr<MovementQuery> encapsulated information needed to move to the given point
+     * @param m_Query std::shared_ptr<MovementQuery> encapsulated information needed to move to the given point
      * @return msl_actuator_msgs::MotionControl msg containing the motion information, NaN if no rule is violated
      */
     msl_actuator_msgs::MotionControl ruleActionForBallGetter();
@@ -64,10 +59,10 @@ class RobotMovement
     msl_actuator_msgs::MotionControl driveRandomly(double translation);
     /**
      * Move to free space to accept a pass
-     * @param m_Query shared_ptr<MovementQuery> encapsulated information needed to move to the given point
+     * @param query std::shared_ptr<MovementQuery> encapsulated information needed to move to the given point
      * @return msl_actuator_msgs::MotionControl msg containing the motion information, NaN if anything went wrong
      */
-    msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<MovementQuery> m_Query);
+    msl_actuator_msgs::MotionControl moveToFreeSpace(MovementQuery &query);
 
     /**
      * Read parameters from Config (Drive.conf)
@@ -93,15 +88,15 @@ class RobotMovement
   private:
     static int randomCounter;
     static int beamSize;
-    static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
-    static shared_ptr<vector<shared_ptr<SearchArea>>> next;
-    static shared_ptr<geometry::CNPoint2D> randomTarget;
+    static std::shared_ptr<vector<std::shared_ptr<SearchArea>>> fringe;
+    static std::shared_ptr<vector<std::shared_ptr<SearchArea>>> next;
+    static nonstd::optional<geometry::CNPointEgo> randomTarget;
 
     MSLWorldModel *wm;
     PathProxy *pp;
-    msl_actuator_msgs::MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
-    double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee, shared_ptr<geometry::CNPosition> ownPos,
-                            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
+    msl_actuator_msgs::MotionControl placeRobot(geometry::CNPointEgo dest, geometry::CNPointEgo headingPoint);
+    double evalPointDynamic(geometry::CNPointAllo alloP, geometry::CNPointAllo alloPassee,
+                            geometry::CNPositionAllo ownPos, std::shared_ptr<vector<geometry::CNPointAllo>> opponents);
     msl_actuator_msgs::MotionControl setNAN();
 
     // for alignTO()
@@ -116,6 +111,5 @@ class RobotMovement
     static double interceptQuotient;
     static double robotRadius;
 };
-}
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_ */
+} /* namespace msl */

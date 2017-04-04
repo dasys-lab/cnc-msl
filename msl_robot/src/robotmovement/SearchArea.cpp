@@ -15,7 +15,7 @@ int SearchArea::maxNum = 500;
 
 SearchArea::SearchArea()
 {
-    this->midP = make_shared<geometry::CNPoint2D>();
+    this->midP = geometry::CNPointAllo();
     this->langle = 0;
     this->hangle = 0;
     this->minDist = 0;
@@ -63,8 +63,8 @@ bool SearchArea::compareTo(shared_ptr<SearchArea> a, shared_ptr<SearchArea> b)
     return true;
 }
 
-SearchArea::SearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center,
-                       shared_ptr<geometry::CNPosition> ownPos)
+SearchArea::SearchArea(double langle, double hangle, double minDist, double maxDist, geometry::CNPointAllo center,
+                       geometry::CNPointAllo ownPos)
 {
     this->langle = langle;
     this->hangle = hangle;
@@ -73,8 +73,8 @@ SearchArea::SearchArea(double langle, double hangle, double minDist, double maxD
     this->center = center;
     this->ownPos = ownPos;
     this->midP = make_shared<geometry::CNPoint2D>(center->x, center->y);
-    this->midP->x += cos((hangle + langle) / 2) * (maxDist + minDist) / 2;
-    this->midP->y += sin((hangle + langle) / 2) * (maxDist + minDist) / 2;
+    this->midP.x += cos((hangle + langle) / 2) * (maxDist + minDist) / 2;
+    this->midP.y += sin((hangle + langle) / 2) * (maxDist + minDist) / 2;
     this->val = 0;
 }
 

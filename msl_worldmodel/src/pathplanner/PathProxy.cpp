@@ -234,7 +234,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathProxy::applyShortcut(const vector<
                 continue;
             }
             shortcutBlocked = shortcutBlocked ||
-                              wm->pathPlanner->corridorCheck(ownPos.getPoint(), path.at(i), current.getPoint(),
+                              wm->pathPlanner->corridorCheck(ownPos.getPoint(), path.at(i), current.position.getPoint(),
                                                              wm->pathPlanner->getRobotRadius());
         }
         for (auto current : *net.getAdditionalObstacles())
@@ -291,8 +291,8 @@ void PathProxy::sendVoronoiNetMsg(const VoronoiNet &voronoi)
     for (auto cluster : *voronoi.getAlloClusteredObsWithMe())
     {
         msl_msgs::Point2dInfo info;
-        info.x = cluster.x;
-        info.y = cluster.y;
+        info.x = cluster.position.x;
+        info.y = cluster.position.y;
         netMsg.sites.push_back(info);
     }
 

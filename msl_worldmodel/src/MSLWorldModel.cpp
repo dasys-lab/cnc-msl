@@ -288,7 +288,7 @@ void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 
     lock_guard<mutex> lock(wmMutex);
     rawSensorData->processWorldModelData(msg);
-    obstacles->processWorldModelData(msg);
+    obstacles->processWorldModelData(*msg);
     pathPlanner->prepareVoronoiDiagram();
     visionTrigger.run();
 }
@@ -433,13 +433,11 @@ void MSLWorldModel::sendSharedWorldModelData()
     }
 
     // add obstacles
-    auto obsInfo = this->obstacles->getEgoObstaclesBuffer().getLastValid();
-    if (obsInfo != nullptr)
+    auto obs = this->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
+    if (obs)
     {
-        auto obs = obsInfo->getInformation();
-
-        msg.obstacles.reserve(obs.size());
-        for (auto &ob : obs)
+        msg.obstacles.reserve((*obs)->size());
+        for (auto &ob : **obs)
         {
             auto egoPoint = geometry::CNPointEgo(ob.x, ob.y);
             auto alloPoint = egoPoint.toAllo(ownPos);
