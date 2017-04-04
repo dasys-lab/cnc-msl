@@ -380,7 +380,6 @@ void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
 
 void RawSensorData::processGoalDetectionData(msl_msgs::Pose2dStampedPtr msg) {
 
-	cout << "RSA: in process method" << endl;
 	shared_ptr<msl_msgs::Pose2dStamped> pose = make_shared<msl_msgs::Pose2dStamped>();
 
 	pose->pose.x = msg->pose.x;
