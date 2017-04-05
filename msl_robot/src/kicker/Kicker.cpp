@@ -7,9 +7,9 @@
 
 #include <Ball.h>
 #include <Game.h>
-#include <cnc_geometry/Calculator.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
+#include <cnc_geometry/Calculator.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <obstaclehandler/Obstacles.h>
@@ -26,7 +26,8 @@ Kicker::Kicker(MSLWorldModel *wm)
     this->sc = supplementary::SystemConfig::getInstance();
     this->TWO_THIRD_PI = 2 * M_PI / 3;
     this->kickerCount = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "KickerCount", NULL);
-    this->ballisticCurveOffset = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "BallisticCurveOffset", NULL);
+    this->ballisticCurveOffset =
+        (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "BallisticCurveOffset", NULL);
     this->minVoltage = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "MinVoltage", NULL);
     this->maxVoltage = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "MaxVoltage", NULL);
     this->powerMult = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "Multiplier", NULL);
@@ -105,22 +106,23 @@ bool Kicker::mayShoot()
     }
     // DistanceScan ds = wm.DistanceScan;
     // if (ds == null) return false;
-    shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles->getEgoVisionObstacles();
-    if (obs == nullptr)
-    {
-        return false;
-    }
-    shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
-    if (ballPos == nullptr || !wm->ball->haveBall())
+    auto obs = wm->obstacles->getObstaclesInfoBuffer().getLastValid()->getInformation();
+    //    if (obs == nullptr)
+    //    {
+    //        return false;
+    //    }
+    auto ballPos = wm->ball->getEgoBallPosition();
+    if (ballPos || !wm->ball->haveBall())
     {
         return false;
     }
     double dang = kickerAngle;
-    for (int i = 0; i < obs->size(); i++)
+    for (auto obstacle : *obs)
     {
-        if (make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->length() > 550)
+        if (geometry::CNPointEgo(obstacle.x, obstacle.y).length() > 550)
             continue;
-        if (abs(geometry::deltaAngle(make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->angleTo(), dang)) < 15.0 * M_PI / 180.0)
+        if (abs(geometry::deltaAngle(geometry::CNPointEgo(obstacle.x, obstacle.y).angleZ(), dang)) <
+            15.0 * M_PI / 180.0)
         {
             return false;
         }
@@ -128,40 +130,40 @@ bool Kicker::mayShoot()
     return true;
 }
 
-shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
+shared_ptr<geometry::CNPointEgo> Kicker::getFreeGoalVector()
 {
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    auto dstscan = wm->rawSensorData->getDistanceScan();
-    if (ownPos == nullptr || dstscan == nullptr)
+    auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+    auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+    if (ownPos || dstscan)
     {
         return nullptr;
     }
     validGoalPoints.clear();
     double x = wm->field->getFieldLength() / 2;
     double y = -1000 + preciseShotMaxTolerance;
-    shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
+    geometry::CNPointAllo aim = geometry::CNPointAllo(x, y);
     double samplePoints = 4;
 
     for (double i = 0.0; i < samplePoints; i += 1.0)
     {
-        shared_ptr<geometry::CNPoint2D> egoAim = aim->alloToEgo(*ownPos);
-        double dist = egoAim->length();
-        double opDist = minFree(egoAim->angleTo(), 200, dstscan);
+        geometry::CNPointEgo egoAim = aim.toEgo(*ownPos);
+        double dist = egoAim.length();
+        double opDist = minFree(egoAim.angleZ(), 200, dstscan->getInformation()); // TODO!
         if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
         {
             validGoalPoints.push_back(egoAim);
         }
-        aim->y += 2 * abs(y) / samplePoints;
+        aim.y += 2 * abs(y) / samplePoints;
     }
     if (validGoalPoints.size() > 0)
     {
-        shared_ptr<geometry::CNPoint2D> ret = nullptr;
+        shared_ptr<geometry::CNPointEgo> ret = nullptr;
         double max = numeric_limits<double>::min();
         for (int i = 0; i < validGoalPoints.size(); i++)
         {
-            if (validGoalPoints[i]->length() > max)
+            if (validGoalPoints[i].length() > max)
             {
-                max = validGoalPoints[i]->length();
+                max = validGoalPoints[i].length();
                 ret = validGoalPoints[i];
             }
         }
@@ -269,7 +271,8 @@ double Kicker::getKickPowerForLobShot(double dist, double height, double heightT
     {
         double initialShootAngle = 2.676119513 * vSample + 12.70950743;
         initialShootAngle *= M_PI / 180;
-        double y = dist * tan(initialShootAngle) - (g * dist * dist) / (2 * vSample * vSample * cos(initialShootAngle) * cos(initialShootAngle));
+        double y = dist * tan(initialShootAngle) -
+                   (g * dist * dist) / (2 * vSample * vSample * cos(initialShootAngle) * cos(initialShootAngle));
         double curHeightErr = abs(height - y);
         if (curHeightErr < heightErr)
         {
@@ -338,7 +341,8 @@ void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl &km)
     shared_ptr<msl_actuator_msgs::KickControl> cmd = make_shared<msl_actuator_msgs::KickControl>();
 
     *cmd = km;
-    shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd = make_shared<InformationElement<msl_actuator_msgs::KickControl>>(cmd, wm->getTime());
+    shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd =
+        make_shared<InformationElement<msl_actuator_msgs::KickControl>>(cmd, wm->getTime());
     jcmd->certainty = 1.0;
     kickControlMsgs.add(jcmd);
 }
@@ -346,7 +350,7 @@ void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl &km)
 shared_ptr<msl_actuator_msgs::KickControl> Kicker::getKickConstrolMsg(int index)
 {
     auto x = kickControlMsgs.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > 1000000000)
+    if (x == nullptr || wm->getTime() - x->creationTime > 1000000000)
     {
         return nullptr;
     }

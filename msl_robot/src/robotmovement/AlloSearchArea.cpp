@@ -24,8 +24,8 @@ AlloSearchArea::~AlloSearchArea()
 {
 }
 
-shared_ptr<AlloSearchArea> AlloSearchArea::getAnArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center,
-                                                     shared_ptr<geometry::CNPosition> ownPos)
+shared_ptr<AlloSearchArea> AlloSearchArea::getAnArea(double langle, double hangle, double minDist, double maxDist, geometry::CNPointAllo center,
+                                                     geometry::CNPositionAllo ownPos)
 {
     shared_ptr<AlloSearchArea> ret = daList->at(counter);
     counter = (counter + 1) % maxNum;
@@ -35,10 +35,10 @@ shared_ptr<AlloSearchArea> AlloSearchArea::getAnArea(double langle, double hangl
     ret->maxDist = maxDist;
     ret->center = center;
     ret->ownPos = ownPos;
-    ret->midP->x = center->x;
-    ret->midP->y = center->y;
-    ret->midP->x += cos((hangle + langle) / 2) * (maxDist + minDist) / 2;
-    ret->midP->y += sin((hangle + langle) / 2) * (maxDist + minDist) / 2;
+    ret->midP.x = center.x;
+    ret->midP.y = center.y;
+    ret->midP.x += cos((hangle + langle) / 2) * (maxDist + minDist) / 2;
+    ret->midP.y += sin((hangle + langle) / 2) * (maxDist + minDist) / 2;
     ret->val = 0;
     return ret;
 }
@@ -99,13 +99,13 @@ string AlloSearchArea::toString()
     stringstream ss;
     ss << "Angle: " << (langle * 180 / M_PI) << " " << (hangle * 180 / M_PI) << "\n"
        << "Dist: " << minDist << " " << maxDist << "\n"
-       << "P : " << midP->x << " " << midP->y << "\n"
-       << "Eval: " << val << "\n======" << endl;
+       << "P : " << midP.x << " " << midP.y << "\n"
+       << "Eval: " << val << "\n======" << std::endl;
     return ss.str();
 }
 
-AlloSearchArea::AlloSearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center,
-                               shared_ptr<geometry::CNPosition> ownPos)
+AlloSearchArea::AlloSearchArea(double langle, double hangle, double minDist, double maxDist, geometry::CNPointAllo center,
+                               geometry::CNPositionAllo ownPos)
     : SearchArea(langle, hangle, minDist, maxDist, center, ownPos)
 {
 }

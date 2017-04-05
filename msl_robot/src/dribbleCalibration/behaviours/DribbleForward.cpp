@@ -35,11 +35,11 @@ namespace msl
 
 	shared_ptr<DribbleCalibrationQuery> DribbleForward::move(int trans)
 	{
-		shared_ptr<MotionControl> mc;
-		shared_ptr<BallHandleCmd> bhc = make_shared<BallHandleCmd>();
+		shared_ptr<msl_actuator_msgs::MotionControl> mc;
+		shared_ptr<msl_actuator_msgs::BallHandleCmd> bhc = make_shared<msl_actuator_msgs::BallHandleCmd>();
 
-		MotionControl mc1 = mCon.move(mCon.Forward, trans);
-		mc = make_shared<MotionControl>(mc1);
+		msl_actuator_msgs::MotionControl mc1 = mCon.move(mCon.Forward, trans);
+		mc = make_shared<msl_actuator_msgs::MotionControl>(mc1);
 //		mc->motion.translation = mc1.motion.translation;
 //		mc->motion.angle = mc1.motion.angle;
 //		mc->motion.rotation = mc1.motion.angle;

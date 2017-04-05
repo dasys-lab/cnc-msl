@@ -21,7 +21,7 @@ using namespace std;
 
 namespace geometry
 {
-class CNPoint2D;
+class CNPointEgo;
 }
 namespace msl
 {
@@ -40,7 +40,7 @@ class Kicker
     int getKickerCount();
     int getKickPower(double dist, double height, double velo);
     bool mayShoot();
-    shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
+    shared_ptr<geometry::CNPointEgo> getFreeGoalVector();
     double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
     double getPassKickpower(double dist, double arrivalTime);
     double getPassVelocity(double kickpower);
@@ -78,7 +78,7 @@ class Kicker
     KickCurve *kick2GoalCurve;
     KickCurve *kickHighPass;
     KickCurve *kickLowPass;
-    vector<shared_ptr<geometry::CNPoint2D>> validGoalPoints;
+    vector<geometry::CNPointEgo> validGoalPoints;
 
     InfoBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
     int mod(int x, int y);

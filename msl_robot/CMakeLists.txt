@@ -31,7 +31,6 @@ add_library(msl_robot
   src/kicker/KickCurve.cpp
   src/kicker/Kicker.cpp
   src/robotmovement/AlloSearchArea.cpp
-  src/robotmovement/EgoSearchArea.cpp
   src/robotmovement/MovementQuery.cpp
   src/robotmovement/RobotMovement.cpp
   src/robotmovement/SearchArea.cpp

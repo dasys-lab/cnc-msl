@@ -35,7 +35,7 @@ namespace msl
 
 	shared_ptr<DribbleCalibrationQuery> DribbleRotateRight::move(int trans)
 	{
-		shared_ptr<MotionControl> mc;
+		shared_ptr<msl_actuator_msgs::MotionControl> mc;
 		mc->motion.rotation = -rotationSpeed;
 		shared_ptr<DribbleCalibrationQuery> query;
 		query->setMc(mc);

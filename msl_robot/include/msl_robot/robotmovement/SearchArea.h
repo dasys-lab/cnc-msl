@@ -1,10 +1,3 @@
-/*
- * SearchArea.h
- *
- *  Created on: Feb 4, 2016
- *      Author: Stefan Jakob
- */
-
 #pragma once
 
 using namespace std;

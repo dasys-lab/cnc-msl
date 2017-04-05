@@ -1,15 +1,11 @@
-/*
- * DribbleBackward.cpp
- *
- *  Created on: Jan 6, 2017
- *      Author: Michael Gottesleben
- */
+#include "msl_robot/dribbleCalibration/behaviours/DribbleBackward.h"
 
-#include <boost/lexical_cast.hpp>
+#include "msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h"
+
 #include <Configuration.h>
-#include <msl_robot/dribbleCalibration/behaviours/DribbleBackward.h>
-#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <SystemConfig.h>
+
+//#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <string>
 
@@ -31,11 +27,11 @@ namespace msl
 
 	shared_ptr<DribbleCalibrationQuery> DribbleBackward::move(int trans)
 	{
-		shared_ptr<MotionControl> mc;
-		shared_ptr<BallHandleCmd> bhc;
+		shared_ptr<msl_actuator_msgs::MotionControl> mc;
+		shared_ptr<msl_actuator_msgs::BallHandleCmd> bhc;
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		mc = make_shared<MotionControl>(mCon.move(mCon.Forward, trans));
+		mc = make_shared<msl_actuator_msgs::MotionControl>(mCon.move(mCon.Forward, trans));
 		query->setMc(mc);
 		bhc->leftMotor = actuatorSpeed;
 		bhc->rightMotor = actuatorSpeed;
@@ -46,7 +42,7 @@ namespace msl
 	void DribbleBackward::writeConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleCalibration"]->set(boost::lexical_cast<std::string>(actuatorSpeed),
+		(*sc)["DribbleCalibration"]->set(to_string(actuatorSpeed),
 											"DribbleCalibration.DribbleBackward.MeasuredActuatorSpeed", NULL);
 	}
 

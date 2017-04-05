@@ -210,7 +210,7 @@ namespace msl
 		return false;
 	}
 
-	shared_ptr<geometry::CNPoint2D> MovementContainer::calcNewAlignPoint(Movement curMove)
+	shared_ptr<geometry::CNPointEgo> MovementContainer::calcNewAlignPoint(Movement curMove)
 	{
 #ifdef DEBUG_MOVE_CONT
 		cout << "MC::calcNewAlignPoint choose new direction..." << endl;
