@@ -37,15 +37,14 @@ namespace alica
 
 		auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
-        auto robotAngle = odom->angle;
-        auto robotVel = odom->translation;
+//        auto robotAngle = odom->angle;
+//        auto robotVel = odom->translation;
 //        auto robotRot = (double)odom->rotation / 1024.0;
-		auto robotRot = (double)odom->rotation;
+//		auto robotRot = (double)odom->rotation;
 
-//		auto robotAngle = 0;
-//		auto robotVel = 0;
-//		auto robotRot = 1.49;
-//		auto robotRot = 0;
+		auto robotAngle = 0;
+		auto robotVel = 0;
+		auto robotRot = 1.49;
 
 		auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
 		auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
@@ -57,8 +56,8 @@ namespace alica
 		auto left = getLeftArmVelocity(ballVel, ballAngle);
 
 		msl_actuator_msgs::BallHandleCmd msgback;
-		msgback.leftMotor = right;
-		msgback.rightMotor = left;
+		msgback.leftMotor = left;
+		msgback.rightMotor = right;
 		cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
 		send(msgback);
 
@@ -80,6 +79,7 @@ namespace alica
 
 		velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
 		staticUpperBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound", NULL);
+		staticMiddleBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticMiddleBound", NULL);
 		staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
 		staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX", NULL);
 		rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot", NULL);
@@ -102,9 +102,12 @@ namespace alica
 		double velX = -cos(angle) * translation;
 		double velY = -sin(angle) * translation + rotation * rBallRobot;
 		//correcting desired ball velocity towards robot to guarantee grib
-		if (velX <= staticUpperBound && velX >= staticLowerBound)
-			velX -= staticNegVelX;
 		velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+
+		if (velX <= staticUpperBound && velX >= staticMiddleBound)
+			velX = 0;
+		if (velX < staticMiddleBound && velX >= staticLowerBound)
+			velX = -10; //value shortly under zero
 
 		return sqrt(velX * velX + velY * velY);
 	}
@@ -114,9 +117,12 @@ namespace alica
 	{
 		double velX = -cos(angle) * translation;
 		double velY = -sin(angle) * translation + rotation * rBallRobot;
-		if (velX <= staticUpperBound && velX >= staticLowerBound)
-			velX -= staticNegVelX;
 		velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+
+		if (velX <= staticUpperBound && velX >= staticMiddleBound)
+			velX = 0;
+		if (velX < staticMiddleBound && velX >= staticLowerBound)
+			velX = -10; //value shortly under zero
 
 		double ballAngle = 0;
 		cout << "velY = " << velY << endl;
@@ -141,8 +147,6 @@ namespace alica
 
 		double angleConst = 0;
 
-		cout << "sec6 = " << sec6 << endl;
-		cout << "sec7 = " << sec7 << endl;
 
 		//linear interpolation of the constants in the 8 sectors
 
@@ -185,6 +189,7 @@ namespace alica
 		else if (ballAngle >= sec7)
 		{
 			// rotate left
+			cout << "sec7" << endl;
 			angleConst = -diagConst + (ballAngle - sec7) * (-forwConst + diagConst) / (sec8 - sec7);
 		}
 

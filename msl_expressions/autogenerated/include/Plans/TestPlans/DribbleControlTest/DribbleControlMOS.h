@@ -34,6 +34,7 @@ namespace alica
 
         double velToInput;
         double staticUpperBound;
+        double staticMiddleBound;
         double staticLowerBound;
         double staticNegVelX;
         double epsilonT;
