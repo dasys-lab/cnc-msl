@@ -65,20 +65,23 @@ namespace alica
             if (!diffOffsetInitialized)
             {
                 diffOffset = iR - mR;
-                cout << "set diffOffset to " << diffOffset << endl;
                 diffOffsetInitialized = true;
             }
 
             double currentDiff = (iR - diffOffset) - mR;
-
+#ifdef ROT_CALIB_DEBUG_ONLY
             cout << currentIMUBearing << "\t";
             cout << "\t";
             cout << currentMotionBearing << "\t";
             cout << "\t";
             cout << iR << "\t" << mR << "\t" << currentDiff << endl;
-
+#endif
+#ifndef ROT_CALIB_DEBUG_ONLY
+            int percent = abs(100 * (abs(currentDiff) / MIN_BEARING_DIFF_FOR_REGRESSION));
+            cout << abs(iR) << "/" << MAX_ROTATIONS << " rotations, difference sums up to " << percent
+                    << "% of the calibration threshold" << endl;
+#endif
             logIMUMotionDifference(currentDiff);
-
             if (iR > MAX_ROTATIONS)
             {
                 // MAX_ROTATIONS reached - calibration finished!
@@ -89,21 +92,12 @@ namespace alica
             {
                 // MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
                 cout
-                        << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on"
+                        << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius"
                         << endl;
                 calculateRadius();
                 this->setFailure(true);
             }
         }
-
-        // cout << "buffer" << endl;
-//		double endAngle = wm->rawOdometry->position.angle;
-//		cout << "end angle: " << endAngle << " => ";
-//		lastRotationCalibError = circularDiff(lastMotionBearing, endAngle);
-//		logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
-//		measurements[1]->y = lastRotationCalibError;
-        // wm->adjustRobotRadius(STEP_SIZE);
-//		this->setSuccess(true);
         /*PROTECTED REGION END*/
     }
     void RotateOnce::initialiseParameters()
@@ -126,9 +120,6 @@ namespace alica
 
         ifstream infile(logfile);
         string firstLine;
-        // TODO needed?
-//		std::getline(infile, firstLine);
-//		std::getline(infile, firstLine);
         string fileContent;
         string lineCppString;
         while (std::getline(infile, lineCppString).eof() == false)
@@ -143,21 +134,19 @@ namespace alica
         ofstr.flush();
         ofstr.close();
 
-//		cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
-//		cmd << logfile;
-//		cmd << "\\\" u 1:2 via a,b; plot \\\"";
-//		cmd << logfile;
-//		cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
-
-        cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) '";
+        cmd << "gnuplot ";
+#ifdef ROT_CALIB_DEBUG_ONLY
+        cmd << "-persist ";
+#endif
+        cmd << "-e \"f(x) = a*x+b; fit f(x) '";
         cmd << logfile;
         cmd << "' u (column(0)):1 via a,b; plot '";
         cmd << logfile;
         cmd << "' , f(x), 0; print sprintf('slope=%f',a)\" 2>&1";
-
+#ifdef ROT_CALIB_DEBUG_ONLY
         cout << cmd.str() << endl;
+#endif
         string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
-        // cout << "gnuplotReturn: " << gnuplotReturn << endl;
 
         /* I like C!
          * I don't */
@@ -190,28 +179,22 @@ namespace alica
         // Convert it to double
         double calculatedSlope = strtod(slopeStr, NULL);
         double newRadius = robotRadius * (1 - calculatedSlope);
-        cout << "old radius: " << robotRadius << endl;
-        cout << "new radius: " << newRadius << endl;
+        cout << "changed radius: " << robotRadius << " -> " << newRadius << endl;
         robotRadius = newRadius;
         wm->setRobotRadius(newRadius);
     }
 
-    /**
-     * TODO needs doc
-     */
     double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations,
                                            bool &isfullRotation)
     {
         double circDiff = circularDiff(currentBearing, lastBearing);
+
+        // project bearing values from [-pi;pi] to [0;1]
         double currentNormedBearing = (currentBearing + M_PI) / (2 * M_PI);
         double lastNormedBearing = (lastBearing + M_PI) / (2 * M_PI);
         lastBearing = currentBearing;
 
-//		cout << "lst " << lastBearing << "; ";
-//		cout << "cur " << currentBearing << "; ";
-//		cout << "cD " << circDiff << "; ";
-//		cout << "rots " << (rotations + currentNormedBearing);
-
+        // ignore rotations in the wrong direction or unnatural jumps
         if (circDiff < 0 || circDiff > CIRCDIFF_THRESHOLD)
         {
             return 0;
@@ -222,10 +205,7 @@ namespace alica
         if (isfullRotation)
         {
             rotations++;
-            // cout << "1";
         }
-
-        // cout << "\t";
 
         return rotations + currentNormedBearing;
     }
@@ -264,9 +244,9 @@ namespace alica
     {
         return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
     }
+
     void RotateOnce::logIMUMotionDifference(double imuMotionDifference)
     {
-        // TODO why don't we use the already defined sc for adjusting the robot radius?
         std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
         ofstream os(logfilePath, ios_base::out | ios_base::app);
         os << imuMotionDifference << endl;

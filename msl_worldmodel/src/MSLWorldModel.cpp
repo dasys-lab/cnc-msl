@@ -503,7 +503,8 @@ namespace msl
 
 	double msl::MSLWorldModel::getRobotRadius()
 	{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		// TODO test if this breaks anything, remove line otherwise
+//		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
 		return motion->get<double>("Motion","MotionControl","RobotRadius",NULL);
@@ -511,7 +512,8 @@ namespace msl
 
 	void msl::MSLWorldModel::setRobotRadius(double newRadius)
 	{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		// TODO test if this breaks anything, remove line otherwise
+//		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
 		motion->set(boost::lexical_cast<string>(newRadius),"Motion.MotionControl.RobotRadius",NULL);

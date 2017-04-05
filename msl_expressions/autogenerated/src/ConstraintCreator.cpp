@@ -27,6 +27,8 @@
 
 #include  "Plans/Standards/Opponent/Penalty/constraints/OppInGamePenalty1466968232004Constraints.h"
 
+#include  "Plans/Calibration/constraints/RotationCalibrationStopWrapper1491404851815Constraints.h"
+
 #include  "Plans/Attack/constraints/Duel1450178655416Constraints.h"
 
 #include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"

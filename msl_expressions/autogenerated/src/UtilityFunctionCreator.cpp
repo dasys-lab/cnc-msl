@@ -27,6 +27,8 @@
 
 #include  "Plans/Standards/Opponent/Penalty/OppInGamePenalty1466968232004.h"
 
+#include  "Plans/Calibration/RotationCalibrationStopWrapper1491404851815.h"
+
 #include  "Plans/Attack/Duel1450178655416.h"
 
 #include  "Plans/CarpetCalibrator1435159127771.h"
@@ -197,6 +199,10 @@ namespace alica
 
             case 1466968232004:
                 return make_shared<UtilityFunction1466968232004>();
+                break;
+
+            case 1491404851815:
+                return make_shared<UtilityFunction1491404851815>();
                 break;
 
             case 1450178655416:

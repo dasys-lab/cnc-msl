@@ -43,15 +43,43 @@ namespace alica
         // rotation speed varies
         double rotationSpeed;
 
+        /**
+         * Calculates the shortest angle distance between two angles.
+         * @param a
+         * @param b
+         * @return Angle distance in [0;pi]. Additionally, the sign shows if the shortest distance is reached clockwise or counter-clockwise.
+         */
         double circularDiff(double a, double b);
+
+        /**
+         * Gets a speed that is limited by constant MAX_ROTATION_SPEED. Also works for negative
+         * @param desiredSpeed
+         * @return
+         */
         double getLimitedRotationSpeed(double desiredSpeed);
+
+        /**
+         * write the given parameter into sc->getLogPath()+"RotationCalibration.log" to be used by gnuplot later
+         * @param imuMotionDifference
+         */
         void logIMUMotionDifference(double imuMotionDifference);
 
         double getMotionBearing();
         double getIMUBearing();
 
+        /**
+         * Updates rotation count based on the given bearing.
+         * @param currentBearing
+         * @param lastBearing Used for reference. Will be overwritten with lastBearing.
+         * @param rotations Will be overwritten with the number of whole rotations.
+         * @param isfullRotation Will be overwritten with true if a whole rotation just completed, false otherwise.
+         * @return Exact number of rotations including decimal digits for a partial rotation.
+         */
         double updateRotationCount(double currentBearing, double &lastBearing, int &rotations, bool &isfullRotation);
 
+        /**
+         * calls gnuplot and asks it for a linear regression of previously logged values
+         */
         void calculateRadius();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
