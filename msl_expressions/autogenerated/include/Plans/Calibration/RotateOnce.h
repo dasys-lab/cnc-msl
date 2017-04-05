@@ -18,7 +18,7 @@ namespace alica
         double const CIRCDIFF_THRESHOLD = 0.5; //TODO tweak
 
         static int const MIN_ROTATIONS = 3; // don't calculate a regression unless we rotated for MIN_ROTATIONS rotations
-        static int const MAX_ROTATIONS = 30; // finish calibration after reaching MAX_ROTATIONS without hitting MIN_BEARING_DIFF_FOR_REGRESSION
+        static int const MAX_ROTATIONS = 40; // finish calibration after reaching MAX_ROTATIONS without hitting MIN_BEARING_DIFF_FOR_REGRESSION
         static double constexpr MIN_BEARING_DIFF_FOR_REGRESSION = 0.03; // start regression calculation as soon as motion/imu rotation counter difference reaches MIN_BEARING_DIFF_FOR_REGRESSION
         static int logCounter;
 

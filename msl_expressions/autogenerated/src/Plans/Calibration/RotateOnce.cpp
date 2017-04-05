@@ -77,8 +77,8 @@ namespace alica
             cout << iR << "\t" << mR << "\t" << currentDiff << endl;
 #endif
 #ifndef ROT_CALIB_DEBUG_ONLY
-            int percent = abs(100 * (abs(currentDiff) / MIN_BEARING_DIFF_FOR_REGRESSION));
-            cout << abs(iR) << "/" << MAX_ROTATIONS << " rotations, difference sums up to " << percent
+            int percent = floor(100 * currentDiff / MIN_BEARING_DIFF_FOR_REGRESSION);
+            cout << floor(iR) << "/" << MAX_ROTATIONS << " rotations, difference sums up to " << percent
                     << "% of the calibration threshold" << endl;
 #endif
             logIMUMotionDifference(currentDiff);
