@@ -4,6 +4,6 @@
     <plan>GenericStandards/GenericExecute.pml#1431522123418</plan>
   </plans>
   <plans id="1438785596804" name="MISSING_NAME" comment="" activated="true">
-    <plan>OwnKickOff.pml#1438785376159</plan>
+    <plan>Standards/Own/KickOff/OwnKickOff.pml#1438785376159</plan>
   </plans>
 </alica:PlanType>

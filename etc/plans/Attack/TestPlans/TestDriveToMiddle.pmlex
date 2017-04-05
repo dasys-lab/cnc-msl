@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434329038"/>
-    <value xPos="59" yPos="171" width="81" height="67"/>
-  </extensions>
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434329037"/>
-    <value width="740" height="546"/>
-  </extensions>
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434329039"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434444773"/>
-    <value xPos="327" yPos="186" width="158" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="GenericBehaviours/DriveToPoint.beh#1431527260342"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434473874"/>
-    <value>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434329038"/>
+    <value xPos="59" yPos="171" width="81" height="67" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434329037"/>
+    <value width="740" height="546" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434329039"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434444773"/>
+    <value xPos="327" yPos="186" width="158" height="86" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericBehaviours/DriveToPoint.beh#1417620568675"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434473874"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="356" yPos="301"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="TestDriveToMiddle.pml#1457434475595"/>
-    <value>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDriveToMiddle.pml#1457434475595"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="364" yPos="213"/>
     </value>
-  </extensions>
-  <extensions>
+  </extension>
+  <extension>
     <key href="GenericBehaviours/Stop.beh#1413992604875"/>
-    <value/>
-  </extensions>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

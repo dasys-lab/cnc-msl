@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="DriveToPost.pml#1464189637941"/>
-    <value xPos="13" yPos="96" width="142" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189637940"/>
-    <value width="555" height="347"/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189637942"/>
-    <value/>
-  </extensions>
-  <extensions>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189637941"/>
+    <value xPos="13" yPos="96" width="142" height="86" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189637940"/>
+    <value width="555" height="347" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189637942"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
     <key href="GenericBehaviours/Stop.beh#1413992604875"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189715889"/>
-    <value xPos="176" yPos="78" width="192" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189725286"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189729245"/>
-    <value xPos="211" yPos="287" width="97" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464189737293"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Goalie/Test/GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.beh#1464189840525"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DriveToPost.pml#1464979937235"/>
-    <value/>
-  </extensions>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189715889"/>
+    <value xPos="176" yPos="78" width="192" height="86" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189725286"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189729245"/>
+    <value xPos="211" yPos="287" width="97" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464189737293"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Goalie/Test/GoalieBehaviours/DriveToGoal.beh#1447863424939"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.beh#1464189819779"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestPlans/GoalieMotionTuning/DriveToPost.pml#1464979937235"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

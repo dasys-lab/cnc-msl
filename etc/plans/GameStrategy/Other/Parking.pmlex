@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="Parking.pml#1426695119331"/>
-    <value xPos="204" yPos="206" width="164" height="88" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="Parking.pml#1426695119330"/>
-    <value width="870" height="631"/>
-  </extensions>
-  <extensions>
-    <key href="Parking.pml#1426695119332"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GenericBehaviours/Parking.beh#1429111645834"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Parking.pml#1429111673933"/>
-    <value xPos="693" yPos="264"/>
-  </extensions>
-  <extensions>
-    <key href="Parking.pml#1429111676838"/>
-    <value/>
-  </extensions>
+  <extension>
+    <key href="GameStrategy/Other/Parking.pml#1426695119331"/>
+    <value xPos="204" yPos="206" width="164" height="88" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GameStrategy/Other/Parking.pml#1426695119330"/>
+    <value width="870" height="631" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GameStrategy/Other/Parking.pml#1426695119332"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericBehaviours/Parking.beh#1429111623710"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GameStrategy/Other/Parking.pml#1429111673933"/>
+    <value xPos="693" yPos="264" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GameStrategy/Other/Parking.pml#1429111676838"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033636228"/>
-    <value xPos="109" yPos="86" width="81" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033620834"/>
-    <value width="694" height="310"/>
-  </extensions>
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033636229"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033701713"/>
-    <value xPos="288" yPos="125"/>
-  </extensions>
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033704233"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="MidfieldBlock.pml#1458033723845"/>
-    <value xPos="109" yPos="247"/>
-  </extensions>
-  <extensions>
-    <key href="OneGernericInGameBlocker.beh#1458034300406"/>
-    <value/>
-  </extensions>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033636228"/>
+    <value xPos="109" yPos="86" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033620834"/>
+    <value width="694" height="310" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033636229"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033701713"/>
+    <value xPos="288" yPos="125" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033704233"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/MidfieldBlock.pml#1458033723845"/>
+    <value xPos="109" yPos="247" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Defence/OneGernericInGameBlocker.beh#1458034268108"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

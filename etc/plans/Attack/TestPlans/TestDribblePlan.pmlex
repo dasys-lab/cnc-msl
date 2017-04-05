@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902404051"/>
-    <value xPos="100" yPos="118" width="81" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902404050"/>
-    <value width="629" height="395"/>
-  </extensions>
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902404053"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902416095"/>
-    <value xPos="349" yPos="125" width="81" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902447098"/>
-    <value>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902404051"/>
+    <value xPos="100" yPos="118" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902404050"/>
+    <value width="629" height="395" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902404053"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902416095"/>
+    <value xPos="349" yPos="125" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902447098"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="376" yPos="227"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="TestDribblePlan.pml#1437902448588"/>
-    <value>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/TestDribblePlan.pml#1437902448588"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="383" yPos="173"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="DribbleToPointPlan.pml#1436960829485"/>
-    <value/>
-  </extensions>
-  <extensions>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DribbleToPointPlan.pml#1436960829485"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
     <key href="GenericBehaviours/Stop.beh#1413992604875"/>
-    <value/>
-  </extensions>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

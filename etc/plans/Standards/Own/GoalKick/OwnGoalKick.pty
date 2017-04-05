@@ -4,6 +4,6 @@
     <plan>GenericStandards/GenericExecute.pml#1431522123418</plan>
   </plans>
   <plans id="1469529968727" name="MISSING_NAME" comment="" activated="true">
-    <plan>GoalKick.pml#1469521732930</plan>
+    <plan>Standards/Own/GoalKick/GoalKick.pml#1469521732930</plan>
   </plans>
 </alica:PlanType>

@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506180438"/>
-    <value xPos="88" yPos="202" width="81" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506180437"/>
-    <value width="876" height="605"/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506180439"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506213756"/>
-    <value xPos="279" yPos="195" width="90" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506223310"/>
-    <value>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1454506180438"/>
+    <value xPos="88" yPos="202" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1454506180437"/>
+    <value width="876" height="605" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1454506180439"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1454506213756"/>
+    <value xPos="279" yPos="195" width="90" height="86" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1454506223310"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="347" yPos="252"/>
     </value>
-  </extensions>
-  <extensions>
+  </extension>
+  <extension>
     <key href="GenericBehaviours/Stop.beh#1413992604875"/>
-    <value/>
-  </extensions>
-  <extensions>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
     <key href="Attack/Duel.pml#1450178655416"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1458125263117"/>
-    <value xPos="471" yPos="208" width="65" height="67"/>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1458125292658"/>
-    <value>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1458125263117"/>
+    <value xPos="471" yPos="208" width="65" height="67" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1458125292658"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="534" yPos="247"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1458125318498"/>
-    <value>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1458125318498"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="457" yPos="375"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1458135841024"/>
-    <value/>
-  </extensions>
+  </extension>
+  <extension>
+    <key href="Attack/TestPlans/DuelTestMaster.pml#1458135841024"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>

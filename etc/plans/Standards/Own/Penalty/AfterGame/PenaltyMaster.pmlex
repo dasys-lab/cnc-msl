@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973051874"/>
-    <value xPos="69" yPos="21" width="142" height="86"/>
-  </extensions>
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973051873"/>
-    <value width="473" height="181"/>
-  </extensions>
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973051875"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973070716"/>
-    <value xPos="232" yPos="24" width="185" height="86"/>
-  </extensions>
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973076640"/>
-    <value>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973051874"/>
+    <value xPos="69" yPos="21" width="142" height="86" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973051873"/>
+    <value width="473" height="181" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973051875"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973070716"/>
+    <value xPos="232" yPos="24" width="185" height="86" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973076640"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="332" yPos="104"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="PenaltyMaster.pml#1466973077670"/>
-    <value>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/PenaltyMaster.pml#1466973077670"/>
+    <value width="-1" height="-1" collapsed="true" visible="true">
       <bendpoints xPos="312" yPos="84"/>
     </value>
-  </extensions>
-  <extensions>
-    <key href="AfterGamePenalty.pml#1466934340668"/>
-    <value/>
-  </extensions>
-  <extensions>
+  </extension>
+  <extension>
+    <key href="Standards/Own/Penalty/AfterGame/AfterGamePenalty.pml#1466934340668"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
     <key href="GenericBehaviours/Stop.beh#1413992604875"/>
-    <value/>
-  </extensions>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
 </uiextensionmodel:PmlUiExtensionMap>
