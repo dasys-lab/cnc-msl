@@ -127,14 +127,15 @@ namespace msl
 	/**
 	 * @return true if opQueue is filled
 	 */
-	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
+	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, vector<geometry::CNVecEgo> &opQueue)
 	{
-		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
+		auto opticalFlow = wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent();
+		if (opticalFlow)
 		{
 			cerr << "no OpticalFLow signal!" << endl;
 			return false;
 		}
-		if (opQueue->size() >= queueSize)
+		if (opQueue.size() >= queueSize)
 		{
 			cout << "1.1" << endl;
 			return true;
@@ -144,21 +145,21 @@ namespace msl
 			cout << "filling optical flow queue!" << endl;
 			queueFilled = true;
 		}
-		opQueue->push_back(wm->rawSensorData->getOpticalFlow(0));
+		opQueue.push_back(*opticalFlow);
 		return false;
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(const vector<geometry::CNVecEgo> &queue)
 	{
 		return getAverageOpticalFlowValue(XValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(const vector<geometry::CNVecEgo> &queue)
 	{
 		return getAverageOpticalFlowValue(YValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value, const std::vector<geometry::CNVecEgo> &queue)
 	{
 		if (value != XValue && value != YValue /*&& value != QOSValue*/)
 		{
@@ -172,18 +173,18 @@ namespace msl
 		cout << "in getAverageOpticalFlowValue() " << endl;
 #endif
 
-		for (shared_ptr<geometry::CNPoint2D> val : *queue)
+		for (auto &val : queue)
 		{
 			if (value == XValue)
 			{
-				sum += val->x;
+				sum += val.x;
 			}
 			else
 			{
-				sum += val->y;
+				sum += val.y;
 			}
 		}
-		double ret = fabs(sum) / queue->size();
+		double ret = fabs(sum) / queue.size();
 		return sum < 0 ? -ret : ret;
 
 	}

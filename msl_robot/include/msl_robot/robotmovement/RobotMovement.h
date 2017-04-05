@@ -12,6 +12,7 @@
 #include "msl_actuator_msgs/MotionControl.h"
 
 #include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
 #include <nonstd/optional.hpp>
 
 #include <memory>
@@ -94,9 +95,10 @@ class RobotMovement
 
     MSLWorldModel *wm;
     PathProxy *pp;
-    msl_actuator_msgs::MotionControl placeRobot(geometry::CNPointEgo dest, geometry::CNPointEgo headingPoint);
+    msl_actuator_msgs::MotionControl placeRobot(geometry::CNPointEgo dest,
+                                                nonstd::optional<geometry::CNPointEgo> headingPoint = nonstd::nullopt);
     double evalPointDynamic(geometry::CNPointAllo alloP, geometry::CNPointAllo alloPassee,
-                            geometry::CNPositionAllo ownPos, std::shared_ptr<vector<geometry::CNPointAllo>> opponents);
+                            geometry::CNPositionAllo ownPos, const std::vector<geometry::CNPointAllo> &opponents);
     msl_actuator_msgs::MotionControl setNAN();
 
     // for alignTO()

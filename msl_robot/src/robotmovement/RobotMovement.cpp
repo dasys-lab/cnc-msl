@@ -32,12 +32,17 @@ using nonstd::optional;
 // remove commentary for debug output
 //#define RM_DEBUG
 
+using nonstd::optional;
+using nonstd::nullopt;
+using std::shared_ptr;
+using std::make_shared;
+
 namespace msl
 {
 
 int RobotMovement::randomCounter = 0;
 int RobotMovement::beamSize = 3;
-shared_ptr<geometry::CNPointAllo> RobotMovement::randomTarget = nullptr;
+optional<geometry::CNPointEgo> RobotMovement::randomTarget = nullopt;
 shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::fringe = make_shared<vector<shared_ptr<SearchArea>>>();
 shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::next = make_shared<vector<shared_ptr<SearchArea>>>();
 double RobotMovement::assume_enemy_velo = 4500;
@@ -100,7 +105,8 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(MovementQuery &query
     optional<geometry::CNPointEgo> egoTarget;
     if (query.pathEval == nullptr)
     {
-        egoTarget = this->pp->getEgoDirection(*query.egoDestinationPoint, PathEvaluator(), *query.getPathPlannerQuery());
+        PathEvaluator pathEval;
+        egoTarget = this->pp->getEgoDirection(*query.egoDestinationPoint, pathEval, *query.getPathPlannerQuery());
     }
     else
     {
@@ -246,13 +252,13 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
     // TODO introduce destination method-parameter for improving this method...
     // TODO add config parameters for all static numbers in here!
     auto egoBallPos = wm->ball->getEgoBallPosition();
-    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid(); // OwnPositionCorrected;
-    if (egoBallPos == nullptr || ownPosInfo == nullptr)
+    auto ownPosOpt = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // OwnPositionCorrected;
+    if (egoBallPos || ownPosOpt)
     {
         return setNAN();
     }
 
-    auto ownPos = ownPosInfo->getInformation();
+    auto ownPos = *ownPosOpt;
 
     geometry::CNPointAllo alloBall = egoBallPos->toAllo(ownPos);
     geometry::CNPointEgo dest;
@@ -331,7 +337,7 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
  * 		the distance to the destination and
  * 		the ball as additional point
  */
-msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo dest, geometry::CNPointEgo headingPoint)
+msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo dest, optional<geometry::CNPointEgo> headingPoint)
 {
     msl_actuator_msgs::MotionControl mc;
     double destTol = 100.0;
@@ -342,7 +348,7 @@ msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo 
         MovementQuery query;
         query.egoDestinationPoint = dest;
         query.egoAlignPoint = ballPos;
-        query.additionalPoints = nullptr;
+        query.additionalPoints = nullopt;
 
         mc = moveToPoint(query);
         mc.motion.translation = 0;
@@ -370,11 +376,12 @@ msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo 
             MovementQuery query;
             query.egoDestinationPoint = dest;
             query.additionalPoints = nullopt;
-            query.egoAlignPoint = headingPoint;
 
-            if (headingPoint == nullopt)
+            if (!headingPoint)
             {
                 query.egoAlignPoint = dest;
+            } else {
+                query.egoAlignPoint = headingPoint;
             }
 
             mc = moveToPoint(query);
@@ -429,28 +436,31 @@ msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(double translation
  */
 msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(MovementQuery &query)
 {
+    // TODO: check this function
+
     auto teamMatePosition = query.alloTeamMatePosition;
     msl_actuator_msgs::MotionControl mc;
 
-    auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
-    if (ownPosInfo == nullptr)
+    auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+    if (!ownPos)
     {
         return setNAN();
     }
 
-
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getEgoVisionObstaclePoints(); // WM.GetTrackedOpponents();
+    auto ops = wm->obstacles->getRawObstaclesEgoBuffer().getLastValidContent(); // WM.GetTrackedOpponents();
     fringe->clear();
     for (int i = 0; i < 16; i++)
     {
         for (int d = 0; d < 8000; d += 2000)
         {
-            shared_ptr<SearchArea> s = SearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000, ownPos->getPoint(), ownPos);
+            shared_ptr<SearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000, ownPos->getPoint(), *ownPos);
             if (s->isValid())
             {
-
-                s->val = evalPointDynamic(s->midP, teamMatePosition, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
-                fringe->push_back(s);
+                auto obsOpt = wm->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
+                if(obsOpt && teamMatePosition) {
+                    s->val = evalPointDynamic(s->midP, *teamMatePosition, *ownPos, *obsOpt->get());
+                    fringe->push_back(s);
+                }
             }
         }
     }
@@ -480,22 +490,28 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(MovementQuery &q
                 next->push_back(expanded->at(i));
             }
         }
-        for (int j = 0; j < next->size(); j++)
+        auto obsOpt = wm->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
+
+        if(obsOpt && teamMatePosition)
         {
-            next->at(j)->val = evalPointDynamic(next->at(j)->midP, teamMatePosition, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
-            fringe->push_back(next->at(j));
+            for (int j=0; j < next->size(); j++)
+            {
+                next->at(j)->val = evalPointDynamic(next->at(j)->midP, *teamMatePosition, *ownPos, *obsOpt->get());
+                fringe->push_back(next->at(j));
+            }
         }
         stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
     }
-    shared_ptr<geometry::CNPoint2D> dest = wm->field->mapOutOfOppGoalArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
-    shared_ptr<geometry::CNPoint2D> align = teamMatePosition->alloToEgo(*ownPos);
+
+    geometry::CNPointEgo dest = wm->field->mapOutOfOppGoalArea(wm->field->mapInsideField(best->midP)).toEgo(*ownPos);
+    geometry::CNPointEgo align = teamMatePosition->toEgo(*ownPos);
 
     //		mc = placeRobotAggressive(dest, align, maxTrans);
 
-    shared_ptr<MovementQuery> q = make_shared<MovementQuery>();
-    q->egoDestinationPoint = dest;
-    q->egoAlignPoint = align;
-    q->fast = true;
+    MovementQuery q;
+    q.egoDestinationPoint = dest;
+    q.egoAlignPoint = align;
+    q.fast = true;
     mc = moveToPoint(q);
 #ifdef RM_DEBUG
     cout << "RobotMovementmoveToFreeSpace: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -506,23 +522,21 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(MovementQuery &q
 /*
  * Used in moveToFreeSpace()
  */
-double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
-                                       shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents)
+double RobotMovement::evalPointDynamic(geometry::CNPointAllo alloP, geometry::CNPointAllo alloPassee,
+                                       geometry::CNPositionAllo ownPos, const vector<geometry::CNPointAllo> &opponents)
 {
     double ret = 0;
 
     // distance to point:
-    ret -= ownPos->distanceTo(alloP) / 10.0;
+    ret -= ownPos.distanceTo(alloP) / 10.0;
     MSLWorldModel *wm = MSLWorldModel::get();
-    shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2, 0);
+    auto oppGoalMid = geometry::CNPointAllo(wm->field->getFieldLength() / 2, 0);
 
-    shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
+    auto passee2p = alloP - alloPassee;
     // if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
 
-    shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal =
-        make_shared<geometry::CNPoint2D>(-wm->field->getFieldLength() / 2.0 - alloPassee->x, wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
-    shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal =
-        make_shared<geometry::CNPoint2D>(-wm->field->getFieldLength() / 2.0 - alloPassee->x, -wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+    auto passee2LeftOwnGoal = geometry::CNVecAllo(-wm->field->getFieldLength() / 2.0 - alloPassee.x, wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee.y);
+    auto passee2RightOwnGoal = geometry::CNVecAllo(-wm->field->getFieldLength() / 2.0 - alloPassee.x, -wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee.y);
 
     if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
     {
@@ -533,24 +547,24 @@ double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, sh
         return numeric_limits<double>::min();
     }
 
-    ret += passee2p->x / 9.0;
-    if (alloP->x < 0)
+    ret += passee2p.x / 9.0;
+    if (alloP.x < 0)
     {
-        ret += alloP->x / 10.0;
+        ret += alloP.x / 10.0;
     }
 
-    if (alloP->y * alloPassee->y < 0)
+    if (alloP.y * alloPassee.y < 0)
     {
-        ret += min(0.0, alloP->x);
+        ret += min(0.0, alloP.x);
     }
-    if (alloP->angleToPoint(oppGoalMid) > M_PI / 3.0)
+    if (alloP.angleZToPoint(oppGoalMid) > M_PI / 3.0)
     {
-        ret -= alloP->angleToPoint(oppGoalMid) * 250.0;
+        ret -= alloP.angleZToPoint(oppGoalMid) * 250.0;
     }
     // distance to passeee:
 
     // Point2D p2GoalVec = goalPos - p;
-    double dist2Passee = passee2p->length();
+    double dist2Passee = passee2p.length();
 
     // nice passing distances: 4000..9000:
     if (dist2Passee < 2000)
@@ -574,19 +588,19 @@ double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, sh
 
     // double goalFactor = 0;
 
-    for (int i = 0; i < opponents->size(); i++)
+    for (int i = 0; i < opponents.size(); i++)
     {
         // pass corridor
-        t = ((opponents->at(i)->x - alloPassee->x) * passee2p->x + (opponents->at(i)->y - alloPassee->y) * passee2p->y) /
-            (passee2p->x * passee2p->x + passee2p->y * passee2p->y);
+        t = ((opponents.at(i).x - alloPassee.x) * passee2p.x + (opponents.at(i).y - alloPassee.y) * passee2p.y) /
+            (passee2p.x * passee2p.x + passee2p.y * passee2p.y);
 
         if (t > 0)
         {
             if (t < 1.0)
             {
 
-                ortX = opponents->at(i)->x - (alloPassee->x + t * (passee2p->x));
-                ortY = opponents->at(i)->y - (alloPassee->y + t * (passee2p->y));
+                ortX = opponents.at(i).x - (alloPassee.x + t * (passee2p.x));
+                ortY = opponents.at(i).y - (alloPassee.y + t * (passee2p.y));
                 v = max(0.0, sqrt(ortX * ortX + ortY * ortY) - robotRadius) / dist2Passee;
 
                 if (v / t * interceptQuotient < 1)
@@ -596,8 +610,8 @@ double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, sh
                     catchFactor = max(catchFactor, cf);
                 }
             }
-            ortX = opponents->at(i)->x - alloP->x;
-            ortY = opponents->at(i)->y - alloP->y;
+            ortX = opponents.at(i).x - alloP.x;
+            ortY = opponents.at(i).y - alloP.y;
             v = sqrt(ortX * ortX + ortY * ortY);
             if (v < 2500)
                 ret -= (2500 - v) * 10;

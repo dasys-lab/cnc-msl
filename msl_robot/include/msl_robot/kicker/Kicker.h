@@ -5,8 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_KICKER_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_KICKER_H_
+#pragma once
 
 #include <InfoBuffer.h>
 #include "KickCurve.h"
@@ -16,8 +15,7 @@
 #include <InformationElement.h>
 #include <SystemConfig.h>
 #include <msl_actuator_msgs/KickControl.h>
-
-using namespace std;
+#include <nonstd/optional.hpp>
 
 namespace geometry
 {
@@ -40,8 +38,8 @@ class Kicker
     int getKickerCount();
     int getKickPower(double dist, double height, double velo);
     bool mayShoot();
-    shared_ptr<geometry::CNPointEgo> getFreeGoalVector();
-    double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
+    nonstd::optional<geometry::CNPointEgo> getFreeGoalVector();
+    double minFree(double angle, double width, const std::vector<double> &distanceScan) const;
     double getPassKickpower(double dist, double arrivalTime);
     double getPassVelocity(double kickpower);
     double getKickPowerForLobShot(double dist, double height, double heightTolerance = 30.0);
@@ -53,11 +51,11 @@ class Kicker
     static double kickerAngle;
 
     void processKickConstrolMsg(msl_actuator_msgs::KickControl &km);
-    shared_ptr<msl_actuator_msgs::KickControl> getKickConstrolMsg(int index = 0);
 
   private:
     MSLWorldModel *wm;
     float kickerVoltage;
+    const InfoTime maxValidity = 1000000000;
 
   protected:
     supplementary::SystemConfig *sc;
@@ -78,12 +76,11 @@ class Kicker
     KickCurve *kick2GoalCurve;
     KickCurve *kickHighPass;
     KickCurve *kickLowPass;
-    vector<geometry::CNPointEgo> validGoalPoints;
+    std::vector<geometry::CNPointEgo> validGoalPoints;
 
-    InfoBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
-    int mod(int x, int y);
+    InfoBuffer<msl_actuator_msgs::KickControl> kickControlMsgs;
+    int mod(int x, int y) const;
 };
 
 } /* namespace msl */
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_KICKER_H_ */

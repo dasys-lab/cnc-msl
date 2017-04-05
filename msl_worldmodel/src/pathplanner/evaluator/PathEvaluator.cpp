@@ -37,7 +37,7 @@ PathEvaluator::~PathEvaluator()
 }
 
 pair<double, double> PathEvaluator::evalInitial(geometry::CNPointAllo startPos, geometry::CNPointAllo goal,
-                                                shared_ptr<SearchNode> nextNode, shared_ptr<const VoronoiNet> voronoi,
+                                                shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi,
                                                 shared_ptr<const vector<geometry::CNPointAllo>> lastPath,
                                                 optional<geometry::CNPointAllo> lastTarget) const
 {
@@ -73,7 +73,7 @@ pair<double, double> PathEvaluator::evalInitial(geometry::CNPointAllo startPos, 
  * Calculates the cost for a voronoi vertex
  */
 pair<double, double> PathEvaluator::eval(geometry::CNPointAllo goal, shared_ptr<SearchNode> currentNode,
-                                         shared_ptr<SearchNode> nextNode, shared_ptr<const VoronoiNet> voronoi) const
+                                         shared_ptr<SearchNode> nextNode, const VoronoiNet &voronoi) const
 {
     auto curPoint = currentNode->getPoint();
     auto nextPoint = nextNode->getPoint();
@@ -83,36 +83,32 @@ pair<double, double> PathEvaluator::eval(geometry::CNPointAllo goal, shared_ptr<
 
     cost += pathLengthWeight * nextPoint.distanceTo(curPoint);
 
-    // TODO: what should be done if voronoi is null??? This is just a quick guess
-    if(voronoi != nullptr)
+    // get sites next to voronoi edge
+    int upType = voronoi.getTypeOfSite(nextNode->getEdge()->up()->point());
+    int downType = voronoi.getTypeOfSite(nextNode->getEdge()->down()->point());
+
+    if (upType == EntityType::UndefinedEntity || downType == EntityType::UndefinedEntity)
     {
-        // get sites next to voronoi edge
-        int upType = voronoi->getTypeOfSite(nextNode->getEdge()->up()->point());
-        int downType = voronoi->getTypeOfSite(nextNode->getEdge()->down()->point());
+        return pair<double, double>(-1.0, -1.0);
+    }
 
-        if (upType == EntityType::UndefinedEntity || downType == EntityType::UndefinedEntity)
-        {
-            return pair<double, double>(-1.0, -1.0);
-        }
+    // calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
+    double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(),
+                                                          nextNode->getEdge()->up()->point().y(), curPoint.x,
+                                                          curPoint.y, nextPoint.x, nextPoint.y);
+    // calculate weighted dist to both objects
 
-        // calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-        double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(),
-                                                              nextNode->getEdge()->up()->point().y(), curPoint.x,
-                                                              curPoint.y, nextPoint.x, nextPoint.y);
-        // calculate weighted dist to both objects
-
-        // Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
-        if ((upType > 0 && downType > 0) ||
-            (upType > 0 && downType != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
-            || (downType > 0 && upType != EntityType::ArtificialObstacle))
-        {
-            cost += (obstacleDistanceWeight * (1.0 / distobs));
-        }
-        // One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
-        if (upType == -1 || downType == -1)
-        {
-            cost += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
-        }
+    // Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
+    if ((upType > 0 && downType > 0) ||
+        (upType > 0 && downType != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
+        || (downType > 0 && upType != EntityType::ArtificialObstacle))
+    {
+        cost += (obstacleDistanceWeight * (1.0 / distobs));
+    }
+    // One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
+    if (upType == -1 || downType == -1)
+    {
+        cost += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
     }
 
     // if the path is longer then one vertex add cost for the angle

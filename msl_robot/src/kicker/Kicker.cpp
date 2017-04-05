@@ -14,6 +14,9 @@
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <obstaclehandler/Obstacles.h>
 
+using nonstd::optional;
+using nonstd::nullopt;
+
 namespace msl
 {
 
@@ -130,13 +133,13 @@ bool Kicker::mayShoot()
     return true;
 }
 
-shared_ptr<geometry::CNPointEgo> Kicker::getFreeGoalVector()
+optional<geometry::CNPointEgo> Kicker::getFreeGoalVector()
 {
     auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
     auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
     if (ownPos || dstscan)
     {
-        return nullptr;
+        return nullopt;
     }
     validGoalPoints.clear();
     double x = wm->field->getFieldLength() / 2;
@@ -148,7 +151,7 @@ shared_ptr<geometry::CNPointEgo> Kicker::getFreeGoalVector()
     {
         geometry::CNPointEgo egoAim = aim.toEgo(*ownPos);
         double dist = egoAim.length();
-        double opDist = minFree(egoAim.angleZ(), 200, dstscan->getInformation()); // TODO!
+        double opDist = minFree(egoAim.angleZ(), 200, *(*dstscan));
         if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
         {
             validGoalPoints.push_back(egoAim);
@@ -157,7 +160,7 @@ shared_ptr<geometry::CNPointEgo> Kicker::getFreeGoalVector()
     }
     if (validGoalPoints.size() > 0)
     {
-        shared_ptr<geometry::CNPointEgo> ret = nullptr;
+        geometry::CNPointEgo ret;
         double max = numeric_limits<double>::min();
         for (int i = 0; i < validGoalPoints.size(); i++)
         {
@@ -171,26 +174,26 @@ shared_ptr<geometry::CNPointEgo> Kicker::getFreeGoalVector()
     }
     else
     {
-        return nullptr;
+        return nullopt;
     }
 }
 
-double Kicker::minFree(double angle, double width, shared_ptr<vector<double>> dstscan)
+double Kicker::minFree(double angle, double width, const vector<double> &distanceScan) const
 {
-    double sectorWidth = 2.0 * M_PI / dstscan->size();
-    int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());
-    double minfree = dstscan->at(startSector);
+    double sectorWidth = 2.0 * M_PI / distanceScan.size();
+    int startSector = mod((int)floor(angle / sectorWidth), distanceScan.size());
+    double minfree = distanceScan.at(startSector);
     double dist, dangle;
-    for (int i = 1; i < dstscan->size() / 4; i++)
+    for (int i = 1; i < distanceScan.size() / 4; i++)
     {
-        dist = dstscan->at(mod((startSector + i), dstscan->size()));
+        dist = distanceScan.at(mod((startSector + i), distanceScan.size()));
         dangle = sectorWidth * i;
         if (abs(dist * sin(dangle)) < width)
         {
             minfree = min(minfree, abs(dist * cos(dangle)));
         }
 
-        dist = dstscan->at(mod((startSector - i), dstscan->size()));
+        dist = distanceScan.at(mod((startSector - i), distanceScan.size()));
         if (abs(dist * sin(dangle)) < width)
         {
             minfree = min(minfree, abs(dist * cos(dangle)));
@@ -323,7 +326,7 @@ int Kicker::getShortPassPower()
     return shortPassPower;
 }
 
-int Kicker::mod(int x, int y)
+int Kicker::mod(int x, int y) const
 {
     int z = x % y;
     if (z < 0)
@@ -338,23 +341,9 @@ int Kicker::mod(int x, int y)
 
 void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl &km)
 {
-    shared_ptr<msl_actuator_msgs::KickControl> cmd = make_shared<msl_actuator_msgs::KickControl>();
-
-    *cmd = km;
-    shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd =
-        make_shared<InformationElement<msl_actuator_msgs::KickControl>>(cmd, wm->getTime());
-    jcmd->certainty = 1.0;
+    auto jcmd =
+        make_shared<InformationElement<msl_actuator_msgs::KickControl>>(km, wm->getTime(), this->maxValidity, 1.0);
     kickControlMsgs.add(jcmd);
-}
-
-shared_ptr<msl_actuator_msgs::KickControl> Kicker::getKickConstrolMsg(int index)
-{
-    auto x = kickControlMsgs.getLast(index);
-    if (x == nullptr || wm->getTime() - x->creationTime > 1000000000)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
 }
 
 } /* namespace msl */
