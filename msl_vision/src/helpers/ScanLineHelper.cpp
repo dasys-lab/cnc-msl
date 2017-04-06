@@ -112,14 +112,14 @@ void ScanLineHelper::init( ){
 	short ex = 0;
 	short ey = 0;
     
-    // Mops need less scanlines due to his smaler camera resolution
+    // Mops need less scanlines due to his smaller camera resolution
     if( this->ownId == 1)
     {
 	    numberOfCircles = 16;
     }
     else
     {
-	    numberOfCircles = 29;
+	    numberOfCircles = 16;
     }
 
 	innerLines = (short *) malloc(nLines/2 * maxPoints * 2 * sizeof(short));

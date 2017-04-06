@@ -25,7 +25,7 @@ void settings_init() {
     default_settings.thermalConstantWinding = 8;
     default_settings.max_deccel=30;
 
-    default_settings.definingAngle = 50.0*PI /180.0; //not read from config
+    default_settings.definingAngle = 40.0*PI /180.0; //not read from config
     default_settings.wheelRadius = 65;
     default_settings.robotRadius = 280;
 	default_settings.odometrySamplingTime = 10;
