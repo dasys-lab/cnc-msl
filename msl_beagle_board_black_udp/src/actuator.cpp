@@ -674,6 +674,8 @@ int main(int argc, char** argv) {
 	bool imu = lsm9ds0.init();
 	adns3080.adns_init();
 
+	std::cout << "I2C: " << i2c << ", SPI: " << spi << "IMU: " << imu << std::endl;
+
 	supplementary::Configuration *proxyconf = (*sc)["msl_bbb_proxy"];
 	std::string baddress = proxyconf->get<std::string>("UdpProxy","MulticastAddress",NULL);
 	unsigned short port = (unsigned short)proxyconf->get<int>("UdpProxy","Port",NULL);

@@ -22,6 +22,9 @@ OpticalFlow::OpticalFlow(const char *pin_names[], BlackSPI *spi_P) {
 	qos = 0;
 	vQos = 0;
 	debugOF = 0;
+	
+	std::cout << "ID: " << (int) getProductId() << std::endl;
+	std::cout << "I-ID: " << (int) getInverseProductId() << std::endl;
 }
 
 OpticalFlow::~OpticalFlow() {
@@ -49,9 +52,16 @@ void OpticalFlow::controlLED(bool enabled) {
 
 uint8_t OpticalFlow::read(uint8_t address) {
 	ncs->setValue(low);
-	spi->transfer(address, 75);		// wait t_SRAD
+//	spi->transfer(address, 75);		// wait t_SRAD
+uint8_t write_arr[1];
+uint8_t read_arr[1];
+write_arr[0] = address;
+spi->transfer(write_arr, read_arr, 1, 10);	// max. 1536 Pixels
 
-	uint8_t ret = spi->transfer(0x00);
+//	uint8_t ret = spi->transfer(0x00);
+write_arr[0] = 0x00;
+spi->transfer(write_arr, read_arr, 1, 10);	// max. 1536 Pixels
+uint8_t ret = read_arr[0];
 	ncs->setValue(high);
 
 	return ret;
@@ -65,9 +75,16 @@ void OpticalFlow::reset(void) {
 
 void OpticalFlow::write(uint8_t address, uint8_t value) {
 	ncs->setValue(low);
-	spi->transfer(address | 0x80, 50);
+//	spi->transfer(address | 0x80, 50);
+uint8_t write_arr[1];
+uint8_t read_arr[1];
+write_arr[0] = address | 0x80;
+spi->transfer(write_arr, read_arr, 1, 50);	// max. 1536 Pixels
 
-	spi->transfer(value);
+
+//	spi->transfer(value);
+write_arr[0] = value;
+spi->transfer(write_arr, read_arr, 1, 10);	// max. 1536 Pixels
 	ncs->setValue(high);
 }
 
@@ -144,7 +161,11 @@ void OpticalFlow::getMotionBurst(int8_t *burst) {
 
 	ncs->setValue(low);
 
-	spi->transfer(MOTION_BURST);
+//	spi->transfer(MOTION_BURST);
+uint8_t write_arr[1];
+uint8_t read_arr[1];
+write_arr[0] = MOTION_BURST;
+spi->transfer(write_arr, read_arr, 1, 10);	// max. 1536 Pixels
 	usleep(75);
 
 	// read all 7 bytes (Motion, Delta_X, Delta_Y, SQUAL, Shutter_Upper, Shutter_Lower, Maximum Pixels)

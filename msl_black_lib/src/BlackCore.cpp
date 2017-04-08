@@ -34,7 +34,6 @@
 
 
 
-
 namespace BlackLib
 {
 
@@ -125,7 +124,7 @@ namespace BlackLib
 
     bool        BlackCore::findOcpName()
     {
-        std::string searchResult = this->searchDirectory("/sys/devices/","ocp.");
+        std::string searchResult = this->searchDirectory("/sys/devices/platform/","ocp");
 
         if(searchResult == SEARCH_DIR_NOT_FOUND)
         {
@@ -147,7 +146,7 @@ namespace BlackLib
     std::string BlackCore::searchDirectoryOcp(BlackCore::ocpSearch searchThis)
     {
         std::string searchResult;
-        std::string searchPath = "/sys/devices/" + this->getOcpName() + "/";
+        std::string searchPath = "/sys/devices/platform/" + this->getOcpName() + "/";
 
         if( searchThis == this->SPI0 )
         {
@@ -221,7 +220,6 @@ namespace BlackLib
                 break;
             }
         }
-
 
         return searchResult;
     }

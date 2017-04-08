@@ -27,8 +27,7 @@
 
  */
 
-
-
+#include <iostream>
 
 
 #include "BlackSPI.h"
@@ -83,6 +82,9 @@ namespace BlackLib
         this->isCurrentEqDefault= false;
         this->spiErrors         = new errorSPI( this->getErrorsFromCore() );
 
+std::cout << "spiBpW: " << (int) spiBitsPerWord << std::endl;
+std::cout << "spiMode: " << (int) spiMode << std::endl;
+std::cout << "spiSpeed: " << (int) spiSpeed << std::endl;
 
         constructorProperties.spiBitsPerWord    = spiBitsPerWord;
         constructorProperties.spiMode           = spiMode;
@@ -131,6 +133,7 @@ namespace BlackLib
         if( this->spiBusNumber == 0 )
         {
             limitedSearchResult = this->searchDirectoryOcp(BlackCore::SPI0);
+std::cout << "lim: " << limitedSearchResult << std::endl;
         }
         else if( this->spiBusNumber == 1 )
         {
@@ -157,6 +160,7 @@ namespace BlackLib
         {
             this->spiErrors->portPathError = false;
             this->spiPortPath = "/dev/spidev" + tostr( limitedSearchResult[3] ) + "." + tostr(this->spiChipNumber);
+std::cout << "portPath: " << this->spiPortPath << std::endl;
             return true;
         }
 
@@ -167,6 +171,8 @@ namespace BlackLib
     {
         uint flags = 0;
 
+std::cout << "Mode: " << openMode << std::endl;
+
         if( (openMode & ReadOnly)   == ReadOnly     ){  flags |= O_RDONLY;  }
         if( (openMode & WriteOnly)  == WriteOnly    ){  flags |= O_WRONLY;  }
         if( (openMode & ReadWrite)  == ReadWrite    ){  flags |= O_RDWR;    }
@@ -174,9 +180,12 @@ namespace BlackLib
         if( (openMode & Truncate)   == Truncate     ){  flags |= O_TRUNC;   }
         if( (openMode & NonBlock)   == NonBlock     ){  flags |= O_NONBLOCK;}
 
+std::cout << "PortPath: " << spiPortPath.c_str() << std::endl;
+std::cout << "Flag: " << flags << std::endl;
 
         this->spiFD = ::open(this->spiPortPath.c_str(), flags);
 
+std::cout << "spiFD: " << this->spiFD << std::endl;
 
         if( this->spiFD < 0 )
         {
@@ -205,6 +214,9 @@ namespace BlackLib
                 this->currentProperties = this->defaultProperties;
             }
         }
+std::cout << "cur BpW: " << (int) this->currentProperties.spiBitsPerWord << std::endl;
+std::cout << "cur Mode: " << (int) this->currentProperties.spiMode << std::endl;
+std::cout << "cur Speed: " << this->currentProperties.spiSpeed << std::endl;
         return true;
     }
 
@@ -232,15 +244,18 @@ namespace BlackLib
 
     bool        BlackSPI::setMode(uint8_t newMode)
     {
+std::cout << "setMode: " << (int) newMode << std::endl;
        if( ::ioctl(this->spiFD, SPI_IOC_WR_MODE, &newMode) == -1 )
        {
            this->spiErrors->modeError = true;
+std::cout << "setMode: " << "false" << std::endl;
            return false;
        }
        else
        {
            this->spiErrors->modeError = false;
            this->currentProperties.spiMode = newMode;
+std::cout << "setMode: " << "true" << std::endl;
            return true;
        }
     }
@@ -266,6 +281,7 @@ namespace BlackLib
 
     bool        BlackSPI::setMaximumSpeed(uint32_t newSpeed)
     {
+std::cout << "setSpeed: " << (int) newSpeed << std::endl;
        if( ::ioctl(this->spiFD, SPI_IOC_WR_MAX_SPEED_HZ, &newSpeed) == -1 )
        {
            this->spiErrors->speedError = true;
@@ -273,6 +289,7 @@ namespace BlackLib
        }
        else
        {
+std::cout << "setSpeed: true" << std::endl;
            this->spiErrors->speedError = false;
            this->currentProperties.spiSpeed = newSpeed;
            return true;
@@ -300,6 +317,7 @@ namespace BlackLib
 
     bool        BlackSPI::setBitsPerWord(uint8_t newBitSize)
     {
+std::cout << "setBpW: " << (int) newBitSize << std::endl;
        if( ::ioctl(this->spiFD, SPI_IOC_WR_BITS_PER_WORD, &newBitSize) == -1 )
        {
            this->spiErrors->bitSizeError = true;
@@ -307,6 +325,7 @@ namespace BlackLib
        }
        else
        {
+std::cout << "setBpW: true" << std::endl;
            this->spiErrors->bitSizeError = false;
            this->currentProperties.spiBitsPerWord = newBitSize;
            return true;
@@ -374,15 +393,25 @@ namespace BlackLib
         package.speed_hz        = this->currentProperties.spiSpeed;
         package.bits_per_word   = this->currentProperties.spiBitsPerWord;
 
+std::cout << "TX_BUF: " << package.tx_buf << ", RX_BUF: " << package.rx_buf << std::endl;
+std::cout << "Len: " << package.len << ", Speed_hz: " << package.speed_hz << std::endl;
+std::cout << "Delay: " << package.delay_usecs << ", BpW: " << package.bits_per_word << std::endl;
+std::cout << "CS_C: " << package.cs_change << ", Pad: " << package.pad << std::endl;
+std::cout << "TX_N: " << package.tx_nbits << ", RX_N: " << package.rx_nbits << std::endl;
 
-        if( ::ioctl(this->spiFD, SPI_IOC_MESSAGE(1), &package) >= 0)
+int var_ioctl = 0;
+
+        /*if(*/var_ioctl = ::ioctl(this->spiFD, SPI_IOC_MESSAGE(1), &package);// >= 0)
+	if(var_ioctl >= 0)
         {
             this->spiErrors->transferError = false;
+std::cout << "Tx okay" << std::endl;
             return tempReadByte;
         }
         else
         {
             this->spiErrors->transferError = true;
+std::cout << "Tx failed: " << var_ioctl << std::endl;
             return tempReadByte;
         }
     }
@@ -410,16 +439,23 @@ namespace BlackLib
         package.speed_hz        = this->currentProperties.spiSpeed;
         package.bits_per_word   = this->currentProperties.spiBitsPerWord;
 
+std::cout << "TX_BUF: " << package.tx_buf << ", RX_BUF: " << package.rx_buf << std::endl;
+std::cout << "Len: " << package.len << ", Speed_hz: " << package.speed_hz << std::endl;
+std::cout << "Delay: " << package.delay_usecs << ", BpW: " << (int) package.bits_per_word << std::endl;
+std::cout << "CS_C: " << (int) package.cs_change << ", Pad: " << package.pad << std::endl;
+std::cout << "TX_N: " << (int) package.tx_nbits << ", RX_N: " << (int) package.rx_nbits << std::endl;
 
         if( ::ioctl(this->spiFD, SPI_IOC_MESSAGE(1), &package) >= 0)
         {
             this->spiErrors->transferError = false;
             memcpy(readBuffer, tempReadBuffer, bufferSize);
+std::cout << "Transfer Buffer: " << "=)" << std::endl;
             return true;
         }
         else
         {
             this->spiErrors->transferError = true;
+std::cout << "Transfer Buffer: " << "ERROR =(" << std::endl;
             return false;
         }
     }
