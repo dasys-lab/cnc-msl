@@ -33,6 +33,8 @@ namespace alica
         static constexpr double ACCELERATION = 0.1;
         double robotRadius;
 
+        // This variable decides whether we drive clockwise or counter clockwise should only be set to 1 or -1
+        int rotationDirection;
         int motionRotations;
         int imuRotations;
         double diffOffset;

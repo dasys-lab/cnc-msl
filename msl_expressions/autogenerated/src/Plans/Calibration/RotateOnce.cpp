@@ -29,6 +29,7 @@ namespace alica
         rotationSpeed = 0;
         diffOffset = 0;
         diffOffsetInitialized = false;
+        rotationDirection = 1;
         /*PROTECTED REGION END*/
     }
     RotateOnce::~RotateOnce()
@@ -110,6 +111,7 @@ namespace alica
         motionRotations = 0;
         diffOffset = 0;
         diffOffsetInitialized = false;
+        rotationDirection = 1;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
@@ -200,11 +202,17 @@ namespace alica
             return 0;
         }
 
-        isfullRotation = lastNormedBearing > currentNormedBearing;
+        if (rotationDirection == 1) {
+			isfullRotation = lastNormedBearing > currentNormedBearing;
+        } else {
+        	isfullRotation = lastNormedBearing < currentNormedBearing;
+        }
 
         if (isfullRotation)
         {
             rotations++;
+            rotationDirection = -rotationDirection;
+            rotationSpeed = 0;
         }
 
         return rotations + currentNormedBearing;
