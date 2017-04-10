@@ -14,7 +14,6 @@ using namespace alica;
 #include "engine/model/EntryPoint.h"
 #include "engine/model/Task.h"
 #include "engine/Assignment.h"
-#include <container/CNPosition.h>
 #include <WhiteBoard.h>
 #include <Ball.h>
 #include <Robots.h>

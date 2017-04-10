@@ -8,6 +8,8 @@ using namespace std;
 #include <msl_actuator_msgs/KickControl.h>
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include <MSLWorldModel.h>
+#include <nonstd/optional.hpp>
+#include <cnc_geometry/CNVecEgo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -384,7 +386,7 @@ namespace alica
     bool RobotTest::opticalFlowRobot()
     {
         auto of = wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent();
-        if (of != nullptr)
+        if (of != nonstd::nullopt)
         {
             cout << "receive data from optical flow!" << endl;
             return false;

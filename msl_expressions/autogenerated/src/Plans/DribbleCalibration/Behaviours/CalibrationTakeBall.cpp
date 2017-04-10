@@ -5,9 +5,8 @@ using namespace std;
 #include <SystemConfig.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
-#include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
-//#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,7 +30,7 @@ namespace alica
         dribbleFactorRight = 0;
         dribbleFactorLeft = 0;
         speedNoBall = 0;
-        opQueue = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        opQueue = make_shared<vector<shared_ptr<geometry::CNPointEgo>>>();
         /*PROTECTED REGION END*/
     }
     CalibrationTakeBall::~CalibrationTakeBall()
@@ -49,7 +48,7 @@ namespace alica
             return;
         }
         // check if robot has the ball
-        if (wm->rawSensorData->getLightBarrier())
+        if (wm->rawSensorData->getLightBarrierBuffer().getLastValidContent())
         {
             // check if ball is rotating correctly
             if (!this->ballRotateCorrect)

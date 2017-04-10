@@ -38,11 +38,11 @@ namespace alica
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
+        shared_ptr < geometry::CNPointAllo > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        shared_ptr < geometry::CNPointEgo > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (ownPos)
         {
             mc = rm.driveRandomly(500);
             send(mc);
@@ -71,11 +71,11 @@ namespace alica
         if (this->teamMateId != 0)
         { // take the teammate as reference point
             auto teammate = wm->robots->teammates.getTeamMatePosition(teamMateId);
-            referencePoint = make_shared < geometry::CNPoint2D > (teammate->x, teammate->y);
+            referencePoint = std::make_shared < geometry::CNPointAllo > (teammate->x, teammate->y);
         }
         else if (egoBallPos != nullptr)
         { // take the ball as reference point
-            referencePoint = egoBallPos->egoToAllo(*ownPos);
+            referencePoint = egoBallPos->toAllo(*ownPos);
         }
         else
         { // no teammate and no ball, hmpf stay inside the middle of the field
@@ -99,7 +99,7 @@ namespace alica
             }
         }
         // repaced moveToPointCarefully with new moveToPoint method
-        query->egoDestinationPoint = targetPoint->alloToEgo(*ownPos);
+        query->egoDestinationPoint = targetPoint->toEgo(*ownPos);
         query->snapDistance = 50;
         if (egoBallPos != nullptr)
         {
@@ -111,7 +111,7 @@ namespace alica
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
 //                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
-            query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
+            query->egoAlignPoint = referencePoint->toEgo(*ownPos);
             mc = rm.moveToPoint(query);
         }
         if (!std::isnan(mc.motion.translation))

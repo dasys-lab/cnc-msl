@@ -6,6 +6,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,35 +28,20 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         auto ballPos = wm->ball->getEgoBallPosition();
-        if (!me.operator bool())
+        if (!me)
         {
             return;
         }
-        auto egoTarget = alloTarget.alloToEgo(*me);
+        auto egoTarget = alloTarget.toEgo(*me);
 
-        msl_actuator_msgs::MotionControl mc;
-
-        /*if (ballPos != nullptr)
-         {
-         mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
-         }
-         else
-         {*/
-        // replaced with new moveToPoint method
-//        mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
         query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
-        mc = rm.moveToPoint(query);
-        //mc.motion.translation = 500;
-        //}
+        query->egoAlignPoint = nonstd::optional<geometry::CNPointEgo>(-1000.0, 0.0);
+        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
-        if (egoTarget->length() < 250)
+        if (egoTarget.length() < 250)
         {
-            //mc.motion.translation = 0;
-            //send(mc);
-            //sleep(1);
             cout << "DriveToPoint: Success" << endl;
             this->setSuccess(true);
         }

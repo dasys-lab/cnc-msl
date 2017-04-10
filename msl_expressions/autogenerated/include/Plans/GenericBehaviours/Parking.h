@@ -3,13 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1429111623710) ENABLED START*/ //Add additional includes here
+#include <cnc_geometry/CNPointAllo.h>
 namespace supplementary
 {
     class SystemConfig;
-}
-namespace geometry
-{
-    class CNPoint2D;
 }
 namespace msl
 {
@@ -34,7 +31,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1429111623710) ENABLED START*/ //Add additional private methods here
         supplementary::SystemConfig* sc;
-        shared_ptr<geometry::CNPoint2D> parkingPosition;
+        geometry::CNPointAllo parkingPosition;
         shared_ptr<msl::MovementQuery> movementQuery;
         msl::RobotMovement* rm;
         double offset;

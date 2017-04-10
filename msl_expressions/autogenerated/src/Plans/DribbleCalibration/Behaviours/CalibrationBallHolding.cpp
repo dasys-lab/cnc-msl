@@ -5,6 +5,7 @@ using namespace std;
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -37,12 +38,12 @@ namespace alica
             this->setSuccess(true);
             return;
         }
-        if (wm->rawSensorData->getLightBarrier())
+        if (wm->rawSensorData->getLightBarrierBuffer().getLastValidContent())
         {
             // if ball is in kicker
 
             // check optical flow before using ballIsRotating
-            if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
+            if (wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent())
             {
                 return;
             }
@@ -73,7 +74,7 @@ namespace alica
         }
         else
         {
-            MotionControl mc = moveCont.getBall();
+            msl_actuator_msgs::MotionControl mc = moveCont.getBall();
             send(mc);
         }
 
@@ -91,7 +92,7 @@ namespace alica
         readConfigParameters();
 
         ballWasStanding = false;
-        opQueue = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        opQueue.clear();
 
         if (this->minRotation > this->slowTranslationWheelSpeed)
         {
@@ -107,7 +108,7 @@ namespace alica
 
         cout << "opticalFlow->x: " << averageXValue << endl;
 
-        opQueue->clear();
+        opQueue.clear();
         return averageXValue > 0 ? true : false;
     }
 
