@@ -7,7 +7,6 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
-#include "container/CNPoint2D.h"
 //#include <msl_actuator_msgs/BallHandleCmd.h>
 /*PROTECTED REGION END*/
 namespace alica

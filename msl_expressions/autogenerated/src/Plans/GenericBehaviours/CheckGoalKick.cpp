@@ -2,7 +2,6 @@ using namespace std;
 #include "Plans/GenericBehaviours/CheckGoalKick.h"
 
 /*PROTECTED REGION ID(inccpp1449076008755) ENABLED START*/ //Add additional includes here
-#include <GeometryCalculator.h>
 #include <math.h>
 #include "engine/RunningPlan.h"
 #include "engine/AlicaEngine.h"

@@ -3,10 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1417620568675) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
 #include <msl_robot/robotmovement/MovementQuery.h>
-
+#include <cnc_geometry/CNPointAllo.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -22,7 +20,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1417620568675) ENABLED START*/ //Add additional protected methods here
-        geometry::CNPoint2D alloTarget;
+        geometry::CNPointAllo alloTarget;
         double defaultTranslation;
         shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/

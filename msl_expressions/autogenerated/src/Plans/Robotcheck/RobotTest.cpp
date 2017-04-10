@@ -27,7 +27,7 @@ namespace alica
     void RobotTest::run(void* msg)
     {
         /*PROTECTED REGION ID(run1456756113767) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
         // testing motion ================================================================
 
@@ -357,11 +357,16 @@ namespace alica
         return true;
     }
 
+    /**
+     * This function seems to be mal-formed! E.g.: Storing the wm-value and directly
+     * testing for differences ...
+     * @return
+     */
     bool RobotTest::lightBarrierRobot()
     {
-        auto lbi = wm->rawSensorData->getLightBarrier();
+        auto lbi = wm->rawSensorData->getLightBarrierBuffer().getLastValidContent();
 
-        bool static lb_old = lbi;
+        auto static lb_old = lbi;
         if (lb_old != lbi)
         {
             lb_old = lbi;
@@ -378,7 +383,7 @@ namespace alica
 
     bool RobotTest::opticalFlowRobot()
     {
-        auto of = wm->rawSensorData->getOpticalFlow();
+        auto of = wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent();
         if (of != nullptr)
         {
             cout << "receive data from optical flow!" << endl;

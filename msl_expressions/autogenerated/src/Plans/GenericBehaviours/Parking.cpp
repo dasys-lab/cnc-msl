@@ -3,7 +3,6 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1429111623710) ENABLED START*/ //Add additional includes here
 #include <SystemConfig.h>
-#include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>

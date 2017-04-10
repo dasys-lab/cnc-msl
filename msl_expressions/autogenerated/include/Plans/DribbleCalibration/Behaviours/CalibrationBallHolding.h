@@ -33,7 +33,7 @@ namespace alica
         void readConfigParameters();
         void writeConfigParameters();
 
-        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
+        shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> opQueue;
     int queueSize;
 
     int changingValue;

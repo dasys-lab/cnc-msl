@@ -5,7 +5,6 @@ using namespace std;
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
-#include "container/CNPoint2D.h"
 /*PROTECTED REGION END*/
 namespace alica
 {

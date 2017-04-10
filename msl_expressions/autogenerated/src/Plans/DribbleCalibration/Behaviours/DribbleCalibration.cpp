@@ -46,11 +46,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
         // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         msl::RobotMovement rm;
 //		MovementContainer moveCont;
         // if ball is in kicker
-        if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
+        if (wm->rawSensorData->getLightBarrierBuffer().getLastValidContent() && (moveCount < speedIter))
 //        if ((moveCount < speedIter))
         {
             getBallFlag = true;
@@ -81,7 +81,7 @@ namespace alica
             shared_ptr<msl::DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
 
             //check input for send methods
-            shared_ptr<MotionControl> mc = query->getMc();
+            std::shared_ptr<msl_actuator_msgs::MotionControl> mc = query->getMc();
             if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
             {
                 if (mc->motion.translation == NAN)
@@ -99,7 +99,7 @@ namespace alica
                 cout << "no MotionControl received!" << endl;
             }
 
-            shared_ptr<BallHandleCmd> bhc = query->getBhc();
+            std::shared_ptr<msl_actuator_msgs::BallHandleCmd> bhc = query->getBhc();
             send(*bhc);
 
             // waiting some time till we can be sure to only collect correct values
