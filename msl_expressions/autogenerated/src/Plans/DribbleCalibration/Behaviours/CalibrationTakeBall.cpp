@@ -30,7 +30,6 @@ namespace alica
         dribbleFactorRight = 0;
         dribbleFactorLeft = 0;
         speedNoBall = 0;
-        opQueue = make_shared<vector<shared_ptr<geometry::CNPointEgo>>>();
         /*PROTECTED REGION END*/
     }
     CalibrationTakeBall::~CalibrationTakeBall()
@@ -209,7 +208,7 @@ namespace alica
         {
             oldOperation = operation;
         }
-        opQueue->clear();
+        opQueue.clear();
         queueFilled = false;
     }
 

@@ -3,24 +3,17 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1417620683982) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPoint3D.h"
-#include "MSLFootballField.h"
+#include <MSLFootballField.h>
+
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+
 #include <sstream>
-#include <container/CNVelocity2D.h>
-#include <GeometryCalculator.h>
-#include "msl_actuator_msgs/MotionControl.h"
-#include "msl_actuator_msgs/KickControl.h"
-#include "msl_actuator_msgs/BallHandleCmd.h"
-
-using namespace msl;
-using namespace msl_actuator_msgs;
-
 enum HoleMode
 {
     toggle = 0, lower = 1, upper = 2
 };
-
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -49,15 +42,15 @@ namespace alica
         bool kicked;
         int iterationsAfterKick;
 
-        geometry::CNPoint3D higherHole;
-        geometry::CNPoint3D lowerHole;
+        geometry::CNPointAllo higherHole;
+        geometry::CNPointAllo lowerHole;
 
         int timesOnTargetThreshold;
         int wheelSpeed;
         double voltage4shoot;
 
-        vector<shared_ptr<geometry::CNPoint2D>> highKickList;
-        vector<shared_ptr<geometry::CNPoint2D>> lowKickList;
+        vector<shared_ptr<geometry::CNPointAllo>> highKickList;
+        vector<shared_ptr<geometry::CNPointAllo>> lowKickList;
 
         unsigned short setKickPower(double distance);
 

@@ -23,7 +23,6 @@ namespace alica
         this->distanceToParkingPositionTolerance = (*this->sc)["Parking"]->get<double>(
                 "ParkingPositions", "distanceToParkingPositionTolerance", NULL);
         this->rm = new msl::RobotMovement();
-        this->movementQuery = make_shared<msl::MovementQuery>();
         this->parkingPosition = geometry::CNPointAllo(this->parkingSlotIdx * -this->offset, wm->field->getFieldWidth() / 2.0);
         /*PROTECTED REGION END*/
     }
@@ -46,9 +45,9 @@ namespace alica
             return;
         }
 
-        this->movementQuery->egoDestinationPoint = this->parkingPosition.toEgo(*ownPos);
-        this->movementQuery->egoAlignPoint =
-                (this->parkingPosition + geometry::CNPointAllo(0, -1000.0)).toEgo(*ownPos);
+        this->movementQuery.egoDestinationPoint = this->parkingPosition.toEgo(*ownPos);
+        this->movementQuery.egoAlignPoint =
+                (this->parkingPosition + geometry::CNVecAllo(0, -1000.0)).toEgo(*ownPos);
         msl_actuator_msgs::MotionControl mc = rm->moveToPoint(movementQuery);
         send(mc);
         /*PROTECTED REGION END*/
@@ -58,7 +57,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1429111623710) ENABLED START*/ //Add additional options here
         this->parkingSlotIdx = (*this->sc)["Parking"]->get<double>("ParkingPositions",
                                                                    to_string(this->getOwnId()).c_str(), NULL);
-        this->parkingPosition = geometry::CNPoint2D(this->parkingSlotIdx * -this->offset, wm->field->getFieldWidth() / 2.0);
+        this->parkingPosition = geometry::CNPointAllo(this->parkingSlotIdx * -this->offset, wm->field->getFieldWidth() / 2.0);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1429111623710) ENABLED START*/ //Add additional methods here

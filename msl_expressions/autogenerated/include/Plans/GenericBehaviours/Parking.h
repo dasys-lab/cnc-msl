@@ -4,13 +4,13 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1429111623710) ENABLED START*/ //Add additional includes here
 #include <cnc_geometry/CNPointAllo.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 namespace supplementary
 {
     class SystemConfig;
 }
 namespace msl
 {
-    class MovementQuery;
     class RobotMovement;
 }
 /*PROTECTED REGION END*/
@@ -32,7 +32,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1429111623710) ENABLED START*/ //Add additional private methods here
         supplementary::SystemConfig* sc;
         geometry::CNPointAllo parkingPosition;
-        shared_ptr<msl::MovementQuery> movementQuery;
+        msl::MovementQuery movementQuery;
         msl::RobotMovement* rm;
         double offset;
         int parkingSlotIdx;

@@ -22,7 +22,7 @@ namespace alica
         /*PROTECTED REGION ID(pro1417620568675) ENABLED START*/ //Add additional protected methods here
         geometry::CNPointAllo alloTarget;
         double defaultTranslation;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1417620568675) ENABLED START*/ //Add additional private methods here

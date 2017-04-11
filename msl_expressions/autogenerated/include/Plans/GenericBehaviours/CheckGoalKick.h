@@ -3,10 +3,12 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1449076008755) ENABLED START*/ //Add additional includes here
+#include <nonstd/optional.hpp>
+#include <cnc_geometry/CNPointEgo.h>
 namespace geometry
 {
-    class CNPosition;
-    class CNPoint2D;
+	class CNPositionAllo;
+
 }
 /*PROTECTED REGION END*/
 namespace alica
@@ -25,8 +27,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1449076008755) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPosition> ownPos;
-        shared_ptr<geometry::CNPoint2D> egoBallPos;
+        shared_ptr<geometry::CNPositionAllo> ownPos;
+        nonstd::optional<geometry::CNPointEgo> egoBallPos;
         double minObsDistGoal;
         double minOwnDistGoal;
         double minOppYDist;
@@ -48,11 +50,11 @@ namespace alica
         double cout_distBall2HitPoint;
 
         void readConfigParameters();
-        double getKickPower(shared_ptr<geometry::CNPoint2D> hitPoint);
+        double getKickPower(shared_ptr<geometry::CNPointAllo> hitPoint);
         void kick(double kickpower);
-        bool checkGoalKeeper(shared_ptr<geometry::CNPoint2D> hitPoint);
-        bool checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint, double& kickPower);
-        shared_ptr<geometry::CNPoint2D> computeHitPoint(double posX, double posY, double alloAngle);
+        bool checkGoalKeeper(shared_ptr<geometry::CNPointAllo> hitPoint);
+        bool checkShootPossibility(shared_ptr<geometry::CNPointAllo> hitPoint, double& kickPower);
+        shared_ptr<geometry::CNPointAllo> computeHitPoint(double posX, double posY, double alloAngle);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -16,7 +16,7 @@ namespace alica
             DomainBehaviour("DriveToPoint")
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+    	this->defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
@@ -36,8 +36,8 @@ namespace alica
         }
         auto egoTarget = alloTarget.toEgo(*me);
 
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = nonstd::optional<geometry::CNPointEgo>(-1000.0, 0.0);
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = geometry::CNPointEgo(-1000.0, 0.0);
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         if (egoTarget.length() < 250)
@@ -79,7 +79,6 @@ namespace alica
         {
             cerr << "D2P: Parameter does not exist" << endl;
         }
-        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1417620568675) ENABLED START*/ //Add additional methods here
