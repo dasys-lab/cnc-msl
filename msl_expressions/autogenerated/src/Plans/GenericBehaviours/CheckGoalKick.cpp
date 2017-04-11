@@ -273,7 +273,7 @@ namespace alica
             return true;
         }
 
-        auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
+        auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
         double dist2Obs = alloBallPos->distanceTo(closestObs);
         cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
         kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
