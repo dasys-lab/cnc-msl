@@ -91,7 +91,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
             // safety measure in case one agent crashes
             continue;
         }
-        robotPositions.push_back(robotPos);
+        robotPositions.push_back(robotPos.value());
         auto vec = make_shared<TVec>(initializer_list<shared_ptr<Term>>{
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(1)->at(i)->at(0)),
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(1)->at(i)->at(1))});
@@ -103,14 +103,14 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
          << endl;
     // END INITILIZE VARIABLE CONTAINER
 
-    shared_ptr<geometry::CNPoint2D> ballPose = wm->ball->getAlloBallPosition();
-    if (ballPose == nullptr)
+    auto ballPose = wm->ball->getAlloBallPosition();
+    if (!ballPose)
     {
-        ballPose = make_shared<geometry::CNPoint2D>(0, 0);
+        ballPose = geometry::CNPoint2D(0, 0);
     }
     shared_ptr<TVec> tvecBallPose = make_shared<TVec>(initializer_list<double>{ballPose->x, ballPose->y});
     auto ownGoalPos = wm->field->posOwnGoalMid();
-    shared_ptr<TVec> ownGoalVec = make_shared<TVec>(initializer_list<double>{ownGoalPos->x, ownGoalPos->y});
+    shared_ptr<TVec> ownGoalVec = make_shared<TVec>(initializer_list<double>{ownGoalPos.x, ownGoalPos.y});
     constraint = constraint & msl::MSLConstraintBuilder::applyRules(-1, poses);
 
     // Just for the case when we use this after "start" has been pressed
@@ -119,29 +119,29 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
         constraint = constraint & msl::MSLConstraintBuilder::ownPenaltyAreaDistanceExceptionRule(tvecBallPose, poses);
     }
 
-    auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+    auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
 
     vector<shared_ptr<TVec>> blockPositions;
     vector<shared_ptr<TVec>> blockOpponents;
     shared_ptr<geometry::CNPoint2D> nearestOpp = nullptr;
     // default nearest opp
 
-    if (ballPose != nullptr)
+    if (ballPose)
         nearestOpp = make_shared<geometry::CNPoint2D>(ballPose->x - 250, ballPose->y);
     double dist = 999999999;
 
-    if (opps != nullptr)
+    if (opps)
     {
-        for (auto opp : *opps)
+        for (auto& opp : *opps)
         {
 
-            cout << "" << opp->toString() << endl;
+            cout << opp.toString() << endl;
 
             // is nearest to the ball?
-            if (ballPose != nullptr)
+            if (ballPose)
             {
-                wm->field->mapOutOfOwnPenalty(opp, ballPose - opp);
-                double oDist = opp->distanceTo(ballPose);
+                wm->field->mapOutOfOwnPenalty(opp, *ballPose - opp);
+                double oDist = opp.distanceTo(*ballPose);
                 if (oDist < dist)
                 {
                     nearestOpp = opp;
@@ -154,21 +154,21 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
             }
 
             // add blocking position
-            shared_ptr<geometry::CNPoint2D> blockingPos;
+            nonstd::optional<geometry::CNPointAllo> blockingPos;
             if (ballPose != nullptr)
             {
                 blockingPos = opp + (ballPose - opp)->normalize() * 700;
             }
             else
             {
-                blockingPos = make_shared<geometry::CNPoint2D>(opp->x - 700, opp->y);
+                blockingPos = geometry::CNPointAllo(opp.x - 700, opp.y);
             }
 
             // only add if opp is in close to midline
-            if (blockingPos->x < wm->field->getFieldLength() / 6.0 && ballPose->distanceTo(blockingPos) > 1100)
+            if (blockingPos->x < wm->field->getFieldLength() / 6.0 && ballPose->distanceTo(*blockingPos) > 1100)
             {
                 blockPositions.push_back(make_shared<TVec>(initializer_list<double>{blockingPos->x, blockingPos->y}));
-                blockOpponents.push_back(make_shared<TVec>(initializer_list<double>{opp->x, opp->y}));
+                blockOpponents.push_back(make_shared<TVec>(initializer_list<double>{opp.x, opp.y}));
             }
         }
     }
@@ -178,17 +178,17 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     if (defender.size() > 0)
     {
         auto direction = (ballPose - ownGoalPos)->normalize();
-        auto wallPoint = direction * min(ownGoalPos->distanceTo(wm->field->posULOppPenaltyArea()),
+        auto wallPoint = direction * min(ownGoalPos.distanceTo(wm->field->posULOppPenaltyArea()),
                                          ballPose->distanceTo(ownGoalPos) / 2);
         wallPoint = wallPoint + ownGoalPos;
 
-        auto directionTVec = make_shared<TVec>(initializer_list<double>{direction->x, direction->y});
-        auto wallPointTVec = make_shared<TVec>(initializer_list<double>{wallPoint->x, wallPoint->y});
+        auto directionTVec = make_shared<TVec>(initializer_list<double>{direction.x, direction.y});
+        auto wallPointTVec = make_shared<TVec>(initializer_list<double>{wallPoint.x, wallPoint.y});
         for (int j = 0; j < defender.size(); j++)
         {
             vector<shared_ptr<Term>> diffTerm;
-            diffTerm.push_back(defender.at(j)->getX() - autodiff::TermBuilder::constant(wallPoint->x));
-            diffTerm.push_back(defender.at(j)->getY() - autodiff::TermBuilder::constant(wallPoint->y));
+            diffTerm.push_back(defender.at(j)->getX() - autodiff::TermBuilder::constant(wallPoint.x));
+            diffTerm.push_back(defender.at(j)->getY() - autodiff::TermBuilder::constant(wallPoint.y));
             auto g2def = make_shared<TVec>(diffTerm);
             auto relPoint = ConstraintBuilder::inCoordsOf(g2def, directionTVec);
             constraint = constraint & ((shared_ptr<autodiff::Term>)make_shared<autodiff::Abs>(relPoint->getX()) <
@@ -242,7 +242,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     {
         auto pos = robotPositions.at(i);
         if (pos != nullptr)
-            realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{pos->x, pos->y}));
+            realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{pos.x, pos.y}));
         else
             realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{0.0, 0.0}));
     }

@@ -86,7 +86,7 @@ geometry::CNPointAllo MSLFootballField::mapOutOfOwnPenalty(const geometry::CNPoi
     return mapOutsideArea(inp, -FieldLength / 2.0 + PenaltyAreaLength + PenaltyAreaMappingTolerance, PenaltyAreaWidth / 2.0 + PenaltyAreaMappingTolerance);
 }
 
-geometry::CNPointAllo MSLFootballField::mapOutOfOwnPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec)
+geometry::CNPointAllo MSLFootballField::mapOutOfOwnPenalty(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec)
 {
     double tolerance = PenaltyAreaMappingTolerance;
     if (!isInsideOwnPenalty(inp, tolerance))
@@ -171,7 +171,7 @@ geometry::CNPointAllo MSLFootballField::mapOutOfOppPenalty(geometry::CNPointAllo
     return mapOutsideArea(inp, FieldLength / 2.0 - PenaltyAreaLength - tolerance, PenaltyAreaWidth / 2.0 + tolerance);
 }
 
-geometry::CNPointAllo MSLFootballField::mapOutOfOppPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec)
+geometry::CNPointAllo MSLFootballField::mapOutOfOppPenalty(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec)
 {
     double tolerance = PenaltyAreaMappingTolerance;
     if (!isInsideOppPenalty(inp, tolerance))
@@ -257,7 +257,7 @@ geometry::CNPointAllo MSLFootballField::mapInsideOwnPenaltyArea(geometry::CNPoin
     return mapInsideArea(inp, -FieldLength / 2.0 + PenaltyAreaLength - tolerance, PenaltyAreaWidth / 2.0 - tolerance);
 }
 
-geometry::CNPointAllo MSLFootballField::mapInsideField(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec)
+geometry::CNPointAllo MSLFootballField::mapInsideField(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec)
 {
     double tolerance = 150;
     if (isInsideField(inp))

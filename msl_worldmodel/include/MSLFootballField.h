@@ -106,9 +106,9 @@ class MSLFootballField
 
     geometry::CNPointAllo mapOutOfPenalty(geometry::CNPointAllo inp);
     geometry::CNPointAllo mapOutOfOwnPenalty(geometry::CNPointAllo inp);
-    geometry::CNPointAllo mapOutOfOwnPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
+    geometry::CNPointAllo mapOutOfOwnPenalty(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec);
     geometry::CNPointAllo mapOutOfOppPenalty(geometry::CNPointAllo inp);
-    geometry::CNPointAllo mapOutOfOppPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
+    geometry::CNPointAllo mapOutOfOppPenalty(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec);
 
     geometry::CNPointAllo mapOutOfOwnGoalArea(geometry::CNPointAllo inp);
     geometry::CNPointAllo mapOutOfOppGoalArea(geometry::CNPointAllo inp);
@@ -118,7 +118,7 @@ class MSLFootballField
 
     geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp);
     geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp, double tolerance);
-    geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
+    geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp, geometry::CNVecAllo alongVec);
 
     geometry::CNPointAllo keepOutOfOwnPenalty(geometry::CNPointAllo from, geometry::CNPointAllo to);
     double distanceToLine(geometry::CNPointAllo from, double angle);

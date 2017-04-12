@@ -50,7 +50,7 @@ namespace alica
         void kick(double kickpower);
         bool checkGoalKeeper(const geometry::CNPointAllo& hitPoint);
         bool checkShootPossibility(const geometry::CNPointAllo& hitPoint, double& kickPower);
-        geometry::CNPointAllo computeHitPoint(double posX, double posY, double alloAngle);
+        nonstd::optional<geometry::CNPointAllo> computeHitPoint(double posX, double posY, double alloAngle);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

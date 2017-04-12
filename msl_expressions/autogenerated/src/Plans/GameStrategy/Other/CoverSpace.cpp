@@ -31,13 +31,13 @@ namespace alica
         auto alloBallPos = wm->ball->getAlloBallPosition();
         if (!alloBallPos)
         {
-            alloBallPos = geometry::CNPoint2D(0, 0);
+            alloBallPos = geometry::CNPointAllo(0, 0);
         }
 
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         if (!ownPos)
         {
-            std::cerr << "No own Position!!!! Initiating Selfdestruction !!!" << std::endl;
+            std::cerr << "No own Position!!!! Initiating Self-destruction !!!" << std::endl;
             return;
         }
 
