@@ -76,23 +76,24 @@ namespace alica
 
 		//if data from goal detection is available, use it
 		auto goalDetectionData = wm->rawSensorData->getGoalDetection();
-		if (goalDetectionData) {
+		if (goalDetectionData)
+		{
 
-
-
-			alloGoalMid = make_shared<geometry::CNPoint2D>(goalDetectionData->pose.x, goalDetectionData->pose.y)->egoToAllo(*ownPos);
-			alloGoalLeft = make_shared<geometry::CNPoint2D>(
-					goalDetectionData->leftGoalPost.x, goalDetectionData->leftGoalPost.y)->egoToAllo(*ownPos);
+			alloGoalMid =
+					make_shared<geometry::CNPoint2D>(goalDetectionData->pose.x, goalDetectionData->pose.y)->egoToAllo(
+							*ownPos);
+			alloGoalLeft = make_shared<geometry::CNPoint2D>(goalDetectionData->leftGoalPost.x,
+															goalDetectionData->leftGoalPost.y)->egoToAllo(*ownPos);
 			cout << "WATCHBALL: 1 " << alloGoalLeft->toString() << endl;
 			alloGoalLeft->y = alloGoalLeft->y - goalieSize / 2;
 			cout << "WATCHBALL: 2 " << alloGoalLeft->toString() << endl;
 
-
-
-			alloGoalRight = make_shared<geometry::CNPoint2D>(
-					goalDetectionData->rightGoalPost.x, goalDetectionData->rightGoalPost.y)->egoToAllo(*ownPos);
+			alloGoalRight = make_shared<geometry::CNPoint2D>(goalDetectionData->rightGoalPost.x,
+																goalDetectionData->rightGoalPost.y)->egoToAllo(*ownPos);
 			alloGoalRight->y = alloGoalRight->y + goalieSize / 2;
-		} else {
+		}
+		else
+		{
 			cout << "WATCHBALL NO LASERDATA" << endl;
 			//no goal detection data, reset to footballfield
 			//TODO use last known position if data has been available
