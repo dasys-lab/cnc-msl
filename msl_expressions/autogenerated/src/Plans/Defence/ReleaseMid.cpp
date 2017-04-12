@@ -39,7 +39,7 @@ void ReleaseMid::run(void *msg)
 
 
     msl_actuator_msgs::MotionControl mc;
-    auto egoBallPos = wm->ball->getEgoBallPosition();
+    auto egoBallPos = wm->ball->getPositionEgo();
     auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
     if (ownPos)
     {

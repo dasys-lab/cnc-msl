@@ -84,7 +84,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // actually ownPosition corrected
-        auto egoBallPos = wm->ball->getEgoBallPosition();
+        auto egoBallPos = wm->ball->getPositionEgo();
 
         // stupid variant to be sure, that we have shoot!!!
         if (kicked)

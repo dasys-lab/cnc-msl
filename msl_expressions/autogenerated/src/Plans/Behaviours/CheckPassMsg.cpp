@@ -24,9 +24,9 @@ namespace alica
     void CheckPassMsg::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457441479350) ENABLED START*/ //Add additional options here
-        auto passMsg = wm->whiteBoard->getPassMsg();
+        auto passMsg = wm->whiteBoard->getPassMsgBuffer().getLastValidContent();
 
-        if (!receivedMsg && passMsg != nullptr)
+        if (!receivedMsg && passMsg)
         {
             receivedMsg = true;
 

@@ -29,7 +29,7 @@ namespace alica
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-        auto ballPos = wm->ball->getEgoBallPosition();
+        auto ballPos = wm->ball->getPositionEgo();
         if (!me)
         {
             return;

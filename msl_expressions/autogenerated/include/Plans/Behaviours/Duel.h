@@ -36,8 +36,8 @@ namespace alica
         unsigned long duelMaxTime;
         bool friendlyBlocked;
         vector<bool> hadClosestOpp;
-        bool pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
-        shared_ptr<msl::MovementQuery> query;
+        bool pointLeftOfVec(const geometry::CNVecAllo &lineVector, const geometry::CNVecAllo &pointToCheck) const;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450178699265) ENABLED START*/ //Add additional private methods here

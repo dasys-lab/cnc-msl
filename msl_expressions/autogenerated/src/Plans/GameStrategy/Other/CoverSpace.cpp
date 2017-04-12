@@ -28,7 +28,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto alloBallPos = wm->ball->getAlloBallPosition();
+        auto alloBallPos = wm->ball->getPositionAllo();
         if (!alloBallPos)
         {
             alloBallPos = geometry::CNPointAllo(0, 0);

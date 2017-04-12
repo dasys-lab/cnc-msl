@@ -103,7 +103,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
          << endl;
     // END INITILIZE VARIABLE CONTAINER
 
-    auto ballPose = wm->ball->getAlloBallPosition();
+    auto ballPose = wm->ball->getPositionAllo();
     if (!ballPose)
     {
         ballPose = geometry::CNPointAllo(0, 0);
@@ -178,9 +178,9 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     if (defender.size() > 0)
     {
         auto direction = (*ballPose - ownGoalPos).normalize();
-        auto wallPoint = direction * min(ownGoalPos.distanceTo(wm->field->posULOppPenaltyArea()),
+        auto wallPointVec = direction * min(ownGoalPos.distanceTo(wm->field->posULOppPenaltyArea()),
                                          ballPose->distanceTo(ownGoalPos) / 2);
-        wallPoint = wallPoint + ownGoalPos;
+        auto wallPoint = ownGoalPos + wallPointVec;
 
         auto directionTVec = make_shared<TVec>(initializer_list<double>{direction.x, direction.y});
         auto wallPointTVec = make_shared<TVec>(initializer_list<double>{wallPoint.x, wallPoint.y});

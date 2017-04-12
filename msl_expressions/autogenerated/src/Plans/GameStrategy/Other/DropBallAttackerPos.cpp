@@ -28,7 +28,7 @@ namespace alica
     void DropBallAttackerPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537841488) ENABLED START*/ //Add additional options here
-        auto alloBallPos = wm->ball->getAlloBallPosition();
+        auto alloBallPos = wm->ball->getPositionAllo();
         if (!alloBallPos)
         {
             alloBallPos = geometry::CNPointAllo(0, 0);
@@ -37,7 +37,7 @@ namespace alica
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         if (!ownPos)
         {
-            cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
+            cerr << "No own Position!!!! Initiating Self-destruction !!!" << endl;
             return;
         }
 

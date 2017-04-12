@@ -45,7 +45,7 @@ namespace alica
         }
         // get sensor data from WM and check validity
         this->ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-        this->egoBallPos = wm->ball->getEgoBallPosition();
+        this->egoBallPos = wm->ball->getPositionEgo();
 
 //        std::cout << "OwnPos:     " << ownPos << std::endl;
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
@@ -274,8 +274,8 @@ namespace alica
         }
 
         auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
-        double dist2Obs = alloBallPos.distanceTo(closestObs);
-        std::cout << "Evil Obs: X:" << closestObs.x << ", Y:" << closestObs.y << ", Dist:" << dist2Obs << std::endl;
+        double dist2Obs = alloBallPos.distanceTo(*closestObs);
+        std::cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << std::endl;
         kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
         {
