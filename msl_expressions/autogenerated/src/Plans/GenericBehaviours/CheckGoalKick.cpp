@@ -59,7 +59,7 @@ namespace alica
             {
                 auto predPos = pred->first;
                 // move ego ball based on predicted own position
-                this->egoBallPos = this->egoBallPos + (predPos - ownPos);
+                this->egoBallPos = this->egoBallPos + (*predPos - ownPos);
                 this->egoBallPos = this->egoBallPos->rotateZ(geometry::deltaAngle(ownPos->theta, predPos->theta));
                 this->ownPos = predPos;
             }
@@ -70,7 +70,7 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPointAllo > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
+        geometry::CNPointAllo hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
         if (false == hitPoint)
         {
@@ -79,7 +79,7 @@ namespace alica
         }
         else
         {
-            std::cout << "hits the goal: x: " << hitPoint->x << ", y: " << hitPoint->y << std::endl;
+            std::cout << "hits the goal: x: " << hitPoint.x << ", y: " << hitPoint.y << std::endl;
         }
 
         // Sending debug message for visualization
@@ -91,8 +91,8 @@ namespace alica
         msl_helper_msgs::DebugPoint point;
 
         point.radius = 0.12;
-        point.point.x = hitPoint->x;
-        point.point.y = hitPoint->y;
+        point.point.x = hitPoint.x;
+        point.point.y = hitPoint.y;
         point.red = 255;
         point.green = 0;
         point.blue = 255;
@@ -197,7 +197,7 @@ namespace alica
     /**
      * Calculates, whether a robot with the given position is hitting the goal.
      */
-    shared_ptr<geometry::CNPointAllo> CheckGoalKick::computeHitPoint(double posX, double posY, double alloAngle)
+    geometry::CNPointAllo CheckGoalKick::computeHitPoint(double posX, double posY, double alloAngle)
     {
         double xDist2OppGoalline = wm->field->getFieldLength() / 2 - posX;
 
@@ -217,7 +217,7 @@ namespace alica
         if (alloAngle > M_PI / 2 || alloAngle < -M_PI / 2)
         {
             // you are aiming away from the opponent goal line
-            return shared_ptr<geometry::CNPointAllo>();
+            return geometry::CNPointAllo();
         }
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
@@ -228,7 +228,7 @@ namespace alica
             return make_shared < geometry::CNPointAllo > (wm->field->getFieldLength() / 2, yHitGoalline);
         }
 
-        return shared_ptr<geometry::CNPointAllo>();
+        return geometry::CNPointAllo();
     }
 
     /*
@@ -236,10 +236,10 @@ namespace alica
      *
      * @return true if it is possible to shoot at the enemy goal
      */
-    bool CheckGoalKick::checkShootPossibility(shared_ptr<geometry::CNPointAllo> hitPoint, double& kickPower)
+    bool CheckGoalKick::checkShootPossibility(const geometry::CNPointAllo& hitPoint, double& kickPower)
     {
         auto obstacles = wm->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
-        if (obstacles || obstacles->size() == 0)
+        if (obstacles || (*obstacles)->size() == 0)
         {
             kickPower = -2;
             return true;
@@ -274,7 +274,7 @@ namespace alica
         }
 
         auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
-        double dist2Obs = alloBallPos->distanceTo(closestObs);
+        double dist2Obs = alloBallPos.distanceTo(closestObs);
         std::cout << "Evil Obs: X:" << closestObs.x << ", Y:" << closestObs.y << ", Dist:" << dist2Obs << std::endl;
         kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
@@ -289,10 +289,10 @@ namespace alica
         }
     }
 
-    double CheckGoalKick::getKickPower(shared_ptr<geometry::CNPointAllo> hitPoint)
+    double CheckGoalKick::getKickPower(const geometry::CNPointAllo& hitPoint)
     {
         auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
-        double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
+        double dist2HitPoint = alloBallPos.distanceTo(hitPoint);
         cout_distBall2HitPoint = dist2HitPoint;
 
         if (dist2HitPoint < 4500)
@@ -319,7 +319,7 @@ namespace alica
      *
      * @return true if no opponent is on/near our hitPoint
      */
-    bool CheckGoalKick::checkGoalKeeper(shared_ptr<geometry::CNPointAllo> hitPoint)
+    bool CheckGoalKick::checkGoalKeeper(const geometry::CNPointAllo& hitPoint)
     {
         auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
         if (opps == nullptr || opps->size() == 0)
