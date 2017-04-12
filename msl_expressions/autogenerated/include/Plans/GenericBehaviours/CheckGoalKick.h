@@ -5,11 +5,7 @@
 /*PROTECTED REGION ID(inc1449076008755) ENABLED START*/ //Add additional includes here
 #include <nonstd/optional.hpp>
 #include <cnc_geometry/CNPointEgo.h>
-namespace geometry
-{
-	class CNPositionAllo;
-
-}
+#include <cnc_geometry/CNPositionAllo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,7 +23,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1449076008755) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPositionAllo> ownPos;
+        nonstd::optional<geometry::CNPositionAllo> ownPos;
         nonstd::optional<geometry::CNPointEgo> egoBallPos;
         double minObsDistGoal;
         double minOwnDistGoal;

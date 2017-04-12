@@ -29,7 +29,7 @@ namespace alica
         string teamMatePlanName;
         EntryPoint* ep;
         int teamMateId;
-        shared_ptr<msl::MovementQuery> movQuery;
+        msl::MovementQuery movQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458034268108) ENABLED START*/ //Add additional private methods here

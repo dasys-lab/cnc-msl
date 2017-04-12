@@ -90,13 +90,13 @@ namespace alica
         if (kicked)
         {
             this->iterationsAfterKick++;
-            if (iterationsAfterKick > 30 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+            if (iterationsAfterKick > 30 && egoBallPos && egoBallPos->length() <= 400)
             {
                 kicked = false;
                 iterationsAfterKick = 0;
             }
 
-            if (egoBallPos == nullptr || egoBallPos->length() > 400)
+            if (!egoBallPos || egoBallPos->length() > 400)
             {
                 if (holeMode == toggle)
                 {
@@ -108,7 +108,7 @@ namespace alica
             return;
         }
 
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos|| !egoBallPos)
         {
             return;
         }

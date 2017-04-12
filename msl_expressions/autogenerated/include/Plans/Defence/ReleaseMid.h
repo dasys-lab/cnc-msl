@@ -25,7 +25,7 @@ namespace alica
         double threshold;
         double yHysteresis;
         double vMax;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458033482289) ENABLED START*/ //Add additional private methods here

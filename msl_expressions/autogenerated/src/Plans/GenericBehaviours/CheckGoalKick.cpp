@@ -40,7 +40,7 @@ namespace alica
         cout << "==========================================================================" << endl;
         if (false == this->wm->game->isMayScore())
         {
-            cout << "may score: false" << endl;
+        	cout << "may score: false" << endl;
             return;
         }
         // get sensor data from WM and check validity
@@ -217,7 +217,7 @@ namespace alica
         if (alloAngle > M_PI / 2 || alloAngle < -M_PI / 2)
         {
             // you are aiming away from the opponent goal line
-            return shared_ptr<geometry::CNPoint2D>();
+            return shared_ptr<geometry::CNPointAllo>();
         }
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
@@ -225,10 +225,10 @@ namespace alica
         if (abs(yHitGoalline) < (wm->field->posLeftOppGoalPost().y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
-            return make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, yHitGoalline);
+            return make_shared < geometry::CNPointAllo > (wm->field->getFieldLength() / 2, yHitGoalline);
         }
 
-        return shared_ptr<geometry::CNPoint2D>();
+        return shared_ptr<geometry::CNPointAllo>();
     }
 
     /*
@@ -246,7 +246,7 @@ namespace alica
         }
 
         double closestObsDist = 1000000;
-        shared_ptr < geometry::CNPoint2D > closestObs;
+        geometry::CNPointAllo closestObs;
 
         for (auto& obs : *obstacles)
         {
@@ -275,7 +275,7 @@ namespace alica
 
         auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
         double dist2Obs = alloBallPos->distanceTo(closestObs);
-        cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
+        std::cout << "Evil Obs: X:" << closestObs.x << ", Y:" << closestObs.y << ", Dist:" << dist2Obs << std::endl;
         kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
         {
@@ -291,7 +291,7 @@ namespace alica
 
     double CheckGoalKick::getKickPower(shared_ptr<geometry::CNPointAllo> hitPoint)
     {
-        auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
+        auto alloBallPos = egoBallPos->toAllo(*this->ownPos);
         double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
         cout_distBall2HitPoint = dist2HitPoint;
 
@@ -321,26 +321,26 @@ namespace alica
      */
     bool CheckGoalKick::checkGoalKeeper(shared_ptr<geometry::CNPointAllo> hitPoint)
     {
-        auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+        auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
         if (opps == nullptr || opps->size() == 0)
         {
             return true;
         }
 
-        for (auto opp : *opps)
+        for (auto& opp : *opps)
         {
-            if (opp->distanceTo(hitPoint) < keeperDistGoal)
+            if (opp.distanceTo(hitPoint) < keeperDistGoal)
             {
-                std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
+                std::cout << "Position of evil goalkeeper " << opp.x << ", " << opp.y << std::endl;
 //            	double deltaAngleGoalie2HitPoint = opp->angleToPoint(hitPoint);
 //            	double stuff = tan(deltaAngleGoalie2HitPoint) * opp->distanceTo(ownPos);
-                auto egoGoalKeeper = opp->alloToEgo(*this->ownPos);
+                auto egoGoalKeeper = opp.toEgo(*this->ownPos);
 
                 // goalkeeper on same level as attacker, handled by checkShootPossibility
-                if (egoGoalKeeper->x == 0)
+                if (egoGoalKeeper.x == 0)
                     continue;
 
-                double keeperDisBallTrajectory = abs(egoGoalKeeper->y / egoGoalKeeper->x) * egoGoalKeeper->length();
+                double keeperDisBallTrajectory = abs(egoGoalKeeper.y / egoGoalKeeper.x) * egoGoalKeeper.length();
 
                 std::cout << "keeperDisBallTrajectory " << keeperDisBallTrajectory << std::endl;
 
