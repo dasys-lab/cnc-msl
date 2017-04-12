@@ -49,8 +49,8 @@ namespace alica
         int wheelSpeed;
         double voltage4shoot;
 
-        vector<shared_ptr<geometry::CNPointAllo>> highKickList;
-        vector<shared_ptr<geometry::CNPointAllo>> lowKickList;
+        vector<geometry::CNPointAllo> highKickList;
+        vector<geometry::CNPointAllo> lowKickList;
 
         unsigned short setKickPower(double distance);
 
