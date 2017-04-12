@@ -2,8 +2,7 @@ using namespace std;
 #include "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 /*PROTECTED REGION ID(inccpp1455537841488) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "container/CNPoint2D.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <Ball.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
@@ -30,24 +29,24 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1455537841488) ENABLED START*/ //Add additional options here
         auto alloBallPos = wm->ball->getAlloBallPosition();
-        if (alloBallPos == nullptr)
+        if (!alloBallPos)
         {
-            alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
+            alloBallPos = geometry::CNPointAllo(0, 0);
         }
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPos)
         {
             cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
             return;
         }
 
-        auto alloTarget = wm->field->posOwnGoalMid() - alloBallPos;
-        alloTarget = alloTarget->normalize() * 1250;
-        alloTarget = alloBallPos + alloTarget;
+        auto alloTargetVec = wm->field->posOwnGoalMid() - *alloBallPos;
+        alloTargetVec = alloTargetVec.normalize() * 1250;
+        auto alloTarget = *alloBallPos + alloTargetVec;
 
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
-        auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
+        auto egoTarget = alloTarget.toEgo(*ownPos);
+        auto egoAlignPoint = alloBallPos->toEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
 //        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);

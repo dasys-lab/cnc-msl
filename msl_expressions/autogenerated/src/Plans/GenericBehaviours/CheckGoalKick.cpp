@@ -246,7 +246,7 @@ namespace alica
         }
 
         double closestObsDist = 1000000;
-        geometry::CNPointAllo closestObs;
+        nonstd::optional<geometry::CNPointAllo> closestObs;
 
         for (auto& obs : *(*obstacles))
         {
@@ -322,7 +322,7 @@ namespace alica
     bool CheckGoalKick::checkGoalKeeper(const geometry::CNPointAllo& hitPoint)
     {
         auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
-        if (opps == nullptr || opps->size() == 0)
+        if (!opps || opps->size() == 0)
         {
             return true;
         }

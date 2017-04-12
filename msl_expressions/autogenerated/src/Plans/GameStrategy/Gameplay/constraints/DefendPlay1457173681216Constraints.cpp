@@ -106,7 +106,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     auto ballPose = wm->ball->getAlloBallPosition();
     if (!ballPose)
     {
-        ballPose = geometry::CNPoint2D(0, 0);
+        ballPose = geometry::CNPointAllo(0, 0);
     }
     shared_ptr<TVec> tvecBallPose = make_shared<TVec>(initializer_list<double>{ballPose->x, ballPose->y});
     auto ownGoalPos = wm->field->posOwnGoalMid();
@@ -123,11 +123,11 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
 
     vector<shared_ptr<TVec>> blockPositions;
     vector<shared_ptr<TVec>> blockOpponents;
-    shared_ptr<geometry::CNPoint2D> nearestOpp = nullptr;
+    geometry::CNPointAllo nearestOpp;
     // default nearest opp
 
     if (ballPose)
-        nearestOpp = make_shared<geometry::CNPoint2D>(ballPose->x - 250, ballPose->y);
+        nearestOpp = geometry::CNPointAllo(ballPose->x - 250, ballPose->y);
     double dist = 999999999;
 
     if (opps)
@@ -155,9 +155,9 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
 
             // add blocking position
             nonstd::optional<geometry::CNPointAllo> blockingPos;
-            if (ballPose != nullptr)
+            if (ballPose)
             {
-                blockingPos = opp + (ballPose - opp)->normalize() * 700;
+                blockingPos = opp + (*ballPose - opp).normalize() * 700;
             }
             else
             {
@@ -177,7 +177,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     // TODO check Is this good close to the own goal???
     if (defender.size() > 0)
     {
-        auto direction = (ballPose - ownGoalPos)->normalize();
+        auto direction = (*ballPose - ownGoalPos).normalize();
         auto wallPoint = direction * min(ownGoalPos.distanceTo(wm->field->posULOppPenaltyArea()),
                                          ballPose->distanceTo(ownGoalPos) / 2);
         wallPoint = wallPoint + ownGoalPos;

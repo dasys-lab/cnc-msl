@@ -29,7 +29,6 @@ OneGernericInGameBlocker::OneGernericInGameBlocker()
     teamMatePlanName = "";
     ep = nullptr;
     teamMateId = 0;
-    movQuery = make_shared<msl::MovementQuery>();
     /*PROTECTED REGION END*/
 }
 OneGernericInGameBlocker::~OneGernericInGameBlocker()
@@ -44,7 +43,7 @@ void OneGernericInGameBlocker::run(void *msg)
     msl_actuator_msgs::MotionControl mc;
     auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
     auto ballPos = wm->ball->getEgoBallPosition();
-    if (ownPos == nullptr || ballPos == nullptr)
+    if (!ownPos || !ballPos)
     {
         mc.motion.angle = 0;
         mc.motion.translation = 0;
@@ -146,7 +145,7 @@ void OneGernericInGameBlocker::run(void *msg)
         // replaced with new moveToPoint method
         //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
 
-        movQuery.egoDestinationPoint = driveTo;
+        movQuery.egoDestinationPoint = driveTo.toEgo(*ownPos);
         movQuery.egoAlignPoint = ballPos;
         mc = rm.moveToPoint(movQuery);
         if (driveTo.length() < 100)
@@ -158,7 +157,7 @@ void OneGernericInGameBlocker::run(void *msg)
     {
         // replaced method with new moveToPoint method
         //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
-        movQuery.egoDestinationPoint = driveTo;
+        movQuery.egoDestinationPoint = driveTo.toEgo(*ownPos);
         movQuery.egoAlignPoint = ballPos;
         movQuery.fast = true;
         mc = rm.moveToPoint(movQuery);
