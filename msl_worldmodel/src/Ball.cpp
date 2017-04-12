@@ -75,25 +75,25 @@ optional<geometry::CNPointAllo> Ball::getBallPickupPosition()
     return this->ballPickupPosition;
 }
 
-optional<geometry::CNPointAllo> Ball::getAlloBallPosition()
+optional<geometry::CNPointAllo> Ball::getPositionAllo() const
 {
-    auto ownPosInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
+    auto ownPos = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
-    if (!ownPosInfo)
+    if (!ownPos)
     {
         return nullopt;
     }
 
-    auto egoBallPos = this->getEgoBallPosition();
+    auto egoBallPos = this->getPositionEgo();
     if (!egoBallPos)
     {
         return nullopt;
     }
 
-    return egoBallPos->toAllo(ownPosInfo->getInformation());
+    return egoBallPos->toAllo(*ownPos);
 }
 
-optional<geometry::CNPointEgo> Ball::getEgoBallPosition()
+optional<geometry::CNPointEgo> Ball::getPositionEgo() const
 {
     auto rawBallInfo = this->visionBallPositionBuffer.getLastValid();
     auto sharedBallInfo = this->sharedBallPosition.getLast();
@@ -222,6 +222,11 @@ bool Ball::ballMovedSiginficantly()
     return ballMoved;
 }
 
+optional<geometry::CNPointAllo> Ball::getAlloBallGuessPosition() const
+{
+    return ballGuessPosition.getLastValidContent();
+}
+
 void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty)
 {
     InfoTime time = this->wm->getTime();
@@ -280,9 +285,9 @@ void Ball::updateBallPossession()
 {
     if (this->haveBall())
     {
-        if (!this->ballPickupPosition && this->getAlloBallPosition())
+        if (!this->ballPickupPosition && this->getPositionAllo())
         {
-            ballPickupPosition = this->getAlloBallPosition();
+            ballPickupPosition = this->getPositionAllo();
         }
     }
     else
@@ -296,7 +301,7 @@ void Ball::updateBallPossession()
             return;
     }
 
-    auto myEgoBall = this->getEgoBallPosition();
+    auto myEgoBall = this->getPositionEgo();
     if (!myEgoBall)
     {
         this->selfInBallPossesion = false;
@@ -584,7 +589,7 @@ optional<bool> Ball::getTeamMateBallPossession(int teamMateId)
 bool Ball::oppHasBall()
 {
     bool ret = false;
-    optional<geometry::CNPointEgo> ballPos = this->wm->ball->getEgoBallPosition();
+    optional<geometry::CNPointEgo> ballPos = this->wm->ball->getPositionEgo();
     if (!ballPos)
     {
         return false;
@@ -664,7 +669,7 @@ bool Ball::simpleHaveBallDribble(bool hadBefore)
     }
 
     bool ret = true;
-    optional<geometry::CNPointEgo> ballPos = wm->ball->getEgoBallPosition();
+    optional<geometry::CNPointEgo> ballPos = wm->ball->getPositionEgo();
     if (!ballPos)
     {
         return false;

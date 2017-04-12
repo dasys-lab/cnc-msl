@@ -77,7 +77,7 @@ optional<geometry::CNPointEgo> Opponents::getClosestToBall(double &distance)
 
     auto opps = oppsInfo->getInformation();
 
-    auto ball = wm->ball->getEgoBallPosition();
+    auto ball = wm->ball->getPositionEgo();
     if (ball)
         return nullopt;
 

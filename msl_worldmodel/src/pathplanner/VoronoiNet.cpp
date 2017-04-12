@@ -665,7 +665,7 @@ void VoronoiNet::blockThreeMeterAroundBall()
 {
     auto ret = vector<geometry::CNPointAllo>();
     // get ball pos
-    auto alloBall = wm->ball->getAlloBallPosition();
+    auto alloBall = wm->ball->getPositionAllo();
     if (alloBall == nullopt)
     {
         return;

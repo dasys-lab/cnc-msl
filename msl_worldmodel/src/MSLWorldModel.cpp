@@ -397,7 +397,7 @@ void MSLWorldModel::sendSharedWorldModelData()
     {
         // if sb == nullptr send ballguess
         auto guess = this->ball->getAlloBallGuessPosition();
-        if (guess != nullptr)
+        if (guess)
         {
             msg.sharedBall.point.x = guess->x;
             msg.sharedBall.point.y = guess->y;

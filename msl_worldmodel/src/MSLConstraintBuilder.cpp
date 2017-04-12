@@ -408,7 +408,7 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(Situation situation, int speci
     shared_ptr<Term> c;
     shared_ptr<TVec> ballT = nullptr;
     auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
-    optional<geometry::CNPointEgo> egoBall = wm->ball->getEgoBallPosition();
+    optional<geometry::CNPointEgo> egoBall = wm->ball->getPositionEgo();
 
     if (egoBall && ownPosInfo != nullptr)
     {
@@ -469,7 +469,7 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_
     shared_ptr<TVec> ballT = nullptr;
     auto ownPosInfo = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
     // TODO: stopped working here
-    optional<geometry::CNPointAllo> ball = wm->ball->getAlloBallPosition();
+    optional<geometry::CNPointAllo> ball = wm->ball->getPositionAllo();
     if (ball)
     {
         ballT = make_shared<TVec>(initializer_list<double>{ball->x, ball->y});
