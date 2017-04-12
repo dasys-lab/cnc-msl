@@ -3,15 +3,16 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1466940246275) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPoint3D.h"
 #include "MSLFootballField.h"
+
+#include <cnc_geometry/CNVecEgo.h>
+#include <cnc_geometry/CNPointEgo.h>
+
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+
 #include <sstream>
-#include <container/CNVelocity2D.h>
-#include <GeometryCalculator.h>
-#include "msl_actuator_msgs/MotionControl.h"
-#include "msl_actuator_msgs/KickControl.h"
-#include "msl_actuator_msgs/BallHandleCmd.h"
 
 using namespace msl;
 using namespace msl_actuator_msgs;
@@ -44,7 +45,7 @@ namespace alica
 
         // PID variables for alignToPointWithBall
         double defaultRotateP;
-        double alignToPointpRot;
+        double alignToPointPRot;
         double lastRotError;
         double alignToPointMaxRotation;
         double alignToPointMinRotation;
@@ -53,8 +54,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1466940246275) ENABLED START*/ //Add additional private methods here
-        msl_actuator_msgs::MotionControl alignToPointWithBall(std::shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-                                                              std::shared_ptr<geometry::CNPoint2D> egoBallPos,
+        msl_actuator_msgs::MotionControl alignToPointWithBall(geometry::CNPointEgo egoAlignPoint,
+                                                              geometry::CNPointEgo egoBallPos,
                                                               double angleTolerance, double ballAngleTolerance);
         void readConfigParameters();
         /*PROTECTED REGION END*/};

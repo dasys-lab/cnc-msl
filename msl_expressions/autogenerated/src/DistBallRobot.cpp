@@ -11,6 +11,7 @@
 #include <MSLFootballField.h>
 
 using nonstd::optional;
+using nonstd::nullopt;
 
 namespace msl
 {
@@ -90,7 +91,7 @@ namespace msl
 			for (int& robot : *relevantRobots)
 			{
 				curPosition = this->getPositionOfTeammate(robot);
-				if (curPosition == nullptr)
+				if (!curPosition)
 					continue; // This player was not 'positionReceived'
 
 				// SET UI.MIN
@@ -129,7 +130,7 @@ namespace msl
 			{
 				//curPosition = this.playerPositions.GetValue(ass.UnAssignedRobots[i]);
 				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobots().at(i));
-				if (curPosition == nullptr)
+				if (!curPosition)
 					continue;
 				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(*this->sharedBall) / wm->field->getMaxDistance()));
 			}
@@ -142,7 +143,7 @@ namespace msl
 	optional<geometry::CNPositionAllo> DistBallRobot::getPositionOfTeammate(int robotId)
 	{
 		if (this->teammates == nullptr)
-			return nullptr;
+			return nullopt;
 
 		for (auto& robot : *this->teammates)
 		{
@@ -150,7 +151,7 @@ namespace msl
 				return robot.second;
 		}
 
-		return nullptr;
+		return nullopt;
 	}
 
 } /* namespace msl */

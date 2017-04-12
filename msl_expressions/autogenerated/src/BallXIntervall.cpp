@@ -34,7 +34,7 @@ BallXIntervall::~BallXIntervall()
 
 void BallXIntervall::cacheEvalData()
 {
-    this->alloBall = msl::MSLWorldModel::get()->ball->getAlloBallPosition();
+    this->alloBall = msl::MSLWorldModel::get()->ball->getPositionAllo();
 }
 
 UtilityInterval BallXIntervall::eval(IAssignment *ass)
@@ -42,7 +42,7 @@ UtilityInterval BallXIntervall::eval(IAssignment *ass)
     this->ui.setMin(0.0);
     this->ui.setMax(0.0);
 
-    if (alloBall == nullptr)
+    if (!alloBall)
     {
         this->ui.setMin(0.0);
         this->ui.setMax(0.0);
