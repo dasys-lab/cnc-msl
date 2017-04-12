@@ -135,7 +135,7 @@ double MovementQuery::translationPIForDribble(double transOrt)
 
 double MovementQuery::angleCalcForDribble(double transOrt)
 {
-    auto ballPos = this->wm->ball->getEgoBallPosition();
+    auto ballPos = this->wm->ball->getPositionEgo();
     auto dir = ballPos->normalize();
     auto ort = geometry::CNPointEgo(dir.y, -dir.x);
     dir = dir * this->curTransDribble + ort * transOrt;

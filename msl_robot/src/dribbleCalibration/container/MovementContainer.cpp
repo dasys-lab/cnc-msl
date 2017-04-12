@@ -51,7 +51,7 @@ MotionControl MovementContainer::getBall()
         cerr << "MovementContainer::getBall() -> couldn't get vision data" << endl;
     }
 
-    auto egoBallPos = wm->ball->getAlloBallPosition()->toEgo(*ownPos);
+    auto egoBallPos = wm->ball->getPositionEgo();
     query.egoDestinationPoint = egoBallPos;
     query.egoAlignPoint = egoBallPos;
 

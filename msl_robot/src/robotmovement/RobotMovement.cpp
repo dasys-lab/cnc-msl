@@ -36,6 +36,7 @@ using nonstd::optional;
 using nonstd::nullopt;
 using std::shared_ptr;
 using std::make_shared;
+using std::vector;
 
 namespace msl
 {
@@ -143,7 +144,7 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(MovementQuery &query
     {
         mc.motion.rotation = query.rotationPDForDribble(*egoTarget);
         double rotPointDist = 350.0;
-        if (auto ballPos = wm->ball->getEgoBallPosition())
+        if (auto ballPos = wm->ball->getPositionEgo())
         {
             rotPointDist = min(rotPointDist, ballPos->length()); // the point around which we rotate
         }
@@ -224,7 +225,7 @@ msl_actuator_msgs::MotionControl RobotMovement::alignTo(MovementQuery &query)
             mc.motion.rotation = query.rotationPDForDribble(*egoTarget);
             double rotPointDist = 350.0;
 
-            if (auto ballPos = wm->ball->getEgoBallPosition())
+            if (auto ballPos = wm->ball->getPositionEgo())
             {
                 rotPointDist = min(rotPointDist, ballPos->length()); // the point around which we rotate
             }
@@ -251,7 +252,7 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 {
     // TODO introduce destination method-parameter for improving this method...
     // TODO add config parameters for all static numbers in here!
-    auto egoBallPos = wm->ball->getEgoBallPosition();
+    auto egoBallPos = wm->ball->getPositionEgo();
     auto ownPosOpt = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // OwnPositionCorrected;
     if (egoBallPos || ownPosOpt)
     {
@@ -341,7 +342,7 @@ msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo 
 {
     msl_actuator_msgs::MotionControl mc;
     double destTol = 100.0;
-    auto ballPos = wm->ball->getEgoBallPosition();
+    auto ballPos = wm->ball->getPositionEgo();
     if (dest.length() < destTol)
     {
         // only align to point
@@ -357,7 +358,7 @@ msl_actuator_msgs::MotionControl RobotMovement::placeRobot(geometry::CNPointEgo 
     }
     else
     {
-        auto alloBallPos = wm->ball->getAlloBallPosition();
+        auto alloBallPos = wm->ball->getPositionAllo();
 
         if (alloBallPos != nullopt)
         {

@@ -41,13 +41,9 @@ class Ball
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    std::shared_ptr<geometry::CNVecAllo> getBallVel3D(int index = 0);
-    nonstd::optional<geometry::CNPointAllo> getAlloBallPosition();
-    nonstd::optional<geometry::CNPointEgo> getEgoBallPosition();
-    std::shared_ptr<geometry::CNVecEgo> getEgoBallVelocity();
     std::shared_ptr<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
     std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
-    std::shared_ptr<geometry::CNPointAllo> getAlloBallGuessPosition(int index = 0);
+    nonstd::optional<geometry::CNPointAllo> getAlloBallGuessPosition() const;
     int getSharedBallSupporter();
     bool ballMovedSiginficantly();
 
@@ -76,6 +72,12 @@ class Ball
 
     const InfoBuffer<geometry::CNVecEgo> &getVisionBallVelocityBuffer() const;
     const InfoBuffer<geometry::CNPointEgo> &getVisionBallPositionBuffer() const;
+
+    nonstd::optional<geometry::CNPointAllo> getPositionAllo() const;
+    nonstd::optional<geometry::CNPointEgo> getPositionEgo() const;
+
+    nonstd::optional<geometry::CNVecEgo> getVelocityAllo() const;
+    nonstd::optional<geometry::CNVecEgo> getVelocityEgo() const;
 
   private:
     //TODO change ball tracking

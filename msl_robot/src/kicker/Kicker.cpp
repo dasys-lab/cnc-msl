@@ -114,7 +114,7 @@ bool Kicker::mayShoot()
     //    {
     //        return false;
     //    }
-    auto ballPos = wm->ball->getEgoBallPosition();
+    auto ballPos = wm->ball->getPositionEgo();
     if (ballPos || !wm->ball->haveBall())
     {
         return false;
