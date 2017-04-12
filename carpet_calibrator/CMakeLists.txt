@@ -13,6 +13,8 @@ find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bri
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
+find_package(OpenCV REQUIRED)
+
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES carpet_calibrator
@@ -40,6 +42,7 @@ add_dependencies(carpet_calibrator_line_points msl_actuator_msgs_generate_messag
 target_link_libraries(carpet_calibrator
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  ${OpenCV_LIBS}
   Xv
 )
 target_link_libraries(carpet_calibrator_line_points

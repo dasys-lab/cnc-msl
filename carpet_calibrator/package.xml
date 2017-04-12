@@ -57,6 +57,7 @@
   <build_depend>std_msgs</build_depend>
   <build_depend>msl_vision</build_depend>
   <build_depend>alica_ros_proxy</build_depend>
+  <build_depend>OpenCV</build_depend>
    
   <run_depend>std_msgs</run_depend>
   <run_depend>msl_vision</run_depend>
@@ -68,6 +69,7 @@
   <run_depend>rospack</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>alica_ros_proxy</run_depend>
+   <run_depend>OpenCV</run_depend>
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
