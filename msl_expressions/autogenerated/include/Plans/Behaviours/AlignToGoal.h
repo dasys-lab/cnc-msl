@@ -3,8 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNVecEgo.h>
+
 #include "MSLFootballField.h"
 
 using namespace msl;
@@ -27,16 +29,16 @@ namespace alica
         double lastRotError;
         double maxRot;
         double minRot;
-        shared_ptr<geometry::CNPoint2D> alloAimPoint;
+        std::shared_ptr<geometry::CNPointAllo> alloAimPoint;
         double maxYTolerance;
         double pRot;
         double dRot;
         int iter;
         bool kicked;
-        double goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle);
-        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        double goalLineHitPoint(std::shared_ptr<geometry::CNPositionAllo> ownPos, double egoAngle);
+        double minFree(double angle, double width, std::shared_ptr<std::vector<double> > dstscan);
         int mod(int x, int y);
-        shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
+        std::shared_ptr<geometry::CNVecEgo> getFreeGoalVector();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1415205272843) ENABLED START*/ //Add additional private methods here

@@ -36,19 +36,20 @@ namespace alica
     void AlignToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball->getEgoBallVelocity();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < vector<double> > dstscan = wm->rawSensorData->getDistanceScan();
+        auto ballPos = wm->ball->getEgoBallPosition();
+        auto ballVel = wm->ball->getEgoBallVelocity();
+        wm->ball->getballpos
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
 
         msl_actuator_msgs::MotionControl mc;
-        if (ballPos == nullptr || ownPos == nullptr)
+        if (ballPos || ownPos)
         {
             return;
         }
-        if (ballVel == nullptr)
+        if (!ballVel)
         {
-            ballVel = make_shared < geometry::CNVelocity2D > (0, 0);
+            ballVel = geometry::CNVecAllo (0, 0);
         }
         else if (ballVel->length() > 5000)
         {

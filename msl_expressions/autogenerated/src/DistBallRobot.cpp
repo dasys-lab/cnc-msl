@@ -9,7 +9,8 @@
 #include <Ball.h>
 #include <Robots.h>
 #include <MSLFootballField.h>
-#include <container/CNPosition.h>
+
+using nonstd::optional;
 
 namespace msl
 {
@@ -36,28 +37,28 @@ namespace msl
 	{
 		validAngle = false;
 
-		sb = wm->ball->getAlloBallPosition();
-		auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+		this->sharedBall = wm->ball->getPositionAllo();
+		auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
 
-		if (sb == nullptr || opps == nullptr)
+		if (this->sharedBall || !opps)
 			return;
 
 		closestOpp.reset();
 		double minDist = wm->field->getFieldLength() * 2;
 		for (auto& opp : *opps)
 		{
-			double d = sb->distanceTo(opp);
+			double d = this->sharedBall->distanceTo(opp);
 			if (d < 700 && d < minDist)
 			{
 				minDist = d;
-				closestOpp = opp->clone();
+				closestOpp = opp;
 			}
 		}
 
-		if (closestOpp != nullptr)
+		if (closestOpp)
 		{
 			validAngle = true;
-			angleBallOpp = atan2(closestOpp->y - sb->y, closestOpp->x - sb->x);
+			angleBallOpp = atan2(closestOpp->y - this->sharedBall->y, closestOpp->x - this->sharedBall->x);
 		}
 
 		this->teammates = wm->robots->teammates.getPositionsOfTeamMates();
@@ -66,7 +67,7 @@ namespace msl
 	alica::UtilityInterval DistBallRobot::eval(alica::IAssignment* ass)
 	{
 		ui.setMin(0.0);
-		if (sb == nullptr)
+		if (!this->sharedBall)
 		{
 			//cout << "should not happen" << endl;
 			ui.setMax(0.0);
@@ -83,7 +84,7 @@ namespace msl
 		}
 		auto relevantRobots = ass->getRobotsWorking(relevantEntryPoints.at(0));
 
-		shared_ptr<geometry::CNPosition> curPosition;
+		optional<geometry::CNPositionAllo> curPosition;
 		if (relevantRobots != nullptr)
 		{
 			for (int& robot : *relevantRobots)
@@ -96,12 +97,12 @@ namespace msl
 				if (!validAngle)
 				{
 					//if no opp is near ball
-					ui.setMin(max(ui.getMin(), 1 - sb->distanceTo(curPosition) / wm->field->getMaxDistance()));
+					ui.setMin(max(ui.getMin(), 1 - this->sharedBall->distanceTo(curPosition->getPoint()) / wm->field->getMaxDistance()));
 				}
 				else
 				{
 					//if an opp is near ball
-					double curAngleToBall = atan2(sb->y - curPosition->y, sb->x - curPosition->x);
+					double curAngleToBall = atan2(this->sharedBall->y - curPosition->y, this->sharedBall->x - curPosition->x);
 					double scale = geometry::deltaAngle(curAngleToBall, angleBallOpp);
 					//todo old version differs from the current version as is differently normalized
 					/*double scale = abs(angleBallOpp-curAngleToBall);
@@ -114,7 +115,7 @@ namespace msl
 
 					ui.setMin(
 							max(ui.getMin(),
-								(1 - sb->distanceTo(curPosition) / wm->field->getMaxDistance()) * scale));
+								(1 - this->sharedBall->distanceTo(curPosition->getPoint()) / wm->field->getMaxDistance()) * scale));
 				}
 				numAssignedRobots++;
 			}
@@ -130,7 +131,7 @@ namespace msl
 				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobots().at(i));
 				if (curPosition == nullptr)
 					continue;
-				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(sb) / wm->field->getMaxDistance()));
+				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(*this->sharedBall) / wm->field->getMaxDistance()));
 			}
 		}
 		ui.setMin(max(0.0, ui.getMin()));
@@ -138,15 +139,15 @@ namespace msl
 		return ui;
 	}
 
-	shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(int robotId)
+	optional<geometry::CNPositionAllo> DistBallRobot::getPositionOfTeammate(int robotId)
 	{
 		if (this->teammates == nullptr)
 			return nullptr;
 
-		for (auto robot : *this->teammates)
+		for (auto& robot : *this->teammates)
 		{
-			if (robot->first == robotId)
-				return robot->second;
+			if (robot.first == robotId)
+				return robot.second;
 		}
 
 		return nullptr;

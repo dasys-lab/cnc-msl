@@ -5,38 +5,38 @@
  *      Author: endy
  */
 
-#ifndef DISTBALLROBOT_H_
-#define DISTBALLROBOT_H_
+#pragma once
 
-#include <engine/USummand.h>
-#include <engine/IAssignment.h>
 #include "MSLWorldModel.h"
+
+#include <engine/IAssignment.h>
+#include <engine/USummand.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <nonstd/optional.hpp>
 
 namespace msl
 {
 
-	class DistBallRobot : public alica::USummand
-	{
-	public:
-		DistBallRobot(double weight, string name, long id, vector<long> relevantEntryPointIds);
-		virtual ~DistBallRobot();
+class DistBallRobot : public alica::USummand
+{
+  public:
+    DistBallRobot(double weight, string name, long id, vector<long> relevantEntryPointIds);
+    virtual ~DistBallRobot();
 
+    MSLWorldModel *wm;
+    nonstd::optional<geometry::CNPointAllo> sharedBall;
+    nonstd::optional<geometry::CNPointAllo> closestOpp;
+    bool validAngle;
+    double angleBallOpp;
+    double velAngle;
+    std::shared_ptr<std::vector<std::pair<int, geometry::CNPositionAllo>>> teammates;
 
-		MSLWorldModel* wm;
-		shared_ptr<geometry::CNPoint2D> sb;
-		shared_ptr<geometry::CNPoint2D> closestOpp;
-		bool validAngle;
-		double angleBallOpp;
-		double velAngle;
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teammates;
+    virtual void cacheEvalData();
 
-		virtual void cacheEvalData();
-
-		virtual alica::UtilityInterval eval(alica::IAssignment* ass);
-		string toString();
-		shared_ptr<geometry::CNPosition> getPositionOfTeammate(int robotId);
-	};
+    virtual alica::UtilityInterval eval(alica::IAssignment *ass);
+    string toString();
+    nonstd::optional<geometry::CNPositionAllo> getPositionOfTeammate(int robotId);
+};
 
 } /* namespace msl */
-
-#endif /* DISTBALLROBOT_H_ */

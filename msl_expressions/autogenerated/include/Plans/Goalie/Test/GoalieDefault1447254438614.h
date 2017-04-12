@@ -6,10 +6,6 @@
 #include "engine/UtilityFunction.h"
 #include "engine/DefaultUtilityFunction.h"
 /*PROTECTED REGION ID(incl1447254438614) ENABLED START*/
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-
-using namespace msl;
 //Add inlcudes here
 /*PROTECTED REGION END*/
 using namespace alica;

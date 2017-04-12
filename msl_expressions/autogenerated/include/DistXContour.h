@@ -5,46 +5,41 @@
  *      Author: Tobias Schellien
  */
 
-#ifndef ALICA_ALICA_TEST_INCLUDE_DISTXCONTOUR_H_
-#define ALICA_ALICA_TEST_INCLUDE_DISTXCONTOUR_H_
+#pragma once
 
+#include <cnc_geometry/CNPointAllo.h>
 #include <engine/USummand.h>
-#include <container/CNPoint2D.h>
-#include <vector>
-#include <string>
+#include <nonstd/optional.hpp>
 
-using namespace std;
+#include <string>
+#include <vector>
 
 namespace alica
 {
 
-	class UtilityInterval;
-	class IAssignment;
+class UtilityInterval;
+class IAssignment;
 
-	class DistXContour : public USummand
-	{
-	public:
-		DistXContour(double weight, string name, long id, vector<long>& relevantEntryPointIds, vector<pair<double, double>>& ContourPoints, double xMaxVal, double xMinVal, int ownId);
-		virtual ~DistXContour();
-		void cacheEvalData();
-		double interpolate2D(double X1, double Y1, double X2, double Y2, double xPoint);
-		virtual UtilityInterval eval(IAssignment* ass);
+class DistXContour : public USummand
+{
+  public:
+    DistXContour(double weight, string name, long id, vector<long> &relevantEntryPointIds,
+                 vector<pair<double, double>> &ContourPoints, double xMaxVal, double xMinVal, int ownId);
+    virtual ~DistXContour();
+    void cacheEvalData();
+    double interpolate2D(double X1, double Y1, double X2, double Y2, double xPoint);
+    virtual UtilityInterval eval(IAssignment *ass);
 
-
-	protected:
-		int ownId;
-		double weight;
-		string name;
-		long id;
-		vector<long> relevantEntryPointIds;
-		vector<pair<double, double>> contourPoints;
-		shared_ptr<geometry::CNPoint2D> alloBall;
-		double xMaxVal;
-		double xMinVal;
-
-
-	};
+  protected:
+    int ownId;
+    double weight;
+    string name;
+    long id;
+    std::vector<long> relevantEntryPointIds;
+    std::vector<std::pair<double, double>> contourPoints;
+    nonstd::optional<geometry::CNPointAllo> alloBall;
+    double xMaxVal;
+    double xMinVal;
+};
 
 } /* namespace alica */
-
-#endif /* ALICA_ALICA_TEST_INCLUDE_DISTXCONTOUR_H_ */
