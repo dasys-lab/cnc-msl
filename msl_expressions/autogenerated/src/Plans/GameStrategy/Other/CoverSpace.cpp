@@ -2,13 +2,11 @@ using namespace std;
 #include "Plans/GameStrategy/Other/CoverSpace.h"
 
 /*PROTECTED REGION ID(inccpp1455537892946) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "container/CNPoint2D.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <Ball.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
-using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,7 +16,7 @@ namespace alica
             DomainBehaviour("CoverSpace")
     {
         /*PROTECTED REGION ID(con1455537892946) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+    	positionPercentage = 0;
         /*PROTECTED REGION END*/
     }
     CoverSpace::~CoverSpace()
@@ -31,22 +29,22 @@ namespace alica
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
         auto alloBallPos = wm->ball->getAlloBallPosition();
-        if (alloBallPos == nullptr)
+        if (!alloBallPos)
         {
-            alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
+            alloBallPos = geometry::CNPoint2D(0, 0);
         }
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPos)
         {
-            cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
+            std::cerr << "No own Position!!!! Initiating Selfdestruction !!!" << std::endl;
             return;
         }
 
         //Cover Opposite Side of the field!
 
-        auto alloTarget = alloBallPos->clone();
-        if (abs(alloTarget->y) > 1000 || lastPos == nullptr)
+        auto alloTarget = alloBallPos;
+        if (abs(alloTarget->y) > 1000 || !lastPos)
         {
             alloTarget->y = -alloTarget->y * positionPercentage;
             lastPos = alloTarget;
@@ -68,14 +66,14 @@ namespace alica
             alloTarget->x = -wm->field->getFieldLength() / 2 + wm->field->getPenaltyAreaLength() + 260;
         }
 
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
-        auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
+        auto egoTarget = alloTarget->toEgo(*ownPos);
+        auto egoAlignPoint = alloBallPos->toEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
 //        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoAlignPoint;
-        query->snapDistance = 100;
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = egoAlignPoint;
+        query.snapDistance = 100;
         mc = rm.moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))
@@ -92,7 +90,7 @@ namespace alica
     void CoverSpace::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1455537892946) ENABLED START*/ //Add additional options here
-        lastPos.reset();
+        lastPos = nonstd::nullopt;
         string tmp;
         bool success = true;
         success &= getParameter("DefensePercentage", tmp);
