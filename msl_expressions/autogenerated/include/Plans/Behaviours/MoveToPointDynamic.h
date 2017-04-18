@@ -24,7 +24,7 @@ namespace alica
         bool avoidBall;
         vector<double> result;
         ulong lastResult;
-        shared_ptr<msl::MovementQuery> movQuery;
+        msl::MovementQuery movQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456997073100) ENABLED START*/ //Add additional private methods here

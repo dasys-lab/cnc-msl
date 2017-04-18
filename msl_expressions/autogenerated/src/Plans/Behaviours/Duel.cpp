@@ -209,12 +209,12 @@ void Duel::run(void *msg)
                 return;
             }
         }
-        if (closestFriendly != nullptr && !friendlyBlocked)
+        if (closestFriendly && !friendlyBlocked)
         {
             // align to non-blocked closest team member for future pass play
             egoAlignPoint = closestFriendly->toEgo(*ownPos);
         }
-        else if (closestFriendly != nullptr && friendlyBlocked)
+        else if (closestFriendly && friendlyBlocked)
         {
 
             // can't align to team member so align to opp goal
@@ -224,7 +224,7 @@ void Duel::run(void *msg)
         {
             // found no team member at all
             cout << "Duel: Found nobody" << endl;
-            if (ownPos == nullptr)
+            if (!ownPos)
             {
                 // no idea
                 cout << "Duel: no idea" << endl;
@@ -237,13 +237,11 @@ void Duel::run(void *msg)
                 // TODO testen
                 cout << "Duel: try closest field border" << endl;
 
-                auto ballOrth1 = geometry::CNPointEgo(egoBallPos->y, -egoBallPos->x);
-                auto ballOrth2 = geometry::CNPointEgo(-egoBallPos->y, egoBallPos->x);
-                ballOrth1 = ballOrth1.toAllo(*ownPos);
-                ballOrth2 = ballOrth2.toAllo(*ownPos);
+                auto ballOrth1 = geometry::CNPointEgo(egoBallPos->y, -egoBallPos->x).toAllo(*ownPos);
+                auto ballOrth2 = geometry::CNPointEgo(-egoBallPos->y, egoBallPos->x).toAllo(*ownPos);
 
-                double distance = wm->field->distanceToLine(ownPoint, ballOrth1.toAllo(*ownPos).angleZ());
-                if (wm->field->distanceToLine(ownPoint, ballOrth2.toAllo(*ownPos).angleZ()) < distance)
+                double distance = wm->field->distanceToLine(ownPoint, ballOrth1.angleZ());
+                if (wm->field->distanceToLine(ownPoint, ballOrth2.angleZ()) < distance)
                 {
                     // top line
                     egoAlignPoint = geometry::CNPointAllo(ownPoint.x, -fieldWidth / 2).toEgo(*ownPos);

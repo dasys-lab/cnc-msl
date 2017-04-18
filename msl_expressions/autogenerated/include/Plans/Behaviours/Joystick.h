@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1421854975890) ENABLED START*/ //Add additional includes here
+#include <msl_msgs/JoystickCommand.h>
+#include <nonstd/optional.hpp>
 namespace msl_msgs
 {
     ROS_DECLARE_MESSAGE (JoystickCommand)
@@ -21,7 +23,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1421854975890) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<msl_msgs::JoystickCommand> lastProcessedCmd;
+        nonstd::optional<msl_msgs::JoystickCommand> lastProcessedCmd;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1421854975890) ENABLED START*/ //Add additional private methods here

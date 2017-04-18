@@ -42,7 +42,7 @@ void OneGernericInGameBlocker::run(void *msg)
     msl::RobotMovement rm;
     msl_actuator_msgs::MotionControl mc;
     auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-    auto ballPos = wm->ball->getEgoBallPosition();
+    auto ballPos = wm->ball->getPositionEgo();
     if (!ownPos || !ballPos)
     {
         mc.motion.angle = 0;
@@ -136,9 +136,6 @@ void OneGernericInGameBlocker::run(void *msg)
     debugMsg.points.push_back(point);
     this->send(debugMsg);
     // ---------------------------------------
-
-    // ego centric
-    driveTo = driveTo.toEgo(*ownPos);
 
     if (avoidBall)
     {

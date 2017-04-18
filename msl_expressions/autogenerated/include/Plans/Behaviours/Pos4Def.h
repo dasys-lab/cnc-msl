@@ -21,7 +21,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1445438142979) ENABLED START*/ //Add additional protected methods here
         shared_ptr<alica::Query> query;
-        shared_ptr<msl::MovementQuery> mQuery;
+        msl::MovementQuery mQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1445438142979) ENABLED START*/ //Add additional private methods here

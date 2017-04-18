@@ -29,7 +29,7 @@ namespace alica
     void Joystick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
-        auto joy = wm->rawSensorData->getJoystickCommand();
+        auto joy = wm->rawSensorData->getJoystickCommandsBuffer().getLastValidContent();
         if (!joy)
         {
             msl_actuator_msgs::MotionControl mc;

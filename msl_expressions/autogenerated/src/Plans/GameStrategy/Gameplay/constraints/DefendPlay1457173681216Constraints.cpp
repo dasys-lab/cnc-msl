@@ -241,10 +241,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     for (int i = 0; i < robotPositions.size(); i++)
     {
         auto pos = robotPositions.at(i);
-        if (pos != nullptr)
-            realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{pos.x, pos.y}));
-        else
-            realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{0.0, 0.0}));
+        realRobotPosesTVec.push_back(make_shared<TVec>(initializer_list<double>{pos.x, pos.y}));
     }
     util = util + msl::MSLConstraintBuilder::lazyUtil(realRobotPosesTVec, poses);
 

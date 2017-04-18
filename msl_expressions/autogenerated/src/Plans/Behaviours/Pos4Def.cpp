@@ -19,7 +19,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1445438142979) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::Query > (this->wm->getEngine());
-        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos4Def::~Pos4Def()
@@ -30,36 +29,34 @@ namespace alica
     void Pos4Def::run(void* msg)
     {
         /*PROTECTED REGION ID(run1445438142979) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionEgo();
 
-        if (ownPos == nullptr || ballPos == nullptr)
+        if (!ownPos|| !ballPos)
         {
             return;
         }
-        shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
+        auto alloBall = ballPos->toAllo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
             cout << "Pos4Def: FOUND a solution!" << endl;
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
-            additionalPoints->push_back(alloBall);
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
-                    > (result.at(0), result.at(1));
+            auto additionalPoints = vector<geometry::CNPointAllo>();
+            additionalPoints.push_back(alloBall);
+            auto alloTarget = geometry::CNPointAllo(result.at(0), result.at(1));
 
-            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+            cout << "Target x,y: " << alloTarget.x << " " << alloTarget.y << endl;
 
-            shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
+            geometry::CNPointEgo egoTarget = alloTarget.toEgo(*ownPos);
 
 //            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 100.0,
 //                                                          additionalPoints);
             msl::RobotMovement rm;
-            mQuery->egoDestinationPoint = egoTarget;
-            mQuery->egoAlignPoint = alloBall->alloToEgo(*ownPos);
-            mQuery->snapDistance = 100;
-            mQuery->additionalPoints = additionalPoints;
+            mQuery.egoDestinationPoint = egoTarget;
+            mQuery.egoAlignPoint = alloBall.toEgo(*ownPos);
+            mQuery.snapDistance = 100;
+            mQuery.additionalPoints = additionalPoints;
             mc = rm.moveToPoint(mQuery);
         }
         else

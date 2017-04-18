@@ -4,8 +4,6 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1435159253296) ENABLED START*/ //Add additional includes here
 #include "msl_actuator_msgs/MotionControl.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
 #include "msl_robot/robotmovement/RobotMovement.h"
 #include "math.h"
 /*PROTECTED REGION END*/
@@ -28,7 +26,7 @@ namespace alica
         double alpha, startAngle;
         double epsilon = 0.03;
         int counter;
-        shared_ptr<geometry::CNPoint2D> center;
+        geometry::CNPointAllo center;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

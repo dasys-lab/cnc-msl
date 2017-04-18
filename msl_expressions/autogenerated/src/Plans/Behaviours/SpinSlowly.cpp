@@ -13,7 +13,7 @@ namespace alica
             DomainBehaviour("SpinSlowly")
     {
         /*PROTECTED REGION ID(con1435159253296) ENABLED START*/ //Add additional options here
-        center = make_shared < geometry::CNPoint2D > (0, 0);
+        center = geometry::CNPointAllo(0, 0);
         /*PROTECTED REGION END*/
     }
     SpinSlowly::~SpinSlowly()
@@ -24,9 +24,9 @@ namespace alica
     void SpinSlowly::run(void* msg)
     {
         /*PROTECTED REGION ID(run1435159253296) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionMotion();
+        auto ownPos = wm->rawSensorData->getOwnPositionMotionBuffer().getLastValidContent();
 
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
             return;
         }
