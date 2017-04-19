@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
 
+#include  "Plans/Calibration/constraints/TestRotation1492620432380Constraints.h"
+
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleControlMaster1479905043165Constraints.h"

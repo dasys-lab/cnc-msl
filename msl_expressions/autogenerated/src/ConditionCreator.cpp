@@ -4,6 +4,8 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/Calibration/TestRotation1492620432380.h"
+
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
@@ -161,6 +163,12 @@ namespace alica
             case 1467384969800:
 
                 return make_shared<TransitionCondition1467384969800>();
+
+                break;
+
+            case 1492620542706:
+
+                return make_shared<TransitionCondition1492620542706>();
 
                 break;
 

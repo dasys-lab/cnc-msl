@@ -35,6 +35,8 @@ using namespace std;
 
 #include  "Plans/DribbleCalibration/Behaviours/DribbleCalibration.h"
 
+#include  "Plans/Calibration/TestRotationRotation.h"
+
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
 #include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
@@ -317,6 +319,11 @@ namespace alica
             case 1485355250017:
 
                 return make_shared<DribbleCalibration>();
+                break;
+
+            case 1492620523847:
+
+                return make_shared<TestRotationRotation>();
                 break;
 
             case 1450176216458:

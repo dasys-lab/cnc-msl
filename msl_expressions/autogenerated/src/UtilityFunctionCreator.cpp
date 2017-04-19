@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/Calibration/TestRotation1492620432380.h"
+
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
@@ -155,6 +157,10 @@ namespace alica
 
             case 1467383326416:
                 return make_shared<UtilityFunction1467383326416>();
+                break;
+
+            case 1492620432380:
+                return make_shared<UtilityFunction1492620432380>();
                 break;
 
             case 1434045709191:
