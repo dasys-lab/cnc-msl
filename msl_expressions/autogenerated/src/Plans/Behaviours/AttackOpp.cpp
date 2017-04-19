@@ -19,7 +19,14 @@ AttackOpp::AttackOpp()
     : DomainBehaviour("AttackOpp")
 {
     /*PROTECTED REGION ID(con1430324527403) ENABLED START*/ // Add additional options here
-    query = make_shared<msl::MovementQuery>();
+	this->oldDistance = 0;
+	this->maxIter = 4;
+	this->isMovingAwayIter = 0;
+	this->isMovingCloserIter = 0;
+	this->kD = 1.7;
+	this->kI = 0.0;
+	this->kP = 2.0;
+	this->rotate_P = 1.8;
     /*PROTECTED REGION END*/
 }
 AttackOpp::~AttackOpp()
@@ -41,13 +48,12 @@ void AttackOpp::run(void *msg)
         return;
     }
 
-    auto obstacles = wm->obstacles->getRawObstaclesEgoBuffer().getLastValidContent();
+    auto obstacles = wm->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
     bool blocked = false;
     msl_actuator_msgs::MotionControl mc;
     for (int i = 0; i < (*obstacles)->size(); i++)
     {
-        if (wm->pathPlanner->corridorCheck(make_shared<geometry::CNPoint2D>(me->x, me->y), egoBallPos->egoToAllo(*me),
-                                           make_shared<geometry::CNPoint2D>(obstacles->at(i).x, obstacles->at(i).y)))
+        if (wm->pathPlanner->corridorCheck(me->getPoint(), egoBallPos->toAllo(*me), (*obstacles)->at(i)))
         {
             blocked = true;
             break;
@@ -55,7 +61,7 @@ void AttackOpp::run(void *msg)
     }
     if (!blocked)
     {
-        auto egoBallVelocity = wm->ball->getEgoBallVelocity();
+        auto egoBallVelocity = wm->ball->getVelocityEgo();
         cout << "ego ball vel: " << egoBallVelocity->x << "|" << egoBallVelocity->y << " " << egoBallVelocity->length()
              << endl;
         auto vector = egoBallVelocity + egoBallPos;
@@ -108,14 +114,7 @@ void AttackOpp::run(void *msg)
 void AttackOpp::initialiseParameters()
 {
     /*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ // Add additional options here
-    oldDistance = 0.0;
-    kP = 2.0;
-    kI = 0.0;
-    kD = 1.7;
-    rotate_P = 1.8;
-    isMovingCloserIter = 0;
-    isMovingAwayIter = 0;
-    maxIter = 4;
+
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ // Add additional methods here

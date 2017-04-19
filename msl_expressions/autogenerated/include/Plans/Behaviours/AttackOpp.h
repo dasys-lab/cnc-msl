@@ -34,7 +34,7 @@ namespace alica
         int isMovingCloserIter;
         int isMovingAwayIter;
         int maxIter;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         msl_actuator_msgs::MotionControl ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
                                                         shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                                         shared_ptr<geometry::CNPoint2D> egoBallPos);
