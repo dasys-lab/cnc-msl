@@ -55,8 +55,8 @@ namespace alica
 		auto left = getLeftArmVelocity(ballVel, ballAngle);
 
 		msl_actuator_msgs::BallHandleCmd msgback;
-		msgback.leftMotor = left;
-		msgback.rightMotor = right;
+		msgback.leftMotor = right;
+		msgback.rightMotor = left;
 		cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
 		send(msgback);
 
@@ -99,13 +99,15 @@ namespace alica
 	{
 		double velX = -cos(angle) * translation;
 		double velY = -sin(angle) * translation + rotation * rBallRobot;
-		//correcting desired ball velocity towards robot to guarantee grib
-		velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+
 
 		if (velX <= staticUpperBound && velX >= staticMiddleBound)
 			velX = 0;
-		if (velX < staticMiddleBound && velX >= staticLowerBound)
+		else if (velX < staticMiddleBound && velX >= staticLowerBound)
 			velX = -10; //value shortly under zero
+		else
+			//correcting desired ball velocity towards robot to guarantee grib
+			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
 		return sqrt(velX * velX + velY * velY);
 	}
@@ -115,12 +117,14 @@ namespace alica
 	{
 		double velX = -cos(angle) * translation;
 		double velY = -sin(angle) * translation + rotation * rBallRobot;
-		velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+
 
 		if (velX <= staticUpperBound && velX >= staticMiddleBound)
 			velX = 0;
-		if (velX < staticMiddleBound && velX >= staticLowerBound)
+		else if (velX < staticMiddleBound && velX >= staticLowerBound)
 			velX = -10; //value shortly under zero
+		else
+			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 
 		double ballAngle = 0;
 		cout << "velY = " << velY << endl;
