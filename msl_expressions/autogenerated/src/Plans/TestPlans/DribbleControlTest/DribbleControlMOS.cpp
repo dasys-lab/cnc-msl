@@ -36,14 +36,14 @@ namespace alica
 		// default forth and back
 		auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
-//        auto robotAngle = odom->angle;
-//        auto robotVel = odom->translation;
+        auto robotAngle = odom->angle;
+        auto robotVel = odom->translation;
 //        auto robotRot = (double)odom->rotation / 1024.0;
-//		auto robotRot = (double)odom->rotation;
+		auto robotRot = (double)odom->rotation;
 
-		auto robotAngle = 3.14;
-		auto robotVel = 1000;
-		auto robotRot = 0;
+//		auto robotAngle = 3.14;
+//		auto robotVel = 1000;
+//		auto robotRot = 0;
 
 		auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
 		auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
