@@ -6,10 +6,8 @@
 #include "DateTime.h"
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/KickControl.h>
-namespace geometry
-{
-    class CNPoint2D;
-}
+#include <cnc_geometry/CNPointAllo.h>
+#include <nonstd/optional.hpp>
 namespace alica
 {
     /**
@@ -20,21 +18,21 @@ namespace alica
     protected:
         int indexMax;
         int index;
-        vector<shared_ptr<geometry::CNPoint2D>> buffer;
+        vector<nonstd::optional<geometry::CNVecAllo>> buffer;
         vector<double> gewichte;
 
     public:
         ExperimentalRingbuffer(int size);
         ~ExperimentalRingbuffer();
 
-        shared_ptr<geometry::CNPoint2D> getAvgPoint(int count);
+        geometry::CNPointAllo getAvgPoint(int count);
 
-        void addPoint(shared_ptr<geometry::CNPoint2D> p);
+        void addPoint(geometry::CNVecAllo p);
 
-        void overWrite(shared_ptr<geometry::CNPoint2D> p);
-        void addPoint(shared_ptr<geometry::CNPoint2D> p, double g);
+        void overWrite(shared_ptr<geometry::CNPointAllo> p);
+        void addPoint(shared_ptr<geometry::CNPointAllo> p, double g);
 
-        void overWrite(shared_ptr<geometry::CNPoint2D> p, double g);
+        void overWrite(shared_ptr<geometry::CNPointAllo> p, double g);
     };
 
 }

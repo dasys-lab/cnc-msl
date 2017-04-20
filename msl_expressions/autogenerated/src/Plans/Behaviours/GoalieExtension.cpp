@@ -6,6 +6,7 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <cnc_geometry/CNPointAllo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -16,7 +17,7 @@ namespace alica
         indexMax = size;
     }
 
-    shared_ptr<geometry::CNPoint2D> ExperimentalRingbuffer::getAvgPoint(int count)
+    geometry::CNPointAllo ExperimentalRingbuffer::getAvgPoint(int count)
     {
         if (count > indexMax)
         {
@@ -28,7 +29,7 @@ namespace alica
         }
         int count2 = 0;
         double sum_gewichte = 0;
-        shared_ptr < geometry::CNPoint2D > tmp = make_shared < geometry::CNPoint2D > (0, 0);
+        geometry::CNPointAllo tmp = geometry::CNPointAllo(0, 0);
         for (int i = 0; count2 < count && i < indexMax; ++i)
         {
             int pos = index - i;
@@ -37,17 +38,17 @@ namespace alica
 
             try
             {
-                if (buffer.at(pos) != nullptr)
+                if (buffer.at(pos))
                 {
-                    tmp = tmp + buffer.at(pos) * gewichte.at(pos);
+                    tmp = tmp + *buffer.at(pos) * gewichte.at(pos);
                     ++count2;
                     sum_gewichte += gewichte.at(pos);
                 }
             }
             catch (const std::out_of_range& e)
             {
+            	std::cout << "GoalieExtension-Error: " << e.what() << std::endl;
             }
-
         }
         if (sum_gewichte == 0)
             return nullptr;
@@ -55,17 +56,17 @@ namespace alica
         return tmp;
     }
 
-    void ExperimentalRingbuffer::addPoint(shared_ptr<geometry::CNPoint2D> p)
+    void ExperimentalRingbuffer::addPoint(geometry::CNVecAllo p)
     {
         addPoint(p, 1);
     }
 
-    void ExperimentalRingbuffer::overWrite(shared_ptr<geometry::CNPoint2D> p)
+    void ExperimentalRingbuffer::overWrite(geometry::CNVecAllo p)
     {
         overWrite(p, 1);
     }
 
-    void ExperimentalRingbuffer::addPoint(shared_ptr<geometry::CNPoint2D> p, double g)
+    void ExperimentalRingbuffer::addPoint(geometry::CNVecAllo p, double g)
     {
         if (++index > indexMax)
         {
@@ -79,7 +80,7 @@ namespace alica
         gewichte.at(index) = g;
     }
 
-    void ExperimentalRingbuffer::overWrite(shared_ptr<geometry::CNPoint2D> p, double g)
+    void ExperimentalRingbuffer::overWrite(geometry::CNVecAllo p, double g)
     {
         try
         {
@@ -130,12 +131,12 @@ namespace alica
     void GoalieExtension::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459249216387) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPos)
             return;
 
-        auto ballPos = wm->ball->getEgoBallPosition();
-        if (ballPos == nullptr)
+        auto ballPos = wm->ball->getPositionEgo();
+        if (!ballPos)
             return;
 
         //kick
@@ -144,7 +145,7 @@ namespace alica
         if (currentTime - lastKickerTime >= KICKER_WAIT_TIME)
         {
             if (useKicker == true && ballPos != nullptr && ballPos->length() < 420
-                    && (abs(ballPos->angleTo()) - M_PI) < 0.52)
+                    && (abs(ballPos->angleZ()) - M_PI) < 0.52)
             {
 
                 km.enabled = true;
@@ -154,16 +155,17 @@ namespace alica
                 lastKickerTime = wm->getTime();
             }
         }
-        if (wm->rawSensorData->getLastMotionCommand() == nullptr)
+        auto lastMotionCmd = wm->rawSensorData->getLastMotionCommandBuffer().getLastValidContent();
+        if (!lastMotionCmd)
             return;
         bm_last = msl_actuator_msgs::MotionControl();
-        bm_last.motion.translation = wm->rawSensorData->getLastMotionCommand()->motion.translation;
-        bm_last.motion.rotation = wm->rawSensorData->getLastMotionCommand()->motion.rotation;
-        bm_last.motion.angle = wm->rawSensorData->getLastMotionCommand()->motion.angle;
-        auto ballPosAllo = ballPos->egoToAllo(*ownPos);
+        bm_last.motion.translation = lastMotionCmd->motion.translation;
+        bm_last.motion.rotation = lastMotionCmd->motion.rotation;
+        bm_last.motion.angle = lastMotionCmd->motion.angle;
+        auto ballPosAllo = ballPos->toAllo(*ownPos);
         long now = wm->getTime() / 1000000;
-        auto ballPos3D = wm->ball->getBallPoint3D();
-        if (ballPos3D != nullptr)
+        auto ballPos3D = wm->ball->getPositionAllo();
+        if (ballPos3D)
         {
             if (ballPos3D->z > 500)
             {
@@ -171,11 +173,10 @@ namespace alica
             }
         }
 
-        auto ballV3D = wm->ball->getBallVel3D();
-        if (ballV3D != nullptr && ballPos != nullptr)
+        auto ballV3D = wm->ball->getVelocityAllo();
+        if (ballV3D && ballPos)
         {
-
-            auto ballV3DAllo = ballV3D->egoToAllo(*ownPos);
+            auto ballV3DAllo = ballV3D->toAllo(*ownPos);
             double velo = sqrt(ballV3D->x * ballV3D->x + ballV3D->y * ballV3D->y + ballV3D->z * ballV3D->z);
             if (velo > 1000)
             {
