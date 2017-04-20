@@ -49,7 +49,7 @@ class PathProxy
     PathProxy();
     virtual ~PathProxy();
     /**
-     * Get ego direction form path planner
+     * Get ego direction from path planner
      * @param egoTarget shared_ptr<geometry::CNPoint2D>
      * @param eval shared_ptr<PathEvaluator>
      * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> point to add as artificial obstacles
@@ -61,7 +61,7 @@ class PathProxy
                     std::shared_ptr<const std::vector<geometry::CNPointAllo>> additionalPoints = nullptr);
 
     /**
-     * Get ego direction form path planner
+     * Get ego direction from path planner
      * @param egoTarget shared_ptr<geometry::CNPoint2D>
      * @param eval shared_ptr<PathEvaluator>
      * @param query shared_ptr<PathPlannerQuery> encalsulates information given to the path planner

@@ -139,7 +139,7 @@ void Constraint1458033723845::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     constraint = constraint &
                  ConstraintBuilder::distanceSqr(p1, tAttackerPos) < autodiff::TermBuilder::constant(5500.0 * 5500.0);
 
-    geometry::CNPointAllo attacker2ball = alloBall - *attackerPos;
+    geometry::CNVecAllo attacker2ball = alloBall - attackerPos->getPoint();
     double freeWayLength = 1500.0;
     geometry::CNPointAllo freeWayPoint = attackerPos->getPoint() + attacker2ball.normalize() * freeWayLength;
     double ratio = tan(45 * M_PI / 180);
@@ -153,7 +153,7 @@ void Constraint1458033723845::getConstraint(shared_ptr<ProblemDescriptor> c, sha
 
     util = util + (1 - ConstraintBuilder::distance(p1, talloBall) / wm->field->getMaxDistance());
 
-    geometry::CNPointAllo own2Attacker = attackerPos->getPoint() - ownPos->getPoint() + attackerPos->getPoint();
+    geometry::CNVecAllo own2Attacker = attackerPos->getPoint() - ownPos->getPoint();
     shared_ptr<autodiff::TVec> town2Attacker =
         make_shared<autodiff::TVec>(initializer_list<double>{own2Attacker.x, own2Attacker.y});
 
@@ -219,7 +219,7 @@ void Constraint1458033723845::getConstraint(shared_ptr<ProblemDescriptor> c, sha
                      (ConstraintBuilder::distanceSqr(p1, tvecBallPose) > autodiff::TermBuilder::constant(1500 * 1500));
     }
 
-    if (ownPos != nullptr)
+    if (ownPos)
     {
         // add 'lazyness' utility for stability:
         util = util +
