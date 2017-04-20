@@ -21,6 +21,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1492620499435) ENABLED START*/ //Add additional private methods here
         double initialBearing;
+	int inited;
 	bool halfwayDone;
 	/*PROTECTED REGION END*/};
 } /* namespace alica */

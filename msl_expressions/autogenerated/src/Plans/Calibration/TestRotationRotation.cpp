@@ -54,13 +54,22 @@ namespace alica
             return;
         }
 
+	int limit = 50;
+	if(inited < limit) {
+		inited++;
+		return;
+	} else if(inited == limit) {
+		initialBearing = wm->rawOdometry->position.angle;
+		inited++;
+	}
+
         msl_actuator_msgs::MotionControl mc;
-        rotationSpeed = 0.5;
+        double rotationSpeed = 0.5;
         mc.motion.rotation = rotationSpeed;
         send(mc);
 
 	double currentBearing = wm->rawOdometry->position.angle;
-	double cd = circularDiff(initialbearing, currentBearing);
+	double cd = circularDiff(initialBearing, currentBearing);
 	if(cd > 3)
 	{
 		halfwayDone = true;
@@ -69,7 +78,7 @@ namespace alica
 
 	cout << cd << endl;
 
-	if(halfwayDone && circularDiff(currentBearing, initialBearing) > 0)
+	if(halfwayDone && cd < 0)
 	{
 		this->setSuccess(true);
 	}
@@ -78,7 +87,7 @@ namespace alica
     void TestRotationRotation::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1492620499435) ENABLED START*/ //Add additional options here
-        initialBearing = wm->rawOdometry->position.angle;
+        inited = 0;
 	halfwayDone = false;
 	/*PROTECTED REGION END*/
     }
