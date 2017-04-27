@@ -3,6 +3,7 @@
 #include <msl_refbox/RefBox.h>
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
+#include <QStyleFactory>
 
 namespace msl_refbox
 {
@@ -19,7 +20,7 @@ RefBox::RefBox()
 void RefBox::initPlugin(qt_gui_cpp::PluginContext &context)
 {
     // used to enable colored buttons
-    //QApplication::setStyle(new QPlastiqueStyle);
+    QApplication::setStyle(QStyleFactory::create("fusion"));
     widget_ = new QWidget();
     setupUi(widget_);
     if (context.serialNumber() > 1)
