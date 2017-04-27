@@ -20,10 +20,13 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1479905178049) ENABLED START*/ //Add additional private methods here
-        virtual double getBallVelocity(double angle, double translation, double rotation);
-        virtual double getBallAngle(double angle, double translation, double rotation);
-        virtual double getLeftArmVelocity(double ballVelocity, double ballAngle);
-        virtual double getRightArmVelocity(double ballVelocity, double ballAngle);
+        double getBallVelocity(double velX, double velY);
+        double getBallAngle(double velX, double velY);
+        double getLeftArmVelocity(double ballVelocity, double ballAngle);
+        double getRightArmVelocity(double ballVelocity, double ballAngle);
+        void getBallPath(double translation, double angle, double rotation, double &velX, double &velY);
+
+        int sign(double x);
 
         int testBehaviour;
         int testSpeed;
@@ -38,6 +41,7 @@ namespace alica
         double staticLowerBound;
         double staticNegVelX;
         double epsilonT;
+        double epsilonY;
         double epsilonRot;
         double rBallRobot;
         double forwConst;
