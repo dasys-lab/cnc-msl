@@ -32,7 +32,9 @@ done
 
 if [[ ${#onlineRobots[@]} = 0 ]]; then
 	echo "all robots offline :("
-	exit
+	if [[ $1 != "--setup" ]]; then
+		exit
+	fi
 fi
 
 
