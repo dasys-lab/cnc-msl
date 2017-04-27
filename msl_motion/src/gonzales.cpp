@@ -23,7 +23,7 @@ double wheelcirc;
 double robotcirc;
 double finfactor;
 
-
+FILE *lf;
 
 struct timeval odotime_last;
 struct timeval odotime_cur;
@@ -34,6 +34,8 @@ gonzales_state gonz_state;
 int gonz_mode;
 
 void gonz_init() {
+	//logging
+	lf = fopen("/home/cn/cnws/src/OdometryLog.log","a");
     gonz_state.state = GONZ_RUNNING;
     gonz_state.autorecover = 0;
     gonz_state.recover_timer = 0;
@@ -192,7 +194,7 @@ void gonz_calc_odometry() { //TODO: Optimise!
 
     gettimeofday(&odotime_cur, NULL);
     unsigned long long timediff = TIMEDIFFMS(odotime_cur,odotime_last);//(odotime_cur.tv_sec*1000+odotime_cur.tv_usec/1000)-(odotime_last.tv_sec*1000+odotime_last.tv_usec/1000);
-    //printf("time: %llu\n",timediff);
+	//printf("time: %llu\n",timediff);
     //Position update:
     //angle between ego-x-axis and translational velocity
     double angle = atan2(gonz_state.actualMotion.y,gonz_state.actualMotion.x);
@@ -233,6 +235,8 @@ void gonz_calc_odometry() { //TODO: Optimise!
     }
     gonz_state.currentPosition.x += xtemp1;
     gonz_state.currentPosition.y += ytemp1;
+	
+	fprintf(lf,"%llu\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timediff,angle,trans,rot,xtemp,ytemp,h,xtemp1,ytemp1,gonz_state.currentPosition.x,gonz_state.currentPosition.y,gonz_state.currentPosition.angle);
 
     odotime_last = odotime_cur;
 
