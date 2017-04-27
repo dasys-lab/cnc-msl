@@ -207,11 +207,20 @@ void gonz_calc_odometry() { //TODO: Optimise!
     double radius = 0;
     if (rot!=0) {
     	//distance between the center of the robot and the center of the robots rotation (if translation and rotation are seen as a rotation around a distant point)
-        radius = abs(trans / rot);
-        //distance travelled in direction of the translational velocity
-        xtemp = sin(rot) * radius * SIGN(rot);
-        //distance travelled orthogonal to translational velocity
-		ytemp = (radius - (cos(rot)) * radius) * SIGN(rot);
+        radius = fabs(trans / rot);
+
+	if(rot > 0) {
+	    //distance travelled in direction of the translational velocity
+	    xtemp = sin(rot) * radius;
+	    //distance travelled orthogonal to translational velocity
+	    ytemp = (radius - (cos(rot)) * radius);
+	}
+	else {
+	    //distance travelled in direction of the translational velocity
+	    xtemp = -(sin(rot) * radius);   
+	    //distance travelled orthogonal to translational velocity
+	    ytemp = -(radius - (cos(rot)) * radius);
+	}
     }
     else {
         xtemp = trans;
@@ -237,7 +246,7 @@ void gonz_calc_odometry() { //TODO: Optimise!
     gonz_state.currentPosition.x += xtemp1;
     gonz_state.currentPosition.y += ytemp1;
 	
-	fprintf(lf,"%llu\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timediff,angle,trans,rot,xtemp,ytemp,radius,xtemp1,ytemp1,gonz_state.currentPosition.x,gonz_state.currentPosition.y,gonz_state.currentPosition.angle);
+	fprintf(lf,"%llu\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\n",timediff,angle,trans,rot,xtemp,ytemp,radius,xtemp1,ytemp1,gonz_state.currentPosition.x,gonz_state.currentPosition.y,gonz_state.currentPosition.angle, SIGN(rot));
 
     odotime_last = odotime_cur;
 
