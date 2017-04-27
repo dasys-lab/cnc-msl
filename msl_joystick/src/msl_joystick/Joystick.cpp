@@ -180,19 +180,19 @@ void Joystick::sendJoystickMessage()
         // angle
         if (keyPressed[0] == true && keyPressed[2] == true)
         {
-            msg.motion.angle = (0.75 * M_PI);
+            msg.motion.angle = (1.25 * M_PI);
         }
         else if (keyPressed[0] == true && keyPressed[3] == true)
         {
-            msg.motion.angle = (1.25 * M_PI);
+            msg.motion.angle = (0.75 * M_PI);
         }
         else if (keyPressed[1] == true && keyPressed[2] == true)
         {
-            msg.motion.angle = (0.25 * M_PI);
+            msg.motion.angle = (1.75 * M_PI);
         }
         else if (keyPressed[1] == true && keyPressed[3] == true)
         {
-            msg.motion.angle = (1.75 * M_PI);
+            msg.motion.angle = (0.25 * M_PI);
         }
         else if (keyPressed[0] == true)
         {
