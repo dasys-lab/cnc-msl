@@ -236,7 +236,7 @@ void gonz_calc_odometry() { //TODO: Optimise!
     gonz_state.currentPosition.x += xtemp1;
     gonz_state.currentPosition.y += ytemp1;
 	
-	fprintf(lf,"%llu\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timediff,angle,trans,rot,xtemp,ytemp,h,xtemp1,ytemp1,gonz_state.currentPosition.x,gonz_state.currentPosition.y,gonz_state.currentPosition.angle);
+	fprintf(lf,"%llu\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",timediff,angle,trans,rot,xtemp,ytemp,radius,xtemp1,ytemp1,gonz_state.currentPosition.x,gonz_state.currentPosition.y,gonz_state.currentPosition.angle);
 
     odotime_last = odotime_cur;
 
