@@ -127,10 +127,14 @@ namespace alica
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        auto robotRot = odom->rotation / 1024;
+        //auto robotRot = (double)odom->rotation / 1024.0;
+        auto robotRot = (double)odom->rotation;
 
         auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
         auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
+
+        cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
+        cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
 
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
