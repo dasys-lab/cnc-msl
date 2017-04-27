@@ -206,7 +206,7 @@ void gonz_calc_odometry() { //TODO: Optimise!
 
     if (rot!=0) {
     	//distance between the center of the robot and the center of the robots rotation (if translation and rotation are seen as a rotation around a distant point)
-        double radius = trans / rot;
+        double radius = abs(trans / rot);
         //distance travelled in direction of the translational velocity
         xtemp = sin(rot) * radius * SIGN(rot);
         //distance travelled orthogonal to translational velocity
