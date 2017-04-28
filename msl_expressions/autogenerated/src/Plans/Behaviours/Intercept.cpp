@@ -128,7 +128,8 @@ namespace alica
             }
         }
 
-        predBall->alloToEgo(*predPos);
+
+        auto egoPredBall = predBall->alloToEgo(*predPos);
         //TODO dirty fix to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos->getPoint()))
         {
@@ -140,7 +141,7 @@ namespace alica
         }
 //		}
         // PID controller for minimizing the distance between ball and me
-        double distErr = max(predBall->length(), 1000.0);
+        double distErr = max(egoPredBall->length(), 1000.0);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr;
@@ -158,11 +159,11 @@ namespace alica
             egoVelocity = egoBallVel->getPoint();
         }
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
-        egoVelocity->x += controlDist * cos(predBall->angleTo());
-        egoVelocity->y += controlDist * sin(predBall->angleTo());
+        egoVelocity->x += controlDist * cos(egoPredBall->angleTo());
+        egoVelocity->y += controlDist * sin(egoPredBall->angleTo());
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
-        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
+        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoPredBall->length());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
         if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
         {
