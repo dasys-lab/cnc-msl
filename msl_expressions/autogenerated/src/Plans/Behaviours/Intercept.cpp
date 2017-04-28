@@ -130,7 +130,6 @@ namespace alica
             }
         }
 
-
         auto egoPredBall = predBall->alloToEgo(*predPos);
         //TODO dirty fix to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos->getPoint()))
@@ -148,7 +147,7 @@ namespace alica
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
-        distIntErr = max (0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
+        distIntErr = max(0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
         lastDistErr = distErr;
 
         shared_ptr < geometry::CNPoint2D > egoVelocity;
@@ -227,7 +226,11 @@ namespace alica
             cout << "Intercept: Normal: " << mc.motion.translation << endl;
         }
 
-        if (this->wm->ball->haveBallDribble(false))
+//        if (this->wm->ball->haveBallDribble(false))
+//        {
+//            this->setSuccess(true);
+//        }
+        if (this->wm->ball->haveBall())
         {
             this->setSuccess(true);
         }
