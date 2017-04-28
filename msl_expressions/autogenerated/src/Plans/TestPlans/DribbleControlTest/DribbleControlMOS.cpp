@@ -7,6 +7,7 @@ using namespace std;
 #include "MSLWorldModel.h"
 #include "math.h"
 #include "SystemConfig.h"
+#include "Ball.h"
 /*PROTECTED REGION END*/
 namespace alica {
 /*PROTECTED REGION ID(staticVars1479905178049) ENABLED START*/ //initialise static variables here
@@ -34,12 +35,25 @@ void DribbleControlMOS::run(void* msg) {
 
 	auto robotAngle = odom->angle;
 	auto robotVel = odom->translation;
-//        auto robotRot = (double)odom->rotation / 1024.0;
 	auto robotRot = (double) odom->rotation;
+	msl_actuator_msgs::BallHandleCmd msgback;
 
-//		auto robotAngle = 3.14;
-//		auto robotVel = 1000;
-//		auto robotRot = 0;
+	bool haveBall = wm->ball->haveBall();
+
+	if (!haveBall)
+	{
+		msgback.rightMotor = speedNoBall;
+		msgback.leftMotor = speedNoBall;
+		return;
+	}
+
+//		auto robotAngle = 0;
+//		auto robotVel = 0;
+//		auto robotRot = 1.5;
+
+	cout << "robotAngle odometry = " << robotAngle << endl;
+	cout << "robotVel odometry = " << robotVel << endl;
+	cout << "robotRot odometry = " << robotRot << endl;
 
 //	auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
 //	auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
@@ -57,7 +71,6 @@ void DribbleControlMOS::run(void* msg) {
 	auto right = getRightArmVelocity(ballVel, ballAngle);
 	auto left = getLeftArmVelocity(ballVel, ballAngle);
 
-	msl_actuator_msgs::BallHandleCmd msgback;
 	msgback.leftMotor = right;
 	msgback.rightMotor = left;
 	cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: "
@@ -101,6 +114,8 @@ void DribbleControlMOS::initialiseParameters() {
 	epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY",
 	NULL);
 
+	speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+
 	phi = M_PI / 6; //horizontal angle between y and arm
 
 	//very static
@@ -131,6 +146,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 		velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
 	}
 	velY = velYTemp + 3 / 4 * rBallRobot * rotation;
+	cout << "velX = " << velX << endl;
 	cout << "velY = " << velY << endl;
 	if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound
 			&& velYTemp <= staticUpperBound && velYTemp >= staticMiddleBound

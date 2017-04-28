@@ -35,6 +35,8 @@ namespace alica
         int testCount;
         int testCount2;
 
+        double speedNoBall;
+
         double velToInput;
         double staticUpperBound;
         double staticMiddleBound;
