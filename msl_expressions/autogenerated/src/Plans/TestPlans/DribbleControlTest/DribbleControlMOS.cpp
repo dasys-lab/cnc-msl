@@ -33,6 +33,12 @@ void DribbleControlMOS::run(void* msg) {
 	// default forth and back
 	auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
+	if (odom == nullptr)
+	{
+		cerr << "DribbleControlMOS: no odometry!" << endl;
+		return;
+	}
+
 	auto robotAngle = odom->angle;
 	auto robotVel = odom->translation;
 	auto robotRot = (double) odom->rotation;
