@@ -9,10 +9,10 @@
 #include "mainwindow.h"
 #include <helpers/ColorCalibrationHelper.h>
 
-const int CC_ROBOT_IP_BASE_0 =  172;
-const int CC_ROBOT_IP_BASE_1 =  16;
-const int CC_ROBOT_IP_BASE_2 =  40;
-const int CC_ROBOT_IP_BASE_3 =  10;
+const int CC_ROBOT_IP_BASE_0 =  10;//172;
+const int CC_ROBOT_IP_BASE_1 =  0; //16;
+const int CC_ROBOT_IP_BASE_2 =  0; //40;
+const int CC_ROBOT_IP_BASE_3 =  1; //10;
 
 class NetworkCommunicator : public QObject {
     Q_OBJECT

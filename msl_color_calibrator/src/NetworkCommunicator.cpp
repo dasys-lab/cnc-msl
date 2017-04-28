@@ -48,9 +48,10 @@ void *NetworkCommunicator::getImageFromClient(void *arg) {
     std::ostringstream oss;
     oss << CC_ROBOT_IP_BASE_0 << "." <<
             CC_ROBOT_IP_BASE_1 << "." <<
-            CC_ROBOT_IP_BASE_2 << "." <<
-            (CC_ROBOT_IP_BASE_3 + receiverID);
+            CC_ROBOT_IP_BASE_2 << "."
+     << (CC_ROBOT_IP_BASE_3 /*+ receiverID*/);
     string hostname = oss.str();
+    cout << hostname << endl;
     oss.str("");
     oss.clear();
     oss << CC_ROBOT_PORT;
