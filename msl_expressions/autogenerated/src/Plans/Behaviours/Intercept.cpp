@@ -41,6 +41,8 @@ namespace alica
         pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
         pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
+        minDistErr = (*sc)["Drive"]->get<double>("Drive.Intercept.minDistErr", NULL);
+
         maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
         query = make_shared<msl::MovementQuery>();
@@ -89,9 +91,9 @@ namespace alica
 
             this->query->egoDestinationPoint = egoTarget;
             this->query->egoAlignPoint = egoBallPos;
-            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-            additonalPopints->push_back(alloBall);
-            this->query->additionalPoints = additonalPopints;
+//            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//            additonalPopints->push_back(alloBall);
+//            this->query->additionalPoints = additonalPopints;
             mc = this->robot->robotMovement->moveToPoint(query);
             if (egoTarget->length() < catchRadius)
             {
@@ -138,14 +140,15 @@ namespace alica
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
             send(mc);
+            return;
         }
 //		}
         // PID controller for minimizing the distance between ball and me
-        double distErr = max(egoPredBall->length(), 1000.0);
+        double distErr = max(egoPredBall->length(), minDistErr);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
-        distIntErr += distErr;
-//      distIntErr = max(-1500.0, min(1500.0, distIntErr));
+        distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
+        distIntErr = max (0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
         lastDistErr = distErr;
 
         shared_ptr < geometry::CNPoint2D > egoVelocity;
@@ -204,9 +207,9 @@ namespace alica
         {
             controlRot *= 2.3;
             //we probably translate to fast and cannot rotate anymore: So translate slower
-            if (abs(rotErr) > M_PI / 6)
+            if (fabs(rotErr) > M_PI / 6)
             {
-                mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+                mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
             }
         }
         mc.motion.rotation = controlRot;
