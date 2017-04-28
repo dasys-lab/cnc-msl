@@ -89,9 +89,9 @@ namespace alica
 
             this->query->egoDestinationPoint = egoTarget;
             this->query->egoAlignPoint = egoBallPos;
-            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-            additonalPopints->push_back(alloBall);
-            this->query->additionalPoints = additonalPopints;
+//            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//            additonalPopints->push_back(alloBall);
+//            this->query->additionalPoints = additonalPopints;
             mc = this->robot->robotMovement->moveToPoint(query);
             if (egoTarget->length() < catchRadius)
             {
