@@ -88,7 +88,7 @@ namespace alica
                 cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
                 this->setSuccess(true);
             }
-            else if (iR > MIN_ROTATIONS && abs(currentDiff) > MIN_BEARING_DIFF_FOR_REGRESSION)
+            else if (iR > MIN_ROTATIONS && fabs(currentDiff) > MIN_BEARING_DIFF_FOR_REGRESSION)
             {
                 // MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
                 cout
@@ -227,7 +227,7 @@ namespace alica
         // TODO
 
         double diff = a - b;
-        if (abs(diff) > M_PI)
+        if (fabs(diff) > M_PI)
         {
             diff = 2 * M_PI - diff;
             while (diff > M_PI)
