@@ -31,15 +31,15 @@
     <value xPos="190" yPos="53" width="93" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
     <key href="../../Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

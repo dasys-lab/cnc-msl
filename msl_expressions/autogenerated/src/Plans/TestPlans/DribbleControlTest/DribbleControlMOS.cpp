@@ -7,6 +7,7 @@ using namespace std;
 #include "MSLWorldModel.h"
 #include "math.h"
 #include "SystemConfig.h"
+#include "Ball.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -34,104 +35,45 @@ namespace alica
         // 4 changing translation angle
         // 5 increasing speed
         // default forth and back
-        /*        switch (testBehaviour)
-         {
-         case 1:
-
-         testSpeed = 0;
-         if (testCount >= 60)
-         {
-         testRot += M_PI / 3;
-         }
-         break;
-
-         case 2:
-         if (testCount2 >= 10)
-         {
-         testCount2 = 0;
-         testSpeed -= 1000;
-         testRot += M_PI / 3;
-         }
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testCount2++;
-         testSpeed += 100;
-         }
-         break;
-
-         case 3:
-
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testAngle += M_PI / 8;
-         }
-         break;
-
-         case 4:
-
-         if (testCount2 >= 2)
-         {
-         testCount2 = 0;
-         testRot += M_PI / 12;
-         }
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testCount2++;
-         testAngle += M_PI;
-         }
-         break;
-
-         case 5:
-
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testSpeed += 100;
-         testAngle += M_PI;
-         }
-         break;
-
-         default:
-
-         if (testCount >= 200)
-         {
-         testCount = 0;
-         testAngle += M_PI;
-         }
-         break;
-         }
-
-         //fill message for MotionControl as defined in switch
-         //drive only in time step 6-49
-         //pause in 1-5 and 50-60, repeat
-         msl_actuator_msgs::MotionControl motorMsg;
-         if (testCount < 50 && testCount > 5)
-         {
-         motorMsg.motion.angle = testAngle;
-         motorMsg.motion.rotation = testRot;
-         motorMsg.motion.translation = testSpeed;
-         }
-         else
-         {
-         motorMsg.motion.angle = 0;
-         motorMsg.motion.rotation = 0;
-         motorMsg.motion.translation = 0;
-         }
-         send(motorMsg);
-         testCount++;
-         */
         auto odom = wm->rawSensorData->getOwnVelocityMotion();
+
+        if (odom == nullptr)
+        {
+            cerr << "DribbleControlMOS: no odometry!" << endl;
+            return;
+        }
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        //auto robotRot = (double)odom->rotation / 1024.0;
         auto robotRot = (double)odom->rotation;
+        msl_actuator_msgs::BallHandleCmd msgback;
 
-        auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
-        auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
+        bool haveBall = wm->ball->haveBall();
+
+        if (!haveBall)
+        {
+            msgback.rightMotor = speedNoBall;
+            msgback.leftMotor = speedNoBall;
+            return;
+        }
+
+//		auto robotAngle = 0;
+//		auto robotVel = 0;
+//		auto robotRot = 1.5;
+
+        cout << "robotAngle odometry = " << robotAngle << endl;
+        cout << "robotVel odometry = " << robotVel << endl;
+        cout << "robotRot odometry = " << robotRot << endl;
+
+//	auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
+//	auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
+
+        double velX;
+        double velY;
+
+        getBallPath(robotVel, robotAngle, robotRot, velX, velY);
+        auto ballVel = getBallVelocity(velX, velX);
+        auto ballAngle = getBallAngle(velX, velY);
 
         cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
         cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
@@ -139,9 +81,8 @@ namespace alica
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
 
-        msl_actuator_msgs::BallHandleCmd msgback;
-        msgback.leftMotor = left;
-        msgback.rightMotor = right;
+        msgback.leftMotor = right;
+        msgback.rightMotor = left;
         cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
         send(msgback);
 
@@ -162,11 +103,16 @@ namespace alica
 
         velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
         staticUpperBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound", NULL);
+        staticMiddleBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticMiddleBound", NULL);
         staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
         staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX", NULL);
         rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot", NULL);
         epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT", NULL);
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
+        epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
+
+        speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+
         phi = M_PI / 6; //horizontal angle between y and arm
 
         //very static
@@ -179,31 +125,55 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
-    double DribbleControlMOS::getBallVelocity(double angle, double translation, double rotation)
+    void DribbleControlMOS::getBallPath(double translation, double angle, double rotation, double &velX, double &velY)
     {
-        double velX = -cos(angle) * translation;
-        double velY = -sin(angle) * translation + rotation * rBallRobot;
-        //correcting desired ball velocity towards robot to guarantee grib
-        if (velX <= staticUpperBound && velX >= staticLowerBound)
-            velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        double velXTemp = -cos(angle) * translation;
+        double velYTemp = -sin(angle) * translation;
 
+        //correcting desired ball velocity towards robot to guarantee grib
+        //			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        velX = velXTemp;
+
+        velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+        if (fabs(velYTemp) > 200)
+        {
+            velX = velX - epsilonRot * sign(velYTemp) * rBallRobot * rotation;
+        }
+        else
+        {
+            velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
+        }
+        velY = velYTemp + 3 / 4 * rBallRobot * rotation;
+        cout << "velX = " << velX << endl;
+        cout << "velY = " << velY << endl;
+        if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
+                && velYTemp >= staticMiddleBound && rotation <= 0.1 && rotation >= -0.1)
+        {
+            velX = 0;
+        }
+        else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound && velYTemp <= staticMiddleBound
+                && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
+        {
+            velX = -10;
+        }
+    }
+
+    double DribbleControlMOS::getBallVelocity(double velX, double velY)
+    {
         return sqrt(velX * velX + velY * velY);
     }
 
-    //returns values [pi,-pi[
-    double DribbleControlMOS::getBallAngle(double angle, double translation, double rotation)
+//returns values [pi,-pi[
+    double DribbleControlMOS::getBallAngle(double velX, double velY)
     {
-        double velX = -cos(angle) * translation;
-        double velY = -sin(angle) * translation + rotation * rBallRobot;
-        if (velX <= staticUpperBound && velX >= staticLowerBound)
-            velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        return atan2(velY, velX);
+    }
 
-        double ballAngle = 0;
-        ballAngle = atan2(velY, velX);
-
-        return ballAngle;
+    int DribbleControlMOS::sign(double x)
+    {
+        if (x == 0)
+            return x;
+        return x > 0 ? 1 : -1;
     }
 
     double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAngle)
@@ -220,41 +190,52 @@ namespace alica
 
         double angleConst = 0;
 
-        //linear interpolation of the constants in the 8 sectors
+//linear interpolation of the constants in the 8 sectors
 
         if (ballAngle <= sec1)
         {
+            // rotate right
+            cout << "sec0" << endl;
             angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
         }
         else if (ballAngle <= sec2)
         {
+            cout << "sec1" << endl;
             angleConst = (ballAngle - sec1) * sidewConst / (sec2 - sec1);
         }
         else if (ballAngle <= sec3)
         {
+            cout << "sec2" << endl;
             angleConst = sidewConst + (ballAngle - sec2) * (diagConst - sidewConst) / (sec3 - sec2);
         }
         else if (ballAngle <= sec4)
         {
+            cout << "sec3" << endl;
             angleConst = diagConst + (ballAngle - sec3) * (forwConst - diagConst) / (sec4 - sec3);
         }
         else if (ballAngle <= sec5)
         {
+            cout << "sec4" << endl;
             angleConst = forwConst + (ballAngle - sec4) * (-forwConst) / (sec5 - sec4);
         }
         else if (ballAngle <= sec6)
         {
+            cout << "sec5" << endl;
             angleConst = (ballAngle - sec5) * (-sidewConst) / (sec6 - sec5);
         }
         else if (ballAngle <= sec7)
         {
+            cout << "sec6" << endl;
             angleConst = -sidewConst + (ballAngle - sec6) * (sidewConst - diagConst) / (sec7 - sec6);
         }
         else if (ballAngle >= sec7)
         {
+            // rotate left
+            cout << "sec7" << endl;
             angleConst = -diagConst + (ballAngle - sec7) * (-forwConst + diagConst) / (sec8 - sec7);
         }
 
+        cout << "angleConst left = " << angleConst << endl;
         return ballVelocity * angleConst * velToInput;
     }
 
@@ -272,10 +253,11 @@ namespace alica
 
         double angleConst = 0;
 
-        //linear interpolation of the constants in the 8 sectors
+//linear interpolation of the constants in the 8 sectors
 
         if (ballAngle <= sec1)
         {
+            // rotate right
             angleConst = -forwConst + (ballAngle - sec0) * (-diagConst + forwConst) / (sec1 - sec0);
         }
         else if (ballAngle <= sec2)
@@ -304,9 +286,11 @@ namespace alica
         }
         else if (ballAngle >= sec7)
         {
+            // rotate left
             angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
         }
 
+        cout << "angleConst right = " << angleConst << endl;
         return ballVelocity * angleConst * velToInput;
     }
 
