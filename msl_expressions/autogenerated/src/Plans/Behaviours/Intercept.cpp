@@ -41,6 +41,8 @@ namespace alica
         pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
         pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
+        minDistErr = (*sc)["Drive"]->get<double>("Drive.Intercept.minDistErr", NULL);
+
         maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
         query = make_shared<msl::MovementQuery>();
@@ -142,11 +144,11 @@ namespace alica
         }
 //		}
         // PID controller for minimizing the distance between ball and me
-        double distErr = max(egoPredBall->length(), 1000.0);
+        double distErr = max(egoPredBall->length(), minDistErr);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
-        distIntErr += distErr;
-//      distIntErr = max(-1500.0, min(1500.0, distIntErr));
+        distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
+        distIntErr = max (0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
         lastDistErr = distErr;
 
         shared_ptr < geometry::CNPoint2D > egoVelocity;
