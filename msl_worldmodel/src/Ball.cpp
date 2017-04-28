@@ -355,7 +355,7 @@ void Ball::updateBallPossession()
     {
         this->selfInBallPossesion = false;
     }
-    else if (myEgoBall->length() < 450 /*in c# before: 400 changed for simulator*/
+    else if (myEgoBall->length() < 450
              || (this->selfInBallPossesion && myEgoBall->length() < 600))
     {
         if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
@@ -487,6 +487,11 @@ int Ball::getSharedBallSupporter()
     return sharedBallSupporters;
 }
 
+BallPossessionStatus Ball::getBallPossessionStatus()
+{
+	return this->ballPossessionStatus;
+}
+
 void Ball::updateHaveBall()
 {
     if (hasBallIteration > 0)
@@ -505,6 +510,7 @@ void Ball::updateHaveBall()
     {
         // if you don't see the ball, further pretend that you have it for at most 2 iterations
         hasBallIteration = max(min(--hasBallIteration, 2), 0);
+        this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
 
         // cout << "Ball: NullPointer check failed!" << endl;
         return;
@@ -518,6 +524,7 @@ void Ball::updateHaveBall()
     {
         // if you lost the ball, further pretend that you have it for at most 2 iterations
         hasBallIteration = max(min(--hasBallIteration, 2), 0);
+        this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
         //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
         return;
     }
@@ -527,6 +534,7 @@ void Ball::updateHaveBall()
     {
         // if you lost the ball, further pretend that you have it for at most 2 iterations
         hasBallIteration = max(min(--hasBallIteration, 2), 0);
+        this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
         // cout << "Ball: Angle Tolerance check failed!" << endl;
         return;
     }
@@ -538,6 +546,7 @@ void Ball::updateHaveBall()
         {
             // if you lost the ball, further pretend that you have it for at most 2 iterations
             hasBallIteration = max(min(--hasBallIteration, 2), 0);
+            this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
             // cout << "Ball: Angle Tolerance check failed!" << endl;
             return;
         }
@@ -561,6 +570,7 @@ void Ball::updateHaveBall()
     //			return;
     //		}
 
+    this->ballPossessionStatus = BallPossessionStatus::HaveBall;
     hasBallIteration = max(min(++hasBallIteration, 2), 0);
 }
 
@@ -809,6 +819,7 @@ Velocity Ball::allo2Ego(Velocity vel, Position pos)
     return ego;
 }
 
+// to be removed because it is only used in Intercept for setting success and in own corner behaviour
 bool Ball::haveBallDribble(bool hadBefore)
 {
     bool ret = (simpleHaveBallDribble(hadBefore) && (hadBefore || this->hasBallIteration > 4));

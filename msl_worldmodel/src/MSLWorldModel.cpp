@@ -352,6 +352,9 @@ void MSLWorldModel::sendSharedWorldModelData()
     }
     msl_sensor_msgs::SharedWorldInfo msg;
     msg.senderID = this->ownID;
+    msg.ownGoalIsYellow = this->game->ownGoalColor == Color::Yellow;
+    msg.ownTeamIsMagenta = this->game->ownTeamColor == Color::Magenta;
+    msg.ballPossessionStatus = this->ball->getBallPossessionStatus();
     auto ball = this->ball->getVisionBallPositionAndCertaincy();
     auto pos = rawSensorData->getOwnPositionVision();
     if (pos == nullptr)
@@ -419,21 +422,20 @@ void MSLWorldModel::sendSharedWorldModelData()
     }
 
     auto obs = obstacles->getEgoVisionObstacles();
-    {
-        if (obs != nullptr)
-        {
-            msg.obstacles.reserve(obs->size());
-            for (auto &x : *obs)
-            {
-                shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
-                auto p = point->egoToAllo(*pos);
-                msl_msgs::Point2dInfo info;
-                info.x = p->x;
-                info.y = p->y;
-                msg.obstacles.push_back(info);
-            }
-        }
-    }
+	if (obs != nullptr)
+	{
+		msg.obstacles.reserve(obs->size());
+		for (auto &x : *obs)
+		{
+			shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
+			auto p = point->egoToAllo(*pos);
+			msl_msgs::Point2dInfo info;
+			info.x = p->x;
+			info.y = p->y;
+			msg.obstacles.push_back(info);
+		}
+	}
+
     if (ownPos != nullptr)
     {
         msg.participating = true;
