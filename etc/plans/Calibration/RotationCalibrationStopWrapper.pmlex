@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="RotationCalibrationStopWrapper.pml#1491404851816"/>
+    <value xPos="90" yPos="89" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationStopWrapper.pml#1491404851815"/>
+    <value width="464" height="357"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationStopWrapper.pml#1491404851817"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347588"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationStopWrapper.pml#1491404930441"/>
+    <value xPos="174" yPos="15"/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
