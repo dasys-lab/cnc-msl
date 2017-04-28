@@ -2,16 +2,16 @@
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1436268896671" name="PassPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1436268896672" name="Dribble" comment="" entryPoint="1436268896674">
     <plans xsi:type="alica:BehaviourConfiguration">SearchForPassPoint.beh#1436269036396</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:Plan">Dribble.pml#1434049476066</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1493396908662</plans>
     <inTransitions>#1436268944412</inTransitions>
     <outTransitions>#1436268942088</outTransitions>
   </states>
   <states id="1436268931449" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">AlignAndPassRapid.beh#1436269080263</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1436268942088</inTransitions>
     <outTransitions>#1436268944412</outTransitions>
   </states>

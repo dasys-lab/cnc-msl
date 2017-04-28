@@ -470,6 +470,8 @@ namespace alica
 
             case 1435156811453:
 
+            case 1493396908662:
+
                 return make_shared<ShovelSelect>();
                 break;
 
