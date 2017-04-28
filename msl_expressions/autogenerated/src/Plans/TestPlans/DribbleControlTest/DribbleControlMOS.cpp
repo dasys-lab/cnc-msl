@@ -48,18 +48,22 @@ namespace alica
         auto robotRot = (double)odom->rotation;
         msl_actuator_msgs::BallHandleCmd msgback;
 
+	cout << "Angle odometry = " << robotAngle << endl;
+	cout << "translation odometry = " << robotVel << endl;
+	cout << "rotation odometry = " << robotRot << endl;
+
         bool haveBall = wm->ball->haveBall();
 
-        if (!haveBall)
-        {
-            msgback.rightMotor = -speedNoBall;
-            msgback.leftMotor = -speedNoBall;
-            send(msgback);
-	    return;
-        }
+//        if (!haveBall)
+//        {
+//            msgback.rightMotor = -speedNoBall;
+//            msgback.leftMotor = -speedNoBall;
+//            send(msgback);
+//	    return;
+ //       }
 
 //		auto robotAngle = 0;
-//		auto robotVel = 0;
+//		auto robotVel = 1000;
 //		auto robotRot = 1.5;
 
         cout << "robotAngle odometry = " << robotAngle << endl;
@@ -144,7 +148,9 @@ namespace alica
         {
             velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
         }
-        velY = velYTemp + 3 / 4 * rBallRobot * rotation;
+        cout << "velY = " << velXTemp << "+ 3/4 * " << rBallRobot << " * " << rotation;
+        velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
+	
         cout << "velX = " << velX << endl;
         cout << "velY = " << velY << endl;
         if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
