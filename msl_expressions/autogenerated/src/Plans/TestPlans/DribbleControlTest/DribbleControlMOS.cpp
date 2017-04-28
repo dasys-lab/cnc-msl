@@ -58,8 +58,8 @@ void DribbleControlMOS::run(void* msg) {
 	auto left = getLeftArmVelocity(ballVel, ballAngle);
 
 	msl_actuator_msgs::BallHandleCmd msgback;
-	msgback.leftMotor = right;
-	msgback.rightMotor = left;
+	msgback.leftMotor = left;
+	msgback.rightMotor = right;
 	cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: "
 			<< msgback.rightMotor << endl;
 	send(msgback);
