@@ -64,4 +64,8 @@
     <key href="../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1493396908662"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
