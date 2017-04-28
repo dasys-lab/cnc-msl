@@ -138,6 +138,7 @@ namespace alica
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
             send(mc);
+            return;
         }
 //		}
         // PID controller for minimizing the distance between ball and me
@@ -204,9 +205,9 @@ namespace alica
         {
             controlRot *= 2.3;
             //we probably translate to fast and cannot rotate anymore: So translate slower
-            if (abs(rotErr) > M_PI / 6)
+            if (fabs(rotErr) > M_PI / 6)
             {
-                mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+                mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
             }
         }
         mc.motion.rotation = controlRot;
