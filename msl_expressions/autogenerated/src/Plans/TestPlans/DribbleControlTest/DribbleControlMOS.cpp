@@ -127,7 +127,8 @@ namespace alica
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        auto robotRot = (double)odom->rotation / 1024.0;
+        //auto robotRot = (double)odom->rotation / 1024.0;
+        auto robotRot = (double)odom->rotation;
 
         auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
         auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
