@@ -19,7 +19,7 @@ RefBox::RefBox()
 void RefBox::initPlugin(qt_gui_cpp::PluginContext &context)
 {
     // used to enable colored buttons
-    QApplication::setStyle(new QPlastiqueStyle);
+    //QApplication::setStyle(new QPlastiqueStyle);
     widget_ = new QWidget();
     setupUi(widget_);
     if (context.serialNumber() > 1)
@@ -74,7 +74,9 @@ void RefBox::initPlugin(qt_gui_cpp::PluginContext &context)
     this->tbl_info->verticalHeader()->setVisible(false);
     this->tbl_info->horizontalHeader()->setVisible(false);
     this->tbl_info->verticalHeader()->setDefaultSectionSize(16);
-    this->tbl_info->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    //this->tbl_info->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    this->tbl_info->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
 
     QTableWidgetItem *item = new QTableWidgetItem();
     item->setText("Team");

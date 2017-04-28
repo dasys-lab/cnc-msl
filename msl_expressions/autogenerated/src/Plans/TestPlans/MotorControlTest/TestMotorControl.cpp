@@ -25,7 +25,6 @@ namespace alica
     void TestMotorControl::run(void* msg)
     {
         /*PROTECTED REGION ID(run1482163964536) ENABLED START*/ //Add additional options here
-
         if (wm->getTime() < startTime + 1000000000)
 
         {

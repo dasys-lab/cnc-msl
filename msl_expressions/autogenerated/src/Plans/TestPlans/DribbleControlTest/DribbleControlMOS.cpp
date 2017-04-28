@@ -65,8 +65,8 @@ void DribbleControlMOS::run(void* msg) {
 	auto ballVel = getBallVelocity(velX, velX);
 	auto ballAngle = getBallAngle(velX, velY);
 
-	cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
-	cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
+        cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
+        cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
 
 	auto right = getRightArmVelocity(ballVel, ballAngle);
 	auto left = getLeftArmVelocity(ballVel, ballAngle);
@@ -79,6 +79,7 @@ void DribbleControlMOS::run(void* msg) {
 
 //        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
 //                << ballAngle << "  " << left << " " << right << endl;
+
 
 	/*PROTECTED REGION END*/
 }
@@ -273,6 +274,7 @@ double DribbleControlMOS::getRightArmVelocity(double ballVelocity,
 	cout << "angleConst right = " << angleConst << endl;
 	return ballVelocity * angleConst * velToInput;
 }
+
 
 /*PROTECTED REGION END*/
 } /* namespace alica */

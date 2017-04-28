@@ -152,9 +152,11 @@ namespace alica
 
 //        cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
 //        cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
-        bhc.leftMotor = (int)-max(-10000.0, min(10000.0, speed + l + orthoL));
-        bhc.rightMotor = (int)-max(-10000.0, min(10000.0, speed + r + orthoR));
+//        bhc.leftMotor = (int)-max(-10000.0, min(10000.0, speed + l + orthoL));
+//        bhc.rightMotor = (int)-max(-10000.0, min(10000.0, speed + r + orthoR));
 
+        bhc.rightMotor = (int)-max(-10000.0, min(10000.0, speed + l + orthoL));
+        bhc.leftMotor = (int)-max(-10000.0, min(10000.0, speed + r + orthoR));
         hadBefore = haveBall;
         if (!hadBefore)
         {
