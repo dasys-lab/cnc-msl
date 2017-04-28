@@ -89,9 +89,9 @@ namespace alica
 
             this->query->egoDestinationPoint = egoTarget;
             this->query->egoAlignPoint = egoBallPos;
-            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-            additonalPopints->push_back(alloBall);
-            this->query->additionalPoints = additonalPopints;
+//            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//            additonalPopints->push_back(alloBall);
+//            this->query->additionalPoints = additonalPopints;
             mc = this->robot->robotMovement->moveToPoint(query);
             if (egoTarget->length() < catchRadius)
             {
@@ -128,7 +128,8 @@ namespace alica
             }
         }
 
-        predBall->alloToEgo(*predPos);
+
+        auto egoPredBall = predBall->alloToEgo(*predPos);
         //TODO dirty fix to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos->getPoint()))
         {
@@ -137,10 +138,11 @@ namespace alica
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
             send(mc);
+            return;
         }
 //		}
         // PID controller for minimizing the distance between ball and me
-        double distErr = max(predBall->length(), 1000.0);
+        double distErr = max(egoPredBall->length(), 1000.0);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr;
@@ -158,11 +160,11 @@ namespace alica
             egoVelocity = egoBallVel->getPoint();
         }
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
-        egoVelocity->x += controlDist * cos(predBall->angleTo());
-        egoVelocity->y += controlDist * sin(predBall->angleTo());
+        egoVelocity->x += controlDist * cos(egoPredBall->angleTo());
+        egoVelocity->y += controlDist * sin(egoPredBall->angleTo());
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
-        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
+        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoPredBall->length());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
         if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
         {
@@ -203,9 +205,9 @@ namespace alica
         {
             controlRot *= 2.3;
             //we probably translate to fast and cannot rotate anymore: So translate slower
-            if (abs(rotErr) > M_PI / 6)
+            if (fabs(rotErr) > M_PI / 6)
             {
-                mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+                mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
             }
         }
         mc.motion.rotation = controlRot;
