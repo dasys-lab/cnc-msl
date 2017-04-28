@@ -1,0 +1,1451 @@
+
+
+*******************************************************************************
+Wed Feb  1 19:05:23 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 2
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 43934             delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 102.594
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 6.40949e-31
+abs. change during last iteration : -8.63919e-22
+
+
+Exactly as many data points as there are parameters.
+In this degenerate case, all errors are zero by definition.
+
+Final set of parameters 
+======================= 
+
+a               = -0.082767      
+b               = 9.88752        
+
+
+*******************************************************************************
+Wed Feb  1 19:05:45 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 58177.7           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 96.9314
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 0.085425
+rel. change during last iteration : -6.70943e-14
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.292276
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.085425
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.121911        +/- 0.01327      (10.89%)
+b               = 15.6018          +/- 1.82         (11.66%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.996  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:06:04 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 55161             delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 94.1205
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 5.00987
+rel. change during last iteration : -3.02326e-07
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.23827
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.00987
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.093615        +/- 0.1004       (107.3%)
+b               = 11.021           +/- 13.37        (121.3%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.995  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:06:24 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 69947.2           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 91.5237
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 9.66525
+rel. change during last iteration : -4.97467e-09
+
+degrees of freedom    (FIT_NDF)                        : 2
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.19832
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.83262
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.0454678       +/- 0.08557      (188.2%)
+b               = 4.10217          +/- 11.08        (270%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.995  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:06:45 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 54398.2           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 81.1269
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 9.20249
+rel. change during last iteration : -6.06772e-09
+
+degrees of freedom    (FIT_NDF)                        : 2
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.14505
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.60125
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.102716        +/- 0.07563      (73.63%)
+b               = 10.9865          +/- 8.677        (78.98%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.992  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:07:07 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 5
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 66038.8           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 80.0587
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 9.20606
+rel. change during last iteration : -4.44763e-09
+
+degrees of freedom    (FIT_NDF)                        : 3
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.75177
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.06869
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.103163        +/- 0.06036      (58.51%)
+b               = 11.0505          +/- 6.834        (61.84%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.993  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:07:27 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 5
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 62866             delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 78.2922
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 10.6354
+rel. change during last iteration : -7.01324e-09
+
+degrees of freedom    (FIT_NDF)                        : 3
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.88285
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.54514
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.142267        +/- 0.06692      (47.04%)
+b               = 15.4537          +/- 7.409        (47.95%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.994  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:24:59 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 2
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 55506.4           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 116.728
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 3.08149e-31
+abs. change during last iteration : -1.28653e-20
+
+
+Exactly as many data points as there are parameters.
+In this degenerate case, all errors are zero by definition.
+
+Final set of parameters 
+======================= 
+
+a               = 0.0386689      
+b               = -6.90391       
+
+
+*******************************************************************************
+Wed Feb  1 19:25:18 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 87741.9           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 119.986
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 2.36838e-06
+rel. change during last iteration : -2.47622e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00153896
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.36838e-06
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0384856        +/- 0.0001173    (0.3047%)
+b               = -6.874           +/- 0.0199       (0.2895%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -0.999  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:25:38 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 93843.4           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 124.286
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 0.000181682
+rel. change during last iteration : -3.43079e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.013479
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000181682
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0393897        +/- 0.001925     (4.887%)
+b               = -7.02652         +/- 0.3383       (4.815%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:25:58 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 126028            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 124.752
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 0.000359163
+rel. change during last iteration : -1.30489e-06
+
+degrees of freedom    (FIT_NDF)                        : 2
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0134008
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000179581
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0387935        +/- 0.001817     (4.685%)
+b               = -6.92541         +/- 0.3206       (4.63%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:26:17 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 128900            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.23
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 9.02169e-05
+rel. change during last iteration : -3.39033e-11
+
+degrees of freedom    (FIT_NDF)                        : 2
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00671628
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.51085e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.142719         +/- 0.04095      (28.69%)
+b               = -25.4764         +/- 7.309        (28.69%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:26:37 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 5
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 161126            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.229
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 0.000176905
+rel. change during last iteration : -1.80036e-11
+
+degrees of freedom    (FIT_NDF)                        : 3
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00767909
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.89685e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.144884         +/- 0.04678      (32.29%)
+b               = -25.8649         +/- 8.351        (32.29%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:26:56 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 5
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 161133            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.227
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 0.00155102
+rel. change during last iteration : -1.87283e-12
+
+degrees of freedom    (FIT_NDF)                        : 3
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0227378
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000517007
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.133206         +/- 0.1403       (105.3%)
+b               = -23.7873         +/- 25.05        (105.3%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:27:15 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 6
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 193393            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.235
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 4 iterations the fit converged.
+final sum of squares of residuals : 0.00259852
+rel. change during last iteration : -7.62749e-06
+
+degrees of freedom    (FIT_NDF)                        : 4
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0254878
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000649629
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.00563861      +/- 0.1474       (2615%)
+b               = 0.99357          +/- 26.32        (2649%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:27:35 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 6
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 192570            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 125.953
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00147451
+rel. change during last iteration : -1.42368e-12
+
+degrees of freedom    (FIT_NDF)                        : 4
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0191997
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000368628
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0264738        +/- 0.009149     (34.56%)
+b               = -4.74512         +/- 1.63         (34.34%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:27:54 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 7
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 225046            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.066
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00197702
+rel. change during last iteration : -5.88546e-13
+
+degrees of freedom    (FIT_NDF)                        : 5
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0198848
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000395404
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0312016        +/- 0.008497     (27.23%)
+b               = -5.58412         +/- 1.515        (27.13%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:28:14 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 7
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 225246            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.125
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00209295
+rel. change during last iteration : -4.55656e-13
+
+degrees of freedom    (FIT_NDF)                        : 5
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0204595
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00041859
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0324243        +/- 0.008429     (25.99%)
+b               = -5.80079         +/- 1.503        (25.92%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:28:33 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 8
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 257600            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.173
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00293542
+rel. change during last iteration : -3.008e-13
+
+degrees of freedom    (FIT_NDF)                        : 6
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0221187
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000489237
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0348623        +/- 0.008921     (25.59%)
+b               = -6.23184         +/- 1.592        (25.54%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:28:53 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 8
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 257674            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.194
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00380414
+rel. change during last iteration : -2.41571e-13
+
+degrees of freedom    (FIT_NDF)                        : 6
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0251798
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000634023
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0363168        +/- 0.01008      (27.76%)
+b               = -6.48893         +/- 1.799        (27.72%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:29:13 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 289943            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.21
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00527093
+rel. change during last iteration : -1.7772e-13
+
+degrees of freedom    (FIT_NDF)                        : 7
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0274407
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00075299
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.037565         +/- 0.01095      (29.15%)
+b               = -6.70718         +/- 1.954        (29.14%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:29:33 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 289933            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.214
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00829208
+rel. change during last iteration : -9.83252e-14
+
+degrees of freedom    (FIT_NDF)                        : 7
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0344178
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00118458
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0381731        +/- 0.01373      (35.97%)
+b               = -6.80804         +/- 2.451        (36%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:29:53 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 10
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 322099            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.204
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00830229
+rel. change during last iteration : -1.19934e-13
+
+degrees of freedom    (FIT_NDF)                        : 8
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0322147
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00103779
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0382412        +/- 0.01283      (33.56%)
+b               = -6.82054         +/- 2.29         (33.58%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:34:22 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 2
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 67912.7           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 129.702
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 1.14834e-31
+abs. change during last iteration : -1.10584e-19
+
+
+Exactly as many data points as there are parameters.
+In this degenerate case, all errors are zero by definition.
+
+Final set of parameters 
+======================= 
+
+a               = 0.0347482      
+b               = -6.22457       
+
+
+*******************************************************************************
+Wed Feb  1 19:34:42 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 100358            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 128.699
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 4.28168e-05
+rel. change during last iteration : -9.33534e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00654346
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.28168e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0343427        +/- 0.0008318    (2.422%)
+b               = -6.14782         +/- 0.1514       (2.463%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:35:01 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 100585            delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 128.851
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 1.77714e-05
+rel. change during last iteration : -3.20294e-14
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00421561
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.77714e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0341109        +/- 0.0005562    (1.631%)
+b               = -6.1045          +/- 0.1014       (1.66%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:35:20 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 97228.9           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.6
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 4 iterations the fit converged.
+final sum of squares of residuals : 0.000215868
+rel. change during last iteration : -5.04995e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0146925
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000215868
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.0055035       +/- 0.1167       (2120%)
+b               = 0.99457          +/- 20.88        (2100%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:35:40 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 97778.8           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.974
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.000264251
+rel. change during last iteration : -2.8424e-10
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0162558
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000264251
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0353471        +/- 0.01151      (32.56%)
+b               = -6.31709         +/- 2.067        (32.72%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:35:59 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 97672.8           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.904
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.00013189
+rel. change during last iteration : -2.89683e-10
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0114844
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00013189
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0346013        +/- 0.007443     (21.51%)
+b               = -6.18091         +/- 1.336        (21.61%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:36:19 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 97566.6           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.827
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 1.09374e-05
+rel. change during last iteration : -2.42914e-09
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00330718
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.09374e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0390905        +/- 0.001982     (5.071%)
+b               = -6.99312         +/- 0.3555       (5.084%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:36:38 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 96937             delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.396
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 2.57989e-05
+rel. change during last iteration : -6.56379e-13
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00507927
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.57989e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0134722        +/- 0.02663      (197.7%)
+b               = -2.41639         +/- 4.76         (197%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 
+
+
+*******************************************************************************
+Wed Feb  1 19:36:58 2017
+
+
+FIT:    data read from "/home/cn/cnws/src/cnc-msl//log/temp/RotationCalibration.log" u 1:2
+        format = x:z
+        #datapoints = 3
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 97154.6           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 126.548
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 8 iterations the fit converged.
+final sum of squares of residuals : 0.000107353
+rel. change during last iteration : -1.17399e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0103611
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000107353
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0709061        +/- 0.01982      (27.95%)
+b               = -12.684          +/- 3.547        (27.97%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b              -1.000  1.000 

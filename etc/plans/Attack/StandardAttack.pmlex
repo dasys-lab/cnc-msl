@@ -71,10 +71,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
@@ -130,10 +126,6 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/GoalieExtension.beh#1459249287791"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../Behaviours/DefendGoal.beh#1459249336699"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

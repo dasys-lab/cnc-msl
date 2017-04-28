@@ -5,6 +5,8 @@ using namespace std;
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
+#include "MSLWorldModel.h"
+#include "Game.h"
 
 #include <iostream>
 /*PROTECTED REGION END*/
@@ -16,7 +18,12 @@ namespace alica
             DomainBehaviour("ShovelSelect")
     {
         /*PROTECTED REGION ID(con1434199834892) ENABLED START*/ //Add additional options here
+        /*
+         * IF UNCERTAIN IS SET, THE VALUE OF PASSING IS IGNORED!!!
+         *
+         */
         passing = false;
+        uncertain = false;
         /*PROTECTED REGION END*/
     }
     ShovelSelect::~ShovelSelect()
@@ -28,7 +35,23 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1434199834892) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::ShovelSelectCmd ssc = msl_actuator_msgs::ShovelSelectCmd();
-        ssc.passing = this->passing;
+
+        if (!uncertain)
+        {
+            ssc.passing = this->passing;
+        }
+        else
+        {
+            if (wm->game->isMayScore())
+            {
+                ssc.passing = false;
+            }
+            else
+            {
+                ssc.passing = true;
+            }
+        }
+
         send(ssc);
         /*        auto lb = wm->rawSensorData.getLightBarrier();
          if (lb)
@@ -54,6 +77,16 @@ namespace alica
         string tmp;
         try
         {
+            if (getParameter("uncertain", tmp))
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                std::istringstream is(tmp);
+                is >> std::boolalpha >> uncertain;
+            }
+            else
+            {
+                cerr << "SS: Parameter does not exist Uncertain" << endl;
+            }
             if (getParameter("passing", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);

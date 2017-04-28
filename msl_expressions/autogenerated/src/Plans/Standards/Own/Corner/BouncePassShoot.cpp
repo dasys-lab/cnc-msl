@@ -68,11 +68,8 @@ namespace alica
         auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
         auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, 0);
 
-        //this might only need to be WorldHelper.HaveBall
         if (!wm->ball->haveBallDribble(false))
         {
-            // removed method with new  moveToPoint method with Query-Object
-//            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoMatePos;
             mc = rm.moveToPoint(query);
