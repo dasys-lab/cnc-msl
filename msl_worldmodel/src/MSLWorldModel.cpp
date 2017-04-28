@@ -146,8 +146,8 @@ namespace msl
 	{
 		if (msg->receiverID == this->ownID)
 		{
-			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(
-					msg->worldModel);
+			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared < msl_sensor_msgs::WorldModelData
+					> (msg->worldModel);
 			onWorldModelData(wmsim);
 		}
 	}
@@ -159,8 +159,10 @@ namespace msl
 
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 	{
-		if (this->timeLastSimMsgReceived == 0)
+		if (this->timeLastSimMsgReceived == 0) {
 			cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
+			return;
+		}
 
 		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
@@ -507,7 +509,7 @@ namespace msl
 //		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
-		return motion->get<double>("Motion","MotionControl","RobotRadius",NULL);
+		return motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
 	}
 
 	void msl::MSLWorldModel::setRobotRadius(double newRadius)
@@ -516,7 +518,7 @@ namespace msl
 //		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
-		motion->set(boost::lexical_cast<string>(newRadius),"Motion.MotionControl.RobotRadius",NULL);
+		motion->set(boost::lexical_cast < string > (newRadius), "Motion.MotionControl.RobotRadius", NULL);
 		motion->store();
 	}
 
@@ -532,7 +534,7 @@ namespace msl
 		// cout << "killing motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
-		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
+		int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
 		std::vector<int> ownRobotId;
 		ownRobotId.push_back(this->getOwnId());
 		std::vector<int> pKeys;
@@ -553,7 +555,7 @@ namespace msl
 		// cout << "starting motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
-		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
+		int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
 		std::vector<int> ownRobotId;
 		ownRobotId.push_back(this->getOwnId());
 		std::vector<int> pKeys;
