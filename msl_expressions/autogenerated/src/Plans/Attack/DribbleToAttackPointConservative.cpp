@@ -48,7 +48,7 @@ namespace alica
             this->setSuccess(true);
         }
 
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
+        shared_ptr<geometry::CNPoint2D> pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
         query->dribble = true;
 
@@ -59,7 +59,10 @@ namespace alica
         {
             send(tmpMC);
         }
-        send(bm);
+        else
+        {
+            send(bm);
+        }
         /*PROTECTED REGION END*/
     }
     void DribbleToAttackPointConservative::initialiseParameters()
@@ -84,13 +87,13 @@ namespace alica
 
         if (ownPos->x < wm->field->getFieldLength() / 6.0)
         {
-            currentTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 6.0 - 1500, 0);
+            currentTarget = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 6.0 - 1500, 0);
             //} else if (ownPos.X < field.FieldLength/2.0) {
             //	currentTarget = new Point2D(field.FieldLength/2.0,0);
         }
         else
         {
-            currentTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 4.0 - 1500, 0);
+            currentTarget = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 4.0 - 1500, 0);
         }
         currentTarget->y = attackPosY.at(index);
         if (currentTarget->alloToEgo(*ownPos)->length() < 1500)
