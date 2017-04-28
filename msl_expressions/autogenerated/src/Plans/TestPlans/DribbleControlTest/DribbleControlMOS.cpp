@@ -36,14 +36,14 @@ namespace alica
         // 5 increasing speed
         // default forth and back
         auto odom = wm->rawSensorData->getOwnVelocityMotion();
-
-        if (odom == nullptr)
+        
+	if (odom == nullptr)
         {
             cerr << "DribbleControlMOS: no odometry!" << endl;
             return;
         }
-
-        auto robotAngle = odom->angle;
+        
+	auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
         auto robotRot = (double)odom->rotation;
         msl_actuator_msgs::BallHandleCmd msgback;
@@ -52,9 +52,10 @@ namespace alica
 
         if (!haveBall)
         {
-            msgback.rightMotor = speedNoBall;
-            msgback.leftMotor = speedNoBall;
-            return;
+            msgback.rightMotor = -speedNoBall;
+            msgback.leftMotor = -speedNoBall;
+            send(msgback);
+	    return;
         }
 
 //		auto robotAngle = 0;
