@@ -36,6 +36,7 @@ void DribbleControlMOS::run(void* msg) {
 	if (odom == nullptr)
 	{
 		cerr << "DribbleControlMOS: no odometry!" << endl;
+
 		return;
 	}
 
@@ -50,6 +51,7 @@ void DribbleControlMOS::run(void* msg) {
 	{
 		msgback.rightMotor = speedNoBall;
 		msgback.leftMotor = speedNoBall;
+		send(msgback);
 		return;
 	}
 
