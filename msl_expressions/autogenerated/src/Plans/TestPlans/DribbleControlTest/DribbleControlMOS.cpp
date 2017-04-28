@@ -115,6 +115,7 @@ namespace alica
         epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT", NULL);
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
         epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
+        velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
 
         speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
 
@@ -150,7 +151,8 @@ namespace alica
         }
         cout << "velY = " << velXTemp << "+ 3/4 * " << rBallRobot << " * " << rotation;
         velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
-	
+        velY = velY * velYFactor;
+
         cout << "velX = " << velX << endl;
         cout << "velY = " << velY << endl;
         if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound

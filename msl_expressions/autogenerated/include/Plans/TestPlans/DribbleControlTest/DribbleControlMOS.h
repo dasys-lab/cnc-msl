@@ -50,6 +50,7 @@ namespace alica
         double sidewConst;
         double diagConst;
         double phi;
+        double velYFactor;
 
         supplementary::SystemConfig* sc;
 
