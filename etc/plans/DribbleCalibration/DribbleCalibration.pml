@@ -23,7 +23,6 @@
     <outTransitions>#1485356843859</outTransitions>
   </states>
   <states id="1469108996737" name="Calibration Rotation Right" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleCalibration.beh#1485355250017</plans>
     <inTransitions>#1485356843859</inTransitions>
