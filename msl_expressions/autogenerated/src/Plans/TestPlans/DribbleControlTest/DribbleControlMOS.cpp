@@ -137,7 +137,10 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 			&& velYTemp <= staticUpperBound && velYTemp >= staticMiddleBound
 			&& rotation <= 0.1 && rotation >= -0.1) {
 		velX = 0;
-		velY = 0;
+	} else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound
+			&& velYTemp <= staticMiddleBound && velYTemp >= staticLowerBound
+			&& rotation <= 0.1 && rotation >= -0.1) {
+		velX = -10;
 	}
 }
 
