@@ -49,7 +49,7 @@ void DribbleControlMOS::run(void* msg) {
 
 	getBallPath(robotVel, robotAngle, robotRot, velX, velY);
 	auto ballVel = getBallVelocity(velX, velX);
-	auto ballAngle = getBallAngle(velX,velY);
+	auto ballAngle = getBallAngle(velX, velY);
 
 	cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
 	cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
@@ -99,7 +99,7 @@ void DribbleControlMOS::initialiseParameters() {
 	epsilonRot = (*sc)["DribbleAlround"]->get<double>(
 			"DribbleAlround.epsilonRot", NULL);
 	epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY",
-			NULL);
+	NULL);
 
 	phi = M_PI / 6; //horizontal angle between y and arm
 
@@ -114,27 +114,30 @@ void DribbleControlMOS::initialiseParameters() {
 	/*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
-void DribbleControlMOS::getBallPath(double translation, double angle, double rotation, double &velX, double &velY) {
-	velX = -cos(angle) * translation;
-	velY = -sin(angle) * translation + rotation * rBallRobot;
+void DribbleControlMOS::getBallPath(double translation, double angle,
+		double rotation, double &velX, double &velY) {
+	double velXTemp = -cos(angle) * translation;
+	double velYTemp = -sin(angle) * translation;
 
-	if (velX <= staticUpperBound && velX >= staticMiddleBound)
+	//correcting desired ball velocity towards robot to guarantee grib
+	//			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+	cout << "epsilonY = " << epsilonY << endl;
+	velX = velXTemp;
+
+	velX = velX - (epsilonT * velXTemp * sign(velXTemp))
+			- epsilonY * velYTemp * sign(velYTemp);
+	if (fabs(velYTemp) > 200) {
+		velX = velX - epsilonRot * sign(velYTemp) * rBallRobot * rotation;
+	} else {
+		velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
+	}
+	velY = velYTemp + 3 / 4 * rBallRobot * rotation;
+
+	if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound
+			&& velYTemp <= staticUpperBound && velYTemp >= staticMiddleBound
+			&& rotation <= 0.1 && rotation >= -0.1) {
 		velX = 0;
-	else if (velX < staticMiddleBound && velX >= staticLowerBound)
-		velX = -10; //value shortly under zero
-	else {
-		//correcting desired ball velocity towards robot to guarantee grib
-		//			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
-
-		velX = velX
-				- (epsilonT * velX * sign(velX)) - epsilonY * velY * sign(velY);
-		if(fabs(velY)>200) {
-				velX = velX - epsilonRot * sign(velY) * rBallRobot * rotation;
-		}
-		else {
-			velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
-		}
-		velY = velY + 3 / 4 * rBallRobot * rotation;
+		velY = 0;
 	}
 }
 
@@ -167,7 +170,7 @@ double DribbleControlMOS::getLeftArmVelocity(double ballVelocity,
 
 	double angleConst = 0;
 
-	//linear interpolation of the constants in the 8 sectors
+//linear interpolation of the constants in the 8 sectors
 
 	if (ballAngle <= sec1) {
 		// rotate right
@@ -220,7 +223,7 @@ double DribbleControlMOS::getRightArmVelocity(double ballVelocity,
 
 	double angleConst = 0;
 
-	//linear interpolation of the constants in the 8 sectors
+//linear interpolation of the constants in the 8 sectors
 
 	if (ballAngle <= sec1) {
 		// rotate right
