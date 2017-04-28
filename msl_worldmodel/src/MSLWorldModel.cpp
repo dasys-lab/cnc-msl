@@ -147,8 +147,8 @@ namespace msl
 	{
 		if (msg->receiverID == this->ownID)
 		{
-			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(
-					msg->worldModel);
+			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared < msl_sensor_msgs::WorldModelData
+					> (msg->worldModel);
 			onWorldModelData(wmsim);
 		}
 	}
@@ -160,8 +160,10 @@ namespace msl
 
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 	{
-		if (this->timeLastSimMsgReceived == 0)
+		if (this->timeLastSimMsgReceived == 0) {
 			cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
+			return;
+		}
 
 		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
@@ -518,8 +520,7 @@ namespace msl
 		// TODO test if this breaks anything, remove line otherwise
 //		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
-
-		motion->set(boost::lexical_cast<string>(newRadius), "Motion.MotionControl.RobotRadius", NULL);
+		motion->set(boost::lexical_cast < string > (newRadius), "Motion.MotionControl.RobotRadius", NULL);
 		motion->store();
 	}
 
