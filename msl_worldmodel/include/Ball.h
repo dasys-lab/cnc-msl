@@ -16,6 +16,7 @@
 #include "container/CNPoint3D.h"
 #include "container/CNVelocity2D.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "MSLEnums.h"
 #include <map>
 #include <memory>
 
@@ -79,6 +80,7 @@ class Ball
     double calculateSharedBallMassVector(bool withGoalie);
     bool simpleHaveBallDribble(bool hadBefore);
     bool hadBefore;
+    BallPossessionStatus getBallPossessionStatus();
     bool closeToTheBall()
     {
         return selfInBallPossesion;
@@ -102,6 +104,7 @@ class Ball
     double LOCALIZATION_SUCCESS_CONFIDENCE;
     int hasBallIteration;
     bool hasBall; /**< True if the local robot has the ball */
+    BallPossessionStatus ballPossessionStatus;
     double haveBallDistanceDynamic;
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
