@@ -121,7 +121,6 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 
 	//correcting desired ball velocity towards robot to guarantee grib
 	//			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
-	cout << "epsilonY = " << epsilonY << endl;
 	velX = velXTemp;
 
 	velX = velX - (epsilonT * velXTemp * sign(velXTemp))
@@ -132,7 +131,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 		velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
 	}
 	velY = velYTemp + 3 / 4 * rBallRobot * rotation;
-
+	cout << "velY = " << velY << endl;
 	if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound
 			&& velYTemp <= staticUpperBound && velYTemp >= staticMiddleBound
 			&& rotation <= 0.1 && rotation >= -0.1) {
