@@ -47,6 +47,8 @@ private:
 	double rotTolerance;
 	double angleTolerance;
 
+	bool testingMode;
+
 	double velToInput;
 	double staticUpperBound;
 	double staticMiddleBound;

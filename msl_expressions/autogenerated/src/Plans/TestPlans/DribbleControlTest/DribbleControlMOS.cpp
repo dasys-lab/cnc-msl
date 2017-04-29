@@ -19,6 +19,7 @@ namespace alica
 		/*PROTECTED REGION ID(con1479905178049) ENABLED START*/ //Add additional options here
 		this->sc = supplementary::SystemConfig::getInstance();
 		dkFactor = 1;
+		testingMode = false;
 		/*PROTECTED REGION END*/
 	}
 	DribbleControlMOS::~DribbleControlMOS()
@@ -55,7 +56,7 @@ namespace alica
 
 		bool haveBall = wm->ball->haveBall();
 
-		if (!haveBall)
+		if (!haveBall && !testingMode)
 		{
 			msgback.rightMotor = -speedNoBall;
 			msgback.leftMotor = -speedNoBall;
@@ -126,6 +127,7 @@ namespace alica
 		transTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.transTolerance", NULL);
 		rotTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rotTolerance", NULL);
 		angleTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.angleTolerance", NULL);
+		testingMode = (*sc)["DribbleAlround"]->get<bool>("DribbleAlround.testingMode", NULL);
 
 		speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
 
@@ -157,7 +159,8 @@ namespace alica
 		}
 		else
 		{
-			velX = velX - epsilonRot * sign(rotation) * rotation * rBallRobot;
+			// rotate
+			velX = velX - epsilonRot * sign(rotation) * rotation * rotation * rBallRobot;
 		}
 		cout << "velY = " << velXTemp << "+ 3/4 * " << rBallRobot << " * " << rotation;
 		velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
