@@ -34,7 +34,7 @@ namespace alica
         return diff;
     }
 
-	/*PROTECTED REGION END*/
+    /*PROTECTED REGION END*/
     TestRotationRotation::TestRotationRotation() :
             DomainBehaviour("TestRotationRotation")
     {
@@ -49,47 +49,50 @@ namespace alica
     void TestRotationRotation::run(void* msg)
     {
         /*PROTECTED REGION ID(run1492620499435) ENABLED START*/ //Add additional options here
-	if (this->isSuccess())
+        if (this->isSuccess())
         {
             return;
         }
 
-	int limit = 50;
-	if(inited < limit) {
-		inited++;
-		return;
-	} else if(inited == limit) {
-		initialBearing = wm->rawOdometry->position.angle;
-		inited++;
-	}
+        int limit = 50;
+        if (inited < limit)
+        {
+            inited++;
+            return;
+        }
+        else if (inited == limit)
+        {
+            initialBearing = wm->rawOdometry->position.angle;
+            inited++;
+        }
 
         msl_actuator_msgs::MotionControl mc;
         double rotationSpeed = 0.5;
         mc.motion.rotation = rotationSpeed;
         send(mc);
 
-	double currentBearing = wm->rawOdometry->position.angle;
-	double cd = circularDiff(initialBearing, currentBearing);
-	if(cd > 3)
-	{
-		halfwayDone = true;
-		cout << "HALFWAY DONE!!!" << endl;
-	}
+        double currentBearing = wm->rawOdometry->position.angle;
+        double cd = circularDiff(initialBearing, currentBearing);
+        if (cd > 3)
+        {
+            halfwayDone = true;
+            cout << "HALFWAY DONE!!!" << endl;
+        }
 
-	cout << cd << endl;
+        cout << cd << endl;
 
-	if(halfwayDone && cd < 0)
-	{
-		this->setSuccess(true);
-	}
+        if (halfwayDone && cd < 0)
+        {
+            this->setSuccess(true);
+        }
         /*PROTECTED REGION END*/
     }
     void TestRotationRotation::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1492620499435) ENABLED START*/ //Add additional options here
         inited = 0;
-	halfwayDone = false;
-	/*PROTECTED REGION END*/
+        halfwayDone = false;
+        /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1492620499435) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
