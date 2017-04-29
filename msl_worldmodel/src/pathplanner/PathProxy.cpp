@@ -282,6 +282,7 @@ void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoin
  */
 void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
 {
+	// Removed during PO coimbra 2017 to reduce network traffic
 //    msl_msgs::VoronoiNetInfo netMsg;
 //    netMsg.senderId = this->wm->getOwnId();
 //    for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
