@@ -170,11 +170,12 @@ namespace alica
 //	double transTolerance = 200;
 //	double rotTolerance = 0.4;
 //	double angleTolerance = 0.4;
-		if (!(velXTemp > 0))
+
+		if (velXTemp < 0)
 		{
 			if (transTolerance <= fabs(translation - translationOld)
-					&& rotTolerance <= fabs(translation - translationOld)
-					&& angleTolerance <= fabs(angle - angleTolerance))
+					&& rotTolerance <= fabs(rotation - rotationOld)
+					&& angleTolerance <= fabs(angle - angleOld))
 			{
 				double newPowerFactor = powerFactor * dkFactor;
 				velY = velY * newPowerFactor;
