@@ -118,7 +118,7 @@ namespace msl
 		if (rawBall == nullptr)
 		{
 			// In order to be consistent with the haveBall() return value, return the last known ball...
-			if (hasBallIteration > 0)
+			if (hasBallIteration > 0 && lastKnownBallPos != nullptr)
 			{
 				return lastKnownBallPos->clone();
 			}
@@ -551,7 +551,7 @@ namespace msl
 				|| (wm->timeLastSimMsgReceived > 0 && KICKER_DISTANCE_SIMULATOR < ballPos->length()))
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
-			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
 			this->ballPossessionStatus = (
 					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
 			//			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
@@ -562,7 +562,7 @@ namespace msl
 		if (fabs(ballPos->y) > 100)
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
-			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
 			this->ballPossessionStatus = (
 					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
 			// cout << "Ball: Angle Tolerance check failed!" << endl;
