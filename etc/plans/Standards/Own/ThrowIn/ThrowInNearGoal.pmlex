@@ -140,4 +140,12 @@
     <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="ThrowInNearGoal.pml#1493506037250"/>
+    <value xPos="182" yPos="6" width="119" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInNearGoal.pml#1493506054296"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

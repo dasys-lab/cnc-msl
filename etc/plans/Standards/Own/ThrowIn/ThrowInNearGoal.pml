@@ -23,8 +23,8 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1461583806472</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
-    <inTransitions>#1461237656318</inTransitions>
     <inTransitions>#1461584284347</inTransitions>
+    <inTransitions>#1493506054296</inTransitions>
     <outTransitions>#1461237676305</outTransitions>
   </states>
   <states id="1461237666032" name="Pass" comment="">
@@ -56,10 +56,17 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1461584440317</inTransitions>
   </states>
+  <states id="1493506037250" name="timeoutForPull" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <inTransitions>#1461237656318</inTransitions>
+    <outTransitions>#1493506054296</outTransitions>
+  </states>
   <transitions id="1461237656318" name="MISSING_NAME" comment="Aligned" msg="">
     <preCondition id="1461237657374" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1461237603690</inState>
-    <outState>#1461237638988</outState>
+    <outState>#1493506037250</outState>
   </transitions>
   <transitions id="1461237676305" name="MISSING_NAME" comment="haveBall" msg="">
     <preCondition id="1461237677283" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -85,6 +92,11 @@
     <preCondition id="1461584441559" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1461237666032</inState>
     <outState>#1461584409837</outState>
+  </transitions>
+  <transitions id="1493506054296" name="MISSING_NAME" comment="wait for some time" msg="">
+    <preCondition id="1493506056419" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1493506037250</inState>
+    <outState>#1461237638988</outState>
   </transitions>
   <entryPoints id="1461237603691" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
