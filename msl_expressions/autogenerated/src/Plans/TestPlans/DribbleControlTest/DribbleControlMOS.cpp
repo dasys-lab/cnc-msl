@@ -182,7 +182,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 		double newPowerFactor = powerFactor * dkFactor;
 		velY = velY * newPowerFactor;
 		velX = velX * newPowerFactor;
-		dkFactor = dkFactor <= 0 ? 0 : dkFactor - 0.1;
+		dkFactor = dkFactor <= 1 ? 1 : dkFactor - 0.1;
 	} else {
 		dkFactor = 1;
 	}
