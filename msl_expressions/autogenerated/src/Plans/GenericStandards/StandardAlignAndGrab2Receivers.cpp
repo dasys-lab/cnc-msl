@@ -173,23 +173,23 @@ namespace alica
             }
         }
         // Hack coimbra 17
-        if(canPass)
+        if (canPass)
         {
-        	this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
+            this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
         }
         else
         {
-        	this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
+            this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
         }
         if (this->canPassCounter > this->canPassThreshold)
         {
-        	this->canPassThreshold = -2;
+            this->canPassThreshold = -2;
             cout << "SAAG2R: aiming to receiver" << endl;
             alloTarget = recPos1;
         }
         else
         {
-        	this->canPassThreshold = 2;
+            this->canPassThreshold = 2;
             cout << "SAAG2R: aiming to alternative receiver" << endl;
             alloTarget = recPos2;
         }

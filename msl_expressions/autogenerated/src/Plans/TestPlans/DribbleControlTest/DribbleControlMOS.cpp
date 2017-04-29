@@ -176,7 +176,7 @@ namespace alica
 			// rotation goes in nonlinear to fit for high as well as low
 			velX = velX - epsilonRot * pow(rotation * sign(rotation), powerOfRotation)* rBallRobot;
 		}
-		cout << "velY bevor formular = " << velYTemp << endl;  
+
 		//rotation results in y velocity of the ball
 		velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
 		cout << "velY 1 = " << velY << endl;
