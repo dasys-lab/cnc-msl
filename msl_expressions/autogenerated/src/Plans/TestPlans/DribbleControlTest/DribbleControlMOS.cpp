@@ -133,6 +133,7 @@ namespace alica
 		rotTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rotTolerance", NULL);
 		angleTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.angleTolerance", NULL);
 		testingMode = (*sc)["DribbleAlround"]->get<bool>("DribbleAlround.testingMode", NULL);
+		powerOfRotation = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerOfRotation", NULL);
 
 		speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
 
@@ -173,7 +174,7 @@ namespace alica
 		else
 		{
 			// rotation goes in nonlinear to fit for high as well as low
-			velX = velX - epsilonRot * pow(rotation * sign(rotation), 1.3)* rBallRobot;
+			velX = velX - epsilonRot * pow(rotation * sign(rotation), powerOfRotation)* rBallRobot;
 		}
 
 		//rotation results in y velocity of the ball
@@ -187,14 +188,14 @@ namespace alica
 //	double rotTolerance = 0.4;
 //	double angleTolerance = 0.4;
 
-		// for higher grib when starting motion, we multiply the velocity with powerFactor for the first iterations
+		// for higher grip when starting motion, we multiply the velocity with powerFactor for the first iterations
 		//only for negative x, so we don't push the ball out
-		if (!(velXTemp > 0))
+		if (velXTemp < 0)
 		{
 		    //detect jumo in odometry values
 			if (transTolerance <= fabs(translation - translationOld)
-					&& rotTolerance <= fabs(translation - translationOld)
-					&& angleTolerance <= fabs(angle - angleTolerance))
+					&& rotTolerance <= fabs(rotation - rotationOld)
+					&& angleTolerance <= fabs(angle - angleOld))
 			{
 			    //powerFactor decays over the iterations
 				double newPowerFactor = powerFactor * dkFactor;

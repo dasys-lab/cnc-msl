@@ -63,6 +63,7 @@ private:
 	double diagConst;
 	double phi;
 	double velYFactor;
+	double powerOfRotation;
 
 	supplementary::SystemConfig* sc;
 
