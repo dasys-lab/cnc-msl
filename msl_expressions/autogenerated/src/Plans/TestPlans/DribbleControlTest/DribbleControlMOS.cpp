@@ -160,7 +160,7 @@ namespace alica
 		else
 		{
 			// rotate
-			velX = velX - epsilonRot * rotation * rotation * rBallRobot;
+			velX = velX - epsilonRot * sign(rotation) * pow(rotation, 1.5)* rBallRobot;
 		}
 		cout << "velY = " << velXTemp << "+ 3/4 * " << rBallRobot << " * " << rotation;
 		velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
