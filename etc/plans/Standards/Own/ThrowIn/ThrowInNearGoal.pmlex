@@ -132,4 +132,8 @@
     <key href="PosAlternativePassReceiver.beh#1461674968023"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
