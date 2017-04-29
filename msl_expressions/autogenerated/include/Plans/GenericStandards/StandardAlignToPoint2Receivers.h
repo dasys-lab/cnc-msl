@@ -47,6 +47,8 @@ namespace alica
         shared_ptr<MovementQuery> m_Query;
         shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
         shared_ptr<geometry::CNPoint2D> oldBallPos;
+        int canPassCounter;
+        int canPassThreshold;
 
         bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                              shared_ptr<geometry::CNPoint2D> c, double tolerance,
