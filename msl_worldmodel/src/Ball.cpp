@@ -518,7 +518,7 @@ namespace msl
 			if (!wm->rawSensorData->getLightBarrier())
 			{
 				// if you lost the ball, further pretend that you have it for at most 2 iterations
-				hasBallIteration = max(min(--hasBallIteration, 2), 0);
+				hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
 				this->ballPossessionStatus =
 						(this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
 				// cout << "Ball: Angle Tolerance check failed!" << endl;
@@ -527,7 +527,7 @@ namespace msl
 			else
 			{
 				this->ballPossessionStatus = BallPossessionStatus::HaveBall;
-				hasBallIteration = max(min(++hasBallIteration, 2), 0);
+				hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
 				return;
 			}
 		}
@@ -589,7 +589,7 @@ namespace msl
 		//		}
 
 		this->ballPossessionStatus = BallPossessionStatus::HaveBall;
-		hasBallIteration = max(min(++hasBallIteration, 2), 0);
+		hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
 	}
 
 	bool Ball::robotHasBall(int robotId)
