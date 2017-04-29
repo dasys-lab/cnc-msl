@@ -27,6 +27,8 @@ namespace alica
 		/*PROTECTED REGION ID(dcon1479905178049) ENABLED START*/ //Add additional options here
 		/*PROTECTED REGION END*/
 	}
+
+	//sends ballhandleCmd depending on odometry
 	void DribbleControlMOS::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
@@ -78,6 +80,7 @@ namespace alica
 		double velX;
 		double velY;
 
+		//calculates desired ball path depending on robot movement, corrected to guarantee grip
 		getBallPath(robotVel, robotAngle, robotRot, velX, velY);
 		auto ballVel = getBallVelocity(velX, velX);
 		auto ballAngle = getBallAngle(velX, velY);
@@ -85,9 +88,11 @@ namespace alica
 		cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
 		cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
 
+		//calculates dribble wheel velocities depending on Ball path
 		auto right = getRightArmVelocity(ballVel, ballAngle);
 		auto left = getLeftArmVelocity(ballVel, ballAngle);
 
+		//depends on hardware connection, left and right in this method are as seen from the robots point of view
 		msgback.leftMotor = right;
 		msgback.rightMotor = left;
 		cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
@@ -143,8 +148,11 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
+
+	//calculates desired ball path depending on the robot movement and corrected to ensure grib
 	void DribbleControlMOS::getBallPath(double translation, double angle, double rotation, double &velX, double &velY)
 	{
+	        //ball velocity form only the robots translation
 		double velXTemp = -cos(angle) * translation;
 		double velYTemp = -sin(angle) * translation;
 
@@ -152,30 +160,43 @@ namespace alica
 		//			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
 		velX = velXTemp;
 
+		//correction of velocity in x , depending on x (epsilonT), depending on y (epsilonY)
+		//epsilonT<1 ; epsilonY<0.45*velYFactor
 		velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+
+		//correction of velocity in x depending on rotation (epsilonRot)
 		if (fabs(velYTemp) > 200)
 		{
+		    //special case where y velocity and rotation result in positive x velocity (sign(velY)!=sign(rot))
 			velX = velX - epsilonRot * sign(velYTemp) * rBallRobot * rotation;
 		}
 		else
 		{
-			// rotate
+			// rotation goes in nonlinear to fit for high as well as low
 			velX = velX - epsilonRot * pow(rotation * sign(rotation), 1.3)* rBallRobot;
 		}
-		cout << "velY = " << velXTemp << "+ 3/4 * " << rBallRobot << " * " << rotation;
+
+		//rotation results in y velocity of the ball
 		velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
+
+		//factor so robot can hold the ball if driving sideways
 		velY = velY * velYFactor;
 
 //	double powerFactor = 2;
 //	double transTolerance = 200;
 //	double rotTolerance = 0.4;
 //	double angleTolerance = 0.4;
+
+		// for higher grib when starting motion, we multiply the velocity with powerFactor for the first iterations
+		//only for negative x, so we don't push the ball out
 		if (!(velXTemp > 0))
 		{
+		    //detect jumo in odometry values
 			if (transTolerance <= fabs(translation - translationOld)
 					&& rotTolerance <= fabs(translation - translationOld)
 					&& angleTolerance <= fabs(angle - angleTolerance))
 			{
+			    //powerFactor decays over the iterations
 				double newPowerFactor = powerFactor * dkFactor;
 				velY = velY * newPowerFactor;
 				velX = velX * newPowerFactor;
@@ -188,14 +209,18 @@ namespace alica
 		}
 		cout << "velX = " << velX << endl;
 		cout << "velY = " << velY << endl;
+
+		//if we start moving forward, we don't want to push directly
 		if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
 				&& velYTemp >= staticMiddleBound && rotation <= 0.1 && rotation >= -0.1)
 		{
+		    //results in 0 arm wheel movement
 			velX = 0;
 		}
 		else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound && velYTemp <= staticMiddleBound
 				&& velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
 		{
+		    //results in minimum negative arm wheel movement
 			velX = -10;
 		}
 	}
@@ -236,17 +261,20 @@ namespace alica
 
 		if (ballAngle <= sec1)
 		{
-			// rotate right
+			// pull
 			cout << "sec0" << endl;
 			angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
 		}
+		//wheel stops
 		else if (ballAngle <= sec2)
 		{
+		    // push
 			cout << "sec1" << endl;
 			angleConst = (ballAngle - sec1) * sidewConst / (sec2 - sec1);
 		}
 		else if (ballAngle <= sec3)
 		{
+
 			cout << "sec2" << endl;
 			angleConst = sidewConst + (ballAngle - sec2) * (diagConst - sidewConst) / (sec3 - sec2);
 		}
@@ -257,11 +285,14 @@ namespace alica
 		}
 		else if (ballAngle <= sec5)
 		{
+		    //push
 			cout << "sec4" << endl;
 			angleConst = forwConst + (ballAngle - sec4) * (-forwConst) / (sec5 - sec4);
 		}
+		// wheel stops
 		else if (ballAngle <= sec6)
 		{
+		    //pull
 			cout << "sec5" << endl;
 			angleConst = (ballAngle - sec5) * (-sidewConst) / (sec6 - sec5);
 		}
