@@ -29,6 +29,7 @@ bool LightBarrier::getLightBarrier(int index)
 
 bool LightBarrier::mayUseLightBarrier()
 {
+	cout << "mayUseLightbarrier = " << endl;
     return this->useLightBarrier;
 }
 
