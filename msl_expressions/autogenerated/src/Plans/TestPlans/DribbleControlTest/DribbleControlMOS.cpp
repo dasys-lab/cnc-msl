@@ -175,7 +175,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 //	double transTolerance = 200;
 //	double rotTolerance = 0.4;
 //	double angleTolerance = 0.4;
-
+ if (!(velXTemp > 0)) {
 	if (transTolerance <= fabs(translation - translationOld)
 			&& rotTolerance <= fabs(translation - translationOld)
 			&& angleTolerance <= fabs(angle - angleTolerance)) {
@@ -186,7 +186,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle,
 	} else {
 		dkFactor = 1;
 	}
-
+ }
 	cout << "velX = " << velX << endl;
 	cout << "velY = " << velY << endl;
 	if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound
