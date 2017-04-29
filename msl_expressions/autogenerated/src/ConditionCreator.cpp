@@ -1210,6 +1210,12 @@ namespace alica
 
                 break;
 
+            case 1493506056419:
+
+                return make_shared<TransitionCondition1493506056419>();
+
+                break;
+
             case 1457955744730:
 
                 return make_shared<RunTimeCondition1457955744730>();
