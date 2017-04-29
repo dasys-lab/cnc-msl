@@ -133,6 +133,7 @@ namespace alica
 		rotTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rotTolerance", NULL);
 		angleTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.angleTolerance", NULL);
 		testingMode = (*sc)["DribbleAlround"]->get<bool>("DribbleAlround.testingMode", NULL);
+		powerOfRotation = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerOfRotation", NULL);
 
 		speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
 
@@ -173,7 +174,7 @@ namespace alica
 		else
 		{
 			// rotation goes in nonlinear to fit for high as well as low
-			velX = velX - epsilonRot * pow(rotation * sign(rotation), 1.3)* rBallRobot;
+			velX = velX - epsilonRot * pow(rotation * sign(rotation), powerOfRotation)* rBallRobot;
 		}
 
 		//rotation results in y velocity of the ball
