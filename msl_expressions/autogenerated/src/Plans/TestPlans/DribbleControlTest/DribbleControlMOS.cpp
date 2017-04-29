@@ -55,13 +55,13 @@ namespace alica
 
 		bool haveBall = wm->ball->haveBall();
 
-//		if (!haveBall)
-//		{
-//			msgback.rightMotor = -speedNoBall;
-//			msgback.leftMotor = -speedNoBall;
-//			send(msgback);
-//			return;
-//		       }
+		if (!haveBall)
+		{
+			msgback.rightMotor = -speedNoBall;
+			msgback.leftMotor = -speedNoBall;
+			send(msgback);
+			return;
+		       }
 
 //		auto robotAngle = 0;
 //		auto robotVel = 1000;
