@@ -215,7 +215,7 @@ namespace alica
                 double newPowerFactor = powerFactor * dkFactor;
                 velY = velY * newPowerFactor;
                 velX = velX * newPowerFactor;
-                dkFactor = dkFactor <= 1 ? 1 : dkFactor - 0.1;
+                dkFactor = dkFactor <= 1 ? 1 : dkFactor - 0.05;
             }
             else
             {
