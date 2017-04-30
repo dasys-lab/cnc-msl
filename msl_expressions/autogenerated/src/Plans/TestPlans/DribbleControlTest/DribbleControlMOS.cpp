@@ -120,8 +120,8 @@ namespace alica
     	this->wheelSpeedLeftOld = msgback.leftMotor;
     	this->wheelSpeedRightOld = msgback.rightMotor;
 
-    	msgback.rightMotor = msgback.rightMotor < 100 ? 0 : msgback.rightMotor;
-    	msgback.leftMotor = msgback.leftMotor < 100 ? 0 : msgback.leftMotor;
+    	msgback.rightMotor = abs(msgback.rightMotor) < 100 ? 0 : msgback.rightMotor;
+    	msgback.leftMotor = abs(msgback.leftMotor) < 100 ? 0 : msgback.leftMotor;
 
     	send(msgback);
     }
