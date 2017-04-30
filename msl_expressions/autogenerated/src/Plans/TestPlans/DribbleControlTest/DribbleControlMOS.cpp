@@ -211,6 +211,7 @@ namespace alica
                     && angleTolerance <= fabs(angle - angleOld))
             {
                 //powerFactor decays over the iterations
+            	cout << "dkFactor" << endl;
                 double newPowerFactor = powerFactor * dkFactor;
                 velY = velY * newPowerFactor;
                 velX = velX * newPowerFactor;
