@@ -20,6 +20,8 @@ namespace alica
         this->sc = supplementary::SystemConfig::getInstance();
         dkFactor = 1;
         testingMode = false;
+        this->wheelSpeedLeftOld = 0;
+        this->wheelSpeedRightOld = 0;
         /*PROTECTED REGION END*/
     }
     DribbleControlMOS::~DribbleControlMOS()
@@ -60,7 +62,7 @@ namespace alica
         {
             msgback.rightMotor = -speedNoBall;
             msgback.leftMotor = -speedNoBall;
-            send(msgback);
+            sendWheelSpeed(msgback);
             return;
         }
 
@@ -94,12 +96,30 @@ namespace alica
         msgback.leftMotor = right;
         msgback.rightMotor = left;
         cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
-        send(msgback);
+        sendWheelSpeed(msgback);
 
 //        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
 //                << ballAngle << "  " << left << " " << right << endl;
 
         /*PROTECTED REGION END*/
+    }
+
+    void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback){
+    	double maxDelta = 100;
+    	if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
+    			&& msgback.leftMotor > this->wheelSpeedLeftOld
+				&& msgback.rightMotor > this->wheelSpeedRightOld
+				&& fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
+				&& fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta
+				)
+    	{
+    		cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
+    		msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
+    		msgback.rightMotor = wheelSpeedRightOld + maxDelta;
+    	}
+    	this->wheelSpeedLeftOld = msgback.leftMotor;
+    	this->wheelSpeedRightOld = msgback.rightMotor;
+    	send(msgback);
     }
     void DribbleControlMOS::initialiseParameters()
     {
@@ -139,6 +159,8 @@ namespace alica
         sidewConst = sin(0.559) / sin(0.438); //ballVel -> ArmVel for sideways
         diagConst = sin(1.18) / (cos(0.349) * sin(0.82)); //ballVel -> ArmVel for diagonal
 
+        this->wheelSpeedLeftOld = 0;
+        this->wheelSpeedRightOld = 0;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
@@ -189,6 +211,7 @@ namespace alica
                     && angleTolerance <= fabs(angle - angleOld))
             {
                 //powerFactor decays over the iterations
+            	cout << "dkFactor" << endl;
                 double newPowerFactor = powerFactor * dkFactor;
                 velY = velY * newPowerFactor;
                 velX = velX * newPowerFactor;
@@ -199,6 +222,9 @@ namespace alica
                 dkFactor = 1;
             }
         }
+        translationOld = translation;
+        rotationOld = rotation;
+        angleOld = angle;
         cout << "velX = " << velX << endl;
         cout << "velY = " << velY << endl;
 

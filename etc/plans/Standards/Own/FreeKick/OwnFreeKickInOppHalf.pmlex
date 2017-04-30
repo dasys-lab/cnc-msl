@@ -171,4 +171,8 @@
     <key href="../../../Dribble/DribbleControl.beh#1450175539163"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
