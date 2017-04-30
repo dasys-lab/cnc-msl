@@ -83,6 +83,10 @@ namespace alica
 	{
 		kc.enabled = true;
 		kc.senderID = ownID;
+		if (ownID == 9) {
+			// FIXME HACK COMIBRA 2017 Nase KickerVoltage
+			kc.power = min((int)kc.power, 2500);
+		}
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
