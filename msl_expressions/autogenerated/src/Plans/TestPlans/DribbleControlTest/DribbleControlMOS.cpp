@@ -119,6 +119,10 @@ namespace alica
     	}
     	this->wheelSpeedLeftOld = msgback.leftMotor;
     	this->wheelSpeedRightOld = msgback.rightMotor;
+
+    	msgback.rightMotor = msgback.rightMotor < 100 ? 0 : msgback.rightMotor;
+    	msgback.leftMotor = msgback.leftMotor < 100 ? 0 : msgback.leftMotor;
+
     	send(msgback);
     }
     void DribbleControlMOS::initialiseParameters()
@@ -240,9 +244,6 @@ namespace alica
         {
             //results in minimum negative arm wheel movement
             velX = -1000;
-        }
-        if (velX < 100) {
-        	velX = 0;
         }
     }
 
