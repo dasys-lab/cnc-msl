@@ -221,6 +221,9 @@ namespace alica
                 dkFactor = 1;
             }
         }
+        translationOld = translation;
+        rotationOld = rotation;
+        angleOld = angle;
         cout << "velX = " << velX << endl;
         cout << "velY = " << velY << endl;
 
