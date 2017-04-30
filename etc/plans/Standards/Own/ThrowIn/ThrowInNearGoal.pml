@@ -42,7 +42,7 @@
   <states id="1461237704581" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1461572769511</inTransitions>
     <outTransitions>#1461237853423</outTransitions>
   </states>
