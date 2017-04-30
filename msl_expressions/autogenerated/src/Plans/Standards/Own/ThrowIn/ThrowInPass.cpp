@@ -15,6 +15,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
+#include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -220,7 +221,8 @@ namespace alica
         double aimAngle = aimPoint->angleTo();
         double ballAngle = egoBallPos->angleTo();
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
-        if (abs(deltaAngle) < M_PI / 36)
+        //coimbra timeout hack, Stopfer said push it.
+        if (abs(deltaAngle) < M_PI / 36 || this->wm->getTime() - this->wm->game->getTimeSinceStart() > 5e9)
         { // +/-5 degree
           //Kick && PassMsg
             msl_helper_msgs::PassMsg pm;
@@ -267,6 +269,7 @@ namespace alica
             }
 
         }
+
         auto dstscan = this->wm->rawSensorData->getDistanceScan();
         if (dstscan != nullptr && dstscan->size() != 0)
         {
