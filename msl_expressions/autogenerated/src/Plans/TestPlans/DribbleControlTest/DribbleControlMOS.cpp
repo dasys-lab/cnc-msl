@@ -243,7 +243,7 @@ namespace alica
                 && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
         {
             //results in minimum negative arm wheel movement
-            velX = -1000;
+            velX = -100;
         }
     }
 
