@@ -25,6 +25,7 @@ namespace alica
         double getLeftArmVelocity(double ballVelocity, double ballAngle);
         double getRightArmVelocity(double ballVelocity, double ballAngle);
         void getBallPath(double translation, double angle, double rotation, double &velX, double &velY);
+        void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback);
 
         int sign(double x);
 
@@ -36,6 +37,8 @@ namespace alica
         int testCount2;
 
         double speedNoBall;
+        double wheelSpeedLeftOld;
+        double wheelSpeedRightOld;
 
         double dkFactor;
         double translationOld;
