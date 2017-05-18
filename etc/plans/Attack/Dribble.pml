@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434049476066" name="Dribble" comment="" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647" masterPlan="false" utilityFunction="" utilityThreshold="0.1">
+  <vars id="1495127509136" name="Test" comment="" Type=""/>
   <runtimeCondition id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
     <plans xsi:type="alica:Behaviour">Dribble/DribbleControl.beh#1449742071382</plans>
