@@ -29,18 +29,18 @@ namespace alica
 
         int sign(double x);
 
-        int testBehaviour;
-        int testSpeed;
-        double testRot;
-        double testAngle;
-        int testCount;
-        int testCount2;
+//        int testBehaviour;
+//        int testSpeed;
+//        double testRot;
+//        double testAngle;
+//        int testCount;
+//        int testCount2;
 
         double speedNoBall;
         double wheelSpeedLeftOld;
         double wheelSpeedRightOld;
 
-        double dkFactor;
+        double decayFactor;
         double translationOld;
         double rotationOld;
         double angleOld;
