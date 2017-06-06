@@ -16,6 +16,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
         query = make_shared<msl::MovementQuery>();
+        this->defaultTranslation = 1000;
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
