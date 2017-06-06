@@ -189,7 +189,6 @@ class FieldWidget3D : public QVTKWidget3
     void deleteGridView();
     std::shared_ptr<RobotInfo> getRobotById(int id);
 
-    vtkSmartPointer<vtkActor> createObstacle();
     vtkSmartPointer<vtkActor> createDebugPt();
 
   private:

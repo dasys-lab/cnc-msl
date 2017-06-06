@@ -959,25 +959,6 @@ void FieldWidget3D::drawFieldLine(vtkRenderer *renderer, float x1, float y1, flo
     renderer->AddActor(lineActor);
 }
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createObstacle()
-{
-    // Obstacle actors
-    vtkSmartPointer<vtkCylinderSource> cylinder = vtkSmartPointer<vtkCylinderSource>::New();
-    cylinder->SetRadius(0.25);
-    cylinder->SetHeight(OBSTACLE_HEIGHT);
-    cylinder->SetResolution(12);
-    vtkSmartPointer<vtkPolyDataMapper> cylinderMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
-
-    vtkSmartPointer<vtkActor> obstacleActor = vtkSmartPointer<vtkActor>::New();
-    obstacleActor->SetMapper(cylinderMapper);
-    obstacleActor->GetProperty()->SetColor(0, 0, 0);
-    // obstacleActor->GetProperty()->SetRepresentationToWireframe();
-    obstacleActor->RotateX(90); // Rotate 90 degrees in XX axis
-
-    return obstacleActor;
-}
-
 vtkSmartPointer<vtkActor> FieldWidget3D::createDebugPt()
 {
     // Setup four points
