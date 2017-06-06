@@ -169,14 +169,17 @@ namespace alica
             {
                 // Send stop message to motion, in order to signal that the robot would shoot now
                 MotionControl empty;
+                empty.motion.angle = 0;
+                empty.motion.rotation = 0;
+                empty.motion.translation = 0;
                 send(empty);
                 return;
             }
 
 //            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 //                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
-//            this->setSuccess(true);
-            return;
+            this->setSuccess(true);
+            //return;
         }
 
         // Create Motion Command for aiming
