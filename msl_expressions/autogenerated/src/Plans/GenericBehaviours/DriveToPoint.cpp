@@ -29,7 +29,7 @@ namespace alica
         msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
-        if (!me.operator bool())
+        if (me == nullptr)
         {
             return;
         }

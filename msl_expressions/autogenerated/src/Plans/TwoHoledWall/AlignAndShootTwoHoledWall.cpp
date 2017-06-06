@@ -86,6 +86,11 @@ namespace alica
         shared_ptr < geometry::CNPosition > ownPos = this->wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
 
+        if (ownPos == nullptr || egoBallPos == nullptr)
+        {
+            return;
+        }
+
         // stupid variant to be sure, that we have shoot!!!
         if (this->kicked)
         {
@@ -105,11 +110,6 @@ namespace alica
                 this->setSuccess(true);
             }
 
-            return;
-        }
-
-        if (ownPos == nullptr || egoBallPos == nullptr)
-        {
             return;
         }
 
@@ -216,6 +216,7 @@ namespace alica
         this->timesOnTargetCounter = 0;
         this->kicked = false;
         this->iterationsAfterKick = 0;
+        this->lastRotError = 0;
         switch (this->holeMode)
         {
             case toggle:
