@@ -52,8 +52,7 @@ class RobotVisualization
     void updatePassMsg(vtkRenderer *renderer, bool showPassing);
 
   private:
-    void drawObjectBox(vtkRenderer *renderer, double x, double y, double z);
-    void drawObjectTop(vtkRenderer *renderer, double x, double y, double z);
+    void drawObstacleDisc(vtkRenderer *renderer, double x, double y);
     std::array<double, 3> &getColor();
     int getDashedPattern();
 
@@ -75,8 +74,7 @@ class RobotVisualization
     vtkSmartPointer<vtkLineSource> pass = nullptr;
     vtkSmartPointer<vtkActor> passActor = nullptr;
     vtkSmartPointer<vtkActor> passPointActor = nullptr;
-    std::vector<vtkSmartPointer<vtkActor>> objectsBox;
-    std::vector<vtkSmartPointer<vtkActor>> objectsTop;
+    std::vector<vtkSmartPointer<vtkActor>> obstacleDiscs;
 
     std::vector<vtkSmartPointer<vtkActor>> pathLines;
     std::vector<std::shared_ptr<Line>> netLines;

@@ -229,15 +229,20 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     this->ballVelocityActor->SetVisibility(false);
     this->sharedBall->SetVisibility(false);
 
-    for (vtkSmartPointer<vtkActor> actor : objectsTop)
-    {
-        actor->SetVisibility(false);
-    }
+//    for (vtkSmartPointer<vtkActor> actor : objectsTop)
+//    {
+//        actor->SetVisibility(false);
+//    }
+//
+//    for (vtkSmartPointer<vtkActor> actor : objectsBox)
+//    {
+//        actor->SetVisibility(false);
+//    }
 
-    for (vtkSmartPointer<vtkActor> actor : objectsBox)
-    {
-        actor->SetVisibility(false);
-    }
+    for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
+	{
+		actor->SetVisibility(false);
+	}
 
     for (vtkSmartPointer<vtkActor> actor : pathLines)
     {
@@ -571,18 +576,15 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
 
             if (!aTeammate && this->robot->getVisStatus())
             {
-            	// move object boxes instead of drawing new ones, as long as possible
-                if (objectCount < this->objectsBox.size())
+                // move object boxes instead of drawing new ones, as long as possible
+                if (objectCount < this->obstacleDiscs.size())
                 {
-                    this->objectsBox.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
-                    this->objectsBox.at(objectCount)->SetVisibility(true);
-                    this->objectsTop.at(objectCount)->SetPosition(pos.first, pos.second, 0.4);
-                    this->objectsTop.at(objectCount)->SetVisibility(true);
+                    this->obstacleDiscs.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
+					this->obstacleDiscs.at(objectCount)->SetVisibility(true);
                 }
                 else
                 {
-                    drawObjectBox(renderer, pos.first, pos.second, 0);
-                    drawObjectTop(renderer, pos.first, pos.second, 0);
+                	drawObstacleDisc(renderer, pos.first, pos.second);
                 }
                 objectCount++;
             }
@@ -590,76 +592,41 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
     }
 
     // hide unused object boxes
-    if (objectCount < this->objectsBox.size())
+    if (objectCount < this->obstacleDiscs.size())
     {
-        for (int i = objectCount; i < this->objectsBox.size(); ++i)
+        for (int i = objectCount; i < this->obstacleDiscs.size(); ++i)
         {
-            this->objectsBox.at(i)->SetVisibility(false);
-            this->objectsTop.at(i)->SetVisibility(false);
+        	this->obstacleDiscs.at(i)->SetVisibility(false);
         }
     }
 }
 
-void RobotVisualization::drawObjectBox(vtkRenderer *renderer, double x, double y, double z)
+void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, double y)
 {
-    vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-    cubeSrc->SetXLength(0.52);
-    cubeSrc->SetYLength(0.52);
-    cubeSrc->SetZLength(0.4);
+    vtkSmartPointer<vtkDiskSource> diskSrc = vtkSmartPointer<vtkDiskSource>::New();
+    diskSrc->SetOuterRadius(0.26); // like a robot
+    diskSrc->SetInnerRadius(0.0);
+    diskSrc->SetCircumferentialResolution(24);
 
-    vtkSmartPointer<vtkPolyDataMapper> objectBoxMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    objectBoxMapper->SetInputConnection(cubeSrc->GetOutputPort());
+    // Create a mapper and actor.
+    vtkSmartPointer<vtkPolyDataMapper> obstacleDiscMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    obstacleDiscMapper->SetInputConnection(diskSrc->GetOutputPort());
 
-    vtkSmartPointer<vtkActor> objectBox = vtkSmartPointer<vtkActor>::New();
-    objectBox->SetMapper(objectBoxMapper);
-    objectBox->SetPosition(x, y, z);
+    vtkSmartPointer<vtkActor> obstacleDisc = vtkSmartPointer<vtkActor>::New();
+    obstacleDisc->SetMapper(obstacleDiscMapper);
+    obstacleDisc->SetPosition(x, y, 0.01); // 0.01 ~ a little bit above the field
 
-    objectBox->GetProperty()->SetColor(0, 0, 0);
-    objectBox->GetProperty()->SetDiffuse(0.4);
-    objectBox->GetProperty()->SetAmbient(0.8);
-    renderer->AddActor(objectBox);
-
-    objectsBox.push_back(objectBox);
-}
-
-void RobotVisualization::drawObjectTop(vtkRenderer *renderer, double x, double y, double z)
-{
-    float p0[3] = {0.26, 0, 0.0};
-    float p1[3] = {-0.26, 0.26, 0.0};
-    float p2[3] = {-0.26, -0.26, 0.0};
-    float p3[3] = {0.0, 0.0, 0.4};
-
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    points->InsertNextPoint(p0);
-    points->InsertNextPoint(p1);
-    points->InsertNextPoint(p2);
-    points->InsertNextPoint(p3);
-
-    vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
-    tetra->GetPointIds()->SetId(0, 0);
-    tetra->GetPointIds()->SetId(1, 1);
-    tetra->GetPointIds()->SetId(2, 2);
-    tetra->GetPointIds()->SetId(3, 3);
-
-    vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-    cells->InsertNextCell(tetra);
-
-    vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
-    ug->SetPoints(points);
-    ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
-
-    vtkSmartPointer<vtkDataSetMapper> objectTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    objectTopMapper->SetInputData(ug);
-
-    vtkSmartPointer<vtkActor> objectTop = vtkSmartPointer<vtkActor>::New();
-    objectTop->SetMapper(objectTopMapper);
-    objectTop->SetPosition(x, y, z);
     auto c = Color::getColor(this->robot->getId());
-    objectTop->GetProperty()->SetColor(c[0], c[1], c[2]);
-    objectTop->GetProperty()->SetDiffuse(0.4);
-    objectTop->GetProperty()->SetAmbient(0.8);
-    renderer->AddActor(objectTop);
-    objectsTop.push_back(objectTop);
+    obstacleDisc->GetProperty()->SetColor(c[0], c[1], c[2]);
+
+    // The transparency should make it possible to see different disc at one spot
+    obstacleDisc->GetProperty()->SetOpacity(0.6);
+
+    obstacleDisc->GetProperty()->SetDiffuse(0.4);
+    obstacleDisc->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(obstacleDisc);
+
+    obstacleDiscs.push_back(obstacleDisc);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
