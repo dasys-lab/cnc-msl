@@ -115,8 +115,10 @@ namespace alica
 
         // Constant ball handle wheel speed
         BallHandleCmd bhc;
-        bhc.leftMotor = (int8_t)this->wheelSpeed;
-        bhc.rightMotor = (int8_t)this->wheelSpeed;
+//        bhc.leftMotor = (int8_t)this->wheelSpeed;
+//        bhc.rightMotor = (int8_t)this->wheelSpeed;
+        bhc.leftMotor = this->wheelSpeed;
+        bhc.rightMotor = this->wheelSpeed;
         send(bhc);
 
         // Create ego-centric 2D target...
