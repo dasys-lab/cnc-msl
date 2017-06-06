@@ -105,9 +105,8 @@ class MSLWorldModel
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
 
-    MSLSharedWorldModel *getSharedWorldModel();
     InfoTime getTime();
-    void sendSharedWorldModelData();
+    void sendSharedWorldModelData(const ros::TimerEvent& event);
 
     int getRingBufferLength();
     int getOwnId();
@@ -141,7 +140,6 @@ class MSLWorldModel
     int ringBufferLength;
     bool maySendMessages;
 
-    MSLSharedWorldModel *sharedWorldModel;
     alica::AlicaEngine *alicaEngine;
 
     ros::NodeHandle n;
@@ -160,6 +158,7 @@ class MSLWorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
+    ros::Timer sharedWorldModelTimer;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

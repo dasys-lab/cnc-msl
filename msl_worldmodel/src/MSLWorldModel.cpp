@@ -22,12 +22,12 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
-#include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "tf/tf.h"
 #include <GeometryCalculator.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <gazebo_msgs/ModelStates.h>
+#include <ros/timer.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
@@ -100,8 +100,8 @@ MSLWorldModel::MSLWorldModel()
     correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel *)this);
     lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo, (MSLWorldModel *)this);
     imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel *)this);
+    this->sharedWorldModelTimer = n.createTimer(ros::Duration(0.1), &MSLWorldModel::sendSharedWorldModelData, (MSLWorldModel *)this);
 
-    this->sharedWorldModel = new MSLSharedWorldModel(this);
     this->timeLastSimMsgReceived = 0;
     this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
     this->maySendMessages = (*this->sc)["WorldModel"]->get<bool>("WorldModel", "MaySendMessages", NULL);
@@ -119,6 +119,8 @@ MSLWorldModel::MSLWorldModel()
     this->obstacles = new Obstacles(this, ringBufferLength);
     this->prediction = new Prediction();
     this->monitoring = new Monitoring(this);
+
+
 }
 supplementary::ITrigger *MSLWorldModel::getVisionDataEventTrigger()
 {
@@ -302,7 +304,6 @@ MSLWorldModel::~MSLWorldModel()
 {
     spinner->stop();
     delete spinner;
-    delete this->sharedWorldModel;
     delete this->ball;
     delete this->field;
     delete this->monitoring;
@@ -315,11 +316,6 @@ MSLWorldModel::~MSLWorldModel()
     delete this->whiteBoard;
     delete this->obstacles;
     delete this->prediction;
-}
-
-MSLSharedWorldModel *MSLWorldModel::getSharedWorldModel()
-{
-    return this->sharedWorldModel;
 }
 
 InfoTime MSLWorldModel::getTime()
@@ -344,7 +340,7 @@ void MSLWorldModel::setMaySendMessages(bool maySendMessages)
     this->maySendMessages = maySendMessages;
 }
 
-void MSLWorldModel::sendSharedWorldModelData()
+void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
 {
     if (!this->maySendMessages)
     {
