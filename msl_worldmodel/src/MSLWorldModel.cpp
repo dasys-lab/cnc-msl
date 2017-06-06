@@ -354,6 +354,7 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
     {
         return;
     }
+    // Ball
     if (ball != nullptr)
     {
         shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(ball->first->x, ball->first->y);
@@ -368,6 +369,7 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
         msg.ballInPossession = false;
     }
 
+    // Shared Ball
     auto sb = this->ball->getAlloSharedBallPositionAndCertaincy();
     if (sb != nullptr && sb->first != nullptr && this->ball->getSharedBallSupporter() > 1)
     {
@@ -389,6 +391,7 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
         }
     }
 
+    // Ball Velocity
     auto ballVel = this->ball->getVisionBallVelocity();
     if (ballVel != nullptr)
     {
@@ -397,6 +400,7 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
         msg.ball.velocity.vy = ballVel->y;
     }
 
+    // Own Position
     auto ownPos = rawSensorData->getOwnPositionVisionAndCertaincy();
     if (ownPos != nullptr)
     {
@@ -406,6 +410,7 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
         msg.odom.certainty = ownPos->second;
     }
 
+    // Own Motion
     auto ownVel = rawSensorData->getOwnVelocityVision();
     if (ownVel != nullptr)
     {
@@ -414,22 +419,51 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
         msg.odom.motion.translation = ownVel->translation;
     }
 
+    // Obstacles
     auto obs = obstacles->getEgoVisionObstacles();
-    {
-        if (obs != nullptr)
-        {
-            msg.obstacles.reserve(obs->size());
-            for (auto &x : *obs)
-            {
-                shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
-                auto p = point->egoToAllo(*pos);
-                msl_msgs::Point2dInfo info;
-                info.x = p->x;
-                info.y = p->y;
-                msg.obstacles.push_back(info);
-            }
-        }
-    }
+	if (obs != nullptr)
+	{
+		msg.obstacles.reserve(obs->size());
+		for (auto &x : *obs)
+		{
+			shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
+			auto p = point->egoToAllo(*pos);
+			msl_msgs::Point2dInfo info;
+			info.x = p->x;
+			info.y = p->y;
+			msg.obstacles.push_back(info);
+		}
+	}
+
+    // Merged Opponents
+	auto opponents = this->robots->opponents.getOpponentsAlloClustered();
+	if (opponents)
+	{
+		msg.mergedOpponents.reserve(opponents->size());
+		for (auto &opp : *opponents)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = opp->x;
+			info.y = opp->y;
+			msg.mergedOpponents.push_back(info);
+		}
+	}
+
+	// Merged Teammates
+	auto teammates = this->robots->teammates.getTeammatesAlloClustered();
+	if (teammates)
+	{
+		msg.mergedTeamMembers.reserve(teammates->size());
+		for (auto &mate : *teammates)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = mate->x;
+			info.y = mate->y;
+			msg.mergedTeamMembers.push_back(info);
+		}
+	}
+
+    // send the message
     if (ownPos != nullptr)
     {
         msg.participating = true;
