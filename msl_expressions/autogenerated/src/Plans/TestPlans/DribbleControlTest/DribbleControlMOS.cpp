@@ -119,28 +119,6 @@ namespace alica
 
 		/*PROTECTED REGION END*/
 	}
-
-	void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback)
-	{
-		double maxDelta = 100;
-
-		if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
-				&& msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
-				&& fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
-				&& fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
-		{
-			cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
-			msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
-			msgback.rightMotor = wheelSpeedRightOld + maxDelta;
-		}
-		this->wheelSpeedLeftOld = msgback.leftMotor;
-		this->wheelSpeedRightOld = msgback.rightMotor;
-
-		msgback.rightMotor = abs(msgback.rightMotor) < 100 ? 0 : msgback.rightMotor;
-		msgback.leftMotor = abs(msgback.leftMotor) < 100 ? 0 : msgback.leftMotor;
-
-		send(msgback);
-	}
 	void DribbleControlMOS::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
@@ -182,6 +160,27 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
+	void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback)
+	{
+		double maxDelta = 100;
+
+		if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
+				&& msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
+				&& fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
+				&& fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
+		{
+			cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
+			msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
+			msgback.rightMotor = wheelSpeedRightOld + maxDelta;
+		}
+		this->wheelSpeedLeftOld = msgback.leftMotor;
+		this->wheelSpeedRightOld = msgback.rightMotor;
+
+		msgback.rightMotor = abs(msgback.rightMotor) < 100 ? 0 : msgback.rightMotor;
+		msgback.leftMotor = abs(msgback.leftMotor) < 100 ? 0 : msgback.leftMotor;
+
+		send(msgback);
+	}
 	/**
 	 * calculates desired ball path depending on the robot movement and corrected to ensure grib
 	 */
