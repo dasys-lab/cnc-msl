@@ -1,12 +1,4 @@
-/*
- * RobotVisualization.h
- *
- *  Created on: Feb 11, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_
-#define CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -95,5 +87,3 @@ class RobotVisualization
     std::vector<vtkSmartPointer<vtkActor>> sidePoints;
     std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 };
-
-#endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_ */
