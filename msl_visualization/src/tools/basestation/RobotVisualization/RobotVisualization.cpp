@@ -473,7 +473,8 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
 
 void RobotVisualization::updatePosition(vtkRenderer *renderer)
 {
-    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->odom.position.x, robot->getSharedWorldInfo()->odom.position.y);
+    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->odom.position.x,
+                                                 robot->getSharedWorldInfo()->odom.position.y);
 
     robotPos[this->id][0] = pos.first;
     robotPos[this->id][1] = pos.second;
@@ -502,13 +503,16 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
         return;
     }
 
-    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.point.x, robot->getSharedWorldInfo()->ball.point.y);
+    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.point.x,
+                                                 robot->getSharedWorldInfo()->ball.point.y);
 
     this->ball->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->ball.point.z / 1000 + 0.02);
     this->ballVelocity->SetPoint1(pos.first, pos.second, robot->getSharedWorldInfo()->ball.point.z / 1000);
-    auto ballVelTrans = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.velocity.vx, robot->getSharedWorldInfo()->ball.velocity.vy);
+    auto ballVelTrans = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.velocity.vx,
+                                                          robot->getSharedWorldInfo()->ball.velocity.vy);
     this->ballVelocity->SetPoint2(pos.first + ballVelTrans.first, pos.second + ballVelTrans.second,
-                                  robot->getSharedWorldInfo()->ball.point.z / 1000 + robot->getSharedWorldInfo()->ball.velocity.vz / 1000);
+                                  robot->getSharedWorldInfo()->ball.point.z / 1000 +
+                                      robot->getSharedWorldInfo()->ball.velocity.vz / 1000);
 
     this->ball->SetVisibility(true);
     this->ballVelocityActor->SetVisibility(true);
@@ -522,7 +526,8 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
         return;
     }
 
-    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->sharedBall.point.x, robot->getSharedWorldInfo()->sharedBall.point.y);
+    auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->sharedBall.point.x,
+                                                 robot->getSharedWorldInfo()->sharedBall.point.y);
     this->sharedBall->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->sharedBall.point.z / 1000 + 0.02);
     this->sharedBall->SetVisibility(true);
 }
@@ -533,10 +538,13 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
     int objectCount = 0;
 
     if (!robot->getBallOnly())
+    {
         for (auto myObject : robot->getSharedWorldInfo()->obstacles)
         {
             found = false;
             auto pos = this->field->transformToGuiCoords(myObject.x, myObject.y);
+
+            // don't draw the obstacle if there is an object already drawn on the field
             for (auto member : *this->field->getRobots())
             {
                 auto mb = member->getVisualization()->getObject();
@@ -553,6 +561,7 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
             if (found)
                 continue;
 
+            // don't draw object boxes on teammates
             bool aTeammate = false;
             for (int i = 0; i < 6; i++)
             {
@@ -562,6 +571,7 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
 
             if (!aTeammate && this->robot->getVisStatus())
             {
+            	// move object boxes instead of drawing new ones, as long as possible
                 if (objectCount < this->objectsBox.size())
                 {
                     this->objectsBox.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
@@ -571,13 +581,15 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
                 }
                 else
                 {
-                    drawObjectBox(renderer, pos.first, pos.second, 0, aTeammate);
+                    drawObjectBox(renderer, pos.first, pos.second, 0);
                     drawObjectTop(renderer, pos.first, pos.second, 0);
                 }
                 objectCount++;
             }
         }
+    }
 
+    // hide unused object boxes
     if (objectCount < this->objectsBox.size())
     {
         for (int i = objectCount; i < this->objectsBox.size(); ++i)
@@ -588,7 +600,7 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
     }
 }
 
-void RobotVisualization::drawObjectBox(vtkRenderer *renderer, double x, double y, double z, bool teammate)
+void RobotVisualization::drawObjectBox(vtkRenderer *renderer, double x, double y, double z)
 {
     vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
     cubeSrc->SetXLength(0.52);
@@ -680,11 +692,14 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
     // Draw new
     for (int i = 1; i < ppi->pathPoints.size(); i++)
     {
-        pair<double, double> point1 = this->field->transformToGuiCoords(ppi->pathPoints.at(i - 1).x, ppi->pathPoints.at(i - 1).y);
-        pair<double, double> point2 = this->field->transformToGuiCoords(ppi->pathPoints.at(i).x, ppi->pathPoints.at(i).y);
+        pair<double, double> point1 =
+            this->field->transformToGuiCoords(ppi->pathPoints.at(i - 1).x, ppi->pathPoints.at(i - 1).y);
+        pair<double, double> point2 =
+            this->field->transformToGuiCoords(ppi->pathPoints.at(i).x, ppi->pathPoints.at(i).y);
 
         vtkSmartPointer<vtkActor> actor =
-            FieldWidget3D::createLine(point1.first, point1.second, 0.01, point2.first, point2.second, 0.01, 3, Color::getColor(this->robot->getId()));
+            FieldWidget3D::createLine(point1.first, point1.second, 0.01, point2.first, point2.second, 0.01, 3,
+                                      Color::getColor(this->robot->getId()));
         pathLines.push_back(actor);
         renderer->AddActor(actor);
     }
@@ -713,10 +728,14 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
         return;
     }
 
-    pair<double, double> point0 = this->field->transformToGuiCoords(cc->corridorPoints.at(0).x, cc->corridorPoints.at(0).y);
-    pair<double, double> point1 = this->field->transformToGuiCoords(cc->corridorPoints.at(1).x, cc->corridorPoints.at(1).y);
-    pair<double, double> point2 = this->field->transformToGuiCoords(cc->corridorPoints.at(2).x, cc->corridorPoints.at(2).y);
-    pair<double, double> point3 = this->field->transformToGuiCoords(cc->corridorPoints.at(3).x, cc->corridorPoints.at(3).y);
+    pair<double, double> point0 =
+        this->field->transformToGuiCoords(cc->corridorPoints.at(0).x, cc->corridorPoints.at(0).y);
+    pair<double, double> point1 =
+        this->field->transformToGuiCoords(cc->corridorPoints.at(1).x, cc->corridorPoints.at(1).y);
+    pair<double, double> point2 =
+        this->field->transformToGuiCoords(cc->corridorPoints.at(2).x, cc->corridorPoints.at(2).y);
+    pair<double, double> point3 =
+        this->field->transformToGuiCoords(cc->corridorPoints.at(3).x, cc->corridorPoints.at(3).y);
 
     // Draw new
     this->corridorLine1->source->SetPoint1(point0.first, point0.second, 0.01);
@@ -781,13 +800,15 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
     {
         for (int i = 1; i < vni->linePoints.size(); i += 2)
         {
-            pair<double, double> point1 = this->field->transformToGuiCoords(vni->linePoints.at(i - 1).x, vni->linePoints.at(i - 1).y);
-            pair<double, double> point2 = this->field->transformToGuiCoords(vni->linePoints.at(i).x, vni->linePoints.at(i).y);
+            pair<double, double> point1 =
+                this->field->transformToGuiCoords(vni->linePoints.at(i - 1).x, vni->linePoints.at(i - 1).y);
+            pair<double, double> point2 =
+                this->field->transformToGuiCoords(vni->linePoints.at(i).x, vni->linePoints.at(i).y);
 
             if (used >= this->netLines.size())
             {
-                auto line =
-                    FieldWidget3D::createDashedLine(point1.first, point1.second, 0.01, point2.first, point2.second, 0.01, 3, this->getDashedPattern(), color);
+                auto line = FieldWidget3D::createDashedLine(point1.first, point1.second, 0.01, point2.first,
+                                                            point2.second, 0.01, 3, this->getDashedPattern(), color);
 
                 renderer->AddActor(line->actor);
                 this->netLines.push_back(line);
@@ -827,7 +848,8 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         {
             pair<double, double> point = this->field->transformToGuiCoords(vni->sites.at(i).x, vni->sites.at(i).y);
 
-            vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, 0.3, Color::getColor(this->robot->getId()));
+            vtkSmartPointer<vtkActor> actor =
+                FieldWidget3D::createDot(point.first, point.second, 0.3, Color::getColor(this->robot->getId()));
             sidePoints.push_back(actor);
             renderer->AddActor(actor);
         }
@@ -869,7 +891,8 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
             std::array<double, 3> color = {pointDbg.red / 255.0, pointDbg.green / 255.0, pointDbg.blue / 255.0};
             pair<double, double> point = this->field->transformToGuiCoords(pointDbg.point.x, pointDbg.point.y);
 
-            vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, pointDbg.radius, color);
+            vtkSmartPointer<vtkActor> actor =
+                FieldWidget3D::createDot(point.first, point.second, pointDbg.radius, color);
             debugPoints.push_back(actor);
             renderer->AddActor(actor);
         }
