@@ -145,8 +145,9 @@ namespace alica
         }
         else
         {
-            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle) << "ballAngleTolerance: " <<
-            		this->ballAngleTolerance << "fabs(deltaHoleAngle): " << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
+            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
+                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
+                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
             this->timesOnTargetCounter = 0;
         }
 
