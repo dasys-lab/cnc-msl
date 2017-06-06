@@ -17,7 +17,7 @@ namespace alica
             DomainBehaviour("AlignAndShootTwoHoledWall")
     {
         /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
-        this->setTrigger(&wm->visionTrigger);
+//        this->setTrigger(&wm->visionTrigger);
         this->maxVel = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxSpeed", NULL);
 
         // Aiming/Rotation Stuff
