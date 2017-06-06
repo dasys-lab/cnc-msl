@@ -51,24 +51,17 @@ int main(int argc, char *argv[])
     QMainWindow Mwind;
 
     glutInit(&argc, argv);
-
-    // LMOTA
-    // variable went global
-    //	MWind wind(&Mwind);
     wind = new MWind(&Mwind);
 
     Mwind.adjustSize();
     Mwind.showMaximized();
 
-    QApplication::setStyle("fusion"); // Descomentar Quando o Qt não se passar...
+    QApplication::setStyle("fusion");
 
     int ret = app->exec();
 
     if (wind != NULL)
         delete wind;
     wind = NULL;
-
-    //	system("./rtdb_clean");
-    //	fprintf(stderr, "fui-me\n");
     return ret;
 }
