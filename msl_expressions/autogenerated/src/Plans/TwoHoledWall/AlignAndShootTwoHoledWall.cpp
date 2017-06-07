@@ -145,9 +145,9 @@ namespace alica
         }
         else
         {
-            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
-                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
-                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
+//            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
+//                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
+//                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
             this->timesOnTargetCounter = 0;
         }
 
@@ -157,6 +157,7 @@ namespace alica
             KickControl kc;
             kc.enabled = true;
 //            kc.kicker = egoBallPos->angleTo();
+            cout << "AlignAndShootTwoHoledWall: dist to hole: " <<egoHole->length() << endl;
             kc.power = setKickPower(egoHole->length());
             float voltage;
             if (!this->disableKicking)
