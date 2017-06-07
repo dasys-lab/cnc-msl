@@ -109,7 +109,7 @@ namespace alica
                 }
 //                this->setSuccess(true);S
             }
-
+            cout << "AASTHW: return 1" << endl;
             return;
         }
 
@@ -156,7 +156,7 @@ namespace alica
         {
             KickControl kc;
             kc.enabled = true;
-            kc.kicker = egoBallPos->angleTo();
+//            kc.kicker = egoBallPos->angleTo();
             kc.power = setKickPower(egoHole->length());
             float voltage;
             if (!this->disableKicking)
@@ -165,6 +165,7 @@ namespace alica
                 this->kicked = true;
                 this->iterationsAfterKick = 0;
                 voltage = this->robot->kicker->getKickerVoltage();
+                cout << "voltage: " << voltage << endl;
             }
             else
             {
@@ -174,12 +175,14 @@ namespace alica
                 empty.motion.rotation = 0;
                 empty.motion.translation = 0;
                 send(empty);
+                cout << "return disablelkicking" << endl;
                 return;
             }
 
 //            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 //                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
 //            this->setSuccess(true);
+            cout << "return after kick" << endl;
             return;
             //return;
         }
@@ -204,9 +207,9 @@ namespace alica
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = min(this->maxVel, driveTo->length());
 
-//        cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: "
-//                << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", "
-//                << driveTo->y << ")" << endl;
+        cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: "
+                << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", "
+                << driveTo->y << ")" << endl;
 
         send(mc);
         /*PROTECTED REGION END*/
