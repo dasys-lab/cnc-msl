@@ -107,7 +107,7 @@ namespace alica
                 {
                     this->useLowerHole = !this->useLowerHole;
                 }
-//                this->setSuccess(true);S
+                this->setSuccess(true);
             }
             cout << "AASTHW: return 1" << endl;
             return;
@@ -181,8 +181,8 @@ namespace alica
 
 //            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 //                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
-//            this->setSuccess(true);
-            cout << "return after kick" << endl;
+            this->setSuccess(true);
+//            cout << "return after kick" << endl;
             return;
             //return;
         }
