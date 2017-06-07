@@ -229,20 +229,20 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     this->ballVelocityActor->SetVisibility(false);
     this->sharedBall->SetVisibility(false);
 
-//    for (vtkSmartPointer<vtkActor> actor : objectsTop)
-//    {
-//        actor->SetVisibility(false);
-//    }
-//
-//    for (vtkSmartPointer<vtkActor> actor : objectsBox)
-//    {
-//        actor->SetVisibility(false);
-//    }
+    //    for (vtkSmartPointer<vtkActor> actor : objectsTop)
+    //    {
+    //        actor->SetVisibility(false);
+    //    }
+    //
+    //    for (vtkSmartPointer<vtkActor> actor : objectsBox)
+    //    {
+    //        actor->SetVisibility(false);
+    //    }
 
     for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
-	{
-		actor->SetVisibility(false);
-	}
+    {
+        actor->SetVisibility(false);
+    }
 
     for (vtkSmartPointer<vtkActor> actor : pathLines)
     {
@@ -537,7 +537,7 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
     this->sharedBall->SetVisibility(true);
 }
 
-void RobotVisualization::updateObjects(vtkRenderer *renderer)
+void RobotVisualization::updateObstacles(vtkRenderer *renderer)
 {
     bool found = false;
     int objectCount = 0;
@@ -580,11 +580,11 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
                 if (objectCount < this->obstacleDiscs.size())
                 {
                     this->obstacleDiscs.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
-					this->obstacleDiscs.at(objectCount)->SetVisibility(true);
+                    this->obstacleDiscs.at(objectCount)->SetVisibility(true);
                 }
                 else
                 {
-                	drawObstacleDisc(renderer, pos.first, pos.second);
+                    drawObstacleDisc(renderer, pos.first, pos.second);
                 }
                 objectCount++;
             }
@@ -596,7 +596,7 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
     {
         for (int i = objectCount; i < this->obstacleDiscs.size(); ++i)
         {
-        	this->obstacleDiscs.at(i)->SetVisibility(false);
+            this->obstacleDiscs.at(i)->SetVisibility(false);
         }
     }
 }
@@ -627,6 +627,97 @@ void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, doubl
     renderer->AddActor(obstacleDisc);
 
     obstacleDiscs.push_back(obstacleDisc);
+}
+
+void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
+{
+
+	// REFACTOR for Merged Opponents
+    bool found = false;
+    int objectCount = 0;
+
+    if (!robot->getBallOnly())
+    {
+        for (auto myObject : robot->getSharedWorldInfo()->mergedOpponents)
+        {
+            found = false;
+            auto pos = this->field->transformToGuiCoords(myObject.x, myObject.y);
+
+            // don't draw the obstacle if there is an object already drawn on the field
+            for (auto member : *this->field->getRobots())
+            {
+                auto mb = member->getVisualization()->getObject();
+                if (mb == nullptr)
+                    continue;
+
+                if (abs(mb->GetPosition()[0] - pos.first) < 0.25 && abs(mb->GetPosition()[1] - pos.second) < 0.25)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+                continue;
+
+            // don't draw object boxes on teammates
+            bool aTeammate = false;
+            for (int i = 0; i < 6; i++)
+            {
+                if (abs(robotPos[robotIds[i]][0] - pos.first) < 0.4 && abs(robotPos[robotIds[i]][1] - pos.second) < .4)
+                    aTeammate = true;
+            }
+
+            if (!aTeammate && this->robot->getVisStatus())
+            {
+                // move object boxes instead of drawing new ones, as long as possible
+                if (objectCount < this->obstacleDiscs.size())
+                {
+                    this->obstacleDiscs.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
+                    this->obstacleDiscs.at(objectCount)->SetVisibility(true);
+                }
+                else
+                {
+                    drawObstacleDisc(renderer, pos.first, pos.second);
+                }
+                objectCount++;
+            }
+        }
+    }
+
+    // hide unused object boxes
+    if (objectCount < this->obstacleDiscs.size())
+    {
+        for (int i = objectCount; i < this->obstacleDiscs.size(); ++i)
+        {
+            this->obstacleDiscs.at(i)->SetVisibility(false);
+        }
+    }
+}
+
+void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, double y)
+{
+    vtkSmartPointer<vtkCylinderSource> cylinderSrc = vtkSmartPointer<vtkCylinderSource>::New();
+    cylinderSrc->SetCenter(0, 0, 0);
+    cylinderSrc->SetRadius(0.26); // like a robot
+    cylinderSrc->SetHeight(0.7); // almost the height of a robot, because the coloured top has a 0.1m height
+    cylinderSrc->SetResolution(100);
+
+    // Create a mapper and actor
+    vtkSmartPointer<vtkPolyDataMapper> oppBaseMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    oppBaseMapper->SetInputConnection(cylinderSrc->GetOutputPort());
+
+    vtkSmartPointer<vtkActor> oppBase = vtkSmartPointer<vtkActor>::New();
+    oppBase->SetMapper(oppBaseMapper);
+    oppBase->SetPosition(x, y, 0.01); // 0.01 ~ a little bit above the field
+
+    oppBase->GetProperty()->SetColor(0.8, 0.8, 0.8);
+
+    oppBase->GetProperty()->SetDiffuse(0.4);
+    oppBase->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(oppBase);
+
+    this->mergedOppsBases.push_back(oppBase);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)

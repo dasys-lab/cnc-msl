@@ -579,7 +579,7 @@ void FieldWidget3D::update_robot_info(void)
         robot->getVisualization()->updatePosition(this->renderer);
         robot->getVisualization()->updateBall(this->renderer);
         robot->getVisualization()->updateSharedBall(this->renderer);
-        robot->getVisualization()->updateObjects(this->renderer);
+        robot->getVisualization()->updateObstacles(this->renderer);
         robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
     }
 
