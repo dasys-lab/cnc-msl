@@ -14,6 +14,7 @@
   </states>
   <states id="1496753132907" name="Start" comment="">
     <plans xsi:type="alica:Plan">TwoHoledWallAlign.pml#1496753106611</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleConstTwoHoledWall.beh#1496840164871</plans>
     <inTransitions>#1496753328478</inTransitions>
     <outTransitions>#1496753329785</outTransitions>
   </states>
