@@ -116,14 +116,14 @@ RobotVisualization::~RobotVisualization()
     // test
 }
 
-vtkSmartPointer<vtkActor> RobotVisualization::getObject()
+vtkSmartPointer<vtkActor> RobotVisualization::getRobotBox()
 {
-    return object;
+    return robotBox;
 }
 
-void RobotVisualization::setObject(vtkSmartPointer<vtkActor> object)
+void RobotVisualization::setRobotBox(vtkSmartPointer<vtkActor> robotBox)
 {
-    this->object = object;
+    this->robotBox = robotBox;
 }
 
 void RobotVisualization::setNameActor(vtkSmartPointer<vtkActor> nameActor)
@@ -136,14 +136,14 @@ vtkSmartPointer<vtkActor> RobotVisualization::getNameActor()
     return this->nameActor;
 }
 
-vtkSmartPointer<vtkActor> RobotVisualization::getTop()
+vtkSmartPointer<vtkActor> RobotVisualization::getRobotTopTriangle()
 {
-    return top;
+    return robotTopTriangle;
 }
 
-void RobotVisualization::setTop(vtkSmartPointer<vtkActor> top)
+void RobotVisualization::setRobotTopTriangle(vtkSmartPointer<vtkActor> robotTopTriangle)
 {
-    this->top = top;
+    this->robotTopTriangle = robotTopTriangle;
 }
 int RobotVisualization::getId()
 {
@@ -222,8 +222,8 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     robotPos[this->id][0] = -100000;
     robotPos[this->id][1] = -100000;
 
-    this->top->SetVisibility(false);
-    this->object->SetVisibility(false);
+    this->robotTopTriangle->SetVisibility(false);
+    this->robotBox->SetVisibility(false);
     this->nameActor->SetVisibility(false);
     this->ball->SetVisibility(false);
     this->ballVelocityActor->SetVisibility(false);
@@ -384,12 +384,12 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
     renderer->AddActor(nameActor);
     nameActor->SetCamera(renderer->GetActiveCamera());
 
-    this->top = teamTop;
-    this->object = teamBox;
+    this->robotTopTriangle = teamTop;
+    this->robotBox = teamBox;
     this->nameActor = nameActor;
 
-    this->top->SetVisibility(false);
-    this->object->SetVisibility(false);
+    this->robotTopTriangle->SetVisibility(false);
+    this->robotBox->SetVisibility(false);
     this->nameActor->SetVisibility(false);
 
     // ball
@@ -484,18 +484,18 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
     robotPos[this->id][0] = pos.first;
     robotPos[this->id][1] = pos.second;
 
-    this->top->SetPosition(pos.first, pos.second, 0.4);
-    this->object->SetPosition(pos.first, pos.second, 0.2);
+    this->robotTopTriangle->SetPosition(pos.first, pos.second, 0.4);
+    this->robotBox->SetPosition(pos.first, pos.second, 0.2);
     this->nameActor->SetPosition(pos.first, pos.second, 1);
 
-    this->top->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
-    this->object->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
+    this->robotTopTriangle->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
+    this->robotBox->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
 
     if (this->robot->getVisStatus())
-        this->top->SetVisibility(true);
+        this->robotTopTriangle->SetVisibility(true);
     else
-        this->top->SetVisibility(false);
-    this->object->SetVisibility(true);
+        this->robotTopTriangle->SetVisibility(false);
+    this->robotBox->SetVisibility(true);
     this->nameActor->SetVisibility(true);
 }
 
@@ -552,7 +552,7 @@ void RobotVisualization::updateObstacles(vtkRenderer *renderer)
             // don't draw the obstacle if there is an object already drawn on the field
             for (auto member : *this->field->getRobots())
             {
-                auto mb = member->getVisualization()->getObject();
+                auto mb = member->getVisualization()->getRobotBox();
                 if (mb == nullptr)
                     continue;
 
@@ -631,22 +631,20 @@ void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, doubl
 
 void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 {
-
-	// REFACTOR for Merged Opponents
     bool found = false;
     int objectCount = 0;
 
     if (!robot->getBallOnly())
     {
-        for (auto myObject : robot->getSharedWorldInfo()->mergedOpponents)
+        for (auto mergedOpp : robot->getSharedWorldInfo()->mergedOpponents)
         {
             found = false;
-            auto pos = this->field->transformToGuiCoords(myObject.x, myObject.y);
+            auto pos = this->field->transformToGuiCoords(mergedOpp.x, mergedOpp.y);
 
             // don't draw the obstacle if there is an object already drawn on the field
             for (auto member : *this->field->getRobots())
             {
-                auto mb = member->getVisualization()->getObject();
+                auto mb = member->getVisualization()->getRobotBox();
                 if (mb == nullptr)
                     continue;
 

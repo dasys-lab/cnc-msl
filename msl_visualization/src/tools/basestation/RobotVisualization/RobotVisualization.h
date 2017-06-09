@@ -15,10 +15,10 @@ class RobotVisualization
   public:
     RobotVisualization(RobotInfo *robot, FieldWidget3D *field);
     virtual ~RobotVisualization();
-    vtkSmartPointer<vtkActor> getObject();
-    void setObject(vtkSmartPointer<vtkActor> object);
-    vtkSmartPointer<vtkActor> getTop();
-    void setTop(vtkSmartPointer<vtkActor> top);
+    vtkSmartPointer<vtkActor> getRobotBox();
+    void setRobotBox(vtkSmartPointer<vtkActor> robotBox);
+    vtkSmartPointer<vtkActor> getRobotTopTriangle();
+    void setRobotTopTriangle(vtkSmartPointer<vtkActor> robotTopTriangle);
     void setNameActor(vtkSmartPointer<vtkActor> nameActor);
     vtkSmartPointer<vtkActor> getNameActor();
     int getId();
@@ -67,8 +67,8 @@ class RobotVisualization
     std::string name = "";
     int id = 0;
     int senderId = 0;
-    vtkSmartPointer<vtkActor> top = nullptr;
-    vtkSmartPointer<vtkActor> object = nullptr;
+    vtkSmartPointer<vtkActor> robotTopTriangle = nullptr;
+    vtkSmartPointer<vtkActor> robotBox = nullptr;
     vtkSmartPointer<vtkActor> nameActor = nullptr;
     vtkSmartPointer<vtkActor> ball = nullptr;
     vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
