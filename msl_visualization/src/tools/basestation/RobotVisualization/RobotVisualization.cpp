@@ -641,42 +641,47 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
             found = false;
             auto pos = this->field->transformToGuiCoords(mergedOpp.x, mergedOpp.y);
 
-            // don't draw the obstacle if there is an object already drawn on the field
-            for (auto member : *this->field->getRobots())
-            {
-                auto mb = member->getVisualization()->getRobotBox();
-                if (mb == nullptr)
-                    continue;
+            // we should draw merged Opponents onto teammates, because this indicates a failure!
 
-                if (abs(mb->GetPosition()[0] - pos.first) < 0.25 && abs(mb->GetPosition()[1] - pos.second) < 0.25)
-                {
-                    found = true;
-                    break;
-                }
-            }
+//            // don't draw the obstacle if there is a teammate already drawn on the field
+//            for (auto member : *this->field->getRobots())
+//            {
+//                auto mb = member->getVisualization()->getRobotBox();
+//                if (mb == nullptr)
+//                    continue;
+//
+//                if (abs(mb->GetPosition()[0] - pos.first) < 0.25 && abs(mb->GetPosition()[1] - pos.second) < 0.25)
+//                {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//
+//            if (found)
+//                continue;
 
-            if (found)
-                continue;
+//            // don't draw object boxes on teammates
+//            bool aTeammate = false;
+//            for (int i = 0; i < 6; i++)
+//            {
+//                if (abs(robotPos[robotIds[i]][0] - pos.first) < 0.4 && abs(robotPos[robotIds[i]][1] - pos.second) < .4)
+//                    aTeammate = true;
+//            }
 
-            // don't draw object boxes on teammates
-            bool aTeammate = false;
-            for (int i = 0; i < 6; i++)
-            {
-                if (abs(robotPos[robotIds[i]][0] - pos.first) < 0.4 && abs(robotPos[robotIds[i]][1] - pos.second) < .4)
-                    aTeammate = true;
-            }
-
-            if (!aTeammate && this->robot->getVisStatus())
+            if (this->robot->getVisStatus())
             {
                 // move object boxes instead of drawing new ones, as long as possible
-                if (objectCount < this->obstacleDiscs.size())
+                if (objectCount < this->mergedOppsBases.size())
                 {
-                    this->obstacleDiscs.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
-                    this->obstacleDiscs.at(objectCount)->SetVisibility(true);
+                    this->mergedOppsBases.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
+                    this->mergedOppsBases.at(objectCount)->SetVisibility(true);
+                    this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second, 0.4);
+                    this->mergedOppsTops.at(objectCount)->SetVisibility(true);
                 }
                 else
                 {
-                    drawObstacleDisc(renderer, pos.first, pos.second);
+                    drawMergedOppBase(renderer, pos.first, pos.second);
+                    drawMergedOppTop(renderer, pos.first, pos.second);
                 }
                 objectCount++;
             }
@@ -684,11 +689,12 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     }
 
     // hide unused object boxes
-    if (objectCount < this->obstacleDiscs.size())
+    if (objectCount < this->mergedOppsBases.size())
     {
-        for (int i = objectCount; i < this->obstacleDiscs.size(); ++i)
+        for (int i = objectCount; i < this->mergedOppsBases.size(); ++i)
         {
-            this->obstacleDiscs.at(i)->SetVisibility(false);
+            this->mergedOppsBases.at(i)->SetVisibility(false);
+            this->mergedOppsTops.at(i)->SetVisibility(false);
         }
     }
 }
@@ -716,6 +722,11 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
     renderer->AddActor(oppBase);
 
     this->mergedOppsBases.push_back(oppBase);
+}
+
+void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, double y)
+{
+  // TODO
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
