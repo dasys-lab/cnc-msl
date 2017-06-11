@@ -6,150 +6,117 @@
  */
 
 #include "msl_ptgrey_camera/CameraTest.h"
-
-#include <iostream>
-#include <opencv2/opencv.hpp>
-#include <flycapture/FlyCapture2.h>
-using namespace std;
+using std::endl;
+using std::cout;
 using namespace cv;
 
-namespace msl_ptgrey_camera
+CameraTest::CameraTest()
 {
+	// TODO Auto-generated constructor stub
 
-	CameraTest::CameraTest()
-	{
-		// TODO Auto-generated constructor stub
-
-	}
-
-	CameraTest::~CameraTest()
-	{
-		// TODO Auto-generated destructor stub
-	}
-
-} /* namespace msl_ptgrey_camera */
-
-const int col_size   = 1280;
-const int row_size   = 960;
-const int data_size  = row_size * col_size;
-
-void PrintError(FlyCapture2::Error error);
-
-void imgCallback(class FlyCapture2::Image* pImage, const void* pCallbackData )
-{
-	cout << "callback!" << endl;
 }
+
+CameraTest::~CameraTest()
+{
+	// TODO Auto-generated destructor stub
+}
+
+void onGammaTrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+	cam->setGamma((double)value / 10.0);
+}
+
+void onShutterTrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+	cam->setShutter((double)value / 100);
+
+}
+
+//Gain ranges from -4.46915 to 24.0001
+void onGainTrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+	cam->setGain((double)value / 10 - 4.47);
+}
+
+//Saturation ranges from 0 to 399.902
+void onSaturationTrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+	cam->setSaturation((double)value);
+}
+
+//Hue ranges from -180 to 179.912
+void onHueTrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+	cam->setHue((double)value - 180);
+}
+
+void onWB1TrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+//	cam->setWhiteBalance()
+}
+
+void onWB2TrackbarMoved(int value, void* camera)
+{
+	msl_ptgrey_camera::MSLPtGreyCamera* cam = (msl_ptgrey_camera::MSLPtGreyCamera*)camera;
+}
+const cv::String WINDOWNAME = "MSLCameraPreview";
 
 int main(int argc, char** argv)
 {
-	cout << "Test" << endl;
-	namedWindow("MSLCameraPreview", WINDOW_NORMAL);
-	//void* windowHandle = cv::ge("CameraImage");
-	resizeWindow("MSLCameraPreview", 800, 600);
 
-	FlyCapture2::GigECamera cam;
-	FlyCapture2::CameraInfo camInfo;
-	FlyCapture2::Error error;
-	FlyCapture2::BusManager busMgr;
-	FlyCapture2::PGRGuid guid;
-	//Format7PacketInfo fmt7PacketInfo;
-	//Format7ImageSettings fmt7ImageSettings;
+	//Create and init PtGrey cam
+	msl_ptgrey_camera::MSLPtGreyCamera cam;
+	cam.init(1280, 960, msl_ptgrey_camera::ChannelType::C_3, 12);
 
-	FlyCapture2::TriggerMode triggerMode;
+	//Initialize starting values for Slider positions (min values for now)
+	//TODO use system config
+	int gammaSlider = 5;
+	int shutterSlider = 3;
+	int gainSlider = 0;
+	int saturationSlider = 0;
+	int hueSlider = 5;
+	int wb1Slider = 5;
+	int wb2Slider = 5;
 
+	//Create window, trackbars and buttons
+	namedWindow(WINDOWNAME, WINDOW_NORMAL);
+	resizeWindow(WINDOWNAME, 800, 600);
+	createTrackbar(cv::String("Gamma"), WINDOWNAME, &gammaSlider, 39, onGammaTrackbarMoved, &cam);
+	createTrackbar(cv::String("Shutter"), WINDOWNAME, &shutterSlider, 3100, onShutterTrackbarMoved, &cam);
+	createTrackbar(cv::String("Gain"), WINDOWNAME, &gainSlider, 240, onGainTrackbarMoved, &cam);
+	createTrackbar(cv::String("Saturation"), WINDOWNAME, &saturationSlider, 4000, onSaturationTrackbarMoved, &cam);
+	createTrackbar(cv::String("Hue"), WINDOWNAME, &hueSlider, 4000, onHueTrackbarMoved, &cam);
+	createTrackbar(cv::String("WB1"), WINDOWNAME, &wb1Slider, 100, onWB1TrackbarMoved, &cam);
+	createTrackbar(cv::String("WB2"), WINDOWNAME, &wb2Slider, 100, onWB2TrackbarMoved, &cam);
 
-	// Get Flea2 camera
+	Mat img(Size(1280, 960), CV_8UC1);
 
-	busMgr.ForceAllIPAddressesAutomatically();
-	error = busMgr.GetCameraFromIndex( 0, &guid );
-
-	if ( error != FlyCapture2::PGRERROR_OK )
-	{
-	PrintError( error );
-		return -1;
-	}
-
-	// Connect to the camera
-	error = cam.Connect( &guid );
-	if ( error != FlyCapture2::PGRERROR_OK )
-	{
-		PrintError( error );
-		return -1;
-	}
-
-
-	// Get camera information
-	error = cam.GetCameraInfo(&camInfo);
-	if ( error != FlyCapture2::PGRERROR_OK )
-	{
-		PrintError( error );
-		return -1;
-	}
-
-
-	// Set Config
-	FlyCapture2::FC2Config config;
-	config.grabMode = FlyCapture2::GrabMode::DROP_FRAMES;
-	cam.SetConfiguration(&config);
-
-	// Set Imaging Mode
-	cam.SetGigEImagingMode(FlyCapture2::MODE_0);
-
-
-	FlyCapture2::GigEImageSettings imageSettings;
-	imageSettings.pixelFormat = FlyCapture2::PixelFormat::PIXEL_FORMAT_RAW8;
-	imageSettings.height = 960;
-	imageSettings.width = 1280;
-	cam.SetGigEImageSettings(&imageSettings);
-
-	// Start Capture
-	error = cam.StartCapture();
-	if ( error != FlyCapture2::PGRERROR_OK )
-	{
-		PrintError( error );
-		return -1;
-	}
-
-	FlyCapture2::Image camImg;
-
-	//CvMemStorage* storage = NULL;
-	IplImage* img    = NULL;
-	img = cvCreateImage( cvSize( 1280, 960 ),
-					 IPL_DEPTH_8U,
-					 4 );
 
 	int frame = 0;
-	while(true) {
-		//cam.FireSoftwareTrigger(true);
 
+	while (true)
+	{
 
-		cam.RetrieveBuffer(&camImg);
+		cam.getNextImage();
 
+		cout << "frame: " << frame++ << " data size: " << cam.camImg->GetDataSize() << endl;
 
-		cout << "frame: " << frame++ << " data size: " << camImg.GetDataSize() << endl;
-		//cout << "data:" << camImg.GetData() << endl;
+		memcpy(img.data, cam.camImg->GetData(), cam.camImg->GetDataSize());
 
+		Mat dest(Size(1280, 960), CV_8UC3);
 
-		// Create OpenCV structs for grayscale image
+		cvtColor(img, dest, CV_BayerGB2RGB);
 
-
-		memcpy(img->imageData, camImg.GetData(), camImg.GetDataSize());
-		//cvSaveImage( "test.bmp", img );
-
-		cvShowImage("MSLCameraPreview", img);
-
+		imshow("MSLCameraPreview", dest);
 		cvWaitKey(0);
 
 	}
 
-	cvSaveImage( "test.bmp", img );
-
 	return 0;
-}
-
-
-// Print error trace
-void PrintError( FlyCapture2::Error error )
-{
-    error.PrintErrorTrace();
 }

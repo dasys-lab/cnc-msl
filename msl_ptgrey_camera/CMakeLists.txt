@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.3) 
 project(msl_ptgrey_camera)
 
 ## Use c++ 11x std
@@ -23,24 +23,28 @@ find_package(catkin REQUIRED COMPONENTS system_config)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_ptgrey_camera
-  CATKIN_DEPENDS system_config
+  CATKIN_DEPENDS system_config flycapture
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(msl_ptgrey_camera
+set(sources
   src/MSLPtGreyCamera.cpp
+  src/CamPropertySetter.cpp
+  src/CameraTest.cpp
+  src/CNImage.cpp
+  src/filters/BayerDemosaic.cpp
 )
+
+##target_link_libraries(msl_ptgrey_camera
+##  ${catkin_LIBRARIES}
+##  ${OpenCV_LIBS}
+##  flycapture 
+##)
+
+add_executable(msl_ptgrey_camera ${sources})
 
 target_link_libraries(msl_ptgrey_camera
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBS}
-  flycapture
-)
-
-add_executable(msl_ptgrey_camera_test src/CameraTest.cpp)
-
-target_link_libraries(msl_ptgrey_camera_test
   ${catkin_LIBRARIES}
   ${OpenCV_LIBS}
   flycapture

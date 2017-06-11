@@ -12,9 +12,11 @@
   <author email="info@philipp-mandler.com">Philipp Mandler</author>
 
   <build_depend>system_config</build_depend>
+  <build_depend>flycapture</build_depend>
 
 
   <run_depend>system_config</run_depend>
+  <run_depend>flycapture</run_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 
