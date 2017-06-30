@@ -3,7 +3,27 @@
 
 #include "engine/BasicBehaviour.h"
 /*PROTECTED REGION ID(domainBehaviourHeaderHead) ENABLED START*/
-// Add additional options here
+namespace msl_helper_msgs{
+	ROS_DECLARE_MESSAGE(WatchBallMsg)
+	ROS_DECLARE_MESSAGE(PassMsg)
+	ROS_DECLARE_MESSAGE(DebugMsg)
+}
+
+namespace msl_actuator_msgs{
+	ROS_DECLARE_MESSAGE(MotionControl)
+	ROS_DECLARE_MESSAGE(BallHandleCmd)
+	ROS_DECLARE_MESSAGE(KickControl)
+	ROS_DECLARE_MESSAGE(ShovelSelectCmd)
+}
+
+namespace supplementary {
+	class SystemConfig;
+}
+
+namespace msl{
+	class MSLRobot;
+	class MSLWorldModel;
+}
 /*PROTECTED REGION END*/
 
 namespace alica {
@@ -13,7 +33,32 @@ public:
   virtual ~DomainBehaviour();
 
   /*PROTECTED REGION ID(domainBehaviourClassDecl) ENABLED START*/
-  // Add additional options here
+		void send(msl_actuator_msgs::MotionControl& mc);
+		void send(msl_actuator_msgs::BallHandleCmd& bh);
+		void send(msl_actuator_msgs::KickControl& kc);
+		void send(msl_actuator_msgs::ShovelSelectCmd& ssc);
+		void send(msl_helper_msgs::PassMsg& pm);
+		void send(msl_helper_msgs::PassMsg& pm, int senderID);
+		void send(msl_helper_msgs::WatchBallMsg& wb);
+		void send(msl_helper_msgs::DebugMsg& dbm);
+		msl::MSLRobot* robot;
+		msl::MSLWorldModel* wm;
+
+	protected:
+		supplementary::SystemConfig* sc;
+
+	private:
+
+		double __maxTranslation;
+		int ownID;
+		ros::Publisher simlatorPub;
+		ros::Publisher motionControlPub;
+		ros::Publisher ballHandlePub;
+		ros::Publisher kickControlPub;
+		ros::Publisher shovelSelectPublisher;
+		ros::Publisher passMsgPublisher;
+		ros::Publisher watchBallMsgPublisher;
+ros::Publisher debugMsgPublisher;
   /*PROTECTED REGION END*/
 };
 } /* namespace alica */

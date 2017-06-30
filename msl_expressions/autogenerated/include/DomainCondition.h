@@ -3,7 +3,15 @@
 
 #include "engine/BasicCondition.h"
 /*PROTECTED REGION ID(domainHeaderAdditional) ENABLED START*/
-// Add additional options here
+namespace msl{
+	class MSLWorldModel;
+	class MSLRobot;
+	class Rules;
+}
+
+namespace supplementary {
+	class SystemConfig;
+}
 /*PROTECTED REGION END*/
 
 namespace alica {
@@ -13,7 +21,16 @@ public:
   virtual ~DomainCondition();
 
   /*PROTECTED REGION ID(domainHeader) ENABLED START*/
-  // Add additional options here
+  		msl::MSLWorldModel* wm;
+		msl::MSLRobot* robot;
+		supplementary::SystemConfig* sc;
+		msl::Rules* rules;
+
+		/* The time that can pass since the last start command
+		 * until we need to skip proper positioning and execute
+		 * the standard right away. [ns]
+		 */
+		uint64_t timeUntilEmergencyExecute;
   /*PROTECTED REGION END*/
 };
 } /* namespace alica */
