@@ -251,6 +251,16 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 		actor->SetVisibility(false);
 	}
 
+	for (vtkSmartPointer<vtkActor> opp : mergedOppsBases)
+	{
+		opp->SetVisibility(false);
+	}
+
+	for (vtkSmartPointer<vtkActor> top : mergedOppsTops)
+	{
+		top->SetVisibility(false);
+	}
+
 	for (vtkSmartPointer<vtkActor> actor : pathLines)
 	{
 		if (actor != nullptr)
@@ -613,7 +623,8 @@ void RobotVisualization::updateObstacles(vtkRenderer *renderer)
 void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, double y)
 {
 	vtkSmartPointer<vtkDiskSource> diskSrc = vtkSmartPointer<vtkDiskSource>::New();
-	diskSrc->SetOuterRadius(0.26); // like a robot
+//	diskSrc->SetOuterRadius(0.26); // like a robot
+	diskSrc->SetOuterRadius(0.4); // for merged opps debugging TODO remove
 	diskSrc->SetInnerRadius(0.0);
 	diskSrc->SetCircumferentialResolution(24);
 
@@ -682,15 +693,15 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 				// move object boxes instead of drawing new ones, as long as possible
 				if (objectCount < this->mergedOppsBases.size())
 				{
-					this->mergedOppsBases.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
+					this->mergedOppsBases.at(objectCount)->SetPosition(pos.first, pos.second, 0.3);
 					this->mergedOppsBases.at(objectCount)->SetVisibility(true);
-//					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second, 0.4);
-//					this->mergedOppsTops.at(objectCount)->SetVisibility(true);
+					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second, 0.7);
+					this->mergedOppsTops.at(objectCount)->SetVisibility(true);
 				}
 				else
 				{
 					drawMergedOppBase(renderer, pos.first, pos.second);
-//					drawMergedOppTop(renderer, pos.first, pos.second);
+					drawMergedOppTop(renderer, pos.first, pos.second);
 				}
 				objectCount++;
 			}
@@ -703,13 +714,14 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 		for (int i = objectCount; i < this->mergedOppsBases.size(); ++i)
 		{
 			this->mergedOppsBases.at(i)->SetVisibility(false);
-//			this->mergedOppsTops.at(i)->SetVisibility(false);
+			this->mergedOppsTops.at(i)->SetVisibility(false);
 		}
 	}
 }
 
 void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, double y)
 {
+
 	vtkSmartPointer<vtkCylinderSource> cylinderSrc = vtkSmartPointer<vtkCylinderSource>::New();
 	cylinderSrc->SetCenter(0, 0, 0);
 	cylinderSrc->SetRadius(0.26); // like a robot
@@ -723,10 +735,10 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
 	vtkSmartPointer<vtkActor> oppBase = vtkSmartPointer<vtkActor>::New();
 	oppBase->SetMapper(oppBaseMapper);
 	oppBase->SetPosition(x, y, 0.01); // 0.01 ~ a little bit above the field
-	oppBase->SetOrientation(90.0,0,0);
+	oppBase->SetOrientation(90.0, 0, 0);
 
 	oppBase->GetProperty()->SetColor(0.8, 0.1, 0.5);
-
+	oppBase->GetProperty()->SetOpacity(0.3); //TODO remove
 	oppBase->GetProperty()->SetDiffuse(0.4);
 	oppBase->GetProperty()->SetAmbient(0.8);
 	renderer->AddActor(oppBase);
@@ -736,7 +748,49 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
 
 void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, double y)
 {
-	// TODO
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+	float p0[3] = {0.26/3.14, 0, 0};
+	float p1[3] = {-0.26, 0.26/5, 0};
+	float p2[3] = {-0.26, -0.26/5, 0};
+	float p3[3] = {0.0, 0.0, 0.25};
+
+	points->InsertNextPoint(p0);
+	points->InsertNextPoint(p1);
+	points->InsertNextPoint(p2);
+	points->InsertNextPoint(p3);
+
+	vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
+	tetra->GetPointIds()->SetId(0, 0);
+	tetra->GetPointIds()->SetId(1, 1);
+	tetra->GetPointIds()->SetId(2, 2);
+	tetra->GetPointIds()->SetId(3, 3);
+
+
+	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	cells->InsertNextCell(tetra);
+	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	ug->SetPoints(points);
+	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
+	// Create an actor and mapper
+	vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
+	mapper->SetInputData(ug);
+
+	vtkSmartPointer<vtkActor> oppTop = vtkSmartPointer<vtkActor>::New();
+	oppTop->SetMapper(mapper);
+	auto c = Color::getColor(this->robot->getId());
+	oppTop->GetProperty()->SetColor(c[0], c[1], c[2]);
+
+	oppTop->GetProperty()->SetDiffuse(0.4);
+	oppTop->GetProperty()->SetAmbient(0.8);
+
+	oppTop->SetPosition(x, y, 0.01);
+//	oppTop->SetOrientation(0, 0, -90);
+	oppTop->RotateZ(this->id * 180 / 5 + 0.26*180);
+
+	renderer->AddActor(oppTop);
+
+	this->mergedOppsTops.push_back(oppTop);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
@@ -745,7 +799,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
 	boost::shared_ptr<msl_msgs::PathPlanner> ppi;
 	bool timeout = false;
 	{
-		lock_guard < mutex > lock(this->field->pathMutex);
+		lock_guard<mutex> lock(this->field->pathMutex);
 		ppi = this->robot->getPathPlannerInfo();
 		timeout = this->robot->isPathPlannerMsgTimeout();
 
@@ -788,7 +842,7 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
 	boost::shared_ptr<msl_msgs::CorridorCheck> cc;
 	bool timeout = false;
 	{
-		lock_guard < mutex > lock(this->field->corridorMutex);
+		lock_guard<mutex> lock(this->field->corridorMutex);
 		cc = this->robot->getCorridorCheckInfo();
 		timeout = this->robot->isCorridorCheckMsgTimeout();
 
@@ -839,7 +893,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 	boost::shared_ptr<msl_msgs::VoronoiNetInfo> vni;
 	bool timeout = false;
 	{
-		lock_guard < mutex > lock(this->field->voronoiMutex);
+		lock_guard<mutex> lock(this->field->voronoiMutex);
 		vni = this->robot->getVoronoiNetInfo();
 		timeout = this->robot->isVoronoiNetMsgTimeout();
 
@@ -939,7 +993,7 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
 	vector<boost::shared_ptr<msl_helper_msgs::DebugMsg>> msgs;
 	int count;
 	{
-		lock_guard < mutex > lock(this->field->debugMutex);
+		lock_guard<mutex> lock(this->field->debugMutex);
 		count = this->robot->getDebugMsgs(msgs);
 	}
 
@@ -982,7 +1036,7 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
 	boost::shared_ptr<msl_helper_msgs::PassMsg> passMsg;
 	bool timeout = false;
 	{
-		lock_guard < mutex > lock(this->field->passMutex);
+		lock_guard<mutex> lock(this->field->passMutex);
 		passMsg = this->robot->getPassMsg();
 		timeout = this->robot->isPassMsgTimeout();
 	}
