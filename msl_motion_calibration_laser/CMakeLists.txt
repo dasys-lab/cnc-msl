@@ -9,7 +9,7 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)
 
@@ -26,5 +26,5 @@ add_executable(msl_motion_calibration_laser
   src/MotionCalibrationLaser.cpp
 )
 
-target_link_libraries(msl_motion_calibration_laser ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
