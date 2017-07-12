@@ -57,6 +57,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkVectorText.h>
 #include <vtkViewport.h>
+#include <vtkWedge.h>
 
 #include "FieldWidget3D.h"
 #include "RobotInfo.h"
@@ -695,7 +696,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 				{
 					this->mergedOppsBases.at(objectCount)->SetPosition(pos.first, pos.second, 0.3);
 					this->mergedOppsBases.at(objectCount)->SetVisibility(true);
-					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second, 0.7);
+					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second - 0.52 / 4, 0.7);
 					this->mergedOppsTops.at(objectCount)->SetVisibility(true);
 				}
 				else
@@ -737,8 +738,7 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
 	oppBase->SetPosition(x, y, 0.01); // 0.01 ~ a little bit above the field
 	oppBase->SetOrientation(90.0, 0, 0);
 
-	oppBase->GetProperty()->SetColor(0.8, 0.1, 0.5);
-	oppBase->GetProperty()->SetOpacity(0.3); //TODO remove
+	oppBase->GetProperty()->SetColor(0.0, 0.0, 0.0);
 	oppBase->GetProperty()->SetDiffuse(0.4);
 	oppBase->GetProperty()->SetAmbient(0.8);
 	renderer->AddActor(oppBase);
@@ -748,31 +748,52 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
 
 void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, double y)
 {
+//	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+//
+//	float p0[3] = {0.26/3.14, 0, 0};
+//	float p1[3] = {-0.26, 0.26/5, 0};
+//	float p2[3] = {-0.26, -0.26/5, 0};
+//	float p3[3] = {0.0, 0.0, 0.25};
+//
+//	points->InsertNextPoint(p0);
+//	points->InsertNextPoint(p1);
+//	points->InsertNextPoint(p2);
+//	points->InsertNextPoint(p3);
+//
+//	vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkPol>::New();
+//	tetra->GetPointIds()->SetId(0, 0);
+//	tetra->GetPointIds()->SetId(1, 1);
+//	tetra->GetPointIds()->SetId(2, 2);
+//	tetra->GetPointIds()->SetId(3, 3);
+
+	int numberOfVertices = 6;
+
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-	float p0[3] = {0.26/3.14, 0, 0};
-	float p1[3] = {-0.26, 0.26/5, 0};
-	float p2[3] = {-0.26, -0.26/5, 0};
-	float p3[3] = {0.0, 0.0, 0.25};
-
-	points->InsertNextPoint(p0);
-	points->InsertNextPoint(p1);
-	points->InsertNextPoint(p2);
-	points->InsertNextPoint(p3);
-
-	vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
-	tetra->GetPointIds()->SetId(0, 0);
-	tetra->GetPointIds()->SetId(1, 1);
-	tetra->GetPointIds()->SetId(2, 2);
-	tetra->GetPointIds()->SetId(3, 3);
+	points->InsertNextPoint(0, 0.26, 0.0);
+	points->InsertNextPoint(0, 0.13, 0.0);
+	points->InsertNextPoint(0, .5, 0.2);
+	points->InsertNextPoint(0.26, 0.26, 0.0);
+	points->InsertNextPoint(0.26, 0.13, 0.0);
+	points->InsertNextPoint(0.26, .5, 0.2);
 
 
-	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	cells->InsertNextCell(tetra);
+	vtkSmartPointer<vtkWedge> wedge = vtkSmartPointer<vtkWedge>::New();
+	for (int i = 0; i < numberOfVertices; ++i)
+	{
+		wedge->GetPointIds()->SetId(i, i);
+	}
+
 	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ug->SetPoints(points);
-	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
-	// Create an actor and mapper
+	ug->InsertNextCell(wedge->GetCellType(), wedge->GetPointIds());
+
+//	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+//	cells->InsertNextCell(tetra);
+//	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
+//	ug->SetPoints(points);
+//	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
+//	// Create an actor and mapper
 	vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
 	mapper->SetInputData(ug);
 
@@ -786,7 +807,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 
 	oppTop->SetPosition(x, y, 0.01);
 //	oppTop->SetOrientation(0, 0, -90);
-	oppTop->RotateZ(this->id * 180 / 5 + 0.26*180);
+//	oppTop->RotateZ(this->id * 180 / 5 + 0.26 * 180);
 
 	renderer->AddActor(oppTop);
 
