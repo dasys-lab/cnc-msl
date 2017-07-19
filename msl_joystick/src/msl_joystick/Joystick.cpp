@@ -4,6 +4,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
+#include <math.h>
 
 namespace msl_joystick
 {
@@ -141,6 +142,8 @@ void Joystick::sendJoystickMessage()
         msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
     }
 
+
+
     // kicker stuff
     msg.kickPower = this->kickPower;
     if (this->keyPressed[6] == true)
@@ -230,6 +233,36 @@ void Joystick::sendJoystickMessage()
             msg.motion.rotation = 0;
         }
     }
+
+    // smooth driving stuff
+//    if (this->smoothDrivingMode)
+//    {
+    	// slope variable
+    	int a;
+    	// changing point for slope
+    	int b;
+    	//
+    	double TA;
+    	// acceleration memory
+    	double translation = msg.motion.translation;
+    	// number 1, 2, 3 depending on the past iterations
+    	double translationOld1;
+    	double translationOld2;
+    	double translationOld3;
+
+
+    	double n1 = -b * exp(-a * TA) + b;
+    	double n2 = b * exp(-2 * a * TA) - b * exp(-a * TA) - b * a;
+    	double n3 = b * a;
+
+    	double d1 = -2 - 2 * exp(-a * TA);
+    	double d2 = 4 * exp(-a * TA) + 1 + exp(-2 * a * TA);
+    	double d3 = -2 * exp(-a * TA) - 2 * exp(-2 * a * TA);
+    	double d4 = exp(-2 * a * TA);
+
+
+
+//    }
 
 #ifdef RQT_MSL_JOYSTICK_DEBUG
     this->printControlValues();
