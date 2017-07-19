@@ -83,7 +83,36 @@ namespace laserMotionCalibration
 
     void MotionCalibrationLaser::getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold)
     {
-        cout << "doing stuff with threshold=" << threshold << endl;
+        bool aboveThreshold = false;
+        int numberOfGroups = 0;
+
+        int i = 0;
+        int groupBegin = -1;
+        for (auto intensity : laserScan->intensities)
+        {
+            if (!aboveThreshold && intensity > threshold)
+            {
+                aboveThreshold = true;
+                numberOfGroups++;
+                groupBegin = i;
+            }
+
+            if (aboveThreshold && intensity < threshold)
+            {
+                aboveThreshold = false;
+                int groupEnd = i - 1;
+                cout << "[" << numberOfGroups << "] " << groupEnd - groupBegin + 1 << " scans (" << groupBegin << "-" << groupEnd << ")" << endl;
+            }
+
+            if(aboveThreshold)
+            {
+                cout << "[" << numberOfGroups << "] Scan " << i << " (intensity=" << intensity << ", distance=" << laserScan->ranges[i] << ")" << endl;
+            }
+
+            i++;
+        }
+
+        cout << "choosing threshold=" << threshold << " yielded " << numberOfGroups << " groups" << endl << endl;
     }
 }
 
