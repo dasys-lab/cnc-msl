@@ -696,7 +696,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 				{
 					this->mergedOppsBases.at(objectCount)->SetPosition(pos.first, pos.second, 0.3);
 					this->mergedOppsBases.at(objectCount)->SetVisibility(true);
-					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second - 0.52 / 4, 0.7);
+					this->mergedOppsTops.at(objectCount)->SetPosition(pos.first, pos.second, 0.7);
 					this->mergedOppsTops.at(objectCount)->SetVisibility(true);
 				}
 				else
@@ -770,12 +770,22 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-	points->InsertNextPoint(0, 0.26, 0.0);
-	points->InsertNextPoint(0, 0.13, 0.0);
-	points->InsertNextPoint(0, .5, 0.2);
-	points->InsertNextPoint(0.26, 0.26, 0.0);
-	points->InsertNextPoint(0.26, 0.13, 0.0);
-	points->InsertNextPoint(0.26, .5, 0.2);
+	double r =  0.26;
+	double h = r * cos(M_PI*30/180);
+	//first three: triangle 1
+	points->InsertNextPoint(r, 0, 0.2);
+
+	points->InsertNextPoint(r/2, h , 0.2);
+
+	//nose up mid
+	points->InsertNextPoint(0, 0, 0.2);
+
+	//last 3: triangle 2
+	points->InsertNextPoint(r, 0, -0.2);
+	points->InsertNextPoint(r/2, h, -0.2);
+
+	//nose down mid
+	points->InsertNextPoint(0, 0, -0.2);
 
 
 	vtkSmartPointer<vtkWedge> wedge = vtkSmartPointer<vtkWedge>::New();
@@ -783,6 +793,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 	{
 		wedge->GetPointIds()->SetId(i, i);
 	}
+
 
 	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ug->SetPoints(points);
@@ -801,9 +812,9 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 	oppTop->SetMapper(mapper);
 	auto c = Color::getColor(this->robot->getId());
 	oppTop->GetProperty()->SetColor(c[0], c[1], c[2]);
-
 	oppTop->GetProperty()->SetDiffuse(0.4);
 	oppTop->GetProperty()->SetAmbient(0.8);
+	oppTop->GetProperty()->SetRepresentationToWireframe();
 
 	oppTop->SetPosition(x, y, 0.01);
 //	oppTop->SetOrientation(0, 0, -90);
