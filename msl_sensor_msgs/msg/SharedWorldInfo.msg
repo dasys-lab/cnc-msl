@@ -11,7 +11,7 @@ BallInfo negotiatedBall
 SharedBallInfo sharedBall
 
 msl_msgs/Point2dInfo[] path
-msl_msgs/Point2dInfo[] mergedOpponents
+msl_sensor_msgs/MergedOpponentInfo[] mergedOpponents
 msl_msgs/Point2dInfo[] mergedTeamMembers
 msl_msgs/Point2dInfo[] obstacles
 

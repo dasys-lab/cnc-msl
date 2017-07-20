@@ -8,7 +8,7 @@ project(msl_worldmodel)
 find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver tf msl_helper_msgs) 
 find_package(CGAL REQUIRED COMPONENTS Core)
  include(${CGAL_USE_FILE})
-
+ 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")

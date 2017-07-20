@@ -59,6 +59,7 @@ add_message_files(
   DistanceScanInfo.msg
   LocalizationType.msg
   LinePointList.msg
+  MergedOpponentInfo.msg
   ObstacleInfo.msg
   SharedBallInfo.msg
   SharedWorldInfo.msg
@@ -71,6 +72,7 @@ add_message_files(
   SimulatorWorldModelData.msg
   BallHypothesis.msg
   BallHypothesisList.msg
+  
 )
 
 ## Generate services in the 'srv' folder

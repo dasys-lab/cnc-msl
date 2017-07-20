@@ -147,6 +147,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
     // CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
     shared_ptr<vector<shared_ptr<geometry::CNRobot>>> newObsClustersAllo = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
     shared_ptr<vector<shared_ptr<geometry::CNRobot>>> newObsClustersAlloWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
+    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> newObsClustersAlloNoTeam = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -175,6 +176,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
         }
         newObsClustersAlloWithMe->push_back(clusterInfo);
 
+
         curAlloPoint = make_shared<geometry::CNPoint2D>(newClusterArray->at(i)->x, newClusterArray->at(i)->y);
         curEgoPoint = curAlloPoint->alloToEgo(*(make_shared<geometry::CNPosition>(wm->rawSensorData->getCorrectedOdometryInfo()->position.x,
                                                                                   wm->rawSensorData->getCorrectedOdometryInfo()->position.y,
@@ -185,6 +187,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
             // it is not a teammate
             if (wm->field->isInsideField(curAlloPoint, FIELD_TOL))
             {
+            	newObsClustersAlloNoTeam->push_back(clusterInfo);
                 newOppAllo->push_back(curAlloPoint);
                 // egocentric obstacles, which are inside the field and do not belong to our team
                 newOppEgo->push_back(curEgoPoint);
@@ -207,6 +210,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
     this->obstaclesAlloClusteredWithMe.add(owm);
     wm->robots->opponents.processOpponentsEgoClustered(newOppEgo);
     wm->robots->opponents.processOpponentsAlloClustered(newOppAllo);
+    wm->robots->opponents.processOpponentsAlloClusteredNoTeam(newObsClustersAlloNoTeam);
     wm->robots->teammates.processTeammatesEgoClustered(newTeammatesEgo);
     wm->robots->teammates.processTeammatesAlloClustered(newTeammatesAllo);
     pool->reset();

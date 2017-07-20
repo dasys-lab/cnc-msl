@@ -55,7 +55,8 @@ class RobotVisualization
   private:
     void drawObstacleDisc(vtkRenderer *renderer, double x, double y);
     void drawMergedOppBase(vtkRenderer *renderer, double x, double y);
-    void drawMergedOppTop(vtkRenderer *renderer, double x, double y);
+    void drawMergedOppTop(vtkRenderer *renderer, double x, double y,std::vector<int> supporters);
+    void updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>>, double x, double y,std::vector<int> supporters);
     std::array<double, 3> &getColor();
     int getDashedPattern();
 
@@ -79,7 +80,7 @@ class RobotVisualization
     vtkSmartPointer<vtkActor> passPointActor = nullptr;
     std::vector<vtkSmartPointer<vtkActor>> obstacleDiscs;
     std::vector<vtkSmartPointer<vtkActor>> mergedOppsBases;
-    std::vector<vtkSmartPointer<vtkActor>> mergedOppsTops;
+    std::vector<std::vector<vtkSmartPointer<vtkActor>>> mergedOppsTops;
 
     std::vector<vtkSmartPointer<vtkActor>> pathLines;
     std::vector<std::shared_ptr<Line>> netLines;

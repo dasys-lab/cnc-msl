@@ -12,6 +12,7 @@
 #include "RingBuffer.h"
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
+#include <container/CNRobot.h>
 #include <vector>
 
 using namespace std;
@@ -31,6 +32,8 @@ class Opponents
     void processOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsAlloClustered);
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getOpponentsEgoClustered(int index = 0);
     void processOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsEgoClustered);
+    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getOpponentsAlloClusteredNoTeam(int index = 0);
+    void processOpponentsAlloClusteredNoTeam(shared_ptr<vector<shared_ptr<geometry::CNRobot>>> opponentsAlloClusteredNoTeam);
     shared_ptr<geometry::CNPoint2D> getClosestToBall(double &distToOpp);
     shared_ptr<geometry::CNPoint2D> getInCorridor(double angle, double width);
 
@@ -43,6 +46,7 @@ class Opponents
     unsigned long maxInformationAge = 1000000000;
     RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> opponentsEgoClustered;
     RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> opponentsAlloClustered;
+    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> opponentsAlloClusteredNoTeamMates;
 };
 
 } /* namespace msl */

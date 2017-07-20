@@ -36,6 +36,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/MergedOpponentInfo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
@@ -436,15 +437,16 @@ void MSLWorldModel::sendSharedWorldModelData(const ros::TimerEvent& event)
 	}
 
     // Merged Opponents
-	auto opponents = this->robots->opponents.getOpponentsAlloClustered();
+	auto opponents = this->robots->opponents.getOpponentsAlloClusteredNoTeam();
 	if (opponents)
 	{
 		msg.mergedOpponents.reserve(opponents->size());
 		for (auto &opp : *opponents)
 		{
-			msl_msgs::Point2dInfo info;
+			msl_sensor_msgs::MergedOpponentInfo info;
 			info.x = opp->x;
 			info.y = opp->y;
+			info.supporters = *opp->supporter;
 			msg.mergedOpponents.push_back(info);
 		}
 	}
