@@ -27,7 +27,7 @@ namespace alica
 		shared_ptr<std::vector<double>> pastTranslations;
 		shared_ptr<std::vector<double>> pastControlInput;
 
-		int ptController(int translation);
+		int ptController();
 
 		void fillVector(shared_ptr<std::vector<double>> vector, int size, int translation);
 		void updateVector(shared_ptr<std::vector<double>> vector, int translation);

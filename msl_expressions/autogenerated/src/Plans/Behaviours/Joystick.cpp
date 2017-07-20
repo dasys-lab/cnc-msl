@@ -49,7 +49,6 @@ namespace alica
 		if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
 		{
 			msl_actuator_msgs::MotionControl mc;
-			mc.motion = joy->motion;
 
 			if (pastTranslations->empty())
 			{
@@ -61,11 +60,14 @@ namespace alica
 			}
 
 			// smooth driving stuff
-			//    if (this->smoothDrivingState)
-			//    {
-			mc.motion.translation = ptController(mc.motion.translation);
+//			if (this->smoothDrivingState)
+//			{
+			mc.motion.translation = ptController();
 			cout << "Joystick: x = " << mc.motion.translation << endl;
-			//    }
+//			} else
+//			{
+//				mc.motion = joy->motion;
+//			}
 
 			// acceleration memory
 			// saving translation of the last 3 iterations
@@ -112,7 +114,7 @@ namespace alica
 		}
 
 		lastProcessedCmd = joy;
-
+		cout << "=========================" << endl;
 		/*PROTECTED REGION END*/
 	}
 	void Joystick::initialiseParameters()
@@ -121,20 +123,21 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
-	int Joystick::ptController(int translation)
+	int Joystick::ptController()
 	{
 		// slope variable
-		int a = 5;
+		double a = 5;
 		// changing point for slope
-		int b = pow(a, 2);
+		double b = pow(a, 2);
 		// sending frequency
-		double TA = 1 / 30;
+		double TA = 1.0 / 30.0;
 
-		double n1 = -2 * exp(-a * TA) + 1 + exp(-a * TA) - exp(-a * TA) * TA;
+
+		double n1 = pow(a, 2) / (1 / pow(TA, 2) + (2 / TA) + pow(a, 2));
 		double n2 = exp(-2 * a * TA) - exp(-a * TA) + exp(-a * TA) * TA;
 
-		double d1 = -2 * exp(-a * TA) -2;
-		double d2 = exp(-1 * a * TA) + 4 * exp(-a * TA) + 1;
+		double d1 = (-(2 / pow(TA, 2)) - ((2 * a) / TA)) / (1 / pow(TA, 2) + 2 / TA + pow(a, 2));
+		double d2 = (1 / pow(TA, 2)) / (1 / pow(TA, 2) + 2 / TA + pow(a, 2));
 		double d3 = -2 * exp(-2 * a * TA) -2 * exp(-a * TA);
 		double d4 = exp(-2 * a * TA);
 
