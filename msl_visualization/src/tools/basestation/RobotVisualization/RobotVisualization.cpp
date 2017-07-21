@@ -767,7 +767,7 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
 void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, double y, std::vector<int> supporters)
 {
     int numberOfVertices = 6;
-    int teamSize = 6;
+    int teamSize = sizeof(robotIds) / sizeof(int);
     std::vector<vtkSmartPointer<vtkActor>> wedges;
     for (int i = 0; i < teamSize; i++)
     {
@@ -818,6 +818,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
         renderer->AddActor(oppTop);
         wedges.push_back(oppTop);
 
+
     }
 
     for (int s : supporters)
@@ -832,7 +833,6 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
         }
     }
     this->mergedOppsTops.push_back(wedges);
-//    cout << "mOppTops:" << mergedOppsTops.size() << endl;
 }
 
 void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>> wedges, double x, double y,
