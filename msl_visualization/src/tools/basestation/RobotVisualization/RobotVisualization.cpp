@@ -838,7 +838,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>> wedges, double x, double y,
                                             std::vector<int> supporters)
 {
-
+    int teamSize = sizeof(robotIds) / sizeof(int);
     for (auto w : wedges)
     {
         w->SetPosition(x, y, 0.7);
@@ -846,7 +846,7 @@ void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor
     }
     for (int s : supporters)
     {
-        for (int idx = 0; idx < 6; idx++)
+        for (int idx = 0; idx < teamSize; idx++)
         {
             if (robotIds[idx] == s)
             {
