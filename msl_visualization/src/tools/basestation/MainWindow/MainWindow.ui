@@ -754,6 +754,20 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QCheckBox" name="checkRawObs">
+             <property name="text">
+              <string>Raw Obstacles</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkMergedOpps">
+             <property name="text">
+              <string>Merged Opponents</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -1104,6 +1118,28 @@
   <action name="actionShow_All">
    <property name="text">
     <string>Show All</string>
+   </property>
+  </action>
+  <action name="actionShow_Raw_Obstacles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Raw Obstacles</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Raw Obstacles</string>
+   </property>
+  </action>
+  <action name="actionShow_Merged_Opponents">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Merged Opponents</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Merged Opponents</string>
    </property>
   </action>
  </widget>
