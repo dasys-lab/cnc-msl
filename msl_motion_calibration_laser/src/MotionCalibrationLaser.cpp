@@ -10,6 +10,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Point.h>
 #include <cmath>
+#include <ctime>
 
 const float INTENSITY_THRESHOLD = 0.7f;
 
@@ -46,16 +47,17 @@ namespace laserMotionCalibration
 
         auto intensities = laserScan->intensities;
         std::sort(intensities.begin(), intensities.end());
-
+/*
         for (auto threshold : intensities)
         {
             this->getThresholdGroups(laserScan, threshold);
-        }
+        }*/
 
         // calculate XY positions - not actually needed
 
         geometry_msgs::PoseArray poses;
 
+        //const clock_t begin_time = clock();
         int i = 0;
         for (auto intensity : laserScan->intensities)
         {
@@ -75,6 +77,8 @@ namespace laserMotionCalibration
 
             i++;
         }
+        // do something
+        //std::cout << "time: " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << ":time_end" << std::endl;
 
         poses.header.frame_id = "laser"; // for debugging purposes
 
