@@ -733,6 +733,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     {
         for (int i = topCount; i < this->mergedOppsTops.size(); ++i)
         {
+            updateMergedOpponents(renderer);
 //            this->mergedOppsTops.at(i)->SetVisibility(false);
         }
     }
@@ -817,7 +818,6 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 
         renderer->AddActor(oppTop);
         wedges.push_back(oppTop);
-
 
     }
 
