@@ -18,8 +18,6 @@ namespace alica
 			DomainBehaviour("Joystick")
 	{
 		/*PROTECTED REGION ID(con1421854975890) ENABLED START*/ //Add additional options here
-		pastTranslations = make_shared<std::vector<double>>();
-		pastControlInput = make_shared<std::vector<double>>();
 		/*PROTECTED REGION END*/
 	}
 	Joystick::~Joystick()
@@ -39,10 +37,15 @@ namespace alica
 			// for smooth driving
 			//if (this->smoothDrivingState)
 			//{
-			mc.motion.translation = ptController();
+			pastControlInput.push(std::valarray<double>(init,2));
+
+			std::valarray<double> translation = ptController();
+			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
+			mc.motion.angle = atan2(translation[1],translation[0]);
+			mc.motion.rotation = joy->motion.rotation;
+
 			cout << "Joystick: x = " << mc.motion.translation << endl;
-			updateVector(pastTranslations, 0);
-			updateVector(pastControlInput, 0);
+
 			//} else
 			//{
 			//	mc.motion = joy->motion;
@@ -65,7 +68,15 @@ namespace alica
 			// smooth driving stuff
 //			if (this->smoothDrivingState)
 //			{
-			mc.motion.translation = ptController();
+			double input[] = {cos(joy->motion.angle)*joy->motion.translation, sin(joy->motion.angle)*joy->motion.translation};
+			pastControlInput.push(std::valarray<double>(input,2));
+
+
+			std::valarray<double> translation = ptController();
+			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
+			mc.motion.angle = atan2(translation[1],translation[0]);
+			mc.motion.rotation = joy->motion.rotation;
+
 			cout << "Joystick: x = " << mc.motion.translation << endl;
 //			} else
 //			{
@@ -74,8 +85,10 @@ namespace alica
 
 			// acceleration memory
 			// saving translation of the last 3 iterations
-			updateVector(pastTranslations, mc.motion.translation);
-			updateVector(pastControlInput, joy->motion.translation);
+
+
+
+			mc.motion.angle = joy->motion.angle;
 			send(mc);
 		}
 		else
@@ -122,21 +135,31 @@ namespace alica
 	void Joystick::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
-		if (pastTranslations->empty())
+		if (pastTranslations.empty())
 		{
-			fillVector(pastTranslations, 4, 0);
+			pastTranslations.push(std::valarray<double>(init,2) );
+			pastTranslations.push(std::valarray<double>(init,2) );
 		}
-		if (pastControlInput->empty())
+		if (pastControlInput.empty())
 		{
-			fillVector(pastControlInput, 3, 0);
+			pastControlInput.push(std::valarray<double>(init,2) );
+			pastControlInput.push(std::valarray<double>(init,2) );
 		}
+
+		lastJump = 1000;
+
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
-	int Joystick::ptController()
+	std::valarray<double> Joystick::ptController()
 	{
+		int newJump = max(abs(pastControlInput.back()[0]-pastControlInput.front()[0]),abs(pastControlInput.back()[1]-pastControlInput.front()[1]));
+		if (newJump != 0) {
+			lastJump=newJump;
+		}
+
 		// slope variable
-		double a = 5.0;
+		double a = 6.33333 - 4.0/3000.0*lastJump;
 		// changing point for slope
 		double b = pow(a, 2.0);
 		// sending frequency
@@ -154,7 +177,7 @@ namespace alica
 		double d2 = exp(-2 * a * TA);
 
 		cout << "n1 = " << n1 << endl;
-//		cout << "n2 = " << n2 << endl;
+ 		cout << "n2 = " << n2 << endl;
 
 		cout << "d1 = " << d1 << endl;
 		cout << "d2 = " << d2 << endl;
@@ -162,27 +185,14 @@ namespace alica
 //		cout << "d4 = " << d4 << endl;
 
 //		return n1 * pastControlInput->at(0) - d1 * pastTranslations->at(0) - d2 * pastTranslations->at(1);
-		return n1 * pastControlInput->at(0) + n2 * pastControlInput->at(1) - d1 * pastTranslations->at(0)
-				- d2 * pastTranslations->at(1);
+		pastTranslations.push(std::valarray<double>(init,2));
+		pastTranslations.back() += n2*pastControlInput.front() - d2* pastTranslations.front();
+		pastControlInput.pop();
+		pastTranslations.pop();
+		pastTranslations.back() += n1* pastControlInput.front() - d1* pastTranslations.front();
+
+		return pastTranslations.back();
 	}
 
-	void Joystick::fillVector(shared_ptr<std::vector<double>> vector, int size, int translation)
-	{
-		for (int i = 0; i < size; i++)
-		{
-			if (i == size - 1)
-			{
-				vector->insert(vector->begin(), translation);
-				return;
-			}
-			vector->insert(vector->begin(), 0);
-		}
-	}
-
-	void Joystick::updateVector(shared_ptr<std::vector<double>> vector, int translation)
-	{
-		vector->insert(vector->begin(), translation);
-		vector->pop_back();
-	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -4,6 +4,8 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1421854975890) ENABLED START*/ //Add additional includes here
 #include <msl_msgs/JoystickCommand.h>
+#include <queue>
+#include <valarray>
 
 namespace msl_msgs
 {
@@ -24,13 +26,12 @@ namespace alica
 		virtual void initialiseParameters();
 		/*PROTECTED REGION ID(pro1421854975890) ENABLED START*/ //Add additional protected methods here
 		shared_ptr<msl_msgs::JoystickCommand> lastProcessedCmd;
-		shared_ptr<std::vector<double>> pastTranslations;
-		shared_ptr<std::vector<double>> pastControlInput;
+		std::queue<std::valarray<double>> pastTranslations;
+		std::queue<std::valarray<double>> pastControlInput;
+		double init[2] = {0.0,0.0};
 
-		int ptController();
-
-		void fillVector(shared_ptr<std::vector<double>> vector, int size, int translation);
-		void updateVector(shared_ptr<std::vector<double>> vector, int translation);
+		std::valarray<double> ptController();
+		int lastJump;
 
 		/*PROTECTED REGION END*/
 	private:
