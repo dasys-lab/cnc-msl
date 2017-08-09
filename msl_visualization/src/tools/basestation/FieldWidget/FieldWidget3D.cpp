@@ -1248,6 +1248,7 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         mainWindow->robotSelector->setCurrentIndex(0);
         robotVisActive[0] = true;
         mainWindow->checkVis->setChecked(true);
+        mainWindow->checkRawObs->setChecked(true);
         robotIndex[0] = 0;
         robotCount++;
     }
