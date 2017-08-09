@@ -286,6 +286,8 @@ bool robotPassingActive[7] = {false};
 bool robotCorrActive[7] = {false};
 bool robotVoronoiActive[7] = {false};
 bool robotSidesActive[7] = {false};
+bool robotRawObsActive[7] = {false};
+bool robotMergedOppsActive[7] = {false};
 int robotIndex[101] = {0};
 string robotNames[101] = {};
 int selectedRobot = 0;
@@ -412,6 +414,8 @@ void FieldWidget3D::update_robot_info(void)
                 robotCorrActive[0] = true;
                 robotVoronoiActive[0] = true;
                 robotSidesActive[0] = true;
+                robotRawObsActive[0] = true;
+                robotMergedOppsActive[0] = true;
                 for (int i = 1; i < mainWindow->robotSelector->count(); i++)
                 {
                     if (!robotVisActive[i])
@@ -428,6 +432,10 @@ void FieldWidget3D::update_robot_info(void)
                         robotVoronoiActive[0] = false;
                     if (!robotSidesActive[i])
                         robotSidesActive[0] = false;
+                    if (!robotRawObsActive[i])
+                        robotRawObsActive[0] = false;
+                    if (!robotMergedOppsActive[i])
+                        robotMergedOppsActive[0] = false;
                 }
             }
 
@@ -439,6 +447,8 @@ void FieldWidget3D::update_robot_info(void)
             mainWindow->checkCorr->setChecked(robotCorrActive[selectedIndex]);
             mainWindow->checkVoronoi->setChecked(robotVoronoiActive[selectedIndex]);
             mainWindow->checkSides->setChecked(robotSidesActive[selectedIndex]);
+            mainWindow->checkRawObs->setChecked(robotRawObsActive[selectedIndex]);
+            mainWindow->checkMergedOpps->setChecked(robotMergedOppsActive[selectedIndex]);
         }
 
         // detect change on visible checkbox
@@ -463,6 +473,8 @@ void FieldWidget3D::update_robot_info(void)
                 robotCorrActive[selectedIndex] = false;
                 robotVoronoiActive[selectedIndex] = false;
                 robotSidesActive[selectedIndex] = false;
+                robotRawObsActive[selectedIndex] = false;
+                robotMergedOppsActive[selectedIndex] = false;
 
                 // turn off all checkboxes
                 mainWindow->checkVis->setChecked(false);
@@ -471,6 +483,8 @@ void FieldWidget3D::update_robot_info(void)
                 mainWindow->checkCorr->setChecked(false);
                 mainWindow->checkVoronoi->setChecked(false);
                 mainWindow->checkSides->setChecked(false);
+                mainWindow->checkRawObs->setChecked(false);
+                mainWindow->checkMergedOpps->setChecked(false);
             }
         }
 
@@ -559,6 +573,34 @@ void FieldWidget3D::update_robot_info(void)
                 robotSidesActive[selectedIndex] = sidesCheckBoxState;
         }
 
+        // detect change on raw obstacles checkbox
+        bool rawObsCheckBoxState = mainWindow->checkRawObs->checkState();
+        if (robotRawObsActive[selectedIndex] != rawObsCheckBoxState)
+        {
+            if (selectedIndex == 0) // all robots' sides checkboxes are changed
+            {
+                for (int i = 0; i < 7; i++)
+                    robotRawObsActive[i] = rawObsCheckBoxState;
+            }
+            else
+                // only one robot's sides checkbox is changed
+                robotRawObsActive[selectedIndex] = rawObsCheckBoxState;
+        }
+
+        // detect change on merged opponents checkbox
+        bool mergedOppsCheckBoxState = mainWindow->checkMergedOpps->checkState();
+        if (robotMergedOppsActive[selectedIndex] != mergedOppsCheckBoxState)
+        {
+            if (selectedIndex == 0) // all robots' sides checkboxes are changed
+            {
+                for (int i = 0; i < 7; i++)
+                    robotMergedOppsActive[i] = mergedOppsCheckBoxState;
+            }
+            else
+                // only one robot's sides checkbox is changed
+                robotMergedOppsActive[selectedIndex] = mergedOppsCheckBoxState;
+        }
+
         if (!robotVisActive[robotIndex[myId]])
             robot->setVisStatus(false);
         else
@@ -579,8 +621,8 @@ void FieldWidget3D::update_robot_info(void)
         robot->getVisualization()->updatePosition(this->renderer);
         robot->getVisualization()->updateBall(this->renderer);
         robot->getVisualization()->updateSharedBall(this->renderer);
-        robot->getVisualization()->updateObstacles(this->renderer);
-        robot->getVisualization()->updateMergedOpponents(this->renderer);
+        robot->getVisualization()->updateObstacles(this->renderer,robotRawObsActive[robotIndex[myId]]);
+        robot->getVisualization()->updateMergedOpponents(this->renderer,robotMergedOppsActive[robotIndex[myId]]);
         robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
     }
 
@@ -642,6 +684,8 @@ void FieldWidget3D::showDebugPointsToggle()
     mainWindow->checkCorr->setChecked(true);
     mainWindow->checkVoronoi->setChecked(true);
     mainWindow->checkSides->setChecked(true);
+    mainWindow->checkRawObs->setChecked(true);
+    mainWindow->checkMergedOpps->setChecked(true);
     //        this->updatePathPlannerAll();
 }
 

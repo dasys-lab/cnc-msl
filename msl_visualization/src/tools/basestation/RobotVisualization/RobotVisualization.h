@@ -43,8 +43,8 @@ class RobotVisualization
     void updatePosition(vtkRenderer *renderer);
     void updateBall(vtkRenderer *renderer);
     void updateSharedBall(vtkRenderer *renderer);
-    void updateObstacles(vtkRenderer *renderer);
-    void updateMergedOpponents(vtkRenderer *renderer);
+    void updateObstacles(vtkRenderer *renderer, bool show);
+    void updateMergedOpponents(vtkRenderer *renderer, bool show);
 
     void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
     void updateCorridorDebug(vtkRenderer *renderer, bool show);

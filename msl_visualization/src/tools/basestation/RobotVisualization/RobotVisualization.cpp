@@ -561,8 +561,17 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
     this->sharedBall->SetVisibility(true);
 }
 
-void RobotVisualization::updateObstacles(vtkRenderer *renderer)
+void RobotVisualization::updateObstacles(vtkRenderer *renderer, bool show)
 {
+
+    if (false == show)
+    {
+        for (auto disc : this->obstacleDiscs)
+        {
+            disc->SetVisibility(false);
+        }
+        return;
+    }
     bool found = false;
     int objectCount = 0;
 
@@ -653,8 +662,24 @@ void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, doubl
     obstacleDiscs.push_back(obstacleDisc);
 }
 
-void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
+void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer, bool show)
 {
+
+    if (false == show)
+    {
+        for (auto base : this->mergedOppsBases)
+        {
+            base->SetVisibility(false);
+        }
+        for (auto top : this->mergedOppsTops)
+        {
+            for (auto piece : top)
+            {
+                piece->SetVisibility(false);
+            }
+        }
+        return;
+    }
     bool found = false;
     int objectCount = 0;
     int topCount = 0;
@@ -666,31 +691,6 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
             auto pos = this->field->transformToGuiCoords(mergedOpp.x, mergedOpp.y);
 
             // we should draw merged Opponents onto teammates, because this indicates a failure!
-
-//            // don't draw the obstacle if there is a teammate already drawn on the field
-//            for (auto member : *this->field->getRobots())
-//            {
-//                auto mb = member->getVisualization()->getRobotBox();
-//                if (mb == nullptr)
-//                    continue;
-//
-//                if (abs(mb->GetPosition()[0] - pos.first) < 0.25 && abs(mb->GetPosition()[1] - pos.second) < 0.25)
-//                {
-//                    found = true;
-//                    break;
-//                }
-//            }
-//
-//            if (found)
-//                continue;
-
-//            // don't draw object boxes on teammates
-//            bool aTeammate = false;
-//            for (int i = 0; i < 6; i++)
-//            {
-//                if (abs(robotPos[robotIds[i]][0] - pos.first) < 0.4 && abs(robotPos[robotIds[i]][1] - pos.second) < .4)
-//                    aTeammate = true;
-//            }
 
             if (this->robot->getVisStatus())
             {
@@ -720,7 +720,6 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
             }
         }
     }
-
     // hide unused object boxes
     if (objectCount < this->mergedOppsBases.size())
     {
@@ -733,12 +732,14 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     {
         for (int i = topCount; i < this->mergedOppsTops.size(); ++i)
         {
-            updateMergedOpponents(renderer);
-//            this->mergedOppsTops.at(i)->SetVisibility(false);
+            auto top = this->mergedOppsTops.at(i);
+            for (auto piece : top)
+            {
+                piece->SetVisibility(false);
+            }
         }
     }
 }
-
 void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, double y)
 {
 
@@ -748,7 +749,7 @@ void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, doub
     cylinderSrc->SetHeight(0.7); // almost the height of a robot, because the coloured top has a 0.1m height
     cylinderSrc->SetResolution(100);
 
-    // Create a mapper and actor
+// Create a mapper and actor
     vtkSmartPointer<vtkPolyDataMapper> oppBaseMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     oppBaseMapper->SetInputConnection(cylinderSrc->GetOutputPort());
 
@@ -776,19 +777,19 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 
         double r = 0.26;
         double h = r * cos(M_PI * 30 / 180);
-        //first three: triangle 1
+//first three: triangle 1
         points->InsertNextPoint(r, 0, 0.2);
 
         points->InsertNextPoint(r / 2, h, 0.2);
 
-        //nose up mid
+//nose up mid
         points->InsertNextPoint(0, 0, 0.2);
 
-        //last 3: triangle 2
+//last 3: triangle 2
         points->InsertNextPoint(r, 0, 0);
         points->InsertNextPoint(r / 2, h, 0);
 
-        //nose down mid
+//nose down mid
         points->InsertNextPoint(0, 0, 0);
 
         vtkSmartPointer<vtkWedge> wedge = vtkSmartPointer<vtkWedge>::New();
@@ -860,7 +861,7 @@ void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
 {
-    // Check last message
+// Check last message
     boost::shared_ptr<msl_msgs::PathPlanner> ppi;
     bool timeout = false;
     {
@@ -872,7 +873,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
             return;
     }
 
-    // Remove old stuff
+// Remove old stuff
     for (vtkSmartPointer<vtkActor> actor : pathLines)
     {
         if (actor != nullptr)
@@ -885,7 +886,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
     if (false == show || timeout)
         return;
 
-    // Draw new
+// Draw new
     for (int i = 1; i < ppi->pathPoints.size(); i++)
     {
         pair<double, double> point1 = this->field->transformToGuiCoords(ppi->pathPoints.at(i - 1).x,
@@ -903,7 +904,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
 
 void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
 {
-    // Check last message
+// Check last message
     boost::shared_ptr<msl_msgs::CorridorCheck> cc;
     bool timeout = false;
     {
@@ -933,7 +934,7 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
     pair<double, double> point3 = this->field->transformToGuiCoords(cc->corridorPoints.at(3).x,
                                                                     cc->corridorPoints.at(3).y);
 
-    // Draw new
+// Draw new
     this->corridorLine1->source->SetPoint1(point0.first, point0.second, 0.01);
     this->corridorLine1->source->SetPoint2(point1.first, point1.second, 0.01);
 
@@ -954,7 +955,7 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
 
 void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSidePoints)
 {
-    // Check last message
+// Check last message
     boost::shared_ptr<msl_msgs::VoronoiNetInfo> vni;
     bool timeout = false;
     {
@@ -966,7 +967,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
             return;
     }
 
-    // Remove old stuff
+// Remove old stuff
     for (vtkSmartPointer<vtkActor> actor : sidePoints)
     {
         if (actor != nullptr)
@@ -991,7 +992,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
     vtkSmartPointer<vtkActor> actor;
     auto color = Color::getColor(this->robot->getId());
 
-    // Draw voronoi net
+// Draw voronoi net
     if (showVoronoi)
     {
         for (int i = 1; i < vni->linePoints.size(); i += 2)
@@ -1028,7 +1029,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         }
     }
 
-    // Draw side points
+// Draw side points
     if (showSidePoints)
     {
         for (vtkSmartPointer<vtkActor> actor : sidePoints)
@@ -1054,7 +1055,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
 void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints)
 {
-    // Check last message
+// Check last message
     vector<boost::shared_ptr<msl_helper_msgs::DebugMsg>> msgs;
     int count;
     {
@@ -1062,7 +1063,7 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
         count = this->robot->getDebugMsgs(msgs);
     }
 
-    // Remove old objects if show path is disabled
+// Remove old objects if show path is disabled
     for (vtkSmartPointer<vtkActor> actor : this->debugPoints)
     {
         if (actor != nullptr)
@@ -1072,13 +1073,13 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
     }
     debugPoints.clear();
 
-    // Return if nothing should be drawn
+// Return if nothing should be drawn
     if (false == showDebugPoints || count == 0)
     {
         return;
     }
 
-    // Draw debug points
+// Draw debug points
     for (auto debugMsg : msgs)
     {
         for (int i = 0; i < debugMsg->points.size(); i++)
@@ -1097,7 +1098,7 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
 
 void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
 {
-    // Check last message
+// Check last message
     boost::shared_ptr<msl_helper_msgs::PassMsg> passMsg;
     bool timeout = false;
     {
@@ -1106,7 +1107,7 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
         timeout = this->robot->isPassMsgTimeout();
     }
 
-    // Return if nothing should be drawn
+// Return if nothing should be drawn
     if (false == passMsg || timeout)
     {
         this->passActor->SetVisibility(false);
@@ -1114,7 +1115,7 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
         return;
     }
 
-    // Draw debug points
+// Draw debug points
     if (showPassing)
     {
         this->passActor->SetVisibility(true);
