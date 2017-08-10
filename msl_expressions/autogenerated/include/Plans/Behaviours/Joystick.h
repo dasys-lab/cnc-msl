@@ -28,7 +28,7 @@ namespace alica
 		shared_ptr<msl_msgs::JoystickCommand> lastProcessedCmd;
 		std::queue<std::valarray<double>> pastTranslations;
 		std::queue<std::valarray<double>> pastControlInput;
-		double init[2] = {0.0,0.0};
+		double init[3] = {0.0,0.0,0.0};
 
 		std::valarray<double> ptController();
 		int lastJump;

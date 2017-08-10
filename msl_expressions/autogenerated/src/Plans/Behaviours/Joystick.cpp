@@ -37,12 +37,12 @@ namespace alica
 			// for smooth driving
 			//if (this->smoothDrivingState)
 			//{
-			pastControlInput.push(std::valarray<double>(init,2));
+			pastControlInput.push(std::valarray<double>(init,3));
 
 			std::valarray<double> translation = ptController();
 			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
 			mc.motion.angle = atan2(translation[1],translation[0]);
-			mc.motion.rotation = joy->motion.rotation;
+			mc.motion.rotation = translation[2];
 
 			cout << "Joystick: x = " << mc.motion.translation << endl;
 
@@ -68,14 +68,14 @@ namespace alica
 			// smooth driving stuff
 //			if (this->smoothDrivingState)
 //			{
-			double input[] = {cos(joy->motion.angle)*joy->motion.translation, sin(joy->motion.angle)*joy->motion.translation};
-			pastControlInput.push(std::valarray<double>(input,2));
+			double input[] = {cos(joy->motion.angle)*joy->motion.translation, sin(joy->motion.angle)*joy->motion.translation, joy->motion.rotation};
+			pastControlInput.push(std::valarray<double>(input,3));
 
 
 			std::valarray<double> translation = ptController();
 			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
 			mc.motion.angle = atan2(translation[1],translation[0]);
-			mc.motion.rotation = joy->motion.rotation;
+			mc.motion.rotation = translation[2];
 
 			cout << "Joystick: x = " << mc.motion.translation << endl;
 //			} else
@@ -94,6 +94,12 @@ namespace alica
 		else
 		{
 			msl_actuator_msgs::MotionControl mc;
+			pastControlInput.push(std::valarray<double>(init,3));
+
+			std::valarray<double> translation = ptController();
+			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
+			mc.motion.angle = atan2(translation[1],translation[0]);
+			mc.motion.rotation = translation[2];
 			send(mc);
 			//cout << "Joystick: Some Motion Value is NaN!" << endl;
 		}
@@ -137,13 +143,13 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
 		if (pastTranslations.empty())
 		{
-			pastTranslations.push(std::valarray<double>(init,2) );
-			pastTranslations.push(std::valarray<double>(init,2) );
+			pastTranslations.push(std::valarray<double>(init,3) );
+			pastTranslations.push(std::valarray<double>(init,3) );
 		}
 		if (pastControlInput.empty())
 		{
-			pastControlInput.push(std::valarray<double>(init,2) );
-			pastControlInput.push(std::valarray<double>(init,2) );
+			pastControlInput.push(std::valarray<double>(init,3) );
+			pastControlInput.push(std::valarray<double>(init,3) );
 		}
 
 		lastJump = 1000;
