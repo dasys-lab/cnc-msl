@@ -37,12 +37,20 @@ namespace alica
 			// for smooth driving
 			//if (this->smoothDrivingState)
 			//{
+			msl_actuator_msgs::MotionControl mc;
 			pastControlInput.push(std::valarray<double>(init,3));
-
-			std::valarray<double> translation = ptController();
-			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
-			mc.motion.angle = atan2(translation[1],translation[0]);
-			mc.motion.rotation = translation[2];
+			pastControlInput.push(std::valarray<double>(init,3));
+			pastControlInput.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastControlInput.pop();
+			pastControlInput.pop();
+			pastControlInput.pop();
+			pastTranslations.pop();
+			pastTranslations.pop();
+			pastTranslations.pop();
+			send(mc);
 
 			cout << "Joystick: x = " << mc.motion.translation << endl;
 
