@@ -95,11 +95,17 @@ namespace alica
 		{
 			msl_actuator_msgs::MotionControl mc;
 			pastControlInput.push(std::valarray<double>(init,3));
-
-			std::valarray<double> translation = ptController();
-			mc.motion.translation = sqrt(pow(translation[0],2.0) + pow(translation[1],2.0));
-			mc.motion.angle = atan2(translation[1],translation[0]);
-			mc.motion.rotation = translation[2];
+			pastControlInput.push(std::valarray<double>(init,3));
+			pastControlInput.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastTranslations.push(std::valarray<double>(init,3));
+			pastControlInput.pop();
+			pastControlInput.pop();
+			pastControlInput.pop();
+			pastTranslations.pop();
+			pastTranslations.pop();
+			pastTranslations.pop();
 			send(mc);
 			//cout << "Joystick: Some Motion Value is NaN!" << endl;
 		}
@@ -191,7 +197,7 @@ namespace alica
 //		cout << "d4 = " << d4 << endl;
 
 //		return n1 * pastControlInput->at(0) - d1 * pastTranslations->at(0) - d2 * pastTranslations->at(1);
-		pastTranslations.push(std::valarray<double>(init,2));
+		pastTranslations.push(std::valarray<double>(init,3));
 		pastTranslations.back() += n2*pastControlInput.front() - d2* pastTranslations.front();
 		pastControlInput.pop();
 		pastTranslations.pop();
