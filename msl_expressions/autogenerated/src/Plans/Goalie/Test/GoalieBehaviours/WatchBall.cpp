@@ -64,6 +64,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
         ownPos = wm->rawSensorData->getOwnPositionVision();
+
         if (ownPos == nullptr)
         {
             mc.motion.translation = 0;

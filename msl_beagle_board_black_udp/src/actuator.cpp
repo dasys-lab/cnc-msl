@@ -435,15 +435,6 @@ void run_udp() {
 	io_service.run();
 }
 
-
-
-
-
-
-
-
-
-
 void controlBallHandle() {
 	const msl_actuator_msgs::BallHandleMode msg;
 	unique_lock<mutex> l_bhl(threw[0].mtx);
