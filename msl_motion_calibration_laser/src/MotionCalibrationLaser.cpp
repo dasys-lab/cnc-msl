@@ -12,123 +12,137 @@
 #include <cmath>
 #include <ctime>
 
-const float INTENSITY_THRESHOLD = 0.7f;
+const float INITIAL_INTENSITY_THRESHOLD = 0.95f;
 
 namespace laserMotionCalibration
 {
-    using std::cout;
-    using std::endl;
-    using std::shared_ptr;
-    using std::make_shared;
+	using std::cout;
+	using std::endl;
+	using std::shared_ptr;
+	using std::make_shared;
 
-    MotionCalibrationLaser::MotionCalibrationLaser(int argc, char **argv) :
-            spinner(4)
-    {
-        spinner.start();
+	MotionCalibrationLaser::MotionCalibrationLaser(int argc, char **argv) :
+			spinner(4)
+	{
+		spinner.start();
 
-        subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10,
-                                                                               &MotionCalibrationLaser::onScan,
-                                                                               (MotionCalibrationLaser*)this);
-        this->publisher = std::make_shared<ros::Publisher>(
-                rosNode.advertise<geometry_msgs::PoseArray>("/intenseScan", 10));
-    }
+		subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10, &MotionCalibrationLaser::onScan,
+																(MotionCalibrationLaser*)this);
+		this->publisher = std::make_shared < ros::Publisher
+				> (rosNode.advertise<geometry_msgs::PoseArray>("/intenseScan", 10));
+	}
 
-    MotionCalibrationLaser::~MotionCalibrationLaser()
-    {
-        spinner.stop();
-    }
+	MotionCalibrationLaser::~MotionCalibrationLaser()
+	{
+		spinner.stop();
+	}
 
-    void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr& laserScan)
-    {
-        // choose a threshold based on max intensity
+	void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr& laserScan)
+	{
+		// choose a threshold based on max intensity
 
-        const float maxIntensity = *max_element(laserScan->intensities.begin(), laserScan->intensities.end());
-        const float intensityThreshold = INTENSITY_THRESHOLD * maxIntensity;
+		auto intensities = laserScan->intensities;
+		const float maxIntensity = *max_element(intensities.begin(), intensities.end());
+		const int numOfIntensities = intensities.size();
+		std::sort(intensities.begin(), intensities.end());
 
-        auto intensities = laserScan->intensities;
-        std::sort(intensities.begin(), intensities.end());
-/*
-        for (auto threshold : intensities)
-        {
-            this->getThresholdGroups(laserScan, threshold);
-        }*/
+		const float intensityThreshold = intensities[INITIAL_INTENSITY_THRESHOLD * numOfIntensities];
+		std::vector<float> filteredIntensities;
+		for (auto threshold : intensities)
+		{
+			if (threshold > intensityThreshold)
+			{
+				filteredIntensities.push_back(threshold);
+			}
+		}
+		cout << "intensityThreshold: " << intensityThreshold << endl;
+		cout << "number of filtered points: " << filteredIntensities.size() << endl;
 
-        // calculate XY positions - not actually needed
+		const clock_t begin_time = clock();
+		for (auto threshold : filteredIntensities)
+		{
+			this->getThresholdGroups(laserScan, threshold);
+		}
+		std::cout << clock() - begin_time << " µs" << std::endl;
 
-        geometry_msgs::PoseArray poses;
+		// cout << ":) " << ros::Time::now() << endl;
 
-        //const clock_t begin_time = clock();
-        int i = 0;
-        for (auto intensity : laserScan->intensities)
-        {
-            if (intensity > intensityThreshold)
-            {
-                double range = laserScan->ranges.at(i);
-                double angle = laserScan->angle_min + i * laserScan->angle_increment;
+		// calculate XY positions - not actually needed
 
-                geometry_msgs::Point point;
-                point.x = cos(angle) * range;
-                point.y = sin(angle) * range;
+		geometry_msgs::PoseArray poses;
 
-                geometry_msgs::Pose pose;
-                pose.position = point;
-                poses.poses.push_back(pose);
-            }
+		int i = 0;
+		for (auto intensity : laserScan->intensities)
+		{
+			if (intensity > intensityThreshold)
+			{
+				double range = laserScan->ranges.at(i);
+				double angle = laserScan->angle_min + i * laserScan->angle_increment;
 
-            i++;
-        }
-        // do something
-        //std::cout << "time: " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << ":time_end" << std::endl;
+				geometry_msgs::Point point;
+				point.x = cos(angle) * range;
+				point.y = sin(angle) * range;
 
-        poses.header.frame_id = "laser"; // for debugging purposes
+				geometry_msgs::Pose pose;
+				pose.position = point;
+				poses.poses.push_back(pose);
+			}
 
-        publisher->publish(poses);
-    }
+			i++;
+		}
+		// do something
 
-    void MotionCalibrationLaser::getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold)
-    {
-        bool aboveThreshold = false;
-        int numberOfGroups = 0;
+		poses.header.frame_id = "laser"; // for debugging purposes
 
-        int i = 0;
-        int groupBegin = -1;
-        for (auto intensity : laserScan->intensities)
-        {
-            if (!aboveThreshold && intensity > threshold)
-            {
-                aboveThreshold = true;
-                numberOfGroups++;
-                groupBegin = i;
-            }
+		publisher->publish(poses);
+	}
 
-            if (aboveThreshold && intensity < threshold)
-            {
-                aboveThreshold = false;
-                int groupEnd = i - 1;
-                cout << "[" << numberOfGroups << "] " << groupEnd - groupBegin + 1 << " scans (" << groupBegin << "-" << groupEnd << ")" << endl;
-            }
+	void MotionCalibrationLaser::getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold)
+	{
+		bool aboveThreshold = false;
+		int numberOfGroups = 0;
 
-            if(aboveThreshold)
-            {
-                cout << "[" << numberOfGroups << "] Scan " << i << " (intensity=" << intensity << ", distance=" << laserScan->ranges[i] << ")" << endl;
-            }
+		int i = 0;
+		int groupBegin = -1;
+		for (auto intensity : laserScan->intensities)
+		{
+			if (!aboveThreshold && intensity > threshold)
+			{
+				aboveThreshold = true;
+				numberOfGroups++;
+				groupBegin = i;
+			}
 
-            i++;
-        }
+			if (aboveThreshold && intensity < threshold)
+			{
+				aboveThreshold = false;
+				int groupEnd = i - 1;
+				//cout << "[" << numberOfGroups << "] " << groupEnd - groupBegin + 1 << " scans (" << groupBegin << "-" << groupEnd << ")" << endl;
+			}
 
-        cout << "choosing threshold=" << threshold << " yielded " << numberOfGroups << " groups" << endl << endl;
-    }
+			if (aboveThreshold)
+			{
+				//cout << "[" << numberOfGroups << "] Scan " << i << " (intensity=" << intensity << ", distance=" << laserScan->ranges[i] << ")" << endl;
+			}
+
+			i++;
+		}
+
+		// cout << "choosing threshold=" << threshold << " yielded " << numberOfGroups << " groups" << endl << endl;
+		// cout << threshold << ";" << numberOfGroups << endl;
+	}
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "motion_calibration_laser");
-    laserMotionCalibration::MotionCalibrationLaser motionCalibrationLaser = laserMotionCalibration::MotionCalibrationLaser(argc, argv);
+	ros::init(argc, argv, "motion_calibration_laser");
+	laserMotionCalibration::MotionCalibrationLaser motionCalibrationLaser =
+			laserMotionCalibration::MotionCalibrationLaser(argc, argv);
 
-    while (ros::ok())
-    {
-        ros::Duration(0.5).sleep();
-    }
+	while (ros::ok())
+	{
+		ros::Duration(0.5).sleep();
+	}
 
-    return 0;
+	return 0;
 }
