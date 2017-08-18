@@ -622,7 +622,7 @@ void FieldWidget3D::update_robot_info(void)
         robot->getVisualization()->updateBall(this->renderer);
         robot->getVisualization()->updateSharedBall(this->renderer);
         robot->getVisualization()->updateObstacles(this->renderer,robotRawObsActive[robotIndex[myId]]);
-        robot->getVisualization()->updateMergedOpponents(this->renderer,robotMergedOppsActive[robotIndex[myId]]);
+        robot->getVisualization()->updateMergedOpponentsVis(this->renderer,robotMergedOppsActive[robotIndex[myId]]);
         robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
     }
 

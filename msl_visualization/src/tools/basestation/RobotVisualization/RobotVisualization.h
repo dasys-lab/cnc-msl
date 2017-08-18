@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <map>
 #include <vtkActor.h>
 #include <vtkLineSource.h>
 #include <vtkSmartPointer.h>
@@ -44,7 +45,8 @@ class RobotVisualization
     void updateBall(vtkRenderer *renderer);
     void updateSharedBall(vtkRenderer *renderer);
     void updateObstacles(vtkRenderer *renderer, bool show);
-    void updateMergedOpponents(vtkRenderer *renderer, bool show);
+    void updateMergedOpponents(vtkRenderer *renderer);
+    void updateMergedOpponentsVis(vtkRenderer *renderer, bool show);
 
     void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
     void updateCorridorDebug(vtkRenderer *renderer, bool show);
@@ -56,7 +58,8 @@ class RobotVisualization
     void drawObstacleDisc(vtkRenderer *renderer, double x, double y);
     void drawMergedOppBase(vtkRenderer *renderer, double x, double y);
     void drawMergedOppTop(vtkRenderer *renderer, double x, double y,std::vector<int> supporters);
-    void updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>>, double x, double y,std::vector<int> supporters);
+    void updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>> top, double x, double y,std::vector<int> supporters);
+    void addToPieceMap(int myId, std::vector<vtkSmartPointer<vtkActor>> piece);
     std::array<double, 3> &getColor();
     int getDashedPattern();
 
@@ -79,8 +82,11 @@ class RobotVisualization
     vtkSmartPointer<vtkActor> passActor = nullptr;
     vtkSmartPointer<vtkActor> passPointActor = nullptr;
     std::vector<vtkSmartPointer<vtkActor>> obstacleDiscs;
-    std::vector<vtkSmartPointer<vtkActor>> mergedOppsBases;
-    std::vector<std::vector<vtkSmartPointer<vtkActor>>> mergedOppsTops;
+    static std::vector<vtkSmartPointer<vtkActor>> mergedOppsBases;
+    static std::vector<std::vector<vtkSmartPointer<vtkActor>>> mergedOppsTops;
+    static std::map<int, bool> showMergedOppTopMap;
+    std::vector<vtkSmartPointer<vtkActor>> robotPieces;
+
 
     std::vector<vtkSmartPointer<vtkActor>> pathLines;
     std::vector<std::shared_ptr<Line>> netLines;

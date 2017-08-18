@@ -110,6 +110,11 @@ std::map<std::string, std::array<double, 3>> Color::map = Color::create_map();
 float robotPos[101][2];
 int robotIds[6] = {1, 8, 9, 10, 11, 100};
 
+std::vector<vtkSmartPointer<vtkActor>> RobotVisualization::mergedOppsBases = {};
+std::vector<std::vector<vtkSmartPointer<vtkActor>>>RobotVisualization::mergedOppsTops =
+{};
+std::map<int, bool> RobotVisualization::showMergedOppTopMap = { {0, true}, {8, true}, {9, true}, {10, true}, {11, true},
+                                                               {1, true}, {100, true}};
 RobotVisualization::RobotVisualization(RobotInfo *robot, FieldWidget3D *field) :
         robot(robot), field(field)
 {
@@ -662,24 +667,29 @@ void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, doubl
     obstacleDiscs.push_back(obstacleDisc);
 }
 
-void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer, bool show)
+void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 {
-
-    if (false == show)
+    //TODO || false == myShow && i am the only robot
+    if (false == showMergedOppTopMap[0])
     {
+
         for (auto base : this->mergedOppsBases)
         {
             base->SetVisibility(false);
         }
-        for (auto top : this->mergedOppsTops)
+        return;
+    }
+
+    //TODO enough?
+    if (false == showMergedOppTopMap[0] || false == showMergedOppTopMap[this->id])
+    {
+        for (auto piece : this->robotPieces)
         {
-            for (auto piece : top)
-            {
-                piece->SetVisibility(false);
-            }
+            piece->SetVisibility(false);
         }
         return;
     }
+
     bool found = false;
     int objectCount = 0;
     int topCount = 0;
@@ -740,6 +750,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer, bool show)
         }
     }
 }
+
 void RobotVisualization::drawMergedOppBase(vtkRenderer *renderer, double x, double y)
 {
 
@@ -770,7 +781,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 {
     int numberOfVertices = 6;
     int teamSize = sizeof(robotIds) / sizeof(int);
-    std::vector<vtkSmartPointer<vtkActor>> wedges;
+    std::vector<vtkSmartPointer<vtkActor>> oppTop;
     for (int i = 0; i < teamSize; i++)
     {
         vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -805,20 +816,21 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
         vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
         mapper->SetInputData(ug);
 
-        vtkSmartPointer<vtkActor> oppTop = vtkSmartPointer<vtkActor>::New();
-        oppTop->SetMapper(mapper);
+        vtkSmartPointer<vtkActor> piece = vtkSmartPointer<vtkActor>::New();
+        piece->SetMapper(mapper);
         auto c = Color::getColor(robotIds[i]);
-        oppTop->GetProperty()->SetColor(c[0], c[1], c[2]);
-        oppTop->GetProperty()->SetDiffuse(0.4);
-        oppTop->GetProperty()->SetAmbient(0.8);
-        oppTop->GetProperty()->SetEdgeVisibility(1);
-        oppTop->GetProperty()->SetEdgeColor(0, 0, 0);
-        oppTop->SetPosition(x, y, 0.7);
-        oppTop->RotateZ(i % 6 * 60);
-        oppTop->SetVisibility(false);
+        piece->GetProperty()->SetColor(c[0], c[1], c[2]);
+        piece->GetProperty()->SetDiffuse(0.4);
+        piece->GetProperty()->SetAmbient(0.8);
+        piece->GetProperty()->SetEdgeVisibility(1);
+        piece->GetProperty()->SetEdgeColor(0, 0, 0);
+        piece->SetPosition(x, y, 0.7);
+        piece->RotateZ(i % 6 * 60);
+        piece->SetVisibility(false);
 
-        renderer->AddActor(oppTop);
-        wedges.push_back(oppTop);
+        renderer->AddActor(piece);
+        oppTop.push_back(piece);
+        this->robotPieces.push_back(piece);
 
     }
 
@@ -828,12 +840,12 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
         {
             if (robotIds[idx] == s)
             {
-                wedges.at(idx)->SetVisibility(true);
+                oppTop.at(idx)->SetVisibility(true);
                 break;
             }
         }
     }
-    this->mergedOppsTops.push_back(wedges);
+    this->mergedOppsTops.push_back(oppTop);
 }
 
 void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor>> wedges, double x, double y,
@@ -849,7 +861,7 @@ void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor
     {
         for (int idx = 0; idx < teamSize; idx++)
         {
-            if (robotIds[idx] == s)
+            if (robotIds[idx] == s && this->showMergedOppTopMap.at(robotIds[idx]))
             {
                 wedges.at(idx)->SetVisibility(true);
                 break;
@@ -857,6 +869,13 @@ void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor
         }
     }
 
+}
+
+void RobotVisualization::updateMergedOpponentsVis(vtkRenderer* renderer, bool show)
+{
+    cout << "Setting at " << this->id << " to " << show << endl;
+    showMergedOppTopMap.at(this->id) = show;
+    updateMergedOpponents(renderer);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
