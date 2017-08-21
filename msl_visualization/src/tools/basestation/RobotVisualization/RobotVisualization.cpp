@@ -673,22 +673,27 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     if (false == showMergedOppTopMap[0])
     {
 
+        cout << "Setting invis" << endl;
         for (auto base : this->mergedOppsBases)
         {
             base->SetVisibility(false);
         }
-        return;
-    }
-
-    //TODO enough?
-    if (false == showMergedOppTopMap[0] || false == showMergedOppTopMap[this->id])
-    {
         for (auto piece : this->robotPieces)
         {
             piece->SetVisibility(false);
         }
         return;
     }
+
+//    //TODO enough?
+//    if (false == showMergedOppTopMap[this->id])
+//    {
+//        for (auto piece : this->robotPieces)
+//        {
+//            piece->SetVisibility(false);
+//        }
+//        return;
+//    }
 
     bool found = false;
     int objectCount = 0;
@@ -697,7 +702,19 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     {
         for (auto mergedOpp : robot->getSharedWorldInfo()->mergedOpponents)
         {
-            found = false;
+            //TODO ugly
+            bool draw = false;
+            for (auto supp : mergedOpp.supporters)
+            {
+                if (showMergedOppTopMap.at(supp))
+                {
+                    draw=true;
+                }
+            }
+
+            if(!draw) {
+                continue;
+            }
             auto pos = this->field->transformToGuiCoords(mergedOpp.x, mergedOpp.y);
 
             // we should draw merged Opponents onto teammates, because this indicates a failure!
@@ -838,7 +855,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
     {
         for (int idx = 0; idx < teamSize; idx++)
         {
-            if (robotIds[idx] == s)
+            if (robotIds[idx] == s && this->showMergedOppTopMap.at(robotIds[idx]))
             {
                 oppTop.at(idx)->SetVisibility(true);
                 break;
@@ -873,7 +890,6 @@ void RobotVisualization::updateMergedOppTop(std::vector<vtkSmartPointer<vtkActor
 
 void RobotVisualization::updateMergedOpponentsVis(vtkRenderer* renderer, bool show)
 {
-    cout << "Setting at " << this->id << " to " << show << endl;
     showMergedOppTopMap.at(this->id) = show;
     updateMergedOpponents(renderer);
 }
