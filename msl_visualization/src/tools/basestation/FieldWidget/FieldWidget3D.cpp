@@ -27,9 +27,9 @@
 
 class MouseInteractorStyle : public vtkInteractorStyleTerrain
 {
-  public:
-    static MouseInteractorStyle *New();
-    vtkTypeMacro(MouseInteractorStyle, vtkInteractorStyleTerrain);
+public:
+    static MouseInteractorStyle *New();vtkTypeMacro(MouseInteractorStyle, vtkInteractorStyleTerrain)
+    ;
 
     // Initialize internal variables
     MouseInteractorStyle()
@@ -135,7 +135,7 @@ class MouseInteractorStyle : public vtkInteractorStyleTerrain
         }
     }
 
-  private:
+private:
     int robotIdx;
     double *lastFollowPosition;
     vtkActor *LastPickedActor;
@@ -150,7 +150,8 @@ vtkStandardNewMacro(MouseInteractorStyle);
 //########################################## Static ##############################################
 //################################################################################################
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double, 3> color)
+vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1, float x2, float y2, float z2,
+                                                    float width, std::array<double, 3> color)
 {
     vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
     vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -167,7 +168,8 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1
     return lineActor;
 }
 
-void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2)
+void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2,
+                               float z2)
 {
     vtkSmartPointer<vtkMapper> lineMapper = actor->GetMapper();
 
@@ -178,8 +180,8 @@ void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float 
     lineMapper->SetInputConnection(line->GetOutputPort());
 }
 
-std::shared_ptr<Line> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern,
-                                                      std::array<double, 3> color)
+std::shared_ptr<Line> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2,
+                                                      float width, int pattern, std::array<double, 3> color)
 {
     vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
     vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -292,8 +294,8 @@ int robotIndex[101] = {0};
 string robotNames[101] = {};
 int selectedRobot = 0;
 
-FieldWidget3D::FieldWidget3D(QWidget *parent)
-    : QVTKWidget3(parent)
+FieldWidget3D::FieldWidget3D(QWidget *parent) :
+        QVTKWidget3(parent)
 {
     // showPath = true;
     // showVoronoiNet = false;
@@ -305,10 +307,14 @@ FieldWidget3D::FieldWidget3D(QWidget *parent)
     this->parent = parent;
     rosNode = new ros::NodeHandle();
     //	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
-    sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo, (FieldWidget3D *)this);
-    pathPlannerSubscriber = rosNode->subscribe("/PathPlanner/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg, (FieldWidget3D *)this);
-    voronoiSidesSubscriber = rosNode->subscribe("/PathPlanner/VoronoiNet", 10, &FieldWidget3D::onVoronoiNetMsg, (FieldWidget3D *)this);
-    corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg, (FieldWidget3D *)this);
+    sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
+                                                   (FieldWidget3D *)this);
+    pathPlannerSubscriber = rosNode->subscribe("/PathPlanner/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg,
+                                               (FieldWidget3D *)this);
+    voronoiSidesSubscriber = rosNode->subscribe("/PathPlanner/VoronoiNet", 10, &FieldWidget3D::onVoronoiNetMsg,
+                                                (FieldWidget3D *)this);
+    corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
+                                                 (FieldWidget3D *)this);
     debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg, (FieldWidget3D *)this);
     passMsgSubscriber = rosNode->subscribe("/WorldModel/PassMsg", 10, &FieldWidget3D::onPassMsg, (FieldWidget3D *)this);
 
@@ -319,21 +325,31 @@ FieldWidget3D::FieldWidget3D(QWidget *parent)
     Update_timer->setInterval(1);
     connect(Update_timer, SIGNAL(timeout()), this, SLOT(update_robot_info()));
     currentField = (*sc)["FootballField"]->get<string>("FootballField", "CurrentField", NULL);
-    _FIELD_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldLength", NULL) / 1000;
-    _FIELD_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldWidth", NULL) / 1000;
-    _LINE_THICKNESS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "LineWidth", NULL) / 1000;
-    _GOAL_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaXSize", NULL) / 1000;
-    _GOAL_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaYSize", NULL) / 1000;
-    _PENALTY_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltyAreaXSize", NULL) / 1000;
-    _PENALTY_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltyAreaYSize", NULL) / 1000;
-    _CENTER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "MiddleCircleRadius", NULL) / 1000;
+    _FIELD_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldLength", NULL)
+            / 1000;
+    _FIELD_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldWidth", NULL)
+            / 1000;
+    _LINE_THICKNESS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "LineWidth", NULL)
+            / 1000;
+    _GOAL_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaXSize",
+    NULL) / 1000;
+    _GOAL_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaYSize", NULL)
+            / 1000;
+    _PENALTY_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(),
+                                                               "PenaltyAreaXSize", NULL) / 1000;
+    _PENALTY_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltyAreaYSize",
+    NULL) / 1000;
+    _CENTER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(),
+                                                                "MiddleCircleRadius", NULL) / 1000;
     _BALL_DIAMETER = (*sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2.0 / 1000;
-    _CORNER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "CornerCircleRadius", NULL) / 1000;
-    _PENALTY_MARK_DISTANCE = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
+    _CORNER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(),
+                                                                "CornerCircleRadius", NULL) / 1000;
+    _PENALTY_MARK_DISTANCE = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot",
+    NULL) / 1000;
     _BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
-    _BLACK_POINT_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
-    _ROBOT_RADIUS =
-        (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
+    _BLACK_POINT_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot",
+    NULL) / 1000;
+    _ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
     renderWindow = vtkRenderWindow::New();
     renderer = vtkRenderer::New();
@@ -615,14 +631,15 @@ void FieldWidget3D::update_robot_info(void)
 
         robot->getVisualization()->updatePathPlannerDebug(this->renderer, robotPpActive[robotIndex[myId]]);
         robot->getVisualization()->updateCorridorDebug(this->renderer, robotCorrActive[robotIndex[myId]]);
-        robot->getVisualization()->updateVoronoiNetDebug(this->renderer, robotVoronoiActive[robotIndex[myId]], robotSidesActive[robotIndex[myId]]);
+        robot->getVisualization()->updateVoronoiNetDebug(this->renderer, robotVoronoiActive[robotIndex[myId]],
+                                                         robotSidesActive[robotIndex[myId]]);
         robot->getVisualization()->updatePassMsg(this->renderer, robotPassingActive[robotIndex[myId]]);
 
         robot->getVisualization()->updatePosition(this->renderer);
         robot->getVisualization()->updateBall(this->renderer);
         robot->getVisualization()->updateSharedBall(this->renderer);
-        robot->getVisualization()->updateObstacles(this->renderer,robotRawObsActive[robotIndex[myId]]);
-        robot->getVisualization()->updateMergedOpponentsVis(this->renderer,robotMergedOppsActive[robotIndex[myId]]);
+        robot->getVisualization()->updateObstacles(this->renderer, robotRawObsActive[robotIndex[myId]]);
+        robot->getVisualization()->updateMergedOpponentsVis(this->renderer, robotMergedOppsActive[robotIndex[myId]]);
         robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
     }
 
@@ -888,62 +905,65 @@ void FieldWidget3D::drawField(vtkRenderer *renderer)
     drawFieldLine(renderer, -_FIELD_WIDTH / 2, -lineOffSet, 0.0, _FIELD_WIDTH / 2, +lineOffSet, 0.0);
 
     // left side line
-    drawFieldLine(renderer, (-_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0, (-_FIELD_WIDTH / 2) + lineOffSet,
-                  _FIELD_LENGTH / 2 + lineOffSet, 0.0);
+    drawFieldLine(renderer, (-_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
+                  (-_FIELD_WIDTH / 2) + lineOffSet, _FIELD_LENGTH / 2 + lineOffSet, 0.0);
 
     // right side line
-    drawFieldLine(renderer, (_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0, (_FIELD_WIDTH / 2) + lineOffSet,
-                  _FIELD_LENGTH / 2 + lineOffSet, 0.0);
+    drawFieldLine(renderer, (_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
+                  (_FIELD_WIDTH / 2) + lineOffSet, _FIELD_LENGTH / 2 + lineOffSet, 0.0);
 
     // enemy goal line
-    drawFieldLine(renderer, -_FIELD_WIDTH / 2, (_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2, (_FIELD_LENGTH / 2) + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_FIELD_WIDTH / 2, (_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
+                  (_FIELD_LENGTH / 2) + lineOffSet, 0.0);
 
     // own goal line
-    drawFieldLine(renderer, -_FIELD_WIDTH / 2, (-_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2, (-_FIELD_LENGTH / 2) + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_FIELD_WIDTH / 2, (-_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
+                  (-_FIELD_LENGTH / 2) + lineOffSet, 0.0);
 
     // Goal Areas (1. own, 2. opponent)
     // long goal area line
-    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH - lineOffSet, 0.0, _GOAL_AREA_WIDTH / 2,
-                  -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+                  _GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
 
     // left short goal area line
-    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, -_GOAL_AREA_WIDTH / 2 + lineOffSet,
-                  -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+                  -_GOAL_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
 
     // right short goal area line
-    drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, _GOAL_AREA_WIDTH / 2 + lineOffSet,
-                  -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+                  _GOAL_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
 
     // long goal area line
-    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0, _GOAL_AREA_WIDTH / 2,
-                  _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+                  _GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH + lineOffSet, 0.0);
 
     // left short goal area line
-    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0, -_GOAL_AREA_WIDTH / 2 + lineOffSet,
-                  _FIELD_LENGTH / 2, 0.0);
+    drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+                  -_GOAL_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
     // right short goal area line
-    drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0, _GOAL_AREA_WIDTH / 2 + lineOffSet,
-                  _FIELD_LENGTH / 2, 0.0);
+    drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+                  _GOAL_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
     // Penalty Areas (1. opponent, 2. own)
-    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH - lineOffSet, 0.0, _PENALTY_AREA_WIDTH / 2,
-                  -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
+                  _PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, -_PENALTY_AREA_WIDTH / 2 + lineOffSet,
-                  -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+                  -_PENALTY_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-    drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, _PENALTY_AREA_WIDTH / 2 + lineOffSet,
-                  -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+                  _PENALTY_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0, _PENALTY_AREA_WIDTH / 2,
-                  _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
+    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
+                  _PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
-                  -_PENALTY_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
+    drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet,
+                  _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0, -_PENALTY_AREA_WIDTH / 2 + lineOffSet,
+                  _FIELD_LENGTH / 2, 0.0);
 
-    drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
-                  _PENALTY_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
+    drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet,
+                  0.0, _PENALTY_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
     // Corner Arcs
     auto arc = FieldWidget3D::addArc(-_FIELD_WIDTH / 2, -_FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 0, 90);
@@ -967,16 +987,20 @@ void FieldWidget3D::drawField(vtkRenderer *renderer)
     dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, 0, lineOffSet, {0.0, 0.0, 0.0});
     renderer->AddActor(dot);
 
-    dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0, 0.0});
+    dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0,
+                                                                                                              0.0});
     renderer->AddActor(dot);
-    dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0, 0.0});
+    dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0,
+                                                                                                               0.0});
     renderer->AddActor(dot);
     dot = FieldWidget3D::createDot(0, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet);
     renderer->AddActor(dot);
 
-    dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0, 0.0});
+    dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0,
+                                                                                                               0.0});
     renderer->AddActor(dot);
-    dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0, 0.0, 0.0});
+    dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet,
+                                   {0.0, 0.0, 0.0});
     renderer->AddActor(dot);
     dot = FieldWidget3D::createDot(0, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet);
     renderer->AddActor(dot);
@@ -1075,7 +1099,8 @@ void FieldWidget3D::updateGridView()
     {
         for (int j = 0; j < i; j++)
         {
-            heightPoints->SetPoint(j, heightPoints->GetPoint(j)[0], heightPoints->GetPoint(j)[1], heightPoints->GetPoint(j)[2] - minz);
+            heightPoints->SetPoint(j, heightPoints->GetPoint(j)[0], heightPoints->GetPoint(j)[1],
+                                   heightPoints->GetPoint(j)[2] - minz);
         }
     }
 

@@ -115,6 +115,7 @@ std::vector<std::vector<vtkSmartPointer<vtkActor>>>RobotVisualization::mergedOpp
 {};
 std::map<int, bool> RobotVisualization::showMergedOppTopMap = { {0, true}, {8, true}, {9, true}, {10, true}, {11, true},
                                                                {1, true}, {100, true}};
+std::vector<int> RobotVisualization::robotsActive = {};
 RobotVisualization::RobotVisualization(RobotInfo *robot, FieldWidget3D *field) :
         robot(robot), field(field)
 {
@@ -230,6 +231,14 @@ void RobotVisualization::setSharedBall(vtkSmartPointer<vtkActor> sharedBall)
 
 void RobotVisualization::remove(vtkRenderer *renderer)
 {
+    auto it = std::find(robotsActive.begin(), robotsActive.end(), this->id);
+    if (it == robotsActive.end())
+    {
+        return;
+    }
+
+    robotsActive.erase(it);
+
     this->visible = false;
 
     robotPos[this->id][0] = -100000;
@@ -252,25 +261,29 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     //        actor->SetVisibility(false);
     //    }
 
-    for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
+    if (robotsActive.size() == 0)
     {
-        actor->SetVisibility(false);
-    }
 
-    for (vtkSmartPointer<vtkActor> opp : mergedOppsBases)
-    {
-        opp->SetVisibility(false);
-    }
-
-    for (auto top : mergedOppsTops)
-    {
-        for (auto wedge : top)
+        for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
         {
-            wedge->SetVisibility(false);
-
+            actor->SetVisibility(false);
         }
-    }
 
+        for (vtkSmartPointer<vtkActor> opp : mergedOppsBases)
+        {
+            opp->SetVisibility(false);
+        }
+
+        for (auto top : mergedOppsTops)
+        {
+            for (auto wedge : top)
+            {
+                wedge->SetVisibility(false);
+
+            }
+        }
+
+    }
     for (vtkSmartPointer<vtkActor> actor : pathLines)
     {
         if (actor != nullptr)
@@ -323,6 +336,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
     this->setId(id);
     this->setName(std::to_string(id));
     this->setBall(nullptr);
+    robotsActive.push_back(this->id);
 
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
@@ -505,6 +519,10 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
 
 void RobotVisualization::updatePosition(vtkRenderer *renderer)
 {
+    if (std::count(robotsActive.begin(), robotsActive.end(), this->id) == 0)
+    {
+        robotsActive.push_back(this->id);
+    }
     auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->odom.position.x,
                                                  robot->getSharedWorldInfo()->odom.position.y);
 
@@ -669,11 +687,9 @@ void RobotVisualization::drawObstacleDisc(vtkRenderer *renderer, double x, doubl
 
 void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
 {
-    //TODO || false == myShow && i am the only robot
     if (false == showMergedOppTopMap[0])
     {
 
-        cout << "Setting invis" << endl;
         for (auto base : this->mergedOppsBases)
         {
             base->SetVisibility(false);
@@ -684,16 +700,6 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
         }
         return;
     }
-
-//    //TODO enough?
-//    if (false == showMergedOppTopMap[this->id])
-//    {
-//        for (auto piece : this->robotPieces)
-//        {
-//            piece->SetVisibility(false);
-//        }
-//        return;
-//    }
 
     bool found = false;
     int objectCount = 0;
@@ -708,11 +714,12 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
             {
                 if (showMergedOppTopMap.at(supp))
                 {
-                    draw=true;
+                    draw = true;
                 }
             }
 
-            if(!draw) {
+            if (!draw)
+            {
                 continue;
             }
             auto pos = this->field->transformToGuiCoords(mergedOpp.x, mergedOpp.y);

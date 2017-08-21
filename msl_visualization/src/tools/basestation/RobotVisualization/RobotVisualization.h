@@ -85,6 +85,7 @@ class RobotVisualization
     static std::vector<vtkSmartPointer<vtkActor>> mergedOppsBases;
     static std::vector<std::vector<vtkSmartPointer<vtkActor>>> mergedOppsTops;
     static std::map<int, bool> showMergedOppTopMap;
+    static std::vector<int> robotsActive;
     std::vector<vtkSmartPointer<vtkActor>> robotPieces;
 
 
