@@ -34,9 +34,6 @@ namespace alica
 
 		if (!joy)
 		{
-			// for smooth driving
-			//if (this->smoothDrivingState)
-			//{
 			msl_actuator_msgs::MotionControl mc;
 			pastControlInput.push(std::valarray<double>(init, 3));
 			pastControlInput.push(std::valarray<double>(init, 3));
@@ -53,11 +50,6 @@ namespace alica
 			send(mc);
 
 			cout << "Joystick: x = " << mc.motion.translation << endl;
-
-			//} else
-			//{
-			//	mc.motion = joy->motion;
-			//}
 
 			send(mc);
 			return;
@@ -192,11 +184,6 @@ namespace alica
 		// sending frequency
 		double TA = 1.0 / 30.0;
 
-//		double n1 = pow(a, 2.0) / (1.0 / pow(TA, 2.0) + (2.0 / TA) + pow(a, 2.0));
-//
-//		double d1 = (-(2.0 / pow(TA, 2.0)) - ((2.0 * a) / TA)) / (1.0 / pow(TA, 2.0) + 2.0 / TA + pow(a, 2.0));
-//		double d2 = (1.0 / pow(TA, 2.0)) / (1.0 / pow(TA, 2.0) + 2.0 / TA + pow(a, 2.0));
-
 		double n1 = 1.0 - exp(-a * TA) - exp(-a * TA) * a * TA;
 		double n2 = exp(-2 * a * TA) - exp(-a * TA) + exp(-a * TA) * TA * a;
 
@@ -208,11 +195,6 @@ namespace alica
 //
 //		cout << "d1 = " << d1 << endl;
 //		cout << "d2 = " << d2 << endl;
-//		cout << "d3 = " << d3 << endl;
-//		cout << "d4 = " << d4 << endl;
-
-
-//		return n1 * pastControlInput->at(0) - d1 * pastTranslations->at(0) - d2 * pastTranslations->at(1);
 
 		pastTranslations.push(std::valarray<double>(init, 3));
 		pastTranslations.back() += n2 * pastControlInput.front() - d2 * pastTranslations.front();
