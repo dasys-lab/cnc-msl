@@ -623,12 +623,19 @@ void FieldWidget3D::update_robot_info(void)
             robot->setVisStatus(true);
 
         // test for inactivated robot
-        if (robot->isTimeout()) // || !robotVisActive[robotIndex[myId]])
+        if (robot->isTimeout() && !robot->getVisualization()->wasRemoved()) // || !robotVisActive[robotIndex[myId]])
         {
             robot->getVisualization()->remove(this->renderer);
             continue;
         }
-
+        else if (!robot->isTimeout() && robot->getVisualization()->wasRemoved())
+        {
+            robot->getVisualization()->setRemoved(false);
+        }
+        else if (robot->isTimeout() && robot->getVisualization()->wasRemoved())
+        {
+            continue;
+        }
         robot->getVisualization()->updatePathPlannerDebug(this->renderer, robotPpActive[robotIndex[myId]]);
         robot->getVisualization()->updateCorridorDebug(this->renderer, robotCorrActive[robotIndex[myId]]);
         robot->getVisualization()->updateVoronoiNetDebug(this->renderer, robotVoronoiActive[robotIndex[myId]],

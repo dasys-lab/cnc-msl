@@ -122,6 +122,7 @@ RobotVisualization::RobotVisualization(RobotInfo *robot, FieldWidget3D *field) :
     id = 0;
     senderId = 0;
     visible = false;
+    removed = false;
 }
 
 RobotVisualization::~RobotVisualization()
@@ -238,7 +239,6 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     }
 
     robotsActive.erase(it);
-
     this->visible = false;
 
     robotPos[this->id][0] = -100000;
@@ -260,14 +260,13 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     //    {
     //        actor->SetVisibility(false);
     //    }
+    for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
+    {
+        actor->SetVisibility(false);
+    }
 
     if (robotsActive.size() == 0)
     {
-
-        for (vtkSmartPointer<vtkActor> actor : obstacleDiscs)
-        {
-            actor->SetVisibility(false);
-        }
 
         for (vtkSmartPointer<vtkActor> opp : mergedOppsBases)
         {
@@ -327,10 +326,12 @@ void RobotVisualization::remove(vtkRenderer *renderer)
     // pass msg
     this->passActor->SetVisibility(false);
     this->passPointActor->SetVisibility(false);
+    this->removed = true;
 }
 
 void RobotVisualization::init(vtkRenderer *renderer, int id)
 {
+    this->removed = false;
     auto color = Color::getColor(this->robot->getId());
 
     this->setId(id);
@@ -595,6 +596,7 @@ void RobotVisualization::updateObstacles(vtkRenderer *renderer, bool show)
         }
         return;
     }
+
     bool found = false;
     int objectCount = 0;
 
@@ -694,7 +696,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
         {
             base->SetVisibility(false);
         }
-        for (auto piece : this->robotPieces)
+        for (auto piece : this->robotWedges)
         {
             piece->SetVisibility(false);
         }
@@ -854,7 +856,7 @@ void RobotVisualization::drawMergedOppTop(vtkRenderer *renderer, double x, doubl
 
         renderer->AddActor(piece);
         oppTop.push_back(piece);
-        this->robotPieces.push_back(piece);
+        this->robotWedges.push_back(piece);
 
     }
 
@@ -1175,4 +1177,14 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
 int RobotVisualization::getDashedPattern()
 {
     return 0x66 << this->robot->getId();
+}
+
+bool RobotVisualization::wasRemoved()
+{
+    return this->removed;
+}
+
+void RobotVisualization::setRemoved(bool removed)
+{
+    this->removed = removed;
 }

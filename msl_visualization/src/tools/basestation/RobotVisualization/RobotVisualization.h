@@ -38,6 +38,8 @@ class RobotVisualization
     void setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelocityActor);
     vtkSmartPointer<vtkActor> getSharedBall();
     void setSharedBall(vtkSmartPointer<vtkActor> sharedBall);
+    bool wasRemoved();
+    void setRemoved(bool removed);
 
     void remove(vtkRenderer *renderer);
     void init(vtkRenderer *renderer, int id);
@@ -67,6 +69,7 @@ class RobotVisualization
     RobotInfo *robot;
     FieldWidget3D *field;
     bool visible;
+    bool removed;
 
     std::string name = "";
     int id = 0;
@@ -86,7 +89,7 @@ class RobotVisualization
     static std::vector<std::vector<vtkSmartPointer<vtkActor>>> mergedOppsTops;
     static std::map<int, bool> showMergedOppTopMap;
     static std::vector<int> robotsActive;
-    std::vector<vtkSmartPointer<vtkActor>> robotPieces;
+    std::vector<vtkSmartPointer<vtkActor>> robotWedges;
 
 
     std::vector<vtkSmartPointer<vtkActor>> pathLines;
