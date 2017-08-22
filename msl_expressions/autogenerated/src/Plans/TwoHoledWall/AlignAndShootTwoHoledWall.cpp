@@ -158,7 +158,7 @@ namespace alica
             KickControl kc;
             kc.enabled = true;
 //            kc.kicker = egoBallPos->angleTo();
-            cout << "AlignAndShootTwoHoledWall: dist to hole: " <<egoHole->length() << endl;
+            cout << "AlignAndShootTwoHoledWall: dist to hole: " << egoHole->length() << endl;
             kc.power = setKickPower(egoHole->length());
             float voltage;
             if (!this->disableKicking)
