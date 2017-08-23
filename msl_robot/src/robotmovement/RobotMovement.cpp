@@ -121,10 +121,10 @@ namespace msl
 		}
 
 		// dribble behavior -> used from dribbleToPointConservative ==============================================
+		query->initializePTControllerParameters();
 		if (query->dribble)
 		{
 			// will only initialize if Parameters are empty
-			query->initializePTControllerParameters();
 			// old pd stuff (used for pt controller)
 			mc.motion.rotation = query->rotationPDForDribble(egoTarget);
 			double rotPointDist = 350.0;
