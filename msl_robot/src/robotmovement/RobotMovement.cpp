@@ -139,13 +139,13 @@ namespace msl
 			double toleranceDist = 500;
 //        mc.motion.angle = query->angleCalcForDribble(transOrt);
 
-			// pt controller stuff
-			std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
-																	mc.motion.translation);
-			mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
-			mc.motion.angle = atan2(translation[1], translation[0]);
-			mc.motion.rotation = translation[2];
 		}
+		// pt controller stuff
+		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
+																mc.motion.translation);
+		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
+		mc.motion.angle = atan2(translation[1], translation[0]);
+		mc.motion.rotation = translation[2];
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
