@@ -708,14 +708,19 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
     int topCount = 0;
     if (!robot->getBallOnly())
     {
-        for (auto mergedOpp : robot->getSharedWorldInfo()->mergedOpponents)
+        //storing it in mergedOpps makes access to mergedOpps thread-safe
+        auto mergedOpps = robot->getSharedWorldInfo()->mergedOpponents;
+
+        for (auto mergedOpp : mergedOpps)
         {
+
             //TODO ugly
             bool draw = false;
             for (auto supp : mergedOpp.supporters)
             {
                 if (showMergedOppTopMap.at(supp))
                 {
+
                     draw = true;
                 }
             }
@@ -755,6 +760,7 @@ void RobotVisualization::updateMergedOpponents(vtkRenderer *renderer)
                 topCount++;
             }
         }
+//        cout << endl;
     }
     // hide unused object boxes
     if (objectCount < this->mergedOppsBases.size())
