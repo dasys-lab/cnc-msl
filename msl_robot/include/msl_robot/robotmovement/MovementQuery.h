@@ -128,6 +128,10 @@ namespace msl
 	 * PT-Controller for smooth translation acceleration
 	 */
 	std::valarray<double> ptController(double angle, double rotation, double translation);
+	/**
+	 * Initialize all needed parameters and queues for the PT-Controller
+	 */
+	void initializePTControllerParameters();
 
 	void clearPTControllerQueues();
 
@@ -154,11 +158,6 @@ protected:
 	 * Past translation input for PT-Controller
 	 */
 	std::queue<std::valarray<double>> pastControlInput;
-
-	/**
-	 * Initialize all needed parameters and queues for the PT-Controller
-	 */
-	void initializePTControllerParameters();
 
 	void setRotationPDParameters(double pParam, double dParam);
 	void setTranslationPIParameters(double pParam, double iParam);

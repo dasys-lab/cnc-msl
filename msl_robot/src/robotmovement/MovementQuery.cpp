@@ -41,7 +41,6 @@ namespace msl
 
 		resetAllPIDParameters();
 		readConfigParameters();
-		initializePTControllerParameters();
 	}
 
 	MovementQuery::~MovementQuery()
