@@ -94,11 +94,11 @@ namespace msl
 		double d1 = -2 * exp(-a * TA);
 		double d2 = exp(-2 * a * TA);
 
-		//		cout << "n1 = " << n1 << endl;
-		//		cout << "n2 = " << n2 << endl;
-		//
-		//		cout << "d1 = " << d1 << endl;
-		//		cout << "d2 = " << d2 << endl;
+				cout << "n1 = " << n1 << endl;
+				cout << "n2 = " << n2 << endl;
+
+				cout << "d1 = " << d1 << endl;
+				cout << "d2 = " << d2 << endl;
 
 		pastTranslations.push(std::valarray<double>(init, 3));
 		pastTranslations.back() += n2 * pastControlInput.front() - d2 * pastTranslations.front();
@@ -275,7 +275,11 @@ namespace msl
 
 		auto translation = odom->translation;
 		auto angle = odom->angle;
-		auto rotation = odom->rotation;
+		auto rotation = (double)odom->rotation;
+
+//		double translation = 0;
+//		double angle = 0;
+//		double rotation = 0;
 
 		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
 
