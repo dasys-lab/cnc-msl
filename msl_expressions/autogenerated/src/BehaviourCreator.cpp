@@ -117,6 +117,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionExecutor.h"
 
+#include  "Plans/TwoHoledWall/DribbleConstTwoHoledWall.h"
+
 #include  "Plans/Dribble/DribbleControl.h"
 
 #include  "Plans/Attack/Wander.h"
@@ -540,6 +542,11 @@ namespace alica
             case 1438790487994:
 
                 return make_shared<PositionExecutor>();
+                break;
+
+            case 1496840164871:
+
+                return make_shared<DribbleConstTwoHoledWall>();
                 break;
 
             case 1449742099555:

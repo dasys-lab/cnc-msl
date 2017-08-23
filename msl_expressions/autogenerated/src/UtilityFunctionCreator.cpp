@@ -77,6 +77,8 @@
 
 #include  "Plans/TestPlans/MotorControlTest/PointToPoint1489068076224.h"
 
+#include  "Plans/TwoHoledWall/TwoHoledWallAlign1496753106611.h"
+
 #include  "Plans/Standards/Own/Corner/CornerExecBounceShot1459362028865.h"
 
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"
@@ -301,6 +303,10 @@ namespace alica
 
             case 1489068076224:
                 return make_shared<UtilityFunction1489068076224>();
+                break;
+
+            case 1496753106611:
+                return make_shared<UtilityFunction1496753106611>();
                 break;
 
             case 1459362028865:

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753106612"/>
+    <value xPos="150" yPos="152" width="98" height="65" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753106611"/>
+    <value xPos="4" yPos="-5" width="773" height="468"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753106613"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753202569"/>
+    <value xPos="379" yPos="144" width="65" height="65" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753237394"/>
+    <value>
+      <bendpoints xPos="428" yPos="255"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620189234"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753473525"/>
+    <value>
+      <bendpoints xPos="428" yPos="206"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -13,34 +13,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621580835"/>
-    <value xPos="302" yPos="287" width="197" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621589489"/>
-    <value xPos="358" yPos="97" width="65" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621598841"/>
-    <value>
-      <bendpoints xPos="347" yPos="338"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621602033"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621605061"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1417621607473"/>
-    <value>
-      <bendpoints xPos="403" yPos="315"/>
-    </value>
-  </extensions>
-  <extensions>
     <key href="ShootTwoHoledWall.pml#1417620189234"/>
     <value/>
   </extensions>
@@ -54,28 +26,46 @@
   </extensions>
   <extensions>
     <key href="TwoHoledWallMaster.pml#1422464768858"/>
-    <value xPos="550" yPos="297" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TwoHoledWallMaster.pml#1422464816725"/>
-    <value/>
+    <value xPos="322" yPos="221" width="153" height="83" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TwoHoledWallMaster.pml#1422464819985"/>
     <value>
-      <bendpoints xPos="548" yPos="243"/>
+      <bendpoints xPos="379" yPos="300"/>
     </value>
   </extensions>
   <extensions>
-    <key href="TwoHoledWallMaster.pml#1422464823873"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="TwoHoledWallMaster.pml#1422464874668"/>
-    <value/>
+    <value>
+      <bendpoints xPos="403" yPos="223"/>
+    </value>
   </extensions>
   <extensions>
     <key href="../Behaviours/Joystick.beh#1421854995808"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1496753132907"/>
+    <value xPos="331" yPos="57" width="77" height="65" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1496753328478"/>
+    <value>
+      <bendpoints xPos="432" yPos="193"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1496753329785"/>
+    <value>
+      <bendpoints xPos="389" yPos="140"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallAlign.pml#1496753106611"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleConstTwoHoledWall.beh#1496840164871"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
