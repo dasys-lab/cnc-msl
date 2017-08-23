@@ -55,16 +55,35 @@ namespace laserMotionCalibration
 				filteredIntensities.push_back(threshold);
 			}
 		}
+#ifdef laserMotionCalibrationDebug
 		cout << "intensityThreshold: " << intensityThreshold << endl;
 		cout << "number of filtered points: " << filteredIntensities.size() << endl;
+#endif
 
 		const clock_t begin_time = clock();
+		std::vector<std::shared_ptr<LaserPointGroup>> pointGroups;
 		for (auto threshold : filteredIntensities)
 		{
-			this->getThresholdGroups(laserScan, threshold);
+			pointGroups = this->getThresholdGroups(laserScan, threshold);
+			auto numberOfGroups = pointGroups.size();
+#ifdef laserMotionCalibrationDebug
+			cout << "t=" << threshold << " => " << numberOfGroups << " groups" << endl;
+#endif
+			if (numberOfGroups == 2)
+			{
+				break;
+			}
 		}
-		std::cout << clock() - begin_time << " µs" << std::endl;
 
+#ifdef laserMotionCalibrationDebug
+		for (auto pointGroup : pointGroups)
+		{
+			cout << pointGroup->getCenter() << "/" << pointGroup->getDistance() << "mm  ";
+		}
+		cout << endl;
+
+		cout << clock() - begin_time << " µs" << endl;
+#endif
 		// cout << ":) " << ros::Time::now() << endl;
 
 		// calculate XY positions - not actually needed
@@ -97,10 +116,12 @@ namespace laserMotionCalibration
 		publisher->publish(poses);
 	}
 
-	void MotionCalibrationLaser::getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold)
+	std::vector<std::shared_ptr<LaserPointGroup>> MotionCalibrationLaser::getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold)
 	{
 		bool aboveThreshold = false;
 		int numberOfGroups = 0;
+		std::vector<std::shared_ptr<LaserPointGroup>> groups;
+		std::shared_ptr<LaserPointGroup> currentGroup;
 
 		int i = 0;
 		int groupBegin = -1;
@@ -111,6 +132,9 @@ namespace laserMotionCalibration
 				aboveThreshold = true;
 				numberOfGroups++;
 				groupBegin = i;
+				currentGroup = std::make_shared<LaserPointGroup>();
+				groups.push_back(currentGroup);
+				currentGroup->points.push_back(LaserPoint(i, intensity, laserScan->ranges[i]));
 			}
 
 			if (aboveThreshold && intensity < threshold)
@@ -123,11 +147,13 @@ namespace laserMotionCalibration
 			if (aboveThreshold)
 			{
 				//cout << "[" << numberOfGroups << "] Scan " << i << " (intensity=" << intensity << ", distance=" << laserScan->ranges[i] << ")" << endl;
+				currentGroup->points.push_back(LaserPoint(i, intensity, laserScan->ranges[i]));
 			}
 
 			i++;
 		}
 
+		return groups;
 		// cout << "choosing threshold=" << threshold << " yielded " << numberOfGroups << " groups" << endl << endl;
 		// cout << threshold << ";" << numberOfGroups << endl;
 	}
