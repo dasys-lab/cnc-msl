@@ -1,10 +1,13 @@
 #include <ros/ros.h>
 #include <memory>
+#include <laserMotionCalibration/LaserPointGroup.h>
 
 namespace sensor_msgs
 {
     ROS_DECLARE_MESSAGE(LaserScan)
 }
+
+#define laserMotionCalibrationDebug;
 
 namespace laserMotionCalibration
 {
@@ -15,7 +18,7 @@ namespace laserMotionCalibration
         ~MotionCalibrationLaser();
     private:
         void onScan(const sensor_msgs::LaserScanConstPtr& laserScan);
-        void getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold);
+        std::vector<std::shared_ptr<LaserPointGroup>> getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold);
 
         ros::NodeHandle rosNode;
         ros::Subscriber subscriber;
