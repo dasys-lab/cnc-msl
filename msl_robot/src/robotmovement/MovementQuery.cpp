@@ -279,12 +279,18 @@ namespace msl
 
 		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
 
-		controlInput.push(std::valarray<double>(input, 3));
-		controlInput.push(std::valarray<double>(input, 3));
-		controlInput.push(std::valarray<double>(input, 3));
+		if (pastTranslations.empty())
+		{
+			pastTranslations.push(std::valarray<double>(input, 3));
+			pastTranslations.push(std::valarray<double>(input, 3));
+		}
+		if (pastControlInput.empty())
+		{
+			pastControlInput.push(std::valarray<double>(input, 3));
+			pastControlInput.push(std::valarray<double>(input, 3));
+		}
 
-		pastControlInput = controlInput;
-		pastTranslations = controlInput;
+		lastJump = 1000;
 	}
 
 	void MovementQuery::clearPTControllerQueues()
