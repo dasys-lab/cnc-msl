@@ -145,6 +145,7 @@ namespace msl
 		mc.motion.rotation = mc.motion.rotation * 0.16 * query->getAFactor();
 //		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
 		cout << "Rotation input value: " << mc.motion.rotation << endl;
+		cout << "a = " << query->getAFactor() << endl;
 		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
 																mc.motion.translation);
 		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
