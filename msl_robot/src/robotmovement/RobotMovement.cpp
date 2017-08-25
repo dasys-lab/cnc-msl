@@ -142,7 +142,7 @@ namespace msl
 		}
 		// pt controller stuff
 		cout << "Rotation : " << mc.motion.rotation << endl;
-		mc.motion.rotation = mc.motion.rotation * 0.06 * query->getAFactor();
+//		mc.motion.rotation = mc.motion.rotation * 0.06 * query->getAFactor();
 //		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
 		cout << "Rotation input value: " << mc.motion.rotation << endl;
 		cout << "a = " << query->getAFactor() << endl;
