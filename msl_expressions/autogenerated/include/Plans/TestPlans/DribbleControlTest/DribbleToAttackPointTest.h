@@ -20,6 +20,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1498664309837) ENABLED START*/ //Add additional protected methods here
         void readConfigParameters();
+        shared_ptr < geometry::CNPoint2D > getClosestOpp();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1498664309837) ENABLED START*/ //Add additional private methods here
