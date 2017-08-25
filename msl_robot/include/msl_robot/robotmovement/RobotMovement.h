@@ -50,6 +50,7 @@ class RobotMovement
      * @return msl_actuator_msgs::MotionControl msg containing the motion information, NaN if anything went wrong
      */
     msl_actuator_msgs::MotionControl alignTo(shared_ptr<MovementQuery> m_Query);
+    msl_actuator_msgs::MotionControl experimentallyAlignTo(shared_ptr<MovementQuery> m_Query);
     /**
      * Check if the robot is violation any rule and react respectively
      * @param m_Query shared_ptr<MovementQuery> encapsulated information needed to move to the given point

@@ -103,16 +103,17 @@ namespace alica
 			// getting point out of vector
 			alloAlignPoint = closestOpponent + oppVec;
 			cout << "============================" << endl;
-			cout << "ownPos:        x=" << ownPos->x << " y=" << ownPos->y << endl;
-			cout << "closesOpp:     x=" << closestOpponent->x << " y=" << closestOpponent->y << endl;
-			cout << "newVector:     x=" << oppVec->x << " y=" << oppVec->y << endl;
-			cout << "alloAlignPoint: x=" << alloAlignPoint->x << " y=" << alloAlignPoint->y << endl;
+//			cout << "ownPos:        x=" << ownPos->x << " y=" << ownPos->y << endl;
+//			cout << "closesOpp:     x=" << closestOpponent->x << " y=" << closestOpponent->y << endl;
+//			cout << "newVector:     x=" << oppVec->x << " y=" << oppVec->y << endl;
+//			cout << "alloAlignPoint: x=" << alloAlignPoint->x << " y=" << alloAlignPoint->y << endl;
 
 			query->egoAlignPoint = alloAlignPoint->alloToEgo(*(wm->rawSensorData->getOwnPositionVision()));
 		}
 
 		query->rotateAroundTheBall = true;
-		mc = rm.alignTo(query);
+//		mc = rm.alignTo(query);
+		mc = rm.experimentallyAlignTo(query);
 		// use rm.alignTo() method
 		// try to combine moveToPoint and alignTo
 

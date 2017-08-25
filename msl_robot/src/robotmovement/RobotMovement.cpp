@@ -141,6 +141,50 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
     return mc;
 }
 
+msl_actuator_msgs::MotionControl RobotMovement::experimentallyAlignTo(shared_ptr<MovementQuery> m_Query)
+{
+	MotionControl mc;
+//	auto egoBallPos = wm->ball->getEgoBallPosition();
+
+	if (m_Query == nullptr)
+	{
+		cerr << "RobotMovement:experimentallyAlignTo: query is nullptr!" << endl;
+		return setNAN();
+	}
+	if (m_Query->egoAlignPoint == nullptr)
+	{
+		cerr << "RobotMovement:experimentallyAlignTo: egoAlignPoint is nullptr!" << endl;
+		return setNAN();
+	}
+//	if (egoBallPos == nullptr)
+//	{
+//		cerr << "RobotMovement:experimentallyAlignTo: egoBallPos is nullptr!" << endl;
+//		return setNAN();
+//	}
+
+	if (m_Query->egoAlignPoint->y > 0)
+	{
+		// rigth = 1.57079632679
+		mc.motion.angle = (0.5 * M_PI);
+	}else {
+		// left = 4.71238898038
+		mc.motion.angle = (1.5 * M_PI);
+	}
+	mc.motion.angle = mc.motion.angle * M_PI;
+	// right rotation is negative
+	// left rotation is positive
+	cout << "angle: " << mc.motion.angle << endl;
+	double rotation = m_Query->egoAlignPoint->angleTo();
+	mc.motion.rotation = rotation * -1;
+	cout << "rotation: " << mc.motion.rotation << endl;
+	cout << "egoAlignPoint: =" << m_Query->egoAlignPoint->x << " y=" << m_Query->egoAlignPoint->y << endl;
+	// for testing ... maybe you can use the pt-controller
+	// TODO need to stop if angle is good
+	mc.motion.translation = 1000;
+
+	return mc;
+}
+
 msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
 {
     cout << "RobotMovement::alignTo()" << endl;
