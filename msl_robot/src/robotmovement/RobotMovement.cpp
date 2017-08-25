@@ -141,6 +141,10 @@ namespace msl
 
 		}
 		// pt controller stuff
+		mc.motion.rotation = mc.motion.rotation * 0.16 * query->getAFactor();
+		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
+
+
 		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
 																mc.motion.translation);
 		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));

@@ -39,6 +39,8 @@ namespace msl
 		this->rectangleLowerRightCorner = nullptr;
 		this->pathEval = nullptr;
 
+		this->a = 1;
+
 		resetAllPIDParameters();
 		readConfigParameters();
 	}
@@ -63,6 +65,11 @@ namespace msl
 		return ret;
 	}
 
+	double MovementQuery::getAFactor()
+	{
+		return a;
+	}
+
 	/**
 	 * PT-Controller for smooth translation acceleration
 	 */
@@ -81,7 +88,7 @@ namespace msl
 		}
 
 		// slope variable
-		double a = 6.33333 - 4.0 / 3000.0 * lastJump;
+		a = 6.33333 - 4.0 / 3000.0 * lastJump;
 		// changing point for slope
 		double b = pow(a, 2.0);
 		// sending frequency
