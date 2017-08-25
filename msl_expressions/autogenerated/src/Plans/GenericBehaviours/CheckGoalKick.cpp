@@ -169,6 +169,8 @@ namespace alica
                 checkGoalie = false;
             }
         }
+        // hack for coimbra ... Remove if we want to care about the goalkeeper again!!!
+        checkGoalie = false;
 
         readConfigParameters();
         /*PROTECTED REGION END*/

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestRotation.pml#1492620432381"/>
+    <value xPos="49" yPos="229" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestRotation.pml#1492620432380"/>
+    <value width="1016" height="568"/>
+  </extensions>
+  <extensions>
+    <key href="TestRotation.pml#1492620432383"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestRotation.pml#1492620463395"/>
+    <value xPos="284" yPos="266" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestRotationRotation.beh#1492620523847"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestRotation.pml#1492620539509"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -215,7 +215,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > aim = make_shared < geometry::CNPoint2D > (x, y);
         double samplePoints = 4;
 
-        for (double i = 0.0; i < samplePoints; i += 1.0)
+        for (double i = 0.0; i <= samplePoints; i += 1.0)
         {
             shared_ptr < geometry::CNPoint2D > egoAim = aim->alloToEgo(*ownPos);
             double dist = egoAim->length();
@@ -223,9 +223,11 @@ namespace alica
             if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
             {
                 validGoalPoints.push_back(egoAim);
+                std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
             }
             aim->y += 2 * abs(y) / samplePoints;
         }
+
         if (validGoalPoints.size() > 0)
         {
             shared_ptr < geometry::CNPoint2D > ret = nullptr;

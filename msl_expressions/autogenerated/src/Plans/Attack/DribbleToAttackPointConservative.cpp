@@ -59,7 +59,10 @@ namespace alica
         {
             send(tmpMC);
         }
-        send(bm);
+        else
+        {
+            send(bm);
+        }
         /*PROTECTED REGION END*/
     }
     void DribbleToAttackPointConservative::initialiseParameters()

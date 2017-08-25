@@ -510,16 +510,18 @@ bool PathPlanner::corridorCheckBall(shared_ptr<geometry::CNPoint2D> currentPos, 
 
 void PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> points)
 {
-    msl_msgs::CorridorCheck cc;
-    cc.senderId = this->wm->getOwnId();
-    for (int i = 0; i < points.size(); i++)
-    {
-        msl_msgs::Point2dInfo info;
-        info.x = points.at(i)->x;
-        info.y = points.at(i)->y;
-        cc.corridorPoints.push_back(info);
-    }
-    corridorPub.publish(cc);
+	// Removed during PO coimbra 2017 to reduce network traffic
+//    msl_msgs::CorridorCheck cc;
+//    cc.senderId = this->wm->getOwnId();
+//    for (int i = 0; i < points.size(); i++)
+//    {
+//        msl_msgs::Point2dInfo info;
+//        info.x = points.at(i)->x;
+//        info.y = points.at(i)->y;
+//        cc.corridorPoints.push_back(info);
+//    }
+//    corridorPub.publish(cc);
+	return;
 }
 
 shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::getLastPath()

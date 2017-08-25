@@ -73,7 +73,7 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.kicker = 1;
-        kc.power = this->robot->kicker->getKickPowerPass(egoAlignPoint->length());
+        kc.power = this->robot->kicker->getKickPowerPass(egoAlignPoint->length() - 800);
         send(kc);
 
         msl_helper_msgs::PassMsg pm;

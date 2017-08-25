@@ -32,7 +32,9 @@ done
 
 if [[ ${#onlineRobots[@]} = 0 ]]; then
 	echo "all robots offline :("
-	exit
+	if [[ $1 != "--setup" ]]; then
+		exit
+	fi
 fi
 
 
@@ -60,7 +62,7 @@ fi
 for robot in "${onlineRobots[@]}"
 do
 	if [[ $(screen -list | grep "$robot" | wc -l) = 0 ]]; then
-		gnome-terminal --title "$robot" -e "bash -c \"screen -S $robot\""
+		gnome-terminal -e "bash -c \"screen -S $robot\""
 	else
 		echo "notice: $robot screen already running"
 	fi
@@ -80,6 +82,7 @@ do
 	screen -S "$robot" -X stuff "##########################^M# connecting to $robot...^M##########################^M^M"
 	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" != \"$robot\" ]]; then ssh cn@$robot; fi^M"
 	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" == \"$HOSTNAME\" ]]; then exit; fi^M"
+	screen -S "$robot" -X stuff "set-title $robot^M"
 	screen -S "$robot" -X stuff "clear^M"
 
 	if [[ $1 == "--pullmake" ]]; then
