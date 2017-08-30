@@ -282,34 +282,33 @@ void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoin
  */
 void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
 {
-	// Removed during PO coimbra 2017 to reduce network traffic
-//    msl_msgs::VoronoiNetInfo netMsg;
-//    netMsg.senderId = this->wm->getOwnId();
-//    for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
-//    {
-//        msl_msgs::Point2dInfo info;
-//        info.x = cluster->x;
-//        info.y = cluster->y;
-//        netMsg.sites.push_back(info);
-//    }
-//
-//    for (auto ob : *voronoi->getArtificialObstacles())
-//    {
-//        msl_msgs::Point2dInfo info;
-//        info.x = ob->x;
-//        info.y = ob->y;
-//        netMsg.sites.push_back(info);
-//    }
-//
-//    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> linePoints = calculateCroppedVoronoi(voronoi);
-//    for (int i = 0; i < linePoints->size(); i++)
-//    {
-//        msl_msgs::Point2dInfo info;
-//        info.x = linePoints->at(i)->x;
-//        info.y = linePoints->at(i)->y;
-//        netMsg.linePoints.push_back(info);
-//    }
-//    voroniPub.publish(netMsg);
+    msl_msgs::VoronoiNetInfo netMsg;
+    netMsg.senderId = this->wm->getOwnId();
+    for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
+    {
+        msl_msgs::Point2dInfo info;
+        info.x = cluster->x;
+        info.y = cluster->y;
+        netMsg.sites.push_back(info);
+    }
+
+    for (auto ob : *voronoi->getArtificialObstacles())
+    {
+        msl_msgs::Point2dInfo info;
+        info.x = ob->x;
+        info.y = ob->y;
+        netMsg.sites.push_back(info);
+    }
+
+    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> linePoints = calculateCroppedVoronoi(voronoi);
+    for (int i = 0; i < linePoints->size(); i++)
+    {
+        msl_msgs::Point2dInfo info;
+        info.x = linePoints->at(i)->x;
+        info.y = linePoints->at(i)->y;
+        netMsg.linePoints.push_back(info);
+    }
+    voroniPub.publish(netMsg);
 	return;
 }
 
