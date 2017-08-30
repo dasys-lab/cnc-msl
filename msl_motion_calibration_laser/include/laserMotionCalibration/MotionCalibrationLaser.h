@@ -7,7 +7,7 @@ namespace sensor_msgs
     ROS_DECLARE_MESSAGE(LaserScan)
 }
 
-#define laserMotionCalibrationDebug;
+#define laserMotionCalibrationDebug
 
 namespace laserMotionCalibration
 {
