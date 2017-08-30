@@ -51,7 +51,7 @@ namespace alica
 //        alloGoalLeft = make_shared < geometry::CNPoint2D
 //                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
         alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 - 375);
+                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
         /*PROTECTED REGION END*/
