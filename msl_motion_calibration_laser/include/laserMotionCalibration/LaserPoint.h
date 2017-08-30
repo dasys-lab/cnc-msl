@@ -26,7 +26,6 @@ namespace laserMotionCalibration
 		std::shared_ptr<geometry::CNPoint2D> getXY();
 		static void setMinAngle(float minAngle);
 		static void setAngleIncrement(float angleIncrement);
-	private:
 		static float minAngle;
 		static float angleIncrement;
 		static constexpr float UNDEFINED_VALUE = -1.0f;

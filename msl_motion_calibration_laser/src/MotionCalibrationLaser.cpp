@@ -39,6 +39,17 @@ namespace laserMotionCalibration
 
 	void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr& laserScan)
 	{
+
+		if (!initialized)
+		{
+			std::cout << "MIN ANGLE: " << LaserPoint::minAngle << " ANGLE ICNREMENT: " << LaserPoint::angleIncrement << std::endl;
+			std::cout << "MIN ANGLE" << laserScan->angle_min << std::endl;
+			std::cout << "MIN INCREMENT" << laserScan->angle_increment << std::endl;
+			LaserPoint::setMinAngle(laserScan->angle_min);
+			LaserPoint::setAngleIncrement(laserScan->angle_increment);
+			std::cout << "MIN ANGLE: " << LaserPoint::minAngle << " ANGLE ICNREMENT: " << LaserPoint::angleIncrement << std::endl;
+			initialized = true;
+		}
 		// choose a threshold based on max intensity
 
 		auto intensities = laserScan->intensities;

@@ -49,7 +49,7 @@ namespace laserMotionCalibration
 		{
 			std::cout << "WARNING angleIncrement already set!" << std::endl;
 		}
-		LaserPoint::angleIncrement = minAngle;
+		LaserPoint::angleIncrement = angleIncrement;
 	}
 
 }
