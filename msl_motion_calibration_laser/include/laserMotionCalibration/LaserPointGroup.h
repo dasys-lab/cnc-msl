@@ -9,22 +9,10 @@
 #define SRC_LASERPOINTGROUP_H_
 
 #include <vector>
+#include "LaserPoint.h"
 
 namespace laserMotionCalibration
 {
-
-	struct LaserPoint {
-		int index;
-		float intensity;
-		float distance;
-
-		LaserPoint(int newIndex, float newIntensity, float newDistance)
-		{
-			index = newIndex;
-			intensity = newIntensity;
-			distance = newDistance;
-		}
-	};
 
 	class LaserPointGroup
 	{

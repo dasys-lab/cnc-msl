@@ -76,43 +76,27 @@ namespace laserMotionCalibration
 		}
 
 #ifdef laserMotionCalibrationDebug
+		geometry_msgs::PoseArray poses;
 		for (auto pointGroup : pointGroups)
 		{
 			cout << pointGroup->getCenter() << "/" << pointGroup->getDistance() << "mm  ";
+			for (auto point : pointGroup->points)
+			{
+				geometry_msgs::Point rosPoint;
+				std::shared_ptr<geometry::CNPoint2D> coordinates = point.getXY();
+				rosPoint.x = coordinates->x;
+				rosPoint.y = coordinates->y;
+				geometry_msgs::Pose pose;
+				pose.position = rosPoint;
+				poses.poses.push_back(pose);
+			}
 		}
 		cout << endl;
 
 		cout << clock() - begin_time << " µs" << endl;
 #endif
-		// cout << ":) " << ros::Time::now() << endl;
-
-		// calculate XY positions - not actually needed
-
-		geometry_msgs::PoseArray poses;
-
-		int i = 0;
-		for (auto intensity : laserScan->intensities)
-		{
-			if (intensity > intensityThreshold)
-			{
-				double range = laserScan->ranges.at(i);
-				double angle = laserScan->angle_min + i * laserScan->angle_increment;
-
-				geometry_msgs::Point point;
-				point.x = cos(angle) * range;
-				point.y = sin(angle) * range;
-
-				geometry_msgs::Pose pose;
-				pose.position = point;
-				poses.poses.push_back(pose);
-			}
-
-			i++;
-		}
-		// do something
 
 		poses.header.frame_id = "laser"; // for debugging purposes
-
 		publisher->publish(poses);
 	}
 
