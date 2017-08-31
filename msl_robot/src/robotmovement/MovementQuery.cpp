@@ -80,7 +80,7 @@ namespace msl
 //		int newJump = max(abs(pastControlInput.back()[0] - pastControlInput.front()[0]),
 //							abs(pastControlInput.back()[1] - pastControlInput.front()[1]));
 //
-//		pastControlInput.push(std::valarray<double>(input, 3));
+		pastControlInput.push(std::valarray<double>(input, 3));
 //
 //		if (newJump != 0)
 //		{
