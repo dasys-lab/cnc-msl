@@ -237,308 +237,326 @@ void Joystick::sendJoystickMessage()
     // smooth driving stuff
 //    if (this->smoothDrivingMode)
 //    {
-    	// slope variable
-    	int a;
-    	// changing point for slope
-    	int b;
-    	//
-    	double TA;
-    	// acceleration memory
-    	double translation = msg.motion.translation;
-    	// number 1, 2, 3 depending on the past iterations
-    	double translationOld1;
-    	double translationOld2;
-    	double translationOld3;
+		// slope variable
+		int a;
+		// changing point for slope
+		int b;
+		//
+		double TA;
+		// acceleration memory
+		double translation = msg.motion.translation;
+		// number 1, 2, 3 depending on the past iterations
+		double translationOld1;
+		double translationOld2;
+		double translationOld3;
 
+		double n1 = -b * exp(-a * TA) + b;
+		double n2 = b * exp(-2 * a * TA) - b * exp(-a * TA) - b * a;
+		double n3 = b * a;
 
-    	double n1 = -b * exp(-a * TA) + b;
-    	double n2 = b * exp(-2 * a * TA) - b * exp(-a * TA) - b * a;
-    	double n3 = b * a;
-
-    	double d1 = -2 - 2 * exp(-a * TA);
-    	double d2 = 4 * exp(-a * TA) + 1 + exp(-2 * a * TA);
-    	double d3 = -2 * exp(-a * TA) - 2 * exp(-2 * a * TA);
-    	double d4 = exp(-2 * a * TA);
-
-
+		double d1 = -2 - 2 * exp(-a * TA);
+		double d2 = 4 * exp(-a * TA) + 1 + exp(-2 * a * TA);
+		double d3 = -2 * exp(-a * TA) - 2 * exp(-2 * a * TA);
+		double d4 = exp(-2 * a * TA);
 
 //    }
 
 #ifdef RQT_MSL_JOYSTICK_DEBUG
-    this->printControlValues();
+		this->printControlValues();
 // this->printJoystickMessage(msg);
 #endif
-    joyPub.publish(msg);
-}
+		joyPub.publish(msg);
+	}
 
-/**
- * Handles KeyPress and KeyRelease Events by forwarding them to the corresponding method.
- * Other Events are ignored by calling QObject:eventFilter()
- */
-bool Joystick::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == uiWidget)
-    {
-        if (event->type() == QEvent::KeyPress)
-        {
-            this->keyPressEvent(static_cast<QKeyEvent *>(event));
-            return true;
-        }
-        if (event->type() == QEvent::KeyRelease)
-        {
-            this->keyReleaseEvent(static_cast<QKeyEvent *>(event));
-            return true;
-        }
-    }
+	/**
+	 * Handles KeyPress and KeyRelease Events by forwarding them to the corresponding method.
+	 * Other Events are ignored by calling QObject:eventFilter()
+	 */
+	bool Joystick::eventFilter(QObject *watched, QEvent *event)
+	{
+		if (watched == uiWidget)
+		{
+			if (event->type() == QEvent::KeyPress)
+			{
+				this->keyPressEvent(static_cast<QKeyEvent *>(event));
+				return true;
+			}
+			if (event->type() == QEvent::KeyRelease)
+			{
+				this->keyReleaseEvent(static_cast<QKeyEvent *>(event));
+				return true;
+			}
+		}
 
-    return QObject::eventFilter(watched, event);
-}
+		return QObject::eventFilter(watched, event);
+	}
 
-void Joystick::keyPressEvent(QKeyEvent *event)
-{
-    if (!(event->isAutoRepeat()))
-    {
-        switch (event->key())
-        {
-        case Qt::Key_Up:
-            keyPressed[0] = true;
-            break;
-        case Qt::Key_Down:
-            keyPressed[1] = true;
-            break;
-        case Qt::Key_Left:
-            keyPressed[2] = true;
-            break;
-        case Qt::Key_Right:
-            keyPressed[3] = true;
-            break;
-        case Qt::Key_Less:
-            keyPressed[4] = true;
-            break;
-        case Qt::Key_Y:
-            keyPressed[5] = true;
-            break;
-        case Qt::Key_Space:
-            keyPressed[6] = true;
-            break;
-        default:
-            break;
-        }
-    }
-}
+	void Joystick::keyPressEvent(QKeyEvent *event)
+	{
+		if (!(event->isAutoRepeat()))
+		{
+			switch (event->key())
+			{
+				case Qt::Key_Up:
+					keyPressed[0] = true;
+					break;
+				case Qt::Key_Down:
+					keyPressed[1] = true;
+					break;
+				case Qt::Key_Left:
+					keyPressed[2] = true;
+					break;
+				case Qt::Key_Right:
+					keyPressed[3] = true;
+					break;
+				case Qt::Key_Less:
+					keyPressed[4] = true;
+					break;
+				case Qt::Key_Y:
+					keyPressed[5] = true;
+					break;
+				case Qt::Key_Space:
+					keyPressed[6] = true;
+					break;
+				default:
+					break;
+			}
+		}
+	}
 
-void Joystick::keyReleaseEvent(QKeyEvent *event)
-{
-    if (!(event->isAutoRepeat()))
-    {
-        switch (event->key())
-        {
-        case Qt::Key_Up:
-            keyPressed[0] = false;
-            break;
-        case Qt::Key_Down:
-            keyPressed[1] = false;
-            break;
-        case Qt::Key_Left:
-            keyPressed[2] = false;
-            break;
-        case Qt::Key_Right:
-            keyPressed[3] = false;
-            break;
-        case Qt::Key_Less:
-            keyPressed[4] = false;
-            break;
-        case Qt::Key_Y:
-            keyPressed[5] = false;
-            break;
-        case Qt::Key_Space:
-            keyPressed[6] = false;
-            break;
-        default:
-            break;
-        }
-    }
-}
+	void Joystick::keyReleaseEvent(QKeyEvent *event)
+	{
+		if (!(event->isAutoRepeat()))
+		{
+			switch (event->key())
+			{
+				case Qt::Key_Up:
+					keyPressed[0] = false;
+					break;
+				case Qt::Key_Down:
+					keyPressed[1] = false;
+					break;
+				case Qt::Key_Left:
+					keyPressed[2] = false;
+					break;
+				case Qt::Key_Right:
+					keyPressed[3] = false;
+					break;
+				case Qt::Key_Less:
+					keyPressed[4] = false;
+					break;
+				case Qt::Key_Y:
+					keyPressed[5] = false;
+					break;
+				case Qt::Key_Space:
+					keyPressed[6] = false;
+					break;
+				default:
+					break;
+			}
+		}
+	}
 
 // QT GUI Signal and Slots Methods
 
-void Joystick::onRobotIdEdited()
-{
-    this->robotId = robotIdEdit->text().toInt();
-    this->robotIdEdit->setText(QString::number(this->robotId));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onRobotIdEdited()
+	{
+		this->robotId = robotIdEdit->text().toInt();
+		this->robotIdEdit->setText(QString::number(this->robotId));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onKickPowerEdited()
-{
-    this->kickPower = kickPowerEdit->text().toShort();
-    if (this->kickPower > this->kickPowerMax)
-        this->kickPower = this->kickPowerMax;
-    if (this->kickPower < this->kickPowerMin)
-        this->kickPower = this->kickPowerMin;
-    this->kickPowerEdit->setText(QString::number(this->kickPower));
-    bool result = this->kickPowerSlider->blockSignals(true);
-    this->kickPowerSlider->setValue(this->kickPower);
-    this->kickPowerSlider->blockSignals(result);
-    this->uiWidget->setFocus();
-}
+	void Joystick::onKickPowerEdited()
+	{
+		this->kickPower = kickPowerEdit->text().toShort();
+		if (this->kickPower > this->kickPowerMax)
+			this->kickPower = this->kickPowerMax;
+		if (this->kickPower < this->kickPowerMin)
+			this->kickPower = this->kickPowerMin;
+		this->kickPowerEdit->setText(QString::number(this->kickPower));
+		bool result = this->kickPowerSlider->blockSignals(true);
+		this->kickPowerSlider->setValue(this->kickPower);
+		this->kickPowerSlider->blockSignals(result);
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onKickPowerSlided(int value)
-{
-    this->kickPower = (short)value;
-    this->kickPowerEdit->setText(QString::number(value));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onKickPowerSlided(int value)
+	{
+		this->kickPower = (short)value;
+		this->kickPowerEdit->setText(QString::number(value));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onRotationEdited()
-{
-    this->rotation = rotationEdit->text().toDouble();
-    if (this->rotation > this->rotationMax)
-        this->rotation = this->rotationMax;
-    if (this->rotation < this->rotationMin)
-        this->rotation = this->rotationMin;
-    this->rotationEdit->setText(QString::number(this->rotation));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onRotationEdited()
+	{
+		this->rotation = rotationEdit->text().toDouble();
+		if (this->rotation > this->rotationMax)
+			this->rotation = this->rotationMax;
+		if (this->rotation < this->rotationMin)
+			this->rotation = this->rotationMin;
+		this->rotationEdit->setText(QString::number(this->rotation));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onTranslationEdited()
-{
-    this->translation = translationEdit->text().toDouble();
-    if (this->translation > this->translationMax)
-        this->translation = this->translationMax;
-    if (this->translation < this->translationMin)
-        this->translation = this->translationMin;
-    this->translationEdit->setText(QString::number(this->translation));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onTranslationEdited()
+	{
+		this->translation = translationEdit->text().toDouble();
+		if (this->translation > this->translationMax)
+			this->translation = this->translationMax;
+		if (this->translation < this->translationMin)
+			this->translation = this->translationMin;
+		this->translationEdit->setText(QString::number(this->translation));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onLowShovelSelected(bool checked)
-{
-    if (checked)
-    {
-        this->shovelIdx = 0;
-        this->keyPressed[7] = true; // signal to send joystick message for changing shovel
-        this->uiWidget->setFocus();
-    }
-}
+	void Joystick::onLowShovelSelected(bool checked)
+	{
+		if (checked)
+		{
+			this->shovelIdx = 0;
+			this->keyPressed[7] = true; // signal to send joystick message for changing shovel
+			this->uiWidget->setFocus();
+		}
+	}
 
-void Joystick::onHighShovelSelected(bool checked)
-{
-    if (checked)
-    {
-        this->shovelIdx = 1;
-        this->keyPressed[7] = true; // signal to send joystick message for changing shovel
-        this->uiWidget->setFocus();
-    }
-}
+	void Joystick::onHighShovelSelected(bool checked)
+	{
+		if (checked)
+		{
+			this->shovelIdx = 1;
+			this->keyPressed[7] = true; // signal to send joystick message for changing shovel
+			this->uiWidget->setFocus();
+		}
+	}
 
-void Joystick::onBallHandleRightEdited()
-{
-    this->ballHandleRightMotor = ballHandleRightEdit->text().toInt();
-    if (this->ballHandleRightMotor > this->ballHandleMax)
-        this->ballHandleRightMotor = this->ballHandleMax;
-    if (this->ballHandleRightMotor < this->ballHandleMin)
-        this->ballHandleRightMotor = this->ballHandleMin;
-    this->ballHandleRightEdit->setText(QString::number(this->ballHandleRightMotor));
-    bool result = this->ballHandleRightSlider->blockSignals(true);
-    this->ballHandleRightSlider->setValue(this->ballHandleRightMotor);
-    this->ballHandleRightSlider->blockSignals(result);
-    this->uiWidget->setFocus();
-}
+	void Joystick::onBallHandleRightEdited()
+	{
+		this->ballHandleRightMotor = ballHandleRightEdit->text().toInt();
+		if (this->ballHandleRightMotor > this->ballHandleMax)
+			this->ballHandleRightMotor = this->ballHandleMax;
+		if (this->ballHandleRightMotor < this->ballHandleMin)
+			this->ballHandleRightMotor = this->ballHandleMin;
+		this->ballHandleRightEdit->setText(QString::number(this->ballHandleRightMotor));
+		bool result = this->ballHandleRightSlider->blockSignals(true);
+		this->ballHandleRightSlider->setValue(this->ballHandleRightMotor);
+		this->ballHandleRightSlider->blockSignals(result);
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onBallHandleRightSlided(int value)
-{
-    this->ballHandleRightMotor = value;
-    ballHandleRightEdit->setText(QString::number(value));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onBallHandleRightSlided(int value)
+	{
+		this->ballHandleRightMotor = value;
+		ballHandleRightEdit->setText(QString::number(value));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onBallHandleLeftEdited()
-{
-    this->ballHandleLeftMotor = ballHandleLeftEdit->text().toInt();
-    if (this->ballHandleLeftMotor > this->ballHandleMax)
-        this->ballHandleLeftMotor = this->ballHandleMax;
-    if (this->ballHandleLeftMotor < this->ballHandleMin)
-        this->ballHandleLeftMotor = this->ballHandleMin;
-    this->ballHandleLeftEdit->setText(QString::number(this->ballHandleLeftMotor));
-    bool result = this->ballHandleLeftSlider->blockSignals(true);
-    this->ballHandleLeftSlider->setValue(this->ballHandleLeftMotor);
-    this->ballHandleLeftSlider->blockSignals(result);
-    this->uiWidget->setFocus();
-}
+	void Joystick::onBallHandleLeftEdited()
+	{
+		this->ballHandleLeftMotor = ballHandleLeftEdit->text().toInt();
+		if (this->ballHandleLeftMotor > this->ballHandleMax)
+			this->ballHandleLeftMotor = this->ballHandleMax;
+		if (this->ballHandleLeftMotor < this->ballHandleMin)
+			this->ballHandleLeftMotor = this->ballHandleMin;
+		this->ballHandleLeftEdit->setText(QString::number(this->ballHandleLeftMotor));
+		bool result = this->ballHandleLeftSlider->blockSignals(true);
+		this->ballHandleLeftSlider->setValue(this->ballHandleLeftMotor);
+		this->ballHandleLeftSlider->blockSignals(result);
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onBallHandleLeftSlided(int value)
-{
-    this->ballHandleLeftMotor = value;
-    this->ballHandleLeftEdit->setText(QString::number(value));
-    this->uiWidget->setFocus();
-}
+	void Joystick::onBallHandleLeftSlided(int value)
+	{
+		this->ballHandleLeftMotor = value;
+		this->ballHandleLeftEdit->setText(QString::number(value));
+		this->uiWidget->setFocus();
+	}
 
-void Joystick::onBallHandleCheckBoxToggled(int checkState)
-{
-    switch (checkState)
-    {
-    case Qt::CheckState::Checked:
-        std::cout << "BHC: set to true" << endl;
-        this->useBallHandle = true;
-        break;
-    case Qt::CheckState::Unchecked:
-    case Qt::CheckState::PartiallyChecked:
-    default:
-        std::cout << "BHC: set to false" << endl;
-        this->useBallHandle = false;
-        break;
-    }
-    this->uiWidget->setFocus();
-}
+	void Joystick::onBallHandleCheckBoxToggled(int checkState)
+	{
+		switch (checkState)
+		{
+			case Qt::CheckState::Checked:
+				std::cout << "BHC: set to true" << endl;
+				this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+				break;
+			case Qt::CheckState::Unchecked:
+			case Qt::CheckState::PartiallyChecked:
+			default:
+				std::cout << "BHC: set to false" << endl;
+				this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+				break;
+		}
+		this->uiWidget->setFocus();
+	}
 
-/**
- * Prints the current control values to the console.
- */
-void Joystick::printControlValues()
-{
-    cout << "------------ Control Values -------------" << endl;
-    cout << "RobotId:\t\t" << this->robotId << endl;
-    cout << "Translation:\t\t" << this->translation << endl;
-    cout << "Rotation:\t\t" << this->rotation << endl;
-    cout << "KickPower:\t\t" << this->kickPower << endl;
-    cout << "Shovel:\t\t\t";
-    if (this->shovelIdx > 0)
-    {
-        cout << "High" << endl;
-    }
-    else
-    {
-        cout << "Low" << endl;
-    }
-    cout << "BallHandle State:\t" << (this->useBallHandle ? "On" : "Off") << endl;
-    cout << "BallHandle Left:\t" << this->ballHandleLeftMotor << "\t Right: " << this->ballHandleRightMotor << endl;
-}
+	void Joystick::onPTControllerCheckBoxToggled(int checkState)
+	{
+		switch (checkState)
+		{
+			case Qt::CheckState::Checked:
+				std::cout << "PTC: set to true" << endl;
+				this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_ON;
+				break;
+			case Qt::CheckState::Unchecked:
+			case Qt::CheckState::PartiallyChecked:
+			default:
+				std::cout << "PTC: set to false" << endl;
+				this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
+				break;
+		}
+		this->uiWidget->setFocus();
+	}
 
-/**
- * Prints the current joystick command values to the console.
- */
-void Joystick::printJoystickMessage(msl_msgs::JoystickCommand msg)
-{
-    cout << "------------ Command Values -------------" << endl;
-    cout << "RobotId:\t\t" << msg.robotId << endl;
-    cout << "Translation:\t\t" << msg.motion.translation << endl;
-    cout << "Angle:\t\t\t" << msg.motion.angle << endl;
-    cout << "Rotation:\t\t" << msg.motion.rotation << endl;
-    cout << "KickPower:\t\t" << msg.kickPower << endl;
-    cout << "Kick:\t\t\t" << (msg.kick ? "True" : "False") << endl;
-    cout << "Shovel:\t\t\t";
-    if (msg.shovelIdx > 0)
-    {
-        cout << "High" << endl;
-    }
-    else
-    {
-        cout << "Low" << endl;
-    }
-    cout << "BallHandle State:\t" << (msg.ballHandleState ? "On" : "Off") << endl;
-    cout << "BallHandle Left:\t" << (int)msg.ballHandleLeftMotor << "\t Right: " << (int)msg.ballHandleRightMotor << endl;
-}
+	/**
+	 * Prints the current control values to the console.
+	 */
+	void Joystick::printControlValues()
+	{
+		cout << "------------ Control Values -------------" << endl;
+		cout << "RobotId:\t\t" << this->robotId << endl;
+		cout << "Translation:\t\t" << this->translation << endl;
+		cout << "Rotation:\t\t" << this->rotation << endl;
+		cout << "KickPower:\t\t" << this->kickPower << endl;
+		cout << "Shovel:\t\t\t";
+		if (this->shovelIdx > 0)
+		{
+			cout << "High" << endl;
+		}
+		else
+		{
+			cout << "Low" << endl;
+		}
+		cout << "BallHandle State:\t" << (this->useBallHandle ? "On" : "Off") << endl;
+		cout << "PTController State:\t" << (this->usePTController ? "On" : "Off") << endl;
+		cout << "BallHandle Left:\t" << this->ballHandleLeftMotor << "\t Right: " << this->ballHandleRightMotor << endl;
+	}
+
+	/**
+	 * Prints the current joystick command values to the console.
+	 */
+	void Joystick::printJoystickMessage(msl_msgs::JoystickCommand msg)
+	{
+		cout << "------------ Command Values -------------" << endl;
+		cout << "RobotId:\t\t" << msg.robotId << endl;
+		cout << "Translation:\t\t" << msg.motion.translation << endl;
+		cout << "Angle:\t\t\t" << msg.motion.angle << endl;
+		cout << "Rotation:\t\t" << msg.motion.rotation << endl;
+		cout << "KickPower:\t\t" << msg.kickPower << endl;
+		cout << "Kick:\t\t\t" << (msg.kick ? "True" : "False") << endl;
+		cout << "Shovel:\t\t\t";
+		if (msg.shovelIdx > 0)
+		{
+			cout << "High" << endl;
+		}
+		else
+		{
+			cout << "Low" << endl;
+		}
+		cout << "BallHandle State:\t" << (msg.ballHandleState ? "On" : "Off") << endl;
+		cout << "PTController State:\t" << (this->usePTController ? "On" : "Off") << endl;
+		cout << "BallHandle Left:\t" << (int)msg.ballHandleLeftMotor << "\t Right: " << (int)msg.ballHandleRightMotor
+				<< endl;
+	}
 
 } // namespace msl_keyboard_joystick
 
