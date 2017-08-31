@@ -150,7 +150,8 @@ namespace msl
 																mc.motion.translation);
 		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
 		mc.motion.angle = atan2(translation[1], translation[0]);
-		mc.motion.rotation = translation[2];
+//		mc.motion.rotation = translation[2];
+		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * 2;
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
