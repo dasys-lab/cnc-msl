@@ -39,6 +39,8 @@ namespace msl
 		this->rectangleLowerRightCorner = nullptr;
 		this->pathEval = nullptr;
 
+		this->a = 1;
+
 		resetAllPIDParameters();
 		readConfigParameters();
 	}
@@ -63,6 +65,11 @@ namespace msl
 		return ret;
 	}
 
+	double MovementQuery::getAFactor()
+	{
+		return a;
+	}
+
 	/**
 	 * PT-Controller for smooth translation acceleration
 	 */
@@ -70,18 +77,19 @@ namespace msl
 	{
 		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
 
-		int newJump = max(abs(pastControlInput.back()[0] - pastControlInput.front()[0]),
-							abs(pastControlInput.back()[1] - pastControlInput.front()[1]));
-
+//		int newJump = max(abs(pastControlInput.back()[0] - pastControlInput.front()[0]),
+//							abs(pastControlInput.back()[1] - pastControlInput.front()[1]));
+//
 		pastControlInput.push(std::valarray<double>(input, 3));
-
-		if (newJump != 0)
-		{
-			lastJump = newJump;
-		}
+//
+//		if (newJump != 0)
+//		{
+//			lastJump = newJump;
+//		}
 
 		// slope variable
-		double a = 6.33333 - 4.0 / 3000.0 * lastJump;
+//		a = 6.33333 - 4.0 / 3000.0 * lastJump;
+		a = 5;
 		// changing point for slope
 		double b = pow(a, 2.0);
 		// sending frequency

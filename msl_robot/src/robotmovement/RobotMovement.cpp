@@ -116,8 +116,8 @@ namespace msl
 		// ROTATION
 		if (query->egoAlignPoint != nullptr)
 		{
-			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo()
-					* (query->fast ? this->fastRotation : this->defaultRotateP);
+			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo();
+
 		}
 
 		// dribble behavior -> used from dribbleToPointConservative ==============================================
@@ -141,11 +141,17 @@ namespace msl
 
 		}
 		// pt controller stuff
+		cout << "Rotation : " << mc.motion.rotation << endl;
+		mc.motion.rotation = mc.motion.rotation * 0.15 * query->getAFactor();
+//		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
+		cout << "Rotation input value: " << mc.motion.rotation << endl;
+		cout << "a = " << query->getAFactor() << endl;
 		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
 																mc.motion.translation);
 		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
 		mc.motion.angle = atan2(translation[1], translation[0]);
-		mc.motion.rotation = translation[2];
+//		mc.motion.rotation = translation[2];
+		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * 2;
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;

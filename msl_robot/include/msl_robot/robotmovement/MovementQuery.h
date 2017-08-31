@@ -132,6 +132,7 @@ namespace msl
 	 * Initialize all needed parameters and queues for the PT-Controller
 	 */
 	void initializePTControllerParameters();
+	double getAFactor();
 
 	void clearPTControllerQueues();
 
@@ -148,6 +149,8 @@ protected:
 	double angleCalcForDribble(double transOrt);
 
 	int lastJump;
+	// TODO: need to be renamed
+	double a;
 
 	/**
 	 * Past sent translation for PT-Controller
