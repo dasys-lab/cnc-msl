@@ -148,20 +148,14 @@ namespace msl
 		cout << "a = " << query->getAFactor() << endl;
 		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
 																mc.motion.translation);
-		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
-		mc.motion.angle = atan2(translation[1], translation[0]);
-//		mc.motion.rotation = translation[2]; //for PT
-		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * 2; //for P
+		mc.motion.translation = translation[0];
+		mc.motion.rotation = translation[2]; //for PT
+
+//		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
+//		mc.motion.angle = atan2(translation[1], translation[0]);
+//
+//		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * 2; //for P
 		mc.motion.angle = egoTarget->angleTo();
-		if (egoTarget->length() > query->snapDistance)
-				{
-					mc.motion.translation = min(egoTarget->length(),
-												(query->fast ? this->fastTranslation : this->defaultTranslation));
-				}
-				else
-				{
-					mc.motion.translation = 0;
-				}
 
 		//angle correction to respect anlge change through rotation
 		mc.motion.angle -= mc.motion.rotation/30.0; //1/30 s= time step , time step * omega = phi

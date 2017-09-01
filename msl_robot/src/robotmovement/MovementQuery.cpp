@@ -75,8 +75,8 @@ namespace msl
 	 */
 	std::valarray<double> MovementQuery::ptController(double angle, double rotation, double translation)
 	{
-		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
-
+//		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
+		double input[] = {translation, angle, rotation};
 //		int newJump = max(abs(pastControlInput.back()[0] - pastControlInput.front()[0]),
 //							abs(pastControlInput.back()[1] - pastControlInput.front()[1]));
 //
