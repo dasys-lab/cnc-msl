@@ -105,8 +105,8 @@ namespace msl
 		// TRANSLATION
 		if (egoTarget->length() > query->snapDistance)
 		{
-			mc.motion.translation = min(egoTarget->length(),
-										(query->fast ? this->fastTranslation : this->defaultTranslation));
+			mc.motion.translation = egoTarget->length();
+
 		}
 		else
 		{
@@ -142,13 +142,14 @@ namespace msl
 		}
 		// pt controller stuff
 		cout << "Rotation : " << mc.motion.rotation << endl;
+		mc.motion.translation = mc.motion.translation * 0.15 * query->getAFactor();
 		mc.motion.rotation = mc.motion.rotation * 0.15 * query->getAFactor();
 //		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
 		cout << "Rotation input value: " << mc.motion.rotation << endl;
 		cout << "a = " << query->getAFactor() << endl;
 		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
 																mc.motion.translation);
-		mc.motion.translation = translation[0];
+		mc.motion.translation = min(translation[0],(query->fast ? this->fastTranslation : this->defaultTranslation));
 		mc.motion.rotation = translation[2]; //for PT
 
 //		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
