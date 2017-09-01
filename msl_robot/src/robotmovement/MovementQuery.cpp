@@ -39,7 +39,7 @@ namespace msl
 		this->rectangleLowerRightCorner = nullptr;
 		this->pathEval = nullptr;
 
-		this->a = 1;
+		this->velocityMode = Velocity::DEFAULT;
 
 		resetAllPIDParameters();
 		readConfigParameters();
@@ -65,41 +65,39 @@ namespace msl
 		return ret;
 	}
 
-	double MovementQuery::getAFactor()
-	{
-		return a;
-	}
-
 	/**
 	 * PT-Controller for smooth translation acceleration
 	 */
-	std::valarray<double> MovementQuery::ptController(double angle, double rotation, double translation)
+	std::valarray<double> MovementQuery::ptController(double rotation, double translation)
 	{
-//		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
-		double input[] = {translation, angle, rotation};
-//		int newJump = max(abs(pastControlInput.back()[0] - pastControlInput.front()[0]),
-//							abs(pastControlInput.back()[1] - pastControlInput.front()[1]));
-//
-		pastControlInput.push(std::valarray<double>(input, 3));
-//
-//		if (newJump != 0)
-//		{
-//			lastJump = newJump;
-//		}
+		double input[] = {translation, rotation};
+
+		pastControlInput.push(std::valarray<double>(input, 2));
 
 		// slope variable
-//		a = 6.33333 - 4.0 / 3000.0 * lastJump;
-		a = 10;
+		controllerVelocity = defaultControllerVelocity;
+		if (velocityMode == Velocity::FAST)
+		{
+			controllerVelocity = fastControllerVelocity;
+		} else if (velocityMode == Velocity::CAREFULLY)
+		{
+			controllerVelocity = carefullyControllerVelocity;
+		}
+
+		// 0.15 is fix and may not be changed -> fastest acceleration without overshoot
+		translation = translation * 0.15 * controllerVelocity;
+		rotation = rotation * 0.15 * controllerVelocity;
+
 		// changing point for slope
-		double b = pow(a, 2.0);
+		double b = pow(controllerVelocity, 2.0);
 		// sending frequency
 		double TA = 1.0 / 30.0;
 
-		double n1 = 1.0 - exp(-a * TA) - exp(-a * TA) * a * TA;
-		double n2 = exp(-2 * a * TA) - exp(-a * TA) + exp(-a * TA) * TA * a;
+		double n1 = 1.0 - exp(-controllerVelocity * TA) - exp(-controllerVelocity * TA) * controllerVelocity * TA;
+		double n2 = exp(-2 * controllerVelocity * TA) - exp(-controllerVelocity * TA) + exp(-controllerVelocity * TA) * TA * controllerVelocity;
 
-		double d1 = -2 * exp(-a * TA);
-		double d2 = exp(-2 * a * TA);
+		double d1 = -2 * exp(-controllerVelocity * TA);
+		double d2 = exp(-2 * controllerVelocity * TA);
 
 				cout << "n1 = " << n1 << endl;
 				cout << "n2 = " << n2 << endl;
@@ -107,7 +105,7 @@ namespace msl
 				cout << "d1 = " << d1 << endl;
 				cout << "d2 = " << d2 << endl;
 
-		pastTranslations.push(std::valarray<double>(init, 3));
+		pastTranslations.push(std::valarray<double>(init, 2));
 		pastTranslations.back() += n2 * pastControlInput.front() - d2 * pastTranslations.front();
 		pastControlInput.pop();
 		pastTranslations.pop();
@@ -301,7 +299,6 @@ namespace msl
 			pastControlInput.push(std::valarray<double>(input, 3));
 		}
 
-		lastJump = 1000;
 	}
 
 	void MovementQuery::clearPTControllerQueues()
@@ -354,6 +351,10 @@ namespace msl
 																									NULL) / 180 * M_PI;
 		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
 																								"MaxVelocity", NULL);
+		this->carefullyControllerVelocity= (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.CarefullyControllerVelocity", NULL);
+		this->defaultControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.DefaultControllerVelocity", NULL);
+		this->fastControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.FastControllerVelocity", NULL);
+		this->controllerVelocity = defaultControllerVelocity;
 
 	}
 }

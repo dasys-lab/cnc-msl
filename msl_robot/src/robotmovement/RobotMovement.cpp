@@ -70,12 +70,7 @@ namespace msl
 	 * @param egoAlignPoint
 	 * @param snapDistance
 	 * @param additionalPoints
-	 * @param fast
-	 *
-	 * @param dribble
-	 * if dribble == true you can adapt the rotation and translation PD parameters for
-	 * query->curTransDribble
-	 * query->curRotDribble
+	 * @param velocityMode
 	 *
 	 */
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> query)
@@ -120,46 +115,29 @@ namespace msl
 
 		}
 
-		// dribble behavior -> used from dribbleToPointConservative ==============================================
-		query->initializePTControllerParameters();
-		if (query->dribble)
-		{
-			// will only initialize if Parameters are empty
-			// old pd stuff (used for pt controller)
-			mc.motion.rotation = query->rotationPDForDribble(egoTarget);
-			double rotPointDist = 350.0;
-			if (auto ballPos = wm->ball->getEgoBallPosition())
-			{
-				rotPointDist = min(rotPointDist, ballPos->length()); // the point around which we rotate
-			}
-
-			double transOrt = mc.motion.rotation * rotPointDist; // the translation corresponding to the curve we drive
-
-			mc.motion.translation = query->translationPIForDribble(transOrt);
-			double toleranceDist = 500;
-//        mc.motion.angle = query->angleCalcForDribble(transOrt);
-
-		}
 		// pt controller stuff
-		cout << "Rotation : " << mc.motion.rotation << endl;
-		mc.motion.translation = mc.motion.translation * 0.15 * query->getAFactor();
-		mc.motion.rotation = mc.motion.rotation * 0.15 * query->getAFactor();
-//		mc.motion.translation = mc.motion.translation * 0.16 * query->getAFactor();
-		cout << "Rotation input value: " << mc.motion.rotation << endl;
-		cout << "a = " << query->getAFactor() << endl;
-		std::valarray<double> translation = query->ptController(mc.motion.angle, mc.motion.rotation,
-																mc.motion.translation);
-		mc.motion.translation = min(translation[0],(query->fast ? this->fastTranslation : this->defaultTranslation));
-		mc.motion.rotation = translation[2]; //for PT
+		query->initializePTControllerParameters();
 
-//		mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
-//		mc.motion.angle = atan2(translation[1], translation[0]);
-//
-//		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * 2; //for P
+		std::valarray<double> translation = query->ptController(mc.motion.rotation, mc.motion.translation);
+
+		double maxTranslation = this->defaultTranslation;
+
+		if (query->velocityMode == MovementQuery::Velocity::FAST)
+		{
+			maxTranslation = this->fastTranslation;
+
+		} else if (query->velocityMode == MovementQuery::Velocity::CAREFULLY) {
+			maxTranslation = this->carefullyTranslation;
+		}
+
+		mc.motion.translation = min(translation[0], maxTranslation);
+
+		mc.motion.rotation = translation[1]; //for PT
+
 		mc.motion.angle = egoTarget->angleTo();
 
 		//angle correction to respect anlge change through rotation
-		mc.motion.angle -= mc.motion.rotation/30.0; //1/30 s= time step , time step * omega = phi
+		mc.motion.angle -= mc.motion.rotation / 30.0; //1/30 s= time step , time step * omega = phi
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -642,9 +620,11 @@ namespace msl
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
+		carefullyTranslation = (*sc)["Drive"]->get<double>("Drive.Carefully.Velocity", NULL);
 		defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
-		defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
 		fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
+		carefullyRotation = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
+		defaultRotation = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
 		fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
 
 		// for alignTo()

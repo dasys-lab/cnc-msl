@@ -47,6 +47,16 @@ namespace msl
 	 * FastTranslation or DefaultTranslation (Motion.conf)
 	 */
 	bool fast;
+
+	enum Velocity
+	{
+		CAREFULLY, DEFAULT, FAST
+	};
+	Velocity velocityMode;
+	double carefullyControllerVelocity;
+	double defaultControllerVelocity;
+	double fastControllerVelocity;
+
 	/**
 	 * Robot is dribbling the ball
 	 */
@@ -121,18 +131,17 @@ namespace msl
 	/**
 	 * Initial, empty Array for PT-Controller
 	 */
-	double init[3] =
-	{	0.0,0.0,0.0};
+	double init[2] =
+	{	0.0,0.0};
 
 	/**
 	 * PT-Controller for smooth translation acceleration
 	 */
-	std::valarray<double> ptController(double angle, double rotation, double translation);
+	std::valarray<double> ptController(double rotation, double translation);
 	/**
 	 * Initialize all needed parameters and queues for the PT-Controller
 	 */
 	void initializePTControllerParameters();
-	double getAFactor();
 
 	void clearPTControllerQueues();
 
@@ -148,9 +157,7 @@ protected:
 	double translationPIForDribble(double transOrt);
 	double angleCalcForDribble(double transOrt);
 
-	int lastJump;
-	// TODO: need to be renamed
-	double a;
+	double controllerVelocity;
 
 	/**
 	 * Past sent translation for PT-Controller
