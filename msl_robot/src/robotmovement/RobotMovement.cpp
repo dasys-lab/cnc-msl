@@ -70,7 +70,7 @@ namespace msl
 	 * @param egoAlignPoint
 	 * @param snapDistance
 	 * @param additionalPoints
-	 * @param velocityMode
+	 * @param velocityMode -> from type msl::MovementQuery::Velocity
 	 *
 	 */
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> query)

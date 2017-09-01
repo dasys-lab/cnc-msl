@@ -43,18 +43,30 @@ namespace msl
 		 * Obstacles added to the PathPlanner’s Voronoi Diagram
 		 */
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
-	/**
-	 * FastTranslation or DefaultTranslation (Motion.conf)
-	 */
-//	bool fast;
 
+	/**
+	 * Velocity enum to decide how fast we want do go
+	 */
 	enum Velocity
 	{
 		CAREFULLY, DEFAULT, FAST
 	};
+
+	/**
+	 * Velocity enum to decide how fast we want do go
+	 */
 	Velocity velocityMode;
+	/**
+	 * Carefully value for PT-Controller (Drive.conf)
+	 */
 	double carefullyControllerVelocity;
+	/**
+	 * Default value for PT-Controller (Drive.conf)
+	 */
 	double defaultControllerVelocity;
+	/**
+	 * fast value for PT-Controller (Drive.conf)
+	 */
 	double fastControllerVelocity;
 
 	/**
