@@ -89,7 +89,7 @@ namespace msl
 
 		// slope variable
 //		a = 6.33333 - 4.0 / 3000.0 * lastJump;
-		a = 5;
+		a = 10;
 		// changing point for slope
 		double b = pow(a, 2.0);
 		// sending frequency
