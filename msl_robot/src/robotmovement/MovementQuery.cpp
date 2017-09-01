@@ -20,7 +20,7 @@ namespace msl
 		this->egoAlignPoint = nullptr;
 		this->egoDestinationPoint = nullptr;
 		this->additionalPoints = nullptr;
-		this->fast = false;
+//		this->fast = false;
 		this->dribble = false;
 		this->blockOppPenaltyArea = false;
 		this->blockOppGoalArea = false;
@@ -189,7 +189,7 @@ namespace msl
 		this->egoAlignPoint = nullptr;
 		this->egoDestinationPoint = nullptr;
 		this->additionalPoints = nullptr;
-		this->fast = false;
+//		this->fast = false;
 		this->dribble = false;
 		this->blockOppPenaltyArea = false;
 		this->blockOppGoalArea = false;

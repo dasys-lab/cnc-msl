@@ -488,7 +488,7 @@ namespace msl
 		shared_ptr<MovementQuery> q = make_shared<MovementQuery>();
 		q->egoDestinationPoint = dest;
 		q->egoAlignPoint = align;
-		q->fast = true;
+//		q->fast = true;
 		mc = moveToPoint(q);
 #ifdef RM_DEBUG
 		cout << "RobotMovementmoveToFreeSpace: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;

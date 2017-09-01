@@ -46,7 +46,7 @@ namespace msl
 	/**
 	 * FastTranslation or DefaultTranslation (Motion.conf)
 	 */
-	bool fast;
+//	bool fast;
 
 	enum Velocity
 	{
