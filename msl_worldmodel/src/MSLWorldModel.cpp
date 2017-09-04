@@ -1,10 +1,3 @@
-/*
- * MSLWorldModel.cpp
- *
- *  Created on: 27.10.2014
- *      Author: Andreas Witsch
- */
-
 #include "MSLWorldModel.h"
 #include "Ball.h"
 #include "EventTrigger.h"
@@ -311,7 +304,6 @@ MSLWorldModel::~MSLWorldModel()
     delete this->robots;
     delete this->game;
     delete this->pathPlanner;
-    // delete this->kicker; // TODO: delete this line
     delete this->whiteBoard;
     delete this->obstacles;
     delete this->prediction;

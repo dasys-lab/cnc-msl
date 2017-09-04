@@ -205,7 +205,7 @@ void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
          * http://stackoverflow.com/questions/12314967/cohabitation-of-boostshared-ptr-and-stdshared-ptr
          */
         shared_ptr<msl_msgs::JoystickCommand> cmd =
-            shared_ptr<msl_msgs::JoystickCommand>(msg.get(), [msg](msl_msgs::JoystickCommand *) mutable { msg.reset(); });
+            shared_ptr<msl_msgs::JoystickCommand>(msg.get(), [msg](msl_msgs::JoystickCommand*) mutable { msg.reset(); });
         shared_ptr<InformationElement<msl_msgs::JoystickCommand>> jcmd = make_shared<InformationElement<msl_msgs::JoystickCommand>>(cmd, wm->getTime());
         jcmd->certainty = 1.0;
         joystickCommands.add(jcmd);
