@@ -9,14 +9,14 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs cnc_geometry)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs cnc_geometry system_config)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)
 
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES 
- CATKIN_DEPENDS roscpp cnc_geometry
+ CATKIN_DEPENDS roscpp cnc_geometry system_config
  DEPENDS 
 )
 
