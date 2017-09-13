@@ -19,7 +19,7 @@ namespace msl
     std::string logFile = "/home/cn/cnws/IMU.log";
     FILE *lp = fopen(logFile.c_str(), "a");
 
-    RawSensorData::RawSensorData(MSLWorldModel *wm, int ringbufferLength) :
+    RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
             distanceScan(ringbufferLength), lightBarrier(ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(
                     ringbufferLength), ownPositionVision(ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(
                     ringbufferLength), compass(ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(
@@ -36,7 +36,7 @@ namespace msl
     {
     }
 
-    shared_ptr<vector<double>> RawSensorData::getDistanceScan(int index)
+    shared_ptr<vector<double> > RawSensorData::getDistanceScan(int index)
     {
         auto x = distanceScan.getLast(index);
         if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -192,6 +192,11 @@ namespace msl
         ownVelocityMotion.add(vel);
     }
 
+    double RawSensorData::getAverageBearing()
+    {
+        return imuData.getAverageMod();
+    }
+
     void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
     {
         if (msg->robotId == this->ownID)
@@ -228,7 +233,7 @@ namespace msl
         lightBarrier.add(l);
     }
 
-    void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl &cmd)
+    void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl& cmd)
     {
         shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
         mc->motion.angle = cmd.motion.angle;
@@ -247,7 +252,7 @@ namespace msl
 
         if (data->odometry.certainty > 0)
         {
-            // full odometry
+            //full odometry
             msl_sensor_msgs::CorrectedOdometryInfo test = msl_sensor_msgs::CorrectedOdometryInfo(data->odometry);
             shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> odom =
                     make_shared<msl_sensor_msgs::CorrectedOdometryInfo>(data->odometry);
@@ -256,7 +261,7 @@ namespace msl
             odo->certainty = data->odometry.certainty;
             ownOdometry.add(odo);
 
-            // Vision
+            //Vision
             shared_ptr<geometry::CNPosition> pos = make_shared<geometry::CNPosition>(data->odometry.position.x,
                                                                                      data->odometry.position.y,
                                                                                      data->odometry.position.angle);
@@ -271,7 +276,7 @@ namespace msl
             v->certainty = data->odometry.certainty;
             ownVelocityVision.add(v);
 
-            // Motion
+            //Motion
             /*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
              data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
              shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
@@ -294,7 +299,7 @@ namespace msl
                                                                                    data->ball.velocity.vy,
                                                                                    data->ball.velocity.vz);
 
-        // cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
+        //cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
         if (data->ball.confidence < 0.00000001)
             this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
         else
@@ -328,7 +333,7 @@ namespace msl
         wm->getVisionDataEventTrigger()->run();
     }
 
-    void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi)
+    void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
     {
         shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y,
                                                                                  coi->position.angle);
@@ -339,7 +344,7 @@ namespace msl
         this->wm->ball->updateOnLocalizationData(coi->imageTime);
     }
 
-    void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr &list)
+    void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)
     {
         shared_ptr<msl_sensor_msgs::BallHypothesisList> nList = make_shared<msl_sensor_msgs::BallHypothesisList>(*list);
         shared_ptr<InformationElement<msl_sensor_msgs::BallHypothesisList>> o = make_shared<
@@ -353,6 +358,7 @@ namespace msl
     {
         fprintf(lp, "%d:%f\n", index, value);
         fflush(lp);
+
     }
 
     void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
