@@ -181,6 +181,7 @@ namespace alica
             return;
         }
 
+
 //            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 //                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
         this->setSuccess(true);

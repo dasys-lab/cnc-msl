@@ -79,17 +79,25 @@ class RobotMovement
      */
     double defaultTranslation;
     /**
-     * Default rotation P controller value
-     */
-    double defaultRotateP;
-    /**
      * Default fast translation speed
      */
     double fastTranslation;
     /**
+     * Default carefully translation speed
+     */
+    double carefullyTranslation;
+    /**
+     * Default rotation P controller value
+     */
+    double defaultRotation;
+    /**
      * Default fast rotation speed
      */
     double fastRotation;
+    /**
+     * Default carefully rotation speed
+     */
+    double carefullyRotation;
 
   private:
     static int randomCounter;

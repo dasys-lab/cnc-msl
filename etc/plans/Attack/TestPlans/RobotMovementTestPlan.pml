@@ -7,7 +7,7 @@
   </states>
   <states id="1462969884284" name="dribbleTest" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/RobotMovementDribbleTest.beh#1462969753310</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1462969759156</inTransitions>
     <outTransitions>#1462969786619</outTransitions>
   </states>
