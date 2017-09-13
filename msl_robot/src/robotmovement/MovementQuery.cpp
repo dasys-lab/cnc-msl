@@ -11,224 +11,350 @@
 #include <MSLWorldModel.h>
 #include <pathplanner/PathPlannerQuery.h>
 #include <pathplanner/evaluator/IPathEvaluator.h>
+#include "RawSensorData.h"
 
 namespace msl
 {
-MovementQuery::MovementQuery()
-{
-    this->egoAlignPoint = nullptr;
-    this->egoDestinationPoint = nullptr;
-    this->additionalPoints = nullptr;
-    this->fast = false;
-    this->dribble = false;
-    this->blockOppPenaltyArea = false;
-    this->blockOppGoalArea = false;
-    this->blockOwnPenaltyArea = false;
-    this->blockOwnGoalArea = false;
-    this->block3MetersAroundBall = false;
-    this->snapDistance = 0;
-    this->angleTolerance = 0;
-    this->alloTeamMatePosition = nullptr;
-    this->wm = MSLWorldModel::get();
+	MovementQuery::MovementQuery()
+	{
+		this->egoAlignPoint = nullptr;
+		this->egoDestinationPoint = nullptr;
+		this->additionalPoints = nullptr;
+//		this->fast = false;
+		this->dribble = false;
+		this->blockOppPenaltyArea = false;
+		this->blockOppGoalArea = false;
+		this->blockOwnPenaltyArea = false;
+		this->blockOwnGoalArea = false;
+		this->block3MetersAroundBall = false;
+		this->snapDistance = 0;
+		this->angleTolerance = 0;
+		this->alloTeamMatePosition = nullptr;
+		this->wm = MSLWorldModel::get();
 
-    this->rotateAroundTheBall = false;
-    this->circleRadius = -1;
-    this->circleCenterPoint = nullptr;
-    this->rectangleUpperLeftCorner = nullptr;
-    this->rectangleLowerRightCorner = nullptr;
-    this->pathEval = nullptr;
+		this->rotateAroundTheBall = false;
+		this->circleRadius = -1;
+		this->circleCenterPoint = nullptr;
+		this->rectangleUpperLeftCorner = nullptr;
+		this->rectangleLowerRightCorner = nullptr;
+		this->pathEval = nullptr;
 
-    resetAllPIDParameters();
-    readConfigParameters();
-}
+		this->velocityMode = Velocity::DEFAULT;
 
-MovementQuery::~MovementQuery()
-{
-}
+		resetAllPIDParameters();
+		readConfigParameters();
+	}
 
-shared_ptr<PathPlannerQuery> MovementQuery::getPathPlannerQuery()
-{
-    shared_ptr<PathPlannerQuery> ret = make_shared<PathPlannerQuery>();
-    ret->additionalPoints = this->additionalPoints;
-    ret->block3MetersAroundBall = this->block3MetersAroundBall;
-    ret->blockOppGoalArea = this->blockOppGoalArea;
-    ret->blockOppPenaltyArea = this->blockOppPenaltyArea;
-    ret->blockOwnGoalArea = this->blockOwnGoalArea;
-    ret->blockOwnPenaltyArea = this->blockOwnPenaltyArea;
-    ret->circleCenterPoint = this->circleCenterPoint;
-    ret->circleRadius = this->circleRadius;
-    ret->rectangleLowerRightCorner = this->rectangleLowerRightCorner;
-    ret->rectangleUpperLeftCorner = this->rectangleUpperLeftCorner;
-    return ret;
-}
+	MovementQuery::~MovementQuery()
+	{
+	}
 
-double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
-{
-    cout << "MovementQuery::rotationPDForDribble: egoTarget = " << egoTarget->toString();
+	shared_ptr<PathPlannerQuery> MovementQuery::getPathPlannerQuery()
+	{
+		shared_ptr<PathPlannerQuery> ret = make_shared<PathPlannerQuery>();
+		ret->additionalPoints = this->additionalPoints;
+		ret->block3MetersAroundBall = this->block3MetersAroundBall;
+		ret->blockOppGoalArea = this->blockOppGoalArea;
+		ret->blockOppPenaltyArea = this->blockOppPenaltyArea;
+		ret->blockOwnGoalArea = this->blockOwnGoalArea;
+		ret->blockOwnPenaltyArea = this->blockOwnPenaltyArea;
+		ret->circleCenterPoint = this->circleCenterPoint;
+		ret->circleRadius = this->circleRadius;
+		ret->rectangleLowerRightCorner = this->rectangleLowerRightCorner;
+		ret->rectangleUpperLeftCorner = this->rectangleUpperLeftCorner;
+		return ret;
+	}
 
-    double angleErr = egoTarget->rotate(this->robot->kicker->kickerAngle)->angleTo();
-    double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); // Rotation PD
+	/**
+	 * PT-Controller for smooth translation acceleration
+	 */
+	std::valarray<double> MovementQuery::ptController(double rotation, double translation)
+	{
+		double input[] = {translation, rotation};
 
-    // limit rotation acceleration
-    if (rot > this->curRotDribble)
-    {
-        rot = min(rot, this->curRotDribble + this->rotAccStep);
-    }
-    else
-    {
-        rot = max(rot, this->curRotDribble - this->rotAccStep);
-    }
+		pastControlInput.push(std::valarray<double>(input, 2));
 
-    // clamp rotation
-    rot = min(abs(rot), this->maxRot) * (rot > 0 ? 1 : -1);
+		// slope variable
+		controllerVelocity = defaultControllerVelocity;
+		if (velocityMode == Velocity::FAST)
+		{
+			controllerVelocity = fastControllerVelocity;
+		} else if (velocityMode == Velocity::CAREFULLY)
+		{
+			controllerVelocity = carefullyControllerVelocity;
+		}
 
-    this->curRotDribble = rot;
+		// 0.15 is fix and may not be changed -> fastest acceleration without overshoot
+		translation = translation * 0.15 * controllerVelocity;
+		rotation = rotation * 0.15 * controllerVelocity;
 
-    this->lastRotDribbleErr = angleErr;
-    return rot;
-}
+		// changing point for slope
+		double b = pow(controllerVelocity, 2.0);
+		// sending frequency
+		double TA = 1.0 / 30.0;
 
-double MovementQuery::translationPIForDribble(double transOrt)
-{
-    double maxCurTrans = this->maxVel;
-    double transErr = abs(this->lastRotDribbleErr);
-    if (transErr > this->angleDeadBand)
-    {
-        this->transControlIntegralDribble += this->iTrans * transErr;
-        this->transControlIntegralDribble = min(this->transControlIntegralMax, this->transControlIntegralDribble);
-    }
-    else
-    {
-        this->transControlIntegralDribble = 0; // Math.Max(0,transControlIntegral-Math.PI*5);
-        transErr = 0;
-    }
-    maxCurTrans -= this->pTrans * transErr + this->transControlIntegralDribble;
-    maxCurTrans = max(0.0, maxCurTrans);
+		double n1 = 1.0 - exp(-controllerVelocity * TA) - exp(-controllerVelocity * TA) * controllerVelocity * TA;
+		double n2 = exp(-2 * controllerVelocity * TA) - exp(-controllerVelocity * TA) + exp(-controllerVelocity * TA) * TA * controllerVelocity;
 
-    double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
-    if (std::isnan(transTowards) || transTowards < 50)
-        transTowards = 50;
+		double d1 = -2 * exp(-controllerVelocity * TA);
+		double d2 = exp(-2 * controllerVelocity * TA);
 
-    if (transTowards > this->curTransDribble)
-    {
-        transTowards = min(transTowards, this->curTransDribble + this->transAccStep);
-    }
-    else
-    {
-        transTowards = max(transTowards, this->curTransDribble - this->transDecStep);
-    }
+				cout << "n1 = " << n1 << endl;
+				cout << "n2 = " << n2 << endl;
 
-    this->curTransDribble = transTowards;
+				cout << "d1 = " << d1 << endl;
+				cout << "d2 = " << d2 << endl;
 
-    return sqrt(transTowards * transTowards + transOrt * transOrt);
-}
+		pastTranslations.push(std::valarray<double>(init, 2));
+		pastTranslations.back() += n2 * pastControlInput.front() - d2 * pastTranslations.front();
+		pastControlInput.pop();
+		pastTranslations.pop();
+		pastTranslations.back() += n1 * pastControlInput.front() - d1 * pastTranslations.front();
 
-double MovementQuery::angleCalcForDribble(double transOrt)
-{
-    auto ballPos = this->wm->ball->getEgoBallPosition();
-    auto dir = ballPos->normalize();
-    auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
-    dir = dir * this->curTransDribble + ort * transOrt;
-    return dir->angleTo();
-}
+		return pastTranslations.back();
+	}
 
-void MovementQuery::reset()
-{
-    this->egoAlignPoint = nullptr;
-    this->egoDestinationPoint = nullptr;
-    this->additionalPoints = nullptr;
-    this->fast = false;
-    this->dribble = false;
-    this->blockOppPenaltyArea = false;
-    this->blockOppGoalArea = false;
-    this->blockOwnPenaltyArea = false;
-    this->blockOwnGoalArea = false;
-    this->block3MetersAroundBall = false;
-    this->snapDistance = 0;
-    this->angleTolerance = 0;
-    this->alloTeamMatePosition = nullptr;
-    this->wm = MSLWorldModel::get();
+	double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
+	{
+		cout << "MovementQuery::rotationPDForDribble: egoTarget = " << egoTarget->toString();
 
-    resetAllPIDParameters();
-    readConfigParameters();
-}
+		double angleErr = egoTarget->rotate(this->robot->kicker->kickerAngle)->angleTo();
+		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); // Rotation PD
 
-void MovementQuery::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius)
-{
-    this->circleCenterPoint = centerPoint;
-    this->circleRadius = radius;
-}
+		// limit rotation acceleration
+		if (rot > this->curRotDribble)
+		{
+			rot = min(rot, this->curRotDribble + this->rotAccStep);
+		}
+		else
+		{
+			rot = max(rot, this->curRotDribble - this->rotAccStep);
+		}
 
-void MovementQuery::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner)
-{
-    this->rectangleUpperLeftCorner = upLeftCorner;
-    this->rectangleLowerRightCorner = lowRightCorner;
-}
+		// clamp rotation
+		rot = min(abs(rot), this->maxRot) * (rot > 0 ? 1 : -1);
 
-/**
- * Reset all Parameters for the methods rotationPDForDribble() and  translationPIForDribble()
- */
-void MovementQuery::resetAllPIDParameters()
-{
-    resetRotationPDParameters();
-    resetTransaltionPIParameters();
-}
+		this->curRotDribble = rot;
 
-void MovementQuery::resetRotationPDParameters()
-{
-    this->curRotDribble = 0;
-    this->lastRotDribbleErr = 0;
-    readConfigParameters();
-}
+		this->lastRotDribbleErr = angleErr;
+		return rot;
+	}
 
-void MovementQuery::resetTransaltionPIParameters()
-{
-    this->curTransDribble = 0;
-    this->transControlIntegralDribble = 0;
-    readConfigParameters();
-}
+	double MovementQuery::translationPIForDribble(double transOrt)
+	{
+		double maxCurTrans = this->maxVel;
+		double transErr = abs(this->lastRotDribbleErr);
+		if (transErr > this->angleDeadBand)
+		{
+			this->transControlIntegralDribble += this->iTrans * transErr;
+			this->transControlIntegralDribble = min(this->transControlIntegralMax, this->transControlIntegralDribble);
+		}
+		else
+		{
+			this->transControlIntegralDribble = 0; // Math.Max(0,transControlIntegral-Math.PI*5);
+			transErr = 0;
+		}
+		maxCurTrans -= this->pTrans * transErr + this->transControlIntegralDribble;
+		maxCurTrans = max(0.0, maxCurTrans);
 
-/**
- * Sets P and D parameters for rotationPDForDribble()
- * @pParam
- * @dParam
- */
-void MovementQuery::setRotationPDParameters(double pParam, double dParam)
-{
-    this->pRot = pParam;
-    this->dRot = dParam;
-}
+		double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
+		if (std::isnan(transTowards) || transTowards < 50)
+			transTowards = 50;
 
-/**
- * Sets P and I parameters for translationPIForDribble()
- * @pParam
- * @iParam
- */
-void MovementQuery::setTranslationPIParameters(double pParam, double iParam)
-{
-    this->pTrans = pParam;
-    this->iTrans = iParam;
-}
+		if (transTowards > this->curTransDribble)
+		{
+			transTowards = min(transTowards, this->curTransDribble + this->transAccStep);
+		}
+		else
+		{
+			transTowards = max(transTowards, this->curTransDribble - this->transDecStep);
+		}
 
-/**
- * Reads all necessary parameters from Dribble.conf
- */
-void MovementQuery::readConfigParameters()
-{
-    supplementary::SystemConfig *supplementary = supplementary::SystemConfig::getInstance();
-    // load rotation config parameters
-    this->pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot", NULL);
-    this->dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot", NULL);
-    this->rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotationAcceleration", NULL);
-    this->maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotation", NULL);
+		this->curTransDribble = transTowards;
 
-    // load translation config patamerters
-    this->transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxAcceleration", NULL);
-    this->transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxDecceleration", NULL);
-    this->iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans", NULL) / M_PI;
-    this->pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans", NULL) / M_PI;
-    this->transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "maxTransIntegral", NULL);
-    this->angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "angleDeadBand", NULL) / 180 * M_PI;
-    this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxVelocity", NULL);
-}
+		return sqrt(transTowards * transTowards + transOrt * transOrt);
+	}
+
+	double MovementQuery::angleCalcForDribble(double transOrt)
+	{
+		auto ballPos = this->wm->ball->getEgoBallPosition();
+		auto dir = ballPos->normalize();
+		auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
+		dir = dir * this->curTransDribble + ort * transOrt;
+		return dir->angleTo();
+	}
+
+	void MovementQuery::reset()
+	{
+		this->egoAlignPoint = nullptr;
+		this->egoDestinationPoint = nullptr;
+		this->additionalPoints = nullptr;
+//		this->fast = false;
+		this->dribble = false;
+		this->blockOppPenaltyArea = false;
+		this->blockOppGoalArea = false;
+		this->blockOwnPenaltyArea = false;
+		this->blockOwnGoalArea = false;
+		this->block3MetersAroundBall = false;
+		this->snapDistance = 0;
+		this->angleTolerance = 0;
+		this->alloTeamMatePosition = nullptr;
+		this->wm = MSLWorldModel::get();
+
+		resetAllPIDParameters();
+		readConfigParameters();
+	}
+
+	void MovementQuery::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius)
+	{
+		this->circleCenterPoint = centerPoint;
+		this->circleRadius = radius;
+	}
+
+	void MovementQuery::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner,
+										shared_ptr<geometry::CNPoint2D> lowRightCorner)
+	{
+		this->rectangleUpperLeftCorner = upLeftCorner;
+		this->rectangleLowerRightCorner = lowRightCorner;
+	}
+
+	/**
+	 * Reset all Parameters for the methods rotationPDForDribble() and  translationPIForDribble()
+	 */
+	void MovementQuery::resetAllPIDParameters()
+	{
+		resetRotationPDParameters();
+		resetTransaltionPIParameters();
+	}
+
+	void MovementQuery::resetRotationPDParameters()
+	{
+		this->curRotDribble = 0;
+		this->lastRotDribbleErr = 0;
+		readConfigParameters();
+	}
+
+	void MovementQuery::resetTransaltionPIParameters()
+	{
+		this->curTransDribble = 0;
+		this->transControlIntegralDribble = 0;
+		readConfigParameters();
+	}
+
+	/**
+	 * Sets P and D parameters for rotationPDForDribble()
+	 * @pParam
+	 * @dParam
+	 */
+	void MovementQuery::setRotationPDParameters(double pParam, double dParam)
+	{
+		this->pRot = pParam;
+		this->dRot = dParam;
+	}
+
+	/**
+	 * Sets P and I parameters for translationPIForDribble()
+	 * @pParam
+	 * @iParam
+	 */
+	void MovementQuery::setTranslationPIParameters(double pParam, double iParam)
+	{
+		this->pTrans = pParam;
+		this->iTrans = iParam;
+	}
+
+	/**
+	 * Initialize all needed parameters and queues for the PT-Controller
+	 */
+	void MovementQuery::initializePTControllerParameters()
+	{
+		// initial pt-controller stuff
+		std::queue<std::valarray<double>> controlInput;
+		auto odom = wm->rawSensorData->getOwnVelocityMotion();
+
+		if (odom == nullptr)
+		{
+			cerr << "MovementQuery: no odometry!" << endl;
+			return;
+		}
+
+		auto translation = odom->translation;
+		auto angle = odom->angle;
+		auto rotation = (double)odom->rotation;
+
+//		double translation = 0;
+//		double angle = 0;
+//		double rotation = 0;
+
+		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
+
+		if (pastTranslations.empty())
+		{
+			pastTranslations.push(std::valarray<double>(input, 3));
+			pastTranslations.push(std::valarray<double>(input, 3));
+		}
+		if (pastControlInput.empty())
+		{
+			pastControlInput.push(std::valarray<double>(input, 3));
+			pastControlInput.push(std::valarray<double>(input, 3));
+		}
+
+	}
+
+	void MovementQuery::clearPTControllerQueues()
+	{
+		pastControlInput.push(std::valarray<double>(init, 3));
+		pastControlInput.push(std::valarray<double>(init, 3));
+		pastControlInput.push(std::valarray<double>(init, 3));
+		pastTranslations.push(std::valarray<double>(init, 3));
+		pastTranslations.push(std::valarray<double>(init, 3));
+		pastTranslations.push(std::valarray<double>(init, 3));
+		pastControlInput.pop();
+		pastControlInput.pop();
+		pastControlInput.pop();
+		pastTranslations.pop();
+		pastTranslations.pop();
+		pastTranslations.pop();
+	}
+
+	/**
+	 * Reads all necessary parameters from Dribble.conf
+	 */
+	void MovementQuery::readConfigParameters()
+	{
+		supplementary::SystemConfig *supplementary = supplementary::SystemConfig::getInstance();
+		// load rotation config parameters
+		this->pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot",
+		NULL);
+		this->dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot",
+		NULL);
+		this->rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>(
+				"DribbleWater", "MaxRotationAcceleration", NULL);
+		this->maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																								"MaxRotation", NULL);
+
+		// load translation config patamerters
+		this->transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"MaxAcceleration",
+																									NULL);
+		this->transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"MaxDecceleration",
+																									NULL);
+		this->iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans",
+		NULL) / M_PI;
+		this->pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans",
+		NULL) / M_PI;
+		this->transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>(
+				"DribbleWater", "maxTransIntegral", NULL);
+		this->angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"angleDeadBand",
+																									NULL) / 180 * M_PI;
+		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																								"MaxVelocity", NULL);
+		this->carefullyControllerVelocity= (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.CarefullyControllerVelocity", NULL);
+		this->defaultControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.DefaultControllerVelocity", NULL);
+		this->fastControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.FastControllerVelocity", NULL);
+		this->controllerVelocity = defaultControllerVelocity;
+
+	}
 }

@@ -1,10 +1,3 @@
-/*
- * MSLWorldModel.h
- *
- *  Created on: 27.10.2014
- *      Author: Andreas Witsch
- */
-
 #ifndef MSLWORLDMODEL_H_
 #define MSLWORLDMODEL_H_
 

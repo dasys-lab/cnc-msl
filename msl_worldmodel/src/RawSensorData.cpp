@@ -1,3 +1,4 @@
+#define IMULOG false
 /*
 
  * RawSensorData.cpp
@@ -6,11 +7,11 @@
  *      Author: Stefan Jakob
  */
 
+#include "RawSensorData.h"
+#include "Ball.h"
+#include "MSLWorldModel.h"
 #include <SystemConfig.h>
 #include <container/CNPoint3D.h>
-#include "Ball.h"
-#include "RawSensorData.h"
-#include "MSLWorldModel.h"
 #include <math.h>
 
 namespace msl
@@ -375,5 +376,13 @@ namespace msl
                 InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
         o->certainty = 1;
         imuData.add(o);
+
+        // TODO IMU-Baustelle Kai/Marci
+        double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
+        if (IMULOG)
+        {
+            log(0, atan2(cmd->magnet.y, cmd->magnet.x));
+            // log(1, imuData.getAverageMod());
+        }
     }
 } /* namespace alica */

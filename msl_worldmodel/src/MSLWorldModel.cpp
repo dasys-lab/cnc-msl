@@ -5,43 +5,42 @@
  *      Author: Andreas Witsch
  */
 
-#include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
-#include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "Ball.h"
+#include "EventTrigger.h"
+#include "Game.h"
+#include "InformationElement.h"
+#include "LightBarrier.h"
+#include "MSLFootballField.h"
+#include "Monitoring.h"
+#include "Prediction.h"
+#include "RawSensorData.h"
+#include "Robots.h"
+#include "WhiteBoard.h"
 #include "engine/AlicaEngine.h"
 #include "engine/IAlicaClock.h"
+#include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "obstaclehandler/Obstacles.h"
+#include "pathplanner/PathPlanner.h"
+#include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "tf/tf.h"
-#include <std_msgs/Bool.h>
-#include <msl_msgs/JoystickCommand.h>
+#include "process_manager/ProcessCommand.h"
+#include <GeometryCalculator.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include <gazebo_msgs/ModelStates.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <msl_actuator_msgs/MotionBurst.h>
-#include <gazebo_msgs/ModelStates.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
+#include <msl_msgs/JoystickCommand.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
-#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
-#include <msl_sensor_msgs/BallHypothesisList.h>
-#include <msl_sensor_msgs/SharedWorldInfo.h>
-#include "process_manager/ProcessCommand.h"
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
-#include "RawSensorData.h"
-#include "Robots.h"
-#include "Ball.h"
-#include "Game.h"
-//#include "Kicker.h"
-#include "WhiteBoard.h"
-#include "MSLFootballField.h"
-#include "EventTrigger.h"
-#include "InformationElement.h"
-#include "Prediction.h"
-#include "Monitoring.h"
-#include "LightBarrier.h"
-#include "obstaclehandler/Obstacles.h"
-#include "pathplanner/PathPlanner.h"
+#include <std_msgs/Bool.h>
 
 namespace msl
 {
@@ -332,7 +331,6 @@ namespace msl
         delete this->robots;
         delete this->game;
         delete this->pathPlanner;
-        // delete this->kicker; // TODO: delete this line
         delete this->whiteBoard;
         delete this->obstacles;
         delete this->prediction;
@@ -443,17 +441,19 @@ namespace msl
         }
 
         auto obs = obstacles->getEgoVisionObstacles();
-        if (obs != nullptr)
         {
-            msg.obstacles.reserve(obs->size());
-            for (auto &x : *obs)
+            if (obs != nullptr)
             {
-                shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
-                auto p = point->egoToAllo(*pos);
-                msl_msgs::Point2dInfo info;
-                info.x = p->x;
-                info.y = p->y;
-                msg.obstacles.push_back(info);
+                msg.obstacles.reserve(obs->size());
+                for (auto &x : *obs)
+                {
+                    shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
+                    auto p = point->egoToAllo(*pos);
+                    msl_msgs::Point2dInfo info;
+                    info.x = p->x;
+                    info.y = p->y;
+                    msg.obstacles.push_back(info);
+                }
             }
         }
 

@@ -159,7 +159,7 @@ namespace alica
 //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
-            movQuery->fast = true;
+            movQuery->velocityMode = msl::MovementQuery::Velocity::FAST;
             mc = rm.moveToPoint(movQuery);
         }
 
