@@ -532,6 +532,13 @@
       </layout>
      </item>
      <item>
+      <widget class="QCheckBox" name="useGamePadCheckBox">
+       <property name="text">
+        <string>Use Gamepad</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

@@ -7,6 +7,7 @@
 
 #include "ros/ros.h"
 #include <msl_msgs/JoystickCommand.h>
+#include <sensor_msgs/Joy.h>
 #include <ros/macros.h>
 
 #include <QDialog>
@@ -14,6 +15,10 @@
 #include <QtWidgets>
 #include <stdint.h>
 #include <vector>
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 
 namespace msl_joystick
 {
@@ -62,10 +67,15 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     void onBallHandleCheckBoxToggled(int checkState);
     void onPTControllerCheckBoxToggled(int checkState);
 
+    void onUseGamePadCheckBoxToggled(int checkState);
+    void onJoyMsg(sensor_msgs::JoyPtr msg);
+
   private:
     ros::NodeHandle *rosNode;
     ros::Publisher joyPub;
     ros::AsyncSpinner *spinner;
+
+    ros::Subscriber joySub;
 
     vector<bool> keyPressed;
 
@@ -89,6 +99,11 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     double translationMax;
     double rotationMin;
     double rotationMax;
+
+    //game pad
+    bool useGamePad;
+    pid_t joyNodePID;
+    string joyExec;
 
     QTimer *sendMsgTimer;
     int sendInterval;
