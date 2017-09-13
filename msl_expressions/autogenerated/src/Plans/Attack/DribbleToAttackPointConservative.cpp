@@ -53,13 +53,13 @@ namespace alica
         query->dribble = true;
 
         auto bm = rm.moveToPoint(query);
-        auto tmpMC = rm.ruleActionForBallGetter();
 
+        auto tmpMC = rm.ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
         {
             send(tmpMC);
         }
-        else
+        else if(std::isnan(bm.motion.translation))
         {
             send(bm);
         }
