@@ -17,7 +17,7 @@ using std::shared_ptr;
 using std::make_shared;
 
 double MotionCalibrationLaser::initialIntensityThreshold = -1.0;
-supplementary::SystemConfig* MotionCalibrationLaser::sc = supplementary::SystemConfig::getInstance();
+supplementary::SystemConfig *MotionCalibrationLaser::sc = supplementary::SystemConfig::getInstance();
 
 MotionCalibrationLaser::MotionCalibrationLaser(int argc, char **argv)
     : spinner(4)
@@ -85,13 +85,19 @@ void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr &laserS
         }
     }
 
+    if (pointGroups.size() != 2) {
+    	return;
+    }
+
 #ifdef laserMotionCalibrationDebug
     geometry_msgs::PoseArray filteredPoses;
     geometry_msgs::PoseArray resultPoses;
+    vector<std::shared_ptr<geometry::CNPoint2D>> pillarCenters;
     for (auto pointGroup : pointGroups)
     {
         geometry_msgs::Pose centerPose;
         geometry::CNPoint2D pillarCenter = *(pointGroup->getPillarCenter());
+        pillarCenters.push_back(make_shared<geometry::CNPoint2D>(pillarCenter));
         centerPose.position = pillarCenter;
         cout << pillarCenter.length() << "m  ";
         resultPoses.poses.push_back(centerPose);
@@ -110,6 +116,7 @@ void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr &laserS
     cout << endl;
 
     cout << clock() - begin_time << " µs" << endl;
+
 #endif
 
     resultPoses.header.frame_id = "laser";   // for debugging purposes
@@ -159,7 +166,6 @@ std::vector<std::shared_ptr<LaserPointGroup>> MotionCalibrationLaser::getThresho
     // cout << "choosing threshold=" << threshold << " yielded " << numberOfGroups << " groups" << endl << endl;
     // cout << threshold << ";" << numberOfGroups << endl;
 }
-
 }
 
 int main(int argc, char **argv)

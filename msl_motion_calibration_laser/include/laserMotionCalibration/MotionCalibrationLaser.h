@@ -20,7 +20,6 @@ namespace laserMotionCalibration
       private:
         void onScan(const sensor_msgs::LaserScanConstPtr& laserScan);
         std::vector<std::shared_ptr<LaserPointGroup>> getThresholdGroups(const sensor_msgs::LaserScanConstPtr& laserScan, double threshold);
-
         bool initialized = false;
         ros::NodeHandle rosNode;
         ros::Subscriber subscriber;
