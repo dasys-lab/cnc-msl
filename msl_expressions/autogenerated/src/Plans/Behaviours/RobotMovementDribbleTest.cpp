@@ -43,7 +43,7 @@ namespace alica
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
         query->egoAlignPoint = query->egoDestinationPoint;
-        query->fast = true;
+        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
                 << endl;

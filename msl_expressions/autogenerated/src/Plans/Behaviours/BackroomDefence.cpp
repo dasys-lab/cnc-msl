@@ -46,7 +46,7 @@ namespace alica
         query->egoDestinationPoint = defenderPos->alloToEgo(*ownPos);
         query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
         query->snapDistance = 1000;
-        query->fast = true;
+        query->velocityMode = msl::MovementQuery::Velocity::FAST;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);

@@ -9,243 +9,232 @@
 namespace msl_joystick
 {
 
-	using namespace std;
+using namespace std;
 
-	Joystick::Joystick() :
-			rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0)
-	{
-		setObjectName("Joystick");
+Joystick::Joystick()
+    : rqt_gui_cpp::Plugin()
+    , uiWidget(0)
+    , sendMsgTimer(0)
+{
+    setObjectName("Joystick");
 
-		auto sc = supplementary::SystemConfig::getInstance();
-		ballHandleMin = (*sc)["Joystick"]->get<short>("Joystick.ballHandleMin", NULL);
-		ballHandleMax = (*sc)["Joystick"]->get<short>("Joystick.ballHandleMax", NULL);
-		kickPowerMin = (*sc)["Joystick"]->get<short>("Joystick.kickPowerMin", NULL);
-		kickPowerMax = (*sc)["Joystick"]->get<short>("Joystick.kickPowerMax", NULL);
-		translationMin = (*sc)["Joystick"]->get<double>("Joystick.translationMin", NULL);
-		translationMax = (*sc)["Joystick"]->get<double>("Joystick.translationMax", NULL);
-		rotationMin = (*sc)["Joystick"]->get<double>("Joystick.rotationMin", NULL);
-		rotationMax = (*sc)["Joystick"]->get<double>("Joystick.rotationMax", NULL);
-		sendInterval = (*sc)["Joystick"]->get<int>("Joystick.sendInterval", NULL);
-		string joystickCmdTopic = (*sc)["Joystick"]->get<string>("Joystick.Topics.joystickCmdTopic", NULL);
+    auto sc = supplementary::SystemConfig::getInstance();
+    ballHandleMin = (*sc)["Joystick"]->get<short>("Joystick.ballHandleMin", NULL);
+    ballHandleMax = (*sc)["Joystick"]->get<short>("Joystick.ballHandleMax", NULL);
+    kickPowerMin = (*sc)["Joystick"]->get<short>("Joystick.kickPowerMin", NULL);
+    kickPowerMax = (*sc)["Joystick"]->get<short>("Joystick.kickPowerMax", NULL);
+    translationMin = (*sc)["Joystick"]->get<double>("Joystick.translationMin", NULL);
+    translationMax = (*sc)["Joystick"]->get<double>("Joystick.translationMax", NULL);
+    rotationMin = (*sc)["Joystick"]->get<double>("Joystick.rotationMin", NULL);
+    rotationMax = (*sc)["Joystick"]->get<double>("Joystick.rotationMax", NULL);
+    sendInterval = (*sc)["Joystick"]->get<int>("Joystick.sendInterval", NULL);
+    string joystickCmdTopic = (*sc)["Joystick"]->get<string>("Joystick.Topics.joystickCmdTopic", NULL);
 
-		rosNode = new ros::NodeHandle();
-		joyPub = rosNode->advertise<msl_msgs::JoystickCommand>(joystickCmdTopic, 1);
-		spinner = new ros::AsyncSpinner(2);
-		spinner->start();
+    rosNode = new ros::NodeHandle();
+    joyPub = rosNode->advertise<msl_msgs::JoystickCommand>(joystickCmdTopic, 1);
+    spinner = new ros::AsyncSpinner(2);
+    spinner->start();
 
-		keyPressed = vector<bool>(8);
-		for (int i = 0; i < keyPressed.size(); i++)
-		{
-			keyPressed[i] = false;
-		}
+    keyPressed = vector<bool>(8);
+    for (int i = 0; i < keyPressed.size(); i++)
+    {
+        keyPressed[i] = false;
+    }
 
-		this->robotId = -1;
-		this->translation = translationMin;
-		this->rotation = rotationMin;
-		this->kickPower = kickPowerMin;
-		this->shovelIdx = 0;
-		this->ballHandleLeftMotor = 0;
-		this->ballHandleRightMotor = 0;
-		this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
-		this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
-//		this->useBallHandle = false;
-//		this->usePTController = false;
-	}
+    this->robotId = -1;
+    this->translation = translationMin;
+    this->rotation = rotationMin;
+    this->kickPower = kickPowerMin;
+    this->shovelIdx = 0;
+    this->ballHandleLeftMotor = 0;
+    this->ballHandleRightMotor = 0;
+    this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+}
 
-	void Joystick::initPlugin(qt_gui_cpp::PluginContext &context)
-	{
-		uiWidget = new QWidget();
-		uiWidget->installEventFilter(this);
-		uiWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-		uiWidget->setAttribute(Qt::WA_AlwaysShowToolTips, true);
-		setupUi(uiWidget);
-		if (context.serialNumber() > 1)
-		{
-			uiWidget->setWindowTitle(uiWidget->windowTitle() + " (" + QString::number(context.serialNumber()) + ")");
-		}
-		context.addWidget(uiWidget);
+void Joystick::initPlugin(qt_gui_cpp::PluginContext &context)
+{
+    uiWidget = new QWidget();
+    uiWidget->installEventFilter(this);
+    uiWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+    uiWidget->setAttribute(Qt::WA_AlwaysShowToolTips, true);
+    setupUi(uiWidget);
+    if (context.serialNumber() > 1)
+    {
+        uiWidget->setWindowTitle(uiWidget->windowTitle() + " (" + QString::number(context.serialNumber()) + ")");
+    }
+    context.addWidget(uiWidget);
 
-		// set min and max values of slider according to conf file
-		kickPowerSlider->setMinimum(this->kickPowerMin);
-		kickPowerSlider->setMaximum(this->kickPowerMax);
-		ballHandleLeftSlider->setMinimum(this->ballHandleMin);
-		ballHandleLeftSlider->setMaximum(this->ballHandleMax);
-		ballHandleRightSlider->setMinimum(this->ballHandleMin);
-		ballHandleRightSlider->setMaximum(this->ballHandleMax);
+    // set min and max values of slider according to conf file
+    kickPowerSlider->setMinimum(this->kickPowerMin);
+    kickPowerSlider->setMaximum(this->kickPowerMax);
+    ballHandleLeftSlider->setMinimum(this->ballHandleMin);
+    ballHandleLeftSlider->setMaximum(this->ballHandleMax);
+    ballHandleRightSlider->setMinimum(this->ballHandleMin);
+    ballHandleRightSlider->setMaximum(this->ballHandleMax);
 
-		// connect the edit fields
-		connect(robotIdEdit, SIGNAL(editingFinished()), this, SLOT(onRobotIdEdited()));
-		connect(kickPowerEdit, SIGNAL(editingFinished()), this, SLOT(onKickPowerEdited()));
-		connect(translationEdit, SIGNAL(editingFinished()), this, SLOT(onTranslationEdited()));
-		connect(rotationEdit, SIGNAL(editingFinished()), this, SLOT(onRotationEdited()));
-		connect(ballHandleLeftEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleLeftEdited()));
-		connect(ballHandleRightEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleRightEdited()));
+    // connect the edit fields
+    connect(robotIdEdit, SIGNAL(editingFinished()), this, SLOT(onRobotIdEdited()));
+    connect(kickPowerEdit, SIGNAL(editingFinished()), this, SLOT(onKickPowerEdited()));
+    connect(translationEdit, SIGNAL(editingFinished()), this, SLOT(onTranslationEdited()));
+    connect(rotationEdit, SIGNAL(editingFinished()), this, SLOT(onRotationEdited()));
+    connect(ballHandleLeftEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleLeftEdited()));
+    connect(ballHandleRightEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleRightEdited()));
 
-		// connect the sliders
-		connect(kickPowerSlider, SIGNAL(valueChanged(int)), this, SLOT(onKickPowerSlided(int)));
-		connect(ballHandleRightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleRightSlided(int)));
-		connect(ballHandleLeftSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleLeftSlided(int)));
+    // connect the sliders
+    connect(kickPowerSlider, SIGNAL(valueChanged(int)), this, SLOT(onKickPowerSlided(int)));
+    connect(ballHandleRightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleRightSlided(int)));
+    connect(ballHandleLeftSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleLeftSlided(int)));
 
-		// connect the shovel radio button and ballHandle state
-		connect(lowShovelButton, SIGNAL(toggled(bool)), this, SLOT(onLowShovelSelected(bool)));
-		connect(highShovelButton, SIGNAL(toggled(bool)), this, SLOT(onHighShovelSelected(bool)));
-		connect(ballHandleStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onBallHandleCheckBoxToggled(int)));
-		connect(ptControllerStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onPTControllerCheckBoxToggled(int)));
+    // connect the shovel radio button and ballHandle state
+    connect(lowShovelButton, SIGNAL(toggled(bool)), this, SLOT(onLowShovelSelected(bool)));
+    connect(highShovelButton, SIGNAL(toggled(bool)), this, SLOT(onHighShovelSelected(bool)));
+    connect(ballHandleStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onBallHandleCheckBoxToggled(int)));
 
-		sendMsgTimer = new QTimer(this);
-		connect(sendMsgTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
-		sendMsgTimer->start(this->sendInterval);
-	}
+    sendMsgTimer = new QTimer(this);
+    connect(sendMsgTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
+    sendMsgTimer->start(this->sendInterval);
+}
 
-	void Joystick::shutdownPlugin()
-	{
-		delete spinner;
-		delete rosNode;
-	}
+void Joystick::shutdownPlugin()
+{
+    delete spinner;
+    delete rosNode;
+}
 
-	void Joystick::saveSettings(qt_gui_cpp::Settings &plugin_settings, qt_gui_cpp::Settings &instance_settings) const
-	{
-	}
+void Joystick::saveSettings(qt_gui_cpp::Settings &plugin_settings, qt_gui_cpp::Settings &instance_settings) const
+{
+}
 
-	void Joystick::restoreSettings(const qt_gui_cpp::Settings &plugin_settings,
-									const qt_gui_cpp::Settings &instance_settings)
-	{
-	}
+void Joystick::restoreSettings(const qt_gui_cpp::Settings &plugin_settings, const qt_gui_cpp::Settings &instance_settings)
+{
+}
 
-	void Joystick::sendJoystickMessage()
-	{
-		if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]
-				|| keyPressed[6] || keyPressed[7]))
-		{
-			return; // dont send joystick message if no key is pressed
-		}
+void Joystick::sendJoystickMessage()
+{
+    if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5] || keyPressed[6] || keyPressed[7]))
+    {
+        return; // dont send joystick message if no key is pressed
+    }
 
-		if (!this->uiWidget->hasFocus())
-		{
-			for (int i = 0; i < keyPressed.size(); i++)
-			{
-				keyPressed[i] = false; // just to be sure, in case of missed key released events
-			}
-			return; // dont send joystick message if joystick window does not have the focus
-		}
+    if (!this->uiWidget->hasFocus())
+    {
+        for (int i = 0; i < keyPressed.size(); i++)
+        {
+            keyPressed[i] = false; // just to be sure, in case of missed key released events
+        }
+        return; // dont send joystick message if joystick window does not have the focus
+    }
 
-		msl_msgs::JoystickCommand msg;
+    msl_msgs::JoystickCommand msg;
 
-		// robotid
-		msg.robotId = this->robotId;
+    // robotid
+    msg.robotId = this->robotId;
 
-		// ballHandle stuff
-		msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
-		msg.ballHandleRightMotor = this->ballHandleRightMotor;
-		if (this->useBallHandle)
-		{
-			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
-		}
-		else
-		{
-			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
-		}
+    // ballHandle stuff
+    msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
+    msg.ballHandleRightMotor = this->ballHandleRightMotor;
+    if (this->useBallHandle)
+    {
+        msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+    }
+    else
+    {
+        msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+    }
 
-		if (this->usePTController)
-		{
-			msg.ptControllerState = msl_msgs::JoystickCommand::PT_CONTROLLER_ON;
-		}
-		else
-		{
-			msg.ptControllerState = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
-		}
 
-		// kicker stuff
-		msg.kickPower = this->kickPower;
-		if (this->keyPressed[6] == true)
-		{
-			msg.kick = true;
-			this->keyPressed[6] = false; // only shoot for one message
-		}
-		else
-		{
-			msg.kick = false;
-		}
 
-		msg.shovelIdx = this->shovelIdx;
-		if (this->keyPressed[7] == true)
-		{
-			this->keyPressed[7] = false;
-		}
+    // kicker stuff
+    msg.kickPower = this->kickPower;
+    if (this->keyPressed[6] == true)
+    {
+        msg.kick = true;
+        this->keyPressed[6] = false; // only shoot for one message
+    }
+    else
+    {
+        msg.kick = false;
+    }
 
-		if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]))
-		{
-			// Send NaN to signal Joystick behaviour NOT to send MotionControl commands.
-			msg.motion.translation = std::numeric_limits<double>::quiet_NaN();
-			msg.motion.rotation = std::numeric_limits<double>::quiet_NaN();
-			msg.motion.angle = std::numeric_limits<double>::quiet_NaN();
-		}
-		else
-		{
-			// translation
-			msg.motion.translation = this->translation;
+    msg.shovelIdx = this->shovelIdx;
+    if (this->keyPressed[7] == true)
+    {
+        this->keyPressed[7] = false;
+    }
 
-			// driving direction
-			// 0 == up
-			// 1 == down
-			// 2 == left
-			// 3 == right
+    if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]))
+    {
+        // Send NaN to signal Joystick behaviour NOT to send MotionControl commands.
+        msg.motion.translation = std::numeric_limits<double>::quiet_NaN();
+        msg.motion.rotation = std::numeric_limits<double>::quiet_NaN();
+        msg.motion.angle = std::numeric_limits<double>::quiet_NaN();
+    }
+    else
+    {
+        // translation
+        msg.motion.translation = this->translation;
 
-			// angle
-			if (keyPressed[0] == true && keyPressed[2] == true)
-			{
-				msg.motion.angle = (0.75 * M_PI);
-			}
-			else if (keyPressed[0] == true && keyPressed[3] == true)
-			{
-				msg.motion.angle = (1.25 * M_PI);
-			}
-			else if (keyPressed[1] == true && keyPressed[2] == true)
-			{
-				msg.motion.angle = (0.25 * M_PI);
-			}
-			else if (keyPressed[1] == true && keyPressed[3] == true)
-			{
-				msg.motion.angle = (1.75 * M_PI);
-			}
-			else if (keyPressed[0] == true)
-			{
-				msg.motion.angle = M_PI;
-			}
-			else if (keyPressed[1] == true)
-			{
-				msg.motion.angle = 0;
-			}
-			else if (keyPressed[2] == true)
-			{
-				msg.motion.angle = (1.5 * M_PI);
-			}
-			else if (keyPressed[3] == true)
-			{
-				msg.motion.angle = (0.5 * M_PI);
-			}
-			else
-			{
-				msg.motion.translation = 0;
-				msg.motion.rotation = 0;
-			}
+        // driving direction
+        // 0 == up
+        // 1 == down
+        // 2 == left
+        // 3 == right
 
-			// rotation
-			if (keyPressed[4] == true)
-			{
-				msg.motion.rotation = rotation;
-			}
-			else if (keyPressed[5] == true)
-			{
-				msg.motion.rotation = -rotation;
-			}
-			else
-			{
-				msg.motion.rotation = 0;
-			}
-		}
+        // angle
+        if (keyPressed[0] == true && keyPressed[2] == true)
+        {
+            msg.motion.angle = (1.25 * M_PI);
+        }
+        else if (keyPressed[0] == true && keyPressed[3] == true)
+        {
+            msg.motion.angle = (0.75 * M_PI);
+        }
+        else if (keyPressed[1] == true && keyPressed[2] == true)
+        {
+            msg.motion.angle = (1.75 * M_PI);
+        }
+        else if (keyPressed[1] == true && keyPressed[3] == true)
+        {
+            msg.motion.angle = (0.25 * M_PI);
+        }
+        else if (keyPressed[0] == true)
+        {
+            msg.motion.angle = M_PI;
+        }
+        else if (keyPressed[1] == true)
+        {
+            msg.motion.angle = 0;
+        }
+        else if (keyPressed[2] == true)
+        {
+            msg.motion.angle = (1.5 * M_PI);
+        }
+        else if (keyPressed[3] == true)
+        {
+            msg.motion.angle = (0.5 * M_PI);
+        }
+        else
+        {
+            msg.motion.translation = 0;
+            msg.motion.rotation = 0;
+        }
 
-		// smooth driving stuff
+        // rotation
+        if (keyPressed[4] == true)
+        {
+            msg.motion.rotation = rotation;
+        }
+        else if (keyPressed[5] == true)
+        {
+            msg.motion.rotation = -rotation;
+        }
+        else
+        {
+            msg.motion.rotation = 0;
+        }
+    }
+
+    // smooth driving stuff
 //    if (this->smoothDrivingMode)
 //    {
 		// slope variable
