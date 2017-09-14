@@ -1,3 +1,10 @@
+/*
+ * MSLWorldModel.cpp
+ *
+ *  Created on: 27.10.2014
+ *      Author: Andreas Witsch
+ */
+
 #include "MSLWorldModel.h"
 #include "Ball.h"
 #include "EventTrigger.h"
@@ -17,13 +24,14 @@
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "tf/tf.h"
+#include "process_manager/ProcessCommand.h"
 #include <GeometryCalculator.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <msl_actuator_msgs/IMUData.h>
-#include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
+#include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_msgs/JoystickCommand.h>
@@ -103,6 +111,8 @@ namespace msl
                                       (MSLWorldModel *)this);
         imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel *)this);
 
+        processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
+
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->timeLastSimMsgReceived = 0;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
@@ -150,7 +160,10 @@ namespace msl
     void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
     {
         if (this->timeLastSimMsgReceived == 0)
+        {
             cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
+            return;
+        }
 
         alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
@@ -265,6 +278,7 @@ namespace msl
 
     void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
     {
+        rawOdometry = msg;
         rawSensorData->processRawOdometryInfo(msg);
     }
 
@@ -357,6 +371,9 @@ namespace msl
         }
         msl_sensor_msgs::SharedWorldInfo msg;
         msg.senderID = this->ownID;
+        msg.ownGoalIsYellow = this->game->ownGoalColor == Color::Yellow;
+        msg.ownTeamIsMagenta = this->game->ownTeamColor == Color::Magenta;
+        msg.ballPossessionStatus = this->ball->getBallPossessionStatus();
         auto ball = this->ball->getVisionBallPositionAndCertaincy();
         auto pos = rawSensorData->getOwnPositionVision();
         if (pos == nullptr)
@@ -439,6 +456,7 @@ namespace msl
                 }
             }
         }
+
         if (ownPos != nullptr)
         {
             msg.participating = true;
@@ -487,5 +505,72 @@ namespace msl
     void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
     {
         rawSensorData->processLightBarrier(msg);
+    }
+
+    double msl::MSLWorldModel::getRobotRadius()
+    {
+        // TODO test if this breaks anything, remove line otherwise
+//		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        supplementary::Configuration *motion = (*sc)["Motion"];
+
+        return motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
+    }
+
+    void msl::MSLWorldModel::setRobotRadius(double newRadius)
+    {
+        // TODO test if this breaks anything, remove line otherwise
+//		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        supplementary::Configuration *motion = (*sc)["Motion"];
+        motion->set(boost::lexical_cast<string>(newRadius), "Motion.MotionControl.RobotRadius", NULL);
+        motion->store();
+    }
+
+    double msl::MSLWorldModel::adjustRobotRadius(double difference)
+    {
+        double newRadius = getRobotRadius() + difference;
+        setRobotRadius(newRadius);
+        return newRadius;
+    }
+
+    void msl::MSLWorldModel::sendKillMotionCommand()
+    {
+        // cout << "killing motion" << endl;
+        supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+        int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
+        std::vector<int> ownRobotId;
+        ownRobotId.push_back(this->getOwnId());
+        std::vector<int> pKeys;
+        pKeys.push_back(processId);
+        process_manager::ProcessCommand command;
+        command.cmd = 1;
+        command.receiverId = this->getOwnId();
+        command.robotIds = ownRobotId;
+        command.processKeys = pKeys;
+        std::vector<int> paramsets;
+        paramsets.push_back(0);
+        command.paramSets = paramsets;
+        processCommandPub.publish(command);
+    }
+
+    void msl::MSLWorldModel::sendStartMotionCommand()
+    {
+        // cout << "starting motion" << endl;
+        supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+        int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
+        std::vector<int> ownRobotId;
+        ownRobotId.push_back(this->getOwnId());
+        std::vector<int> pKeys;
+        pKeys.push_back(processId);
+        process_manager::ProcessCommand command;
+        command.cmd = 0;
+        command.receiverId = this->getOwnId();
+        command.robotIds = ownRobotId;
+        command.processKeys = pKeys;
+        std::vector<int> paramsets;
+        paramsets.push_back(0);
+        command.paramSets = paramsets;
+        processCommandPub.publish(command);
     }
 } /* namespace msl */

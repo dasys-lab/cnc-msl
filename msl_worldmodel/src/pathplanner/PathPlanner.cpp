@@ -520,6 +520,7 @@ void PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> poin
         cc.corridorPoints.push_back(info);
     }
     corridorPub.publish(cc);
+	return;
 }
 
 shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::getLastPath()

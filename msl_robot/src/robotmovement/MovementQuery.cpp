@@ -79,7 +79,8 @@ namespace msl
 		if (velocityMode == Velocity::FAST)
 		{
 			controllerVelocity = fastControllerVelocity;
-		} else if (velocityMode == Velocity::CAREFULLY)
+		}
+		else if (velocityMode == Velocity::CAREFULLY)
 		{
 			controllerVelocity = carefullyControllerVelocity;
 		}
@@ -94,16 +95,17 @@ namespace msl
 		double TA = 1.0 / 30.0;
 
 		double n1 = 1.0 - exp(-controllerVelocity * TA) - exp(-controllerVelocity * TA) * controllerVelocity * TA;
-		double n2 = exp(-2 * controllerVelocity * TA) - exp(-controllerVelocity * TA) + exp(-controllerVelocity * TA) * TA * controllerVelocity;
+		double n2 = exp(-2 * controllerVelocity * TA) - exp(-controllerVelocity * TA)
+				+ exp(-controllerVelocity * TA) * TA * controllerVelocity;
 
 		double d1 = -2 * exp(-controllerVelocity * TA);
 		double d2 = exp(-2 * controllerVelocity * TA);
 
-				cout << "n1 = " << n1 << endl;
-				cout << "n2 = " << n2 << endl;
+		cout << "n1 = " << n1 << endl;
+		cout << "n2 = " << n2 << endl;
 
-				cout << "d1 = " << d1 << endl;
-				cout << "d2 = " << d2 << endl;
+		cout << "d1 = " << d1 << endl;
+		cout << "d2 = " << d2 << endl;
 
 		pastTranslations.push(std::valarray<double>(init, 2));
 		pastTranslations.back() += n2 * pastControlInput.front() - d2 * pastTranslations.front();
@@ -272,19 +274,23 @@ namespace msl
 		std::queue<std::valarray<double>> controlInput;
 		auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
+		double translation;
+		double angle;
+		double rotation;
+
 		if (odom == nullptr)
 		{
 			cerr << "MovementQuery: no odometry!" << endl;
-			return;
+			translation = 0;
+			angle = 0;
+			rotation = 0;
 		}
-
-		auto translation = odom->translation;
-		auto angle = odom->angle;
-		auto rotation = (double)odom->rotation;
-
-//		double translation = 0;
-//		double angle = 0;
-//		double rotation = 0;
+		else
+		{
+			auto translation = odom->translation;
+			auto angle = odom->angle;
+			auto rotation = (double)odom->rotation;
+		}
 
 		double input[] = {cos(angle) * translation, sin(angle) * translation, rotation};
 
@@ -351,9 +357,12 @@ namespace msl
 																									NULL) / 180 * M_PI;
 		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
 																								"MaxVelocity", NULL);
-		this->carefullyControllerVelocity= (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.CarefullyControllerVelocity", NULL);
-		this->defaultControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.DefaultControllerVelocity", NULL);
-		this->fastControllerVelocity = (*supplementary)["Drive"]->get<double>("Drive.RobotMovement.PIController.FastControllerVelocity", NULL);
+		this->carefullyControllerVelocity = (*supplementary)["Drive"]->get<double>(
+				"Drive.RobotMovement.PTController.CarefullyControllerVelocity", NULL);
+		this->defaultControllerVelocity = (*supplementary)["Drive"]->get<double>(
+				"Drive.RobotMovement.PTController.DefaultControllerVelocity", NULL);
+		this->fastControllerVelocity = (*supplementary)["Drive"]->get<double>(
+				"Drive.RobotMovement.PTController.FastControllerVelocity", NULL);
 		this->controllerVelocity = defaultControllerVelocity;
 
 	}

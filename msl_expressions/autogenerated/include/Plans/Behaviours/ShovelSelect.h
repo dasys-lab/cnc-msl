@@ -18,6 +18,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1434199834892) ENABLED START*/ //Add additional protected methods here
         bool passing;
+        bool uncertain;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1434199834892) ENABLED START*/ //Add additional private methods here
