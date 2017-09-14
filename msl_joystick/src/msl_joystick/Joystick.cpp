@@ -12,7 +12,7 @@ namespace msl_joystick
     using namespace std;
 
     Joystick::Joystick() :
-            rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0)
+            rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0), gamePadTimer(0)
     {
         setObjectName("Joystick");
 
@@ -98,6 +98,8 @@ namespace msl_joystick
 
         sendMsgTimer = new QTimer(this);
         connect(sendMsgTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
+        gamePadTimer = new QTimer(this);
+        connect(gamePadTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
         sendMsgTimer->start(this->sendInterval);
     }
 
@@ -109,6 +111,8 @@ namespace msl_joystick
             kill(joyNodePID, SIGTERM);
             this->joyNodePID = -1;
         }
+        delete sendMsgTimer;
+        delete gamePadTimer;
         delete spinner;
         delete rosNode;
     }
@@ -535,7 +539,8 @@ namespace msl_joystick
 
     void Joystick::onJoyMsg(sensor_msgs::JoyPtr msg)
     {
-        if (msg->buttons.at(6) == 0)
+    	this->gamePadTimer->stop();
+        if (msg->buttons.at(5) == 0)
         {
             return; // dont send joystick message if no key is pressed
         }
@@ -582,7 +587,7 @@ namespace msl_joystick
 
         }
 
-        if (abs(msg->axes.at(0)) == 0.0 || abs(msg->axes.at(1)) == 0.0)
+        if (abs(msg->axes.at(0)) == 0.0 && abs(msg->axes.at(1)) == 0.0)
         {
             // Send NaN to signal Joystick behaviour NOT to send MotionControl commands.
             joycmd.motion.translation = std::numeric_limits<double>::quiet_NaN();
@@ -642,20 +647,11 @@ namespace msl_joystick
             }
             cout << joycmd.motion.translation << endl;
             // rotation
-            if (msg->buttons.at(4) == 1)
-            {
-                joycmd.motion.rotation = rotation;
-            }
-            else if (msg->buttons.at(5) == 1)
-            {
-                joycmd.motion.rotation = -rotation;
-            }
-            else
-            {
-                joycmd.motion.rotation = 0;
-            }
+
+                joycmd.motion.rotation = msg->axes.at(3) * rotation;
         }
         joyPub.publish(joycmd);
+        this->gamePadTimer->start(this->sendInterval);
     }
 
     /**

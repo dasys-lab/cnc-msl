@@ -105,7 +105,9 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     pid_t joyNodePID;
     string joyExec;
 
-    QTimer *sendMsgTimer;
+    QTimer* sendMsgTimer;
+    QTimer* gamePadTimer;
+
     int sendInterval;
 };
 }
