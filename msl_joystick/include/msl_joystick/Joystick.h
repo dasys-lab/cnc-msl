@@ -70,6 +70,11 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     void onUseGamePadCheckBoxToggled(int checkState);
     void onJoyMsg(sensor_msgs::JoyPtr msg);
     void onToggleShovel(bool shovel);
+    void onToggleBallHandle();
+    void onToggleUsePt();
+    void onKickPowerChanged(int value);
+    void onTranslationChanged(int value);
+    void onRotationChanged(int value);
     void resendJoyCmd();
 
   private:
@@ -107,6 +112,9 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     pid_t joyNodePID;
     string joyExec;
     msl_msgs::JoystickCommand joycmd;
+    int kickIncrease;
+    int translationIncrease;
+    int rotationIncrease;
 
     QTimer* sendMsgTimer;
     QTimer* gamePadTimer;
@@ -119,6 +127,9 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
 	void toggleShovelSelect(bool pass);
 	void toggleBallHandle();
 	void toggleUsePt();
+	void changeKickPower(int value);
+	void changeTranslation(int value);
+	void changeRotation(int value);
 };
 }
 

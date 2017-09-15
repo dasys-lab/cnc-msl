@@ -49,9 +49,13 @@ namespace msl_joystick
 		this->ballHandleRightMotor = 0;
 		this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
 		this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
+
 		this->useGamePad = false;
 		this->joyNodePID = -1;
 		this->joyExec = "/opt/ros/kinetic/lib/joy/joy_node";
+		this->kickIncrease = 100;
+		this->translationIncrease = 100;
+		this->rotationIncrease = 1;
 	}
 
 	void Joystick::initPlugin(qt_gui_cpp::PluginContext &context)
@@ -106,6 +110,11 @@ namespace msl_joystick
 		connect(this->gamePadTimer, SIGNAL(timeout()), this, SLOT(resendJoyCmd()));
 		connect(this, SIGNAL(stopJoyTimer()), this->gamePadTimer, SLOT(stop()));
 		connect(this, SIGNAL(startJoyTimer()), this->gamePadTimer, SLOT(start()));
+		connect(this, SIGNAL(toggleBallHandle()), this, SLOT(onToggleBallHandle()));
+		connect(this, SIGNAL(toggleUsePt()), this, SLOT(onToggleUsePt()));
+		connect(this, SIGNAL(changeKickPower(int)), this, SLOT(onKickPowerChanged(int)));
+		connect(this, SIGNAL(changeRotation(int)), this, SLOT(onRotationChanged(int)));
+		connect(this, SIGNAL(changeTranslation(int)), this, SLOT(onTranslationChanged(int)));
 	}
 
 	void Joystick::shutdownPlugin()
@@ -543,7 +552,6 @@ namespace msl_joystick
 				this->joyNodePID = fork();
 				if (this->joyNodePID == 0)
 				{
-					setsid();
 					execReturn = execvp("/opt/ros/kinetic/lib/joy/joy_node", startParams.data());
 					if (execReturn == -1)
 					{
@@ -578,6 +586,55 @@ namespace msl_joystick
 		{
 			this->highShovelButton->setChecked(true);
 		}
+	}
+
+	void Joystick::onToggleBallHandle()
+	{
+		if(this->ballHandleStateCheckBox->isChecked())
+		{
+			this->ballHandleStateCheckBox->setChecked(false);
+		}
+		else
+		{
+			this->ballHandleStateCheckBox->setChecked(true);
+		}
+	}
+
+	void Joystick::onToggleUsePt()
+	{
+		if(this->ptControllerStateCheckBox->isChecked())
+		{
+			this->ptControllerStateCheckBox->setChecked(false);
+		}
+		else
+		{
+			this->ptControllerStateCheckBox->setChecked(true);
+		}
+	}
+
+	void Joystick::onKickPowerChanged(int value)
+	{
+	}
+
+	void Joystick::onTranslationChanged(int value)
+	{
+		if(this->translation + value > this->translationMax)
+		{
+			this->translation = this->translationMax;
+		}
+		else if(this->translation + value < this->translationMin)
+		{
+			this->translation = this->translationMin;
+		}
+		else
+		{
+			this->translation += value;
+		}
+		this->translationEdit->setText(QString(to_string((int)this->translation).c_str()));
+	}
+
+	void Joystick::onRotationChanged(int value)
+	{
 	}
 
 	void Joystick::resendJoyCmd()
@@ -620,24 +677,42 @@ namespace msl_joystick
 		{
 			cmd.kick = false;
 		}
-		if (msg->buttons.at(1) == 1)
+		if (msg->buttons.at(2) == 1)
 		{
 			emit toggleShovelSelect(false);
 		}
 
-		if (msg->buttons.at(2) == 1)
+		if (msg->buttons.at(1) == 1)
 		{
 			emit toggleShovelSelect(true);
 		}
 
 		if (msg->buttons.at(6) == 1)
 		{
-			emit toggleBallHandle();
+			emit toggleUsePt();
 		}
 
 		if (msg->buttons.at(7) == 1)
 		{
-			emit toggleShovelSelect();
+			emit toggleBallHandle();
+		}
+
+		if(msg->axes.at(6) < 0)
+		{
+			emit changeRotation(-this->rotationIncrease);
+		}
+		else if(msg->axes.at(6) > 0)
+		{
+			emit changeRotation(this->rotationIncrease);
+		}
+
+		if(msg->axes.at(7) < 0)
+		{
+			emit changeTranslation(-this->translationIncrease);
+		}
+		else if(msg->axes.at(7) > 0)
+		{
+			emit changeTranslation(this->translationIncrease);
 		}
 
 		if (abs(msg->axes.at(0)) == 0.0 && abs(msg->axes.at(1)) == 0.0 && abs(msg->axes.at(3)) == 0.0)
@@ -649,12 +724,24 @@ namespace msl_joystick
 		}
 		else
 		{
-			cmd.motion.translation = sqrt(pow(msg->axes.at(0), 2) + pow(msg->axes.at(1), 2))
-					* this->translation;
+
+			auto trans = sqrt(pow(msg->axes.at(0), 2) + pow(msg->axes.at(1), 2))
+							* this->translation;
+			if(trans < this->translation)
+			{
+				cmd.motion.translation  = this->translation;
+			}
+			else
+			{
+				cmd.motion.translation = trans;
+			}
 			cmd.motion.angle = atan2(msg->axes.at(0), msg->axes.at(1)) + M_PI;
 			cmd.motion.rotation = msg->axes.at(3) * this->rotation;
 		}
 		cmd.shovelIdx = this->shovelIdx;
+		cmd.ptControllerState = this->usePTController;
+		cmd.ballHandleState = this->useBallHandle;
+		cout << cmd.motion.translation << endl;
 		this->joycmd = cmd;
 		this->joyPub.publish(cmd);
 		emit startJoyTimer();
