@@ -1,6 +1,6 @@
 #ifndef msl_joystick__Joystick_H
 #define msl_joystick__Joystick_H
-#define RQT_MSL_JOYSTICK_DEBUG
+//#define RQT_MSL_JOYSTICK_DEBUG
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_Joystick.h>
@@ -69,6 +69,8 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
 
     void onUseGamePadCheckBoxToggled(int checkState);
     void onJoyMsg(sensor_msgs::JoyPtr msg);
+    void onToggleShovel(bool shovel);
+    void resendJoyCmd();
 
   private:
     ros::NodeHandle *rosNode;
@@ -104,11 +106,19 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     bool useGamePad;
     pid_t joyNodePID;
     string joyExec;
+    msl_msgs::JoystickCommand joycmd;
 
     QTimer* sendMsgTimer;
     QTimer* gamePadTimer;
 
     int sendInterval;
+
+    Q_SIGNALS:
+	void startJoyTimer();
+	void stopJoyTimer();
+	void toggleShovelSelect(bool pass);
+	void toggleBallHandle();
+	void toggleUsePt();
 };
 }
 
