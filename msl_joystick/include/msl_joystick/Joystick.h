@@ -109,6 +109,10 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
 
     //game pad
     bool useGamePad;
+    bool dribbleManually;
+    bool ltPressedOnce;
+    bool rtPressedOnce;
+    int ballHandleSign;
     pid_t joyNodePID;
     string joyExec;
     msl_msgs::JoystickCommand joycmd;

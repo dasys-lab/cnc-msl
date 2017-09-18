@@ -56,6 +56,10 @@ namespace msl_joystick
 		this->kickIncrease = 100;
 		this->translationIncrease = 100;
 		this->rotationIncrease = 1;
+		this->dribbleManually = false;
+		this->ballHandleSign = 1;
+		this->ltPressedOnce = false;
+		this->rtPressedOnce = false;
 	}
 
 	void Joystick::initPlugin(qt_gui_cpp::PluginContext &context)
@@ -506,12 +510,14 @@ namespace msl_joystick
 			case Qt::CheckState::Checked:
 				std::cout << "BHC: set to true" << endl;
 				this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+				this->manual_label->setText("automatic");
 				break;
 			case Qt::CheckState::Unchecked:
 			case Qt::CheckState::PartiallyChecked:
 			default:
 				std::cout << "BHC: set to false" << endl;
 				this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+				this->manual_label->setText("");
 				break;
 		}
 		this->uiWidget->setFocus();
@@ -570,6 +576,8 @@ namespace msl_joystick
 					cout << "Joystick: Try to kill " << this->joyNodePID << endl;
 					kill(this->joyNodePID, SIGTERM);
 					this->joyNodePID = -1;
+					this->direction_label->setText("");
+					this->manual_label->setText("");
 				}
 				break;
 		}
@@ -590,19 +598,21 @@ namespace msl_joystick
 
 	void Joystick::onToggleBallHandle()
 	{
-		if(this->ballHandleStateCheckBox->isChecked())
+		if (this->ballHandleStateCheckBox->isChecked())
 		{
 			this->ballHandleStateCheckBox->setChecked(false);
+			this->manual_label->setText("");
 		}
 		else
 		{
 			this->ballHandleStateCheckBox->setChecked(true);
+			this->manual_label->setText("automatic");
 		}
 	}
 
 	void Joystick::onToggleUsePt()
 	{
-		if(this->ptControllerStateCheckBox->isChecked())
+		if (this->ptControllerStateCheckBox->isChecked())
 		{
 			this->ptControllerStateCheckBox->setChecked(false);
 		}
@@ -614,15 +624,29 @@ namespace msl_joystick
 
 	void Joystick::onKickPowerChanged(int value)
 	{
+		if (this->kickPower + value > this->kickPowerMax)
+		{
+			this->kickPower = this->kickPowerMax;
+		}
+		else if (this->kickPower + value < this->kickPowerMin)
+		{
+			this->kickPower = this->kickPowerMin;
+		}
+		else
+		{
+			this->kickPower += value;
+		}
+		this->kickPowerEdit->setText(QString(to_string((int)this->kickPower).c_str()));
+		this->kickPowerSlider->setValue((int)this->kickPower);
 	}
 
 	void Joystick::onTranslationChanged(int value)
 	{
-		if(this->translation + value > this->translationMax)
+		if (this->translation + value > this->translationMax)
 		{
 			this->translation = this->translationMax;
 		}
-		else if(this->translation + value < this->translationMin)
+		else if (this->translation + value < this->translationMin)
 		{
 			this->translation = this->translationMin;
 		}
@@ -635,6 +659,19 @@ namespace msl_joystick
 
 	void Joystick::onRotationChanged(int value)
 	{
+		if (this->rotation + value > this->rotationMax)
+		{
+			this->rotation = this->rotationMax;
+		}
+		else if (this->rotation + value < this->rotationMin)
+		{
+			this->rotation = this->rotationMin;
+		}
+		else
+		{
+			this->rotation += value;
+		}
+		this->rotationEdit->setText(QString(to_string(this->rotation).c_str()));
 	}
 
 	void Joystick::resendJoyCmd()
@@ -645,31 +682,57 @@ namespace msl_joystick
 	void Joystick::onJoyMsg(sensor_msgs::JoyPtr msg)
 	{
 		emit stopJoyTimer();
-		if (msg->buttons.at(5) == 0)
+
+		// lb button => dead-man
+		if (msg->buttons.at(4) == 0)
 		{
-			return; // dont send joystick message if no key is pressed
+			return; // dont send joystick message if dead-man is not pressed
+		}
+
+		// both axes are set to 0.0 if they have not been triggered
+		// after first trigger they are set to 1.0 ...
+		if(msg->axes.at(2) != 0)
+		{
+			this->ltPressedOnce = true;
+		}
+
+		if(msg->axes.at(5) != 0)
+		{
+			this->rtPressedOnce = true;
 		}
 
 		msl_msgs::JoystickCommand cmd = msl_msgs::JoystickCommand();
 
-		// robotid
 		cmd.robotId = this->robotId;
 
-		// ballHandle stuff
-		cmd.ballHandleLeftMotor = this->ballHandleLeftMotor;
-		cmd.ballHandleRightMotor = this->ballHandleRightMotor;
-		if (this->useBallHandle)
+		// a button => decrease kick power
+		if (msg->buttons.at(0) == 1)
 		{
-			cmd.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
-		}
-		else
-		{
-			cmd.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+			emit changeKickPower(-this->kickIncrease);
 		}
 
-		// kicker stuff
-		cmd.kickPower = this->kickPower;
-		if (msg->buttons.at(0) == 1)
+		// b button => select low shovel
+		if (msg->buttons.at(1) == 1)
+		{
+			emit toggleShovelSelect(true);
+		}
+
+		// x button => select high shovel
+		if (msg->buttons.at(2) == 1)
+		{
+			emit toggleShovelSelect(false);
+		}
+
+		//y button => increase kick power
+		if (msg->buttons.at(3) == 1)
+		{
+			emit changeKickPower(this->kickIncrease);
+		}
+
+		//Button 4 is used as dead-man therefore used before
+
+		// rb button => kick
+		if (msg->buttons.at(5) == 1)
 		{
 			cmd.kick = true;
 		}
@@ -677,44 +740,45 @@ namespace msl_joystick
 		{
 			cmd.kick = false;
 		}
-		if (msg->buttons.at(2) == 1)
-		{
-			emit toggleShovelSelect(false);
-		}
 
-		if (msg->buttons.at(1) == 1)
-		{
-			emit toggleShovelSelect(true);
-		}
-
+		// back button => use pt controller on/off
 		if (msg->buttons.at(6) == 1)
 		{
 			emit toggleUsePt();
 		}
 
+		// start button => use ballhandle on/off
 		if (msg->buttons.at(7) == 1)
 		{
 			emit toggleBallHandle();
 		}
 
-		if(msg->axes.at(6) < 0)
+		// logitech button => use ballhandle manually on/off
+		if (msg->buttons.at(8) == 1)
 		{
-			emit changeRotation(-this->rotationIncrease);
-		}
-		else if(msg->axes.at(6) > 0)
-		{
-			emit changeRotation(this->rotationIncrease);
-		}
-
-		if(msg->axes.at(7) < 0)
-		{
-			emit changeTranslation(-this->translationIncrease);
-		}
-		else if(msg->axes.at(7) > 0)
-		{
-			emit changeTranslation(this->translationIncrease);
+			this->dribbleManually = !this->dribbleManually;
+			if (this->dribbleManually)
+			{
+				this->manual_label->setText("manual:");
+				this->direction_label->setText((this->ballHandleSign == 1) ? "backward" : "forward");
+			}
+			else
+			{
+				this->direction_label->setText("");
+				this->manual_label->setText("");
+			}
 		}
 
+		// logitech button => use ballhandle manually on/off
+		if (msg->buttons.at(9) == 1)
+		{
+			this->ballHandleSign = this->ballHandleSign * -1;
+			this->direction_label->setText((this->ballHandleSign == 1) ? "backward" : "forward");
+		}
+
+		// button 10 (right stick) is not used
+
+		// left stick (axes 0/1) => drive &&  right stick (axis 3) => rotation && axis 4 is not used
 		if (abs(msg->axes.at(0)) == 0.0 && abs(msg->axes.at(1)) == 0.0 && abs(msg->axes.at(3)) == 0.0)
 		{
 			// Send NaN to signal Joystick behaviour NOT to send MotionControl commands.
@@ -725,11 +789,10 @@ namespace msl_joystick
 		else
 		{
 
-			auto trans = sqrt(pow(msg->axes.at(0), 2) + pow(msg->axes.at(1), 2))
-							* this->translation;
-			if(trans < this->translation)
+			auto trans = sqrt(pow(msg->axes.at(0), 2) + pow(msg->axes.at(1), 2)) * this->translation;
+			if (trans < this->translation)
 			{
-				cmd.motion.translation  = this->translation;
+				cmd.motion.translation = this->translation;
 			}
 			else
 			{
@@ -738,10 +801,54 @@ namespace msl_joystick
 			cmd.motion.angle = atan2(msg->axes.at(0), msg->axes.at(1)) + M_PI;
 			cmd.motion.rotation = msg->axes.at(3) * this->rotation;
 		}
+
+		// cross left/right => increase/decrease rotation
+		if (msg->axes.at(6) < 0)
+		{
+			emit changeRotation(-this->rotationIncrease);
+		}
+		else if (msg->axes.at(6) > 0)
+		{
+			emit changeRotation(this->rotationIncrease);
+		}
+
+		// cross up/down => increase/decrease translation
+		if (msg->axes.at(7) < 0)
+		{
+			emit changeTranslation(-this->translationIncrease);
+		}
+		else if (msg->axes.at(7) > 0)
+		{
+			emit changeTranslation(this->translationIncrease);
+		}
+
+		// ballHandle stuff LT/RT => rotate ball handle
+		if (this->dribbleManually)
+		{
+			if (this->ltPressedOnce && this->rtPressedOnce)
+			{
+				cmd.ballHandleLeftMotor = this->ballHandleSign * ((msg->axes.at(2) - 1) / 2) * this->ballHandleMax;
+				cmd.ballHandleRightMotor = this->ballHandleSign * ((msg->axes.at(5) - 1) / 2) * this->ballHandleMax;
+			}
+		}
+		else
+		{
+			cmd.ballHandleLeftMotor = this->ballHandleLeftMotor;
+			cmd.ballHandleRightMotor = this->ballHandleRightMotor;
+		}
+		if (this->useBallHandle)
+		{
+			cmd.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+		}
+		else
+		{
+			cmd.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+		}
+		cmd.kickPower = this->kickPower;
 		cmd.shovelIdx = this->shovelIdx;
 		cmd.ptControllerState = this->usePTController;
 		cmd.ballHandleState = this->useBallHandle;
-		cout << cmd.motion.translation << endl;
+		printJoystickMessage(cmd);
 		this->joycmd = cmd;
 		this->joyPub.publish(cmd);
 		emit startJoyTimer();
