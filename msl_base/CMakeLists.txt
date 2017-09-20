@@ -24,6 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
   alica_ros_proxy 
   msl_expressions 
   msl_worldmodel
+  msl_robot_id
 )
 
 catkin_package(
@@ -37,6 +38,7 @@ catkin_package(
     alica_ros_proxy 
     msl_expressions 
     msl_worldmodel
+    msl_robot_id
 )
 
 ###########

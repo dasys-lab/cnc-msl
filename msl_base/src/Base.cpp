@@ -8,13 +8,16 @@
 #include <iostream>
 
 #include "Base.h"
+
 #include "CGSolver.h"
 #include "SigFault.h"
 #include "SolverType.h"
-#include "clock/AlicaROSClock.h"
-#include "communication/AlicaRosCommunication.h"
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "ros/ros.h"
+#include <clock/AlicaROSClock.h>
+#include <communication/AlicaRosCommunication.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl/robot/IntRobotIDFactory.h>
+#include <ros/ros.h>
+
 #include <chrono>
 #include <thread>
 
@@ -31,6 +34,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     cc = new alica::ConditionCreator();
     uc = new alica::UtilityFunctionCreator();
     crc = new alica::ConstraintCreator();
+    ae->setRobotIDFactory(new msl::robot::IntRobotIDFactory());
     ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
     ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
     if (sim)
@@ -60,6 +64,7 @@ void Base::start()
 Base::~Base()
 {
     ae->shutdown();
+    delete ae->getRobotIDFactory();
     delete ae->getIAlicaClock();
     delete ae->getCommunicator();
     delete ae;
