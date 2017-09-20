@@ -43,7 +43,7 @@ namespace alica
 
 	UtilityInterval PriorityList::eval(IAssignment* ass)
 	{
-		int unassignedRobots = ass->getNumUnAssignedRobots();
+		int unassignedRobots = ass->getNumUnAssignedRobotIds();
 		UtilityInterval ui(0.0, 0.0);
 
 		for (int i = 0; i< this->relevantEntryPoints.size(); i++)

@@ -6,8 +6,7 @@ namespace robot
 {
 
 IntRobotID::IntRobotID(uint8_t *idBytes, int idSize)
-    : IRobotID(idBytes, idSize)
-    , id(0)
+    : id(0)
 {
     if (idSize != 4)
     {
@@ -25,9 +24,34 @@ IntRobotID::~IntRobotID()
 {
 }
 
-bool IntRobotID::operator==(const IRobotID &obj) const
+uint8_t* IntRobotID::getRaw() const
 {
-    return this->id == dynamic_cast<const IntRobotID&>(obj).id;
+	return this->id;
+}
+
+int IntRobotID::getSize() const
+{
+	return sizeof(int);
+};
+
+bool IntRobotID::operator==(const IRobotID &other) const
+{
+    return this->id == dynamic_cast<const IntRobotID&>(other).id;
+}
+
+bool IntRobotID::operator!=(const IRobotID &other) const
+{
+    return this->id != dynamic_cast<const IntRobotID&>(other).id;
+}
+
+bool IntRobotID::operator<(const IRobotID &other) const
+{
+    return this->id < dynamic_cast<const IntRobotID&>(other).id;
+}
+
+bool IntRobotID::operator> (const IRobotID& other) const
+{
+	return this->id > dynamic_cast<const IntRobotID&>(other).id;
 }
 
 } /* namespace robot */

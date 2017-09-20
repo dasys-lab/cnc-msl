@@ -122,12 +122,12 @@ namespace msl
 
 		ui.setMax(ui.getMin());
 		// Calculate the best possible robot for this job (ignoring every other summand...)
-		if (relevantEntryPoints.at(0)->getMaxCardinality() > numAssignedRobots && ass->getNumUnAssignedRobots() > 0)
+		if (relevantEntryPoints.at(0)->getMaxCardinality() > numAssignedRobots && ass->getNumUnAssignedRobotIds() > 0)
 		{
-			for (int i = 0; i < ass->getNumUnAssignedRobots(); ++i)
+			for (int i = 0; i < ass->getNumUnAssignedRobotIds(); ++i)
 			{
 				//curPosition = this.playerPositions.GetValue(ass.UnAssignedRobots[i]);
-				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobots().at(i));
+				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobotIds().at(i));
 				if (curPosition == nullptr)
 					continue;
 				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(sb) / wm->field->getMaxDistance()));
