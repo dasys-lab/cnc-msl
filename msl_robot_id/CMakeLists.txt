@@ -25,6 +25,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/IntRobotID.cpp
+  src/IntRobotIDFactory.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

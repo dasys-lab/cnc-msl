@@ -1,6 +1,10 @@
 #pragma once
 
+#include "IntRobotID.h"
+
+#include <engine/IRobotID.h>
 #include <engine/IRobotIDFactory.h>
+
 
 namespace msl
 {
@@ -12,6 +16,8 @@ class IntRobotIDFactory : public alica::IRobotIDFactory
   public:
     IntRobotIDFactory();
     virtual ~IntRobotIDFactory();
+
+    alica::IRobotID create (uint8_t* idBytes, int idSize) const;
 };
 
 } /* namespace robot */
