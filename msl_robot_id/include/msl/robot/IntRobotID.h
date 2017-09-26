@@ -11,6 +11,7 @@ namespace robot
 
 class IntRobotID : public alica::IRobotID
 {
+	friend struct std::hash<msl::robot::IntRobotID>;
   public:
     IntRobotID(uint8_t* idBytes, int idSize);
     virtual ~IntRobotID();
@@ -46,7 +47,7 @@ namespace std
 
         result_type operator()(argument_type & pa) const
         {
-            return std::hash<int>(pa.id);
+            return std::hash<int>()(pa.id);
         }
     };
 }

@@ -26,7 +26,7 @@ IntRobotID::~IntRobotID()
 
 uint8_t* IntRobotID::getRaw() const
 {
-	return this->id;
+	return (uint8_t*)&this->id;
 }
 
 int IntRobotID::getSize() const

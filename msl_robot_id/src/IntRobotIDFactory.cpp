@@ -16,9 +16,9 @@ IntRobotIDFactory::~IntRobotIDFactory()
 {
 }
 
-alica::IRobotID IntRobotIDFactory::create(uint8_t *idBytes, int idSize) const
+const alica::IRobotID* IntRobotIDFactory::create(uint8_t *idBytes, int idSize) const
 {
-	return IntRobotID(idBytes, idSize);
+	return new IntRobotID(idBytes, idSize);
 }
 
 } /* namespace robot */
