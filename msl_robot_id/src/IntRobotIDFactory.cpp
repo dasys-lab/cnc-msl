@@ -2,7 +2,6 @@
 
 #include <engine/IRobotID.h>
 
-
 namespace msl
 {
 namespace robot
