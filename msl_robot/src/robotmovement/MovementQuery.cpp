@@ -280,7 +280,7 @@ namespace msl
 
 		if (odom == nullptr)
 		{
-			cerr << "MovementQuery: no odometry!" << endl;
+			cerr << "MovementQuery: no odometry! Initialize translation, angle and rotation with 0" << endl;
 			translation = 0;
 			angle = 0;
 			rotation = 0;
