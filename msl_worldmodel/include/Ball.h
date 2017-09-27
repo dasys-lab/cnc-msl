@@ -76,7 +76,7 @@ class Ball
     nonstd::optional<geometry::CNPointAllo> getPositionAllo() const;
     nonstd::optional<geometry::CNPointEgo> getPositionEgo() const;
 
-    nonstd::optional<geometry::CNVecEgo> getVelocityAllo() const;
+    nonstd::optional<geometry::CNVecAllo> getVelocityAllo() const;
     nonstd::optional<geometry::CNVecEgo> getVelocityEgo() const;
 
   private:

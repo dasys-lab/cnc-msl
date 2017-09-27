@@ -3,9 +3,11 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1430324527403) ENABLED START*/ //Add additional includes here
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
-#include <container/CNVelocity2D.h>
+#include <cnc_geometry/CNVecEgo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPositionEgo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 using namespace msl;
 /*PROTECTED REGION END*/
@@ -22,7 +24,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1430324527403) ENABLED START*/ //Add additional protected methods here
-        geometry::CNPoint2D alloTarget;
+        geometry::CNPointAllo alloTarget;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1430324527403) ENABLED START*/ //Add additional private methods here
@@ -35,11 +37,11 @@ namespace alica
         int isMovingAwayIter;
         int maxIter;
         msl::MovementQuery query;
-        msl_actuator_msgs::MotionControl ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
-                                                        shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                                                        shared_ptr<geometry::CNPoint2D> egoBallPos);
-        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
-                                                           shared_ptr<geometry::CNVelocity2D> egoBallVel);
+        msl_actuator_msgs::MotionControl ballGetsCloser(geometry::CNPositionAllo robotPosition,
+                                                        geometry::CNVecEgo ballVelocity,
+                                                        geometry::CNPointEgo egoBallPos);
+        msl_actuator_msgs::MotionControl driveToMovingBall(geometry::CNPointEgo egoBallPos,
+                                                           geometry::CNVecEgo egoBallVel);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -6,6 +6,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,7 +16,7 @@ namespace alica
             DomainBehaviour("DriveToPointCalib")
     {
         /*PROTECTED REGION ID(con1474278265440) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+        defaultTranslation = 0;
         /*PROTECTED REGION END*/
     }
     DriveToPointCalib::~DriveToPointCalib()
@@ -27,13 +28,13 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1474278265440) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto me = wm->rawSensorData->getOwnPositionVision();
-        auto ballPos = wm->ball->getEgoBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionEgo();
         if (!me.operator bool())
         {
             return;
         }
-        auto egoTarget = alloTarget.alloToEgo(*me);
+        auto egoTarget = alloTarget.toEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 
@@ -45,13 +46,15 @@ namespace alica
          {*/
         // replaced with new moveToPoint method
         //mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = geometry::CNPointEgo(-1000.0, 0.0);
+
         mc = rm.moveToPoint(query);
+
         mc.motion.translation = 500;
         //}
 
-        if (egoTarget->length() < 100)
+        if (egoTarget.length() < 100)
         {
             mc.motion.translation = 0;
             send(mc);

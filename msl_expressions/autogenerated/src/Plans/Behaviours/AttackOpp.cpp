@@ -10,6 +10,10 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <obstaclehandler/Obstacles.h>
 #include <pathplanner/PathPlanner.h>
+
+using geometry::CNPointEgo;
+using geometry::CNVecEgo;
+using geometry::CNPositionAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -84,12 +88,12 @@ void AttackOpp::run(void *msg)
         if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
         {
             cout << "roll away" << endl;
-            mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+            mc = this->driveToMovingBall(egoBallPos, egoBallVelocity);
         }
         else if (isMovingCloserIter >= maxIter)
         {
             cout << "get closer" << endl;
-            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
+            mc = this->ballGetsCloser(me, egoBallVelocity, egoBallPos);
         }
         else
         {
@@ -101,8 +105,8 @@ void AttackOpp::run(void *msg)
     else
     {
         //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
-        query->egoDestinationPoint = egoBallPos;
-        query->egoAlignPoint = egoBallPos;
+        query.egoDestinationPoint = egoBallPos;
+        query.egoAlignPoint = egoBallPos;
 
         mc = rm.moveToPoint(query);
     }
@@ -118,26 +122,26 @@ void AttackOpp::initialiseParameters()
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ // Add additional methods here
-msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
-                                                              shared_ptr<geometry::CNVelocity2D> egoBallVel)
+msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(CNPointEgo egoBallPos,
+                                                              CNVecEgo egoBallVel)
 {
 
     msl_actuator_msgs::MotionControl mc;
     msl_actuator_msgs::BallHandleCmd bhc;
 
-    mc.motion.angle = egoBallPos->angleTo();
-    mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+    mc.motion.angle = egoBallPos.angleZ();
+    mc.motion.rotation = egoBallPos.rotateZ(M_PI).angleZ() * rotate_P;
 
-    double distance = egoBallPos->length();
+    double distance = egoBallPos.length();
     double movement = kP * distance + kD * (distance - oldDistance);
     oldDistance = distance;
 
-    double ball_speed = egoBallVel->length();
+    double ball_speed = egoBallVel.length();
 
     movement += ball_speed;
     mc.motion.translation = movement;
 
-    if (egoBallPos->length() < 300)
+    if (egoBallPos.length() < 300)
     {
 
         bhc.leftMotor = -30;
@@ -149,20 +153,18 @@ msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometr
     return mc;
 }
 
-msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
-                                                           shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                                                           shared_ptr<geometry::CNPoint2D> egoBallPos)
+msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(CNPositionAllo robotPosition,
+                                                           CNVecEgo ballVelocity,
+                                                           CNPointEgo egoBallPos)
 {
-    double yIntersection = egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
+    double yIntersection = egoBallPos.y + (-(egoBallPos.x / ballVelocity.x)) * ballVelocity.y;
 
-    shared_ptr<geometry::CNPoint2D> interPoint = make_shared<geometry::CNPoint2D>(0, yIntersection);
+    CNPointEgo interPoint = make_shared<geometry::CNPoint2D>(0, yIntersection);
 
     msl_actuator_msgs::MotionControl mc;
-    // TODO : remove later
-    //        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
     msl::RobotMovement rm;
-    query->egoDestinationPoint = interPoint;
-    query->egoAlignPoint = egoBallPos;
+    query.egoDestinationPoint = interPoint;
+    query.egoAlignPoint = egoBallPos;
 
     mc = rm.moveToPoint(query);
 

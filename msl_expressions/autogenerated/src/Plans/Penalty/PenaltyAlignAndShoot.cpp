@@ -65,7 +65,7 @@ void PenaltyAlignAndShoot::run(void *msg)
     auto frontRight = geometry::CNPointAllo((wm->field->getFieldLength() - (4 * robotRadius)) / 2, -goalLineLength / 2);
 
     // Create back point according to last alignment
-    geometry::CNPointAllo back = nullptr;
+    geometry::CNPointAllo back;
 
     // Hysteresis
     if (lastAlignment == 0) // not aligned before (default)

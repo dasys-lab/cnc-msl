@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/Penalty/DriveToPenaltyStart.h"
 
 /*PROTECTED REGION ID(inccpp1459609457478) ENABLED START*/ //Add additional includes here
@@ -7,6 +6,11 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <nonstd/optional.hpp>
+
+using std::cout;
+using std::endl;
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -16,7 +20,6 @@ namespace alica
             DomainBehaviour("DriveToPenaltyStart")
     {
         /*PROTECTED REGION ID(con1459609457478) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToPenaltyStart::~DriveToPenaltyStart()
@@ -28,25 +31,24 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto me = wm->rawSensorData->getOwnPositionVision();
-        auto ballPos = wm->ball->getEgoBallPosition();
-        if (me == nullptr)
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!me.has_value())
         {
             return;
         }
-        auto egoTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0)->alloToEgo(*me);
-        auto egoAlignPoint = wm->field->posOppGoalMid()->alloToEgo(*me);
+        auto egoTarget = CNPointAllo(0.0, 0.0).toEgo(*me);
+        auto egoAlignPoint = wm->field->posOppGoalMid().toEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 
         // repalced with new moveToPoint method
 //        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 0);
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoAlignPoint;
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = egoAlignPoint;
 
         mc = rm.moveToPoint(query);
 
-        if (egoTarget->length() < 250)
+        if (egoTarget.length() < 250)
         {
             this->setSuccess(true);
         }

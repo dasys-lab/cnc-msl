@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
@@ -6,6 +5,11 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <nonstd/optional.hpp>
+
+using geometry::CNPointAllo;
+using std::cout;
+using std::endl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,15 +19,13 @@ namespace alica
             DomainBehaviour("DriveToGoal")
     {
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
-        goalInitPos = (*this->sc)["Behaviour"]->get < string > ("Goalie.GoalInitPosition", NULL);
+        goalInitPos = (*this->sc)["Behaviour"]->get<string>("Goalie.GoalInitPosition", NULL);
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
         alloGoalMid = wm->field->posOwnGoalMid();
-        alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-        alloGoalRight = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+        alloFieldCenterAlignPoint = wm->field->posCenterMarker();
+        alloGoalLeft = CNPointAllo(alloGoalMid.x, wm->field->posLeftOwnGoalPost().y - goalieSize / 2);
+        alloGoalRight = CNPointAllo(alloGoalMid.x, wm->field->posRightOwnGoalPost().y + goalieSize / 2);
 
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToGoal::~DriveToGoal()
@@ -37,12 +39,11 @@ namespace alica
         msl::RobotMovement rm;
 
         cout << "### DriveToGoal ###" << endl;
-        shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
 
-        me = wm->rawSensorData->getOwnPositionVision();
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
-        if (me == nullptr)
+        if (!me.has_value())
         {
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
@@ -50,58 +51,54 @@ namespace alica
 
             cout << " [DriveToGoal] Stop!" << endl;
             cout << "### DriveToGoal ###\n" << endl;
+            send(mc);
+            return;
+        }
+        if (goalInitPos.compare("Left") == 0)
+        {
+            alloTargetX = alloGoalLeft.x - 100;
+            alloTargetY = alloGoalLeft.y;
+        }
+        else if (goalInitPos.compare("Right") == 0)
+        {
+            alloTargetX = alloGoalRight.x - 100;
+            alloTargetY = alloGoalRight.y;
         }
         else
         {
-            if (goalInitPos.compare("Left") == 0)
-            {
-                alloTargetX = alloGoalLeft->x - 100;
-                alloTargetY = alloGoalLeft->y;
-            }
-            else if (goalInitPos.compare("Right") == 0)
-            {
-                alloTargetX = alloGoalRight->x - 100;
-                alloTargetY = alloGoalRight->y;
-            }
-            else
-            {
-                alloTargetX = alloGoalMid->x - 100;
-                alloTargetY = alloGoalMid->y;
-            }
-
-            alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
-            alloFieldCenterAlignPoint = wm->field->posCenterMarker();
-
-            cout << " Driving to goal" << endl;
-            // replaced with new moveToPoint method
-//            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-//                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
-            query->egoDestinationPoint = alloTarget->alloToEgo(*me);
-            query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
-            query->snapDistance = 100;
-
-            mc = rm.moveToPoint(query);
-
-            if (me->distanceTo(alloTarget) <= 100)
-            {
-                msl_actuator_msgs::MotionControl mcStop;
-                mcStop.motion.translation = 0;
-                mcStop.motion.rotation = 0;
-                mcStop.motion.angle = 0;
-                send(mcStop);
-                this->setSuccess(true);
-            }
-            else if (!std::isnan(mc.motion.translation))
-            {
-                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
-                send (mc);
-            }
-            else
-            {
-                cout << "Motion command is NaN!" << endl;
-            }
-            cout << "### DriveToGoal ###\n" << endl;
+            alloTargetX = alloGoalMid.x - 100;
+            alloTargetY = alloGoalMid.y;
         }
+
+        auto alloTarget = CNPointAllo(alloTargetX, alloTargetY);
+
+
+        cout << " Driving to goal" << endl;
+        query.egoDestinationPoint = alloTarget.toEgo(*me);
+        query.egoAlignPoint = alloFieldCenterAlignPoint.toEgo(*me);
+        query.snapDistance = 100;
+
+        mc = rm.moveToPoint(query);
+
+        if (me->distanceTo(alloTarget) <= 100)
+        {
+            msl_actuator_msgs::MotionControl mcStop;
+            mcStop.motion.translation = 0;
+            mcStop.motion.rotation = 0;
+            mcStop.motion.angle = 0;
+            send(mcStop);
+            this->setSuccess(true);
+        }
+        else if (!std::isnan(mc.motion.translation))
+        {
+            cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
+            send(mc);
+        }
+        else
+        {
+            cout << "Motion command is NaN!" << endl;
+        }
+        cout << "### DriveToGoal ###\n" << endl;
         /*PROTECTED REGION END*/
     }
     void DriveToGoal::initialiseParameters()

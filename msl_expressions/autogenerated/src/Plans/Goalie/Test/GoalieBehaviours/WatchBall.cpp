@@ -7,6 +7,12 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
+
+using geometry::CNPointAllo;
+using geometry::CNVecAllo;
+using geometry::CNPointEgo;
+using std::make_shared;
+using nonstd::optional;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -45,13 +51,15 @@ namespace alica
 
         snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
+
+        ballPositions = new InfoBuffer<CNPointAllo>(nrOfPositions);
+        //REFACT
+//        ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
+
         auto tempMid = wm->field->posOwnGoalMid();
-        alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
-        alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
-        alloGoalRight = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+        alloGoalMid = CNPointAllo (tempMid.x, tempMid.y);
+        alloGoalLeft = CNPointAllo(alloGoalMid.x, wm->field->posLeftOwnGoalPost().y - goalieSize / 2 + 375);
+        alloGoalRight = CNPointAllo(alloGoalMid.x, wm->field->posRightOwnGoalPost().y + goalieSize / 2);
         /*PROTECTED REGION END*/
     }
     WatchBall::~WatchBall()
@@ -63,8 +71,9 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-        ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+//        ownPos = wm->rawSensorData->getOwnPositionVision();
+        ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPos.has_value())
         {
             mc.motion.translation = 0;
             mc.motion.angle = 0;
@@ -74,21 +83,23 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = wm->ball->getAlloBallPosition();
+        auto alloBall = wm->ball->getPositionAllo();
 
         // TODO: Keep?
-        if (alloBall != nullptr && alloBall->x > -250)
+        if (alloBall.has_value() && alloBall->x > -250)
         {
             mc.motion.translation = 0;
-            shared_ptr < geometry::CNPoint2D > alignPoint = make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y); // align to mirrored ownPos
-            mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+//            CNPointAllo alignPoint(-ownPos->x, ownPos->y); // align to mirrored ownPos
+            CNVecAllo alignPointVec(-ownPos->x, ownPos->y); // align to mirrored ownPos
+//            mc.motion.rotation = alignPoint.toEgo(*ownPos).rotate(M_PI).angleTo();
+            mc.motion.rotation = alignPointVec.toEgo(*ownPos).rotateZ(M_PI).angleZ();
             send (mc);
             cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
             return;
         }
         // TODO: Keep?
 
-        if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
+        if (!alloBall.has_value_ || abs(alloBall->x) > abs(alloGoalMid.x) + 50)
         {
 
             /*
@@ -96,59 +107,62 @@ namespace alica
              */
 
             cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-            mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
-            rotate(make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y));
+            mc.motion.angle = prevTarget.toEgo(*ownPos).angleZ();
+            this->rotate(CNPointAllo(-ownPos->x, ownPos->y));
             mc.motion.translation = std::min(
                     alignMaxVel,
-                    (prevTarget->alloToEgo(*ownPos)->length() * pTrans)
-                            + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
+                    (prevTarget.toEgo(*ownPos).length() * pTrans)
+                            + ((prevTarget.toEgo(*ownPos).length() - prevTargetDist) * dTrans));
             send (mc);
             return;
         }
 
-        this->ballPositions->add(alloBall);
+
+        this->ballPositions->add(make_shared<InformationElement>(alloBall));
 
         /*
          * Calculate target position on goal line
          */
 
-        shared_ptr < geometry::CNPoint2D > alloTarget;
+        CNPointAllo alloTarget;
         double targetY;
         if (ballPositions->getSize() > 0)
         {
             targetY = calcGoalImpactY();
             targetY = fitTargetY(targetY);
-            alloTarget = make_shared < geometry::CNPoint2D > (alloGoalMid->x + 200, targetY);
+            //TODO diff
+            alloTarget.x = alloGoalMid.x + 200;
+            alloTarget.y =  targetY;
             prevTarget = alloTarget;
         }
         else
         {
             alloTarget = prevTarget;
-            targetY = alloTarget->y;
+            targetY = alloTarget.y;
         }
 
-        auto egoBall = alloBall->alloToEgo(*ownPos);
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
+        auto egoBall = alloBall->toEgo(*ownPos);
+        auto egoTarget = alloTarget.toEgo(*ownPos);
 
         /*
          * Goalie drives to target
          */
 
-        mc.motion.angle = egoTarget->angleTo();
-        rotate (alloBall);
+        mc.motion.angle = egoTarget.angleZ();
+        this->rotate (CNPointAllo(alloBall->x,alloBall->y));
 
-        if (egoTarget->length() > snapDistance)
+        if (egoTarget.length() > snapDistance)
         {
             auto tempPFactor = pTrans;
-            if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
+            if (alloBall->x > alloFieldCntr.x + 1000)
             {
                 // todo: remove
 //				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
                 tempPFactor = pTrans / 2;
             }
 
-            double translation = (egoTarget->length() * tempPFactor)
-                    + ((egoTarget->length() - prevTargetDist) * dTrans);
+            double translation = (egoTarget.length() * tempPFactor)
+                    + ((egoTarget.length() - prevTargetDist) * dTrans);
             mc.motion.translation = std::min(alignMaxVel, translation);
         }
         else
@@ -175,15 +189,15 @@ namespace alica
     {
         double _slope, _yInt;
         double sumXY = 0, sumX2 = 0, sumX2Y2 = 0;
-        shared_ptr < geometry::CNPoint2D > avgBall = make_shared < geometry::CNPoint2D > (0.0, 0.0);
+        CNPointAllo avgBall = CNPointAllo(0.0, 0.0);
         int nPoints = 0;
         for (int i = 0; i < ballPositions->getSize(); i++)
         {
             auto currentBall = ballPositions->getLast(i);
             // p=prev, pp=prePrev, ppp=prePrePrev
-            shared_ptr < geometry::CNPoint2D > ppprevBall;
-            shared_ptr < geometry::CNPoint2D > pprevBall;
-            shared_ptr < geometry::CNPoint2D > prevBall;
+            optional<CNPointAllo> ppprevBall;
+            optional<CNPointAllo> pprevBall;
+            optional<CNPointAllo> prevBall;
             if (i > 2)
             {
                 ppprevBall = ballPositions->getLast(i - 3);
@@ -191,7 +205,7 @@ namespace alica
                 prevBall = ballPositions->getLast(i - 1);
             }
 
-            if (prevBall != nullptr && pprevBall != nullptr && ppprevBall != nullptr)
+            if (prevBall.has_value() && pprevBall.has_value() && ppprevBall.has_value())
             {
                 // check if function is continual
                 double diffppp = ppprevBall->y - pprevBall->y;
@@ -216,35 +230,36 @@ namespace alica
                 }
             }
 
-            avgBall->x += currentBall->x;
-            avgBall->y += currentBall->y;
+            avgBall.x += currentBall->x;
+            avgBall.y += currentBall->y;
             sumXY = sumXY + (currentBall->y * currentBall->x);
             sumX2 = sumX2 + (currentBall->x * currentBall->x);
             sumX2Y2 = sumX2Y2 + (currentBall->x * currentBall->x + currentBall->y * currentBall->y);
             nPoints = nPoints + 1;
         }
 
-        double sumX = avgBall->x;
-        double sumY = avgBall->y;
+        double sumX = avgBall.x;
+        double sumY = avgBall.y;
         avgBall = avgBall / nPoints;
         double denom = 0;
         double nomi = 0;
         double calcTargetY;
-        double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
-                - 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
+        double variance = (sumX2Y2 + nPoints * ((avgBall.x * avgBall.x) + (avgBall.y * avgBall.y))
+                - 2 * ((avgBall.x * sumX) + (avgBall.y * sumY))) / nPoints;
 
         // TODO: Keep?
-        std::shared_ptr < geometry::CNVelocity2D > alloBallVel = wm->ball->getEgoBallVelocity();
+        auto alloBallVel = wm->ball->getVelocityAllo();
+        auto egoBallVel = wm->ball->getVelocityEgo();
 
-        if (alloBallVel != nullptr)
+        if (egoBallVel.has_value())
         {
-            alloBallVel = alloBallVel->egoToAllo(*ownPos);
+            alloBallVel = egoBallVel->toAllo(*ownPos);
         }
 
-        if (alloBallVel != nullptr && alloBallVel->x < -1000)
+        if (alloBallVel.has_value() && alloBallVel->x < -1000)
         {
             cout << "[WatchBall] alloBallVelX: " << alloBallVel->x << endl;
-            calcTargetY = prevTarget->y;
+            calcTargetY = prevTarget.y;
         } // TODO: Keep?
         else if (nPoints > 1 && variance > maxVariance)
         {
@@ -264,8 +279,8 @@ namespace alica
                 return prevTarget->y;
             }
             _slope = nomi / denom;
-            _yInt = avgBall->y - _slope * avgBall->x;
-            calcTargetY = _slope * alloGoalMid->x + _yInt;
+            _yInt = avgBall.y - _slope * avgBall.x;
+            calcTargetY = _slope * alloGoalMid.x + _yInt;
 //			cout << "[WatchBall] -LinearRegression- calcTargetY: " << calcTargetY << endl;
         }
         else
@@ -320,15 +335,15 @@ namespace alica
     double WatchBall::fitTargetY(double targetY)
     {
 
-        if (targetY > alloGoalLeft->y)
+        if (targetY > alloGoalLeft.y)
         {
 //			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
-            return alloGoalLeft->y;
+            return alloGoalLeft.y;
         }
-        else if (targetY < alloGoalRight->y)
+        else if (targetY < alloGoalRight.y)
         {
 //			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
-            return alloGoalRight->y;
+            return alloGoalRight.y;
         }
         else
         {
@@ -337,7 +352,7 @@ namespace alica
         }
     }
 
-    void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
+    void WatchBall::rotate(CNPointAllo alloTarget)
     {
         shared_ptr < geometry::CNPoint2D > alignPoint;
         double ballAngle = ownPos->getPoint()->angleToPoint(alloTarget) / M_PI * 180;

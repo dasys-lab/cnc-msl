@@ -4,12 +4,16 @@
 #include <InfoBuffer.h>
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1447863466691) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
+#include "cnc_geometry/CNPositionAllo.h"
+#include "cnc_geometry/CNPointAllo.h"
+#include "cnc_geometry/CNVecAllo.h"
+#include "cnc_geometry/CNPointEgo.h"
 #include <string>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <nonstd/optional.hpp>
+
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -27,13 +31,13 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr<geometry::CNPosition> ownPos;
-        shared_ptr<geometry::CNPoint2D> alloGoalLeft;
-        shared_ptr<geometry::CNPoint2D> alloGoalRight;
-        shared_ptr<geometry::CNPoint2D> alloGoalMid;
-        shared_ptr<geometry::CNPoint2D> prevTarget;
-        shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field->posCenterMarker();
-        shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
+        nonstd::optional<geometry::CNPositionAllo> ownPos;
+        geometry::CNPointAllo alloGoalLeft;
+        geometry::CNPointAllo alloGoalRight;
+        geometry::CNPointAllo alloGoalMid;
+        geometry::CNPointAllo prevTarget;
+        geometry::CNPointAllo alloFieldCntr = MSLWorldModel::get()->field->posCenterMarker();
+        geometry::CNPointAllo alloAlignPt = alloFieldCntr;
         bool alignTowardsBall;
         int maxVariance;
         int goalieSize;
@@ -43,9 +47,9 @@ namespace alica
         double pTrans, dTrans, pRot, dRot;
         double prevTargetDist, lastRotErr;
         double rotationLimit;
-        msl::InfoBuffer<geometry::CNPoint2D>* ballPositions;
+        msl::InfoBuffer<geometry::CNPointAllo>* ballPositions;
         double calcGoalImpactY();
-        void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
+        void rotate(geometry::CNPointAllo alloTarget);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
