@@ -108,6 +108,8 @@ namespace alica
 //			cout << "newVector:     x=" << oppVec->x << " y=" << oppVec->y << endl;
 //			cout << "alloAlignPoint: x=" << alloAlignPoint->x << " y=" << alloAlignPoint->y << endl;
 
+			// for testing
+			alloAlignPoint = closestOpponent;
 			query->egoAlignPoint = alloAlignPoint->alloToEgo(*(wm->rawSensorData->getOwnPositionVision()));
 		}
 
