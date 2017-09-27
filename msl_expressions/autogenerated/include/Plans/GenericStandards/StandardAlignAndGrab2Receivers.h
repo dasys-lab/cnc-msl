@@ -45,6 +45,8 @@ namespace alica
         double minTol;
         double tol;
         msl::InfoTime startTime;
+        int canPassCounter;
+        int canPassThreshold;
         bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                              shared_ptr<geometry::CNPoint2D> c, double tolerance,
                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);

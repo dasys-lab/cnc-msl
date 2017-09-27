@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
 
+#include  "Plans/Calibration/constraints/TestRotation1492620432380Constraints.h"
+
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleControlMaster1479905043165Constraints.h"
@@ -26,6 +28,8 @@
 #include  "Plans/Attack/TestPlans/constraints/DuelTestMaster1454506180437Constraints.h"
 
 #include  "Plans/Standards/Opponent/Penalty/constraints/OppInGamePenalty1466968232004Constraints.h"
+
+#include  "Plans/Calibration/constraints/RotationCalibrationStopWrapper1491404851815Constraints.h"
 
 #include  "Plans/Attack/constraints/Duel1450178655416Constraints.h"
 
@@ -63,11 +67,15 @@
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
 
+#include  "Plans/Calibration/constraints/RotationCalibration1467396347588Constraints.h"
+
 #include  "Plans/Attack/constraints/PassPlay1436268896671Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/WanderPlan1458553921358Constraints.h"
 
 #include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
+
+#include  "Plans/TestPlans/constraints/TestCalculationPlan1478709817405Constraints.h"
 
 #include  "Plans/TestPlans/MotorControlTest/constraints/PointToPoint1489068076224Constraints.h"
 
