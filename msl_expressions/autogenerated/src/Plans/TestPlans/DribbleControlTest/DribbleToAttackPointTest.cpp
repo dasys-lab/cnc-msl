@@ -109,7 +109,7 @@ namespace alica
 //			cout << "alloAlignPoint: x=" << alloAlignPoint->x << " y=" << alloAlignPoint->y << endl;
 
 			// for testing
-			alloAlignPoint = closestOpponent;
+//			alloAlignPoint = closestOpponent;
 			query->egoAlignPoint = alloAlignPoint->alloToEgo(*(wm->rawSensorData->getOwnPositionVision()));
 		}
 
