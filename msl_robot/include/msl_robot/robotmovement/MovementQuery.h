@@ -70,10 +70,6 @@ namespace msl
 	double fastControllerVelocity;
 
 	/**
-	 * Robot is dribbling the ball
-	 */
-	bool dribble;
-	/**
 	 * Distance when the goal is reached
 	 */
 	double snapDistance;
@@ -162,12 +158,6 @@ protected:
 	shared_ptr<geometry::CNPoint2D> circleCenterPoint;
 	shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
 	shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
-	void resetAllPIDParameters();
-	void resetRotationPDParameters();
-	void resetTransaltionPIParameters();
-	double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
-	double translationPIForDribble(double transOrt);
-	double angleCalcForDribble(double transOrt);
 
 	double controllerVelocity;
 
@@ -181,32 +171,9 @@ protected:
 	 */
 	std::queue<std::valarray<double>> pastControlInput;
 
-	void setRotationPDParameters(double pParam, double dParam);
-	void setTranslationPIParameters(double pParam, double iParam);
-
-	double curRotDribble;
-	double curTransDribble;
-
 private:
 	MSLWorldModel *wm;
 	MSLRobot *robot;
-
-	// PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
-	double pRot;
-	double dRot;
-	double rotAccStep;
-	double maxRot;
-	double lastRotDribbleErr;
-
-	// PD variables for RobotMovement::moveToPoint() and RobotMovement::translationDribblePD()
-	double maxVel;
-	double angleDeadBand;
-	double iTrans;
-	double transControlIntegralMax;
-	double pTrans;
-	double transAccStep;
-	double transDecStep;
-	double transControlIntegralDribble;
 
 	void readConfigParameters();
 };

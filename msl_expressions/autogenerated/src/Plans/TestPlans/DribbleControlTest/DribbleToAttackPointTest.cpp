@@ -114,8 +114,7 @@ namespace alica
 		}
 
 		query->rotateAroundTheBall = true;
-//		mc = rm.alignTo(query);
-		mc = rm.experimentallyAlignTo(query);
+		mc = rm.alignTo(query);
 		// use rm.alignTo() method
 		// try to combine moveToPoint and alignTo
 

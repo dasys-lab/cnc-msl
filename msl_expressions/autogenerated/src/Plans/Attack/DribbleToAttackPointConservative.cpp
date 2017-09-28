@@ -50,7 +50,6 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
-        query->dribble = true;
 
         auto bm = rm.moveToPoint(query);
 
