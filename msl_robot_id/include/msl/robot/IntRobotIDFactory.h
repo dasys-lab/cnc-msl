@@ -5,6 +5,7 @@
 #include <engine/IRobotID.h>
 #include <engine/IRobotIDFactory.h>
 
+#include <vector>
 
 namespace msl
 {
@@ -17,7 +18,7 @@ class IntRobotIDFactory : public alica::IRobotIDFactory
     IntRobotIDFactory();
     virtual ~IntRobotIDFactory();
 
-    const alica::IRobotID* create (uint8_t* idBytes, int idSize) const;
+    const alica::IRobotID* create(std::vector<uint8_t *> &robotID) const;
 };
 
 } /* namespace robot */

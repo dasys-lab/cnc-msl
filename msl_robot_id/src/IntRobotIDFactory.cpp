@@ -15,10 +15,13 @@ IntRobotIDFactory::~IntRobotIDFactory()
 {
 }
 
-const alica::IRobotID* IntRobotIDFactory::create(uint8_t *idBytes, int idSize) const
+const alica::IRobotID* IntRobotIDFactory::create(std::vector<uint8_t * > &robotID) const
 {
-	return new IntRobotID(idBytes, idSize);
+	unsigned char *_robotRosID = reinterpret_cast<unsigned char *>(robotID.data());
+	return new IntRobotID(_robotRosID, robotID.size());
 }
+
+
 
 } /* namespace robot */
 } /* namespace msl */

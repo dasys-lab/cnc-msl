@@ -54,5 +54,17 @@ bool IntRobotID::operator> (const IRobotID& other) const
 	return this->id > dynamic_cast<const IntRobotID&>(other).id;
 }
 
+std::vector<uint8_t* > IntRobotID::toByteVector() const {
+
+	std::vector<uint8_t* > bytes;
+
+    for (int i = 0; i < this->getSize(); i++)
+    {
+    	bytes.push_back(this->getRaw() + i);
+    }
+
+    return bytes;
+}
+
 } /* namespace robot */
 } /* namespace msl */
