@@ -18,7 +18,7 @@ class IntRobotIDFactory : public alica::IRobotIDFactory
     IntRobotIDFactory();
     virtual ~IntRobotIDFactory();
 
-    const alica::IRobotID* create(std::vector<uint8_t *> &robotID) const;
+    const alica::IRobotID* create(std::vector<uint8_t> &robotID) const;
 };
 
 } /* namespace robot */

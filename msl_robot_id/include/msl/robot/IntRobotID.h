@@ -29,7 +29,7 @@ class IntRobotID : public alica::IRobotID
     bool operator< (const IRobotID& other) const;
     bool operator> (const IRobotID& other) const;
 
-    std::vector<uint8_t* > toByteVector() const;
+    std::vector<uint8_t> toByteVector() const;
 
   private:
     int id;
