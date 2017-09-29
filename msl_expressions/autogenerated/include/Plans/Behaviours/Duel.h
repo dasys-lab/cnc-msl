@@ -6,7 +6,7 @@
 #include <msl_robot/robotmovement/MovementQuery.h>
 namespace geometry
 {
-    class CNPoint2D;
+    class CNPointAllo;
 }
 /*PROTECTED REGION END*/
 namespace alica

@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/Behaviours/BackroomDefence.h"
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
@@ -16,7 +15,6 @@ namespace alica
             DomainBehaviour("BackroomDefence")
     {
         /*PROTECTED REGION ID(con1454507752863) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     BackroomDefence::~BackroomDefence()
@@ -28,8 +26,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        auto alloBallPos = wm->ball->getAlloBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto alloBallPos = wm->ball->getPositionAllo();
 
         if (!ownPos || !alloBallPos)
         {
@@ -39,14 +37,15 @@ namespace alica
         // assume goalie is in the middle of the goal
         auto ownGoalMid = wm->field->posOwnGoalMid();
 
-        auto goaltoball = alloBallPos - ownGoalMid;
-        auto defenderPos = ownGoalMid + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
+        auto goaltoball = *alloBallPos - ownGoalMid;
+        auto defenderPos = ownGoalMid + (goaltoball.normalize()) * min(4300.0, goaltoball.length() - 1750.0);
+
         defenderPos = wm->field->mapOutOfOwnPenalty(defenderPos, goaltoball);
 
-        query->egoDestinationPoint = defenderPos->alloToEgo(*ownPos);
-        query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
-        query->snapDistance = 1000;
-        query->fast = true;
+        query.egoDestinationPoint = defenderPos.toEgo(*ownPos);
+        query.egoAlignPoint = alloBallPos->toEgo(*ownPos);
+        query.snapDistance = 1000;
+        query.fast = true;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);

@@ -175,7 +175,7 @@ bool Ball::haveBall()
     return hasBallIteration > 0;
 }
 
-bool Ball::ballMovedSiginficantly()
+bool Ball::ballMovedSignificantly()
 {
     static const int BALLBUFSIZE = 10;
     vector<double> ballVelAngles;

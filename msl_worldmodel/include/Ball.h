@@ -45,7 +45,7 @@ class Ball
     std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
     nonstd::optional<geometry::CNPointAllo> getAlloBallGuessPosition() const;
     int getSharedBallSupporter();
-    bool ballMovedSiginficantly();
+    bool ballMovedSignificantly();
 
     void updateHaveBall();
     void updateOnBallHypothesisList(unsigned long long imageTime);

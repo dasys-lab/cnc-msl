@@ -19,7 +19,6 @@ namespace alica
             DomainBehaviour("GetBall")
     {
         /*PROTECTED REGION ID(con1414828300860) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     GetBall::~GetBall()
@@ -31,17 +30,18 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
+        msl_actuator_msgs::MotionControl mc;
 
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        if (me == nullptr || egoBallPos == nullptr)
+        auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
+        if (!me || !egoBallPos)
         {
             return;
         }
-        auto obstacles = wm->obstacles->getAlloObstaclePoints();
+        auto obstacles = wm->obstacles->getClusteredObstaclesAlloBuffer();
         bool blocked = false;
-        msl_actuator_msgs::MotionControl mc;
-        if (obstacles != nullptr)
+
+        if (obstacles)
         {
             for (int i = 0; i < obstacles->size(); i++)
             {

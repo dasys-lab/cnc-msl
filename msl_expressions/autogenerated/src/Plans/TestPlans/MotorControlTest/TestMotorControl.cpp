@@ -1,10 +1,8 @@
-using namespace std;
 #include "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
 
 /*PROTECTED REGION ID(inccpp1482163964536) ENABLED START*/ //Add additional includes here
-#include "msl_actuator_msgs/MotionControl.h"
-#include "RawSensorData.h"
-#include "MSLWorldModel.h"
+using std::cout;
+using std::endl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -34,31 +32,31 @@ namespace alica
         {
             cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot
                     << endl;
-            start = wm->rawSensorData->getOwnPositionMotion();
-            if (start == NULL)
+            start = wm->rawSensorData->getOwnPositionMotionBuffer().getLastValidContent();
+            if (!start.has_value())
                 return;
-            goal->x = start->x + relGoalX;
-            goal->y = start->y + relGoalY;
-            goal->theta = start->theta + relGoalRot;
+            this->goal.x = start->x + relGoalX;
+            this->goal.y = start->y + relGoalY;
+            this->goal.theta = start->theta + relGoalRot;
         }
 
-        currentPos = wm->rawSensorData->getOwnPositionMotion();
-        goalPointer = goal - currentPos;
-        angleDistance = goal->theta - currentPos->theta;
+        currentPos = wm->rawSensorData->getOwnPositionMotionBuffer().getLastValidContent();
+        goalVec = goal - currentPos;
+        angleDistance = goal.theta - currentPos->theta;
         goalDistance = sqrt(
-                goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
+                goalVec.x * goalVec.x + goalVec.y * goalVec.y
                         + angleDistance * angleDistance * 500);
 
         cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance
-                << "current x " << currentPos->x << "current y " << currentPos->y << " x " << goalPointer->x << " y "
-                << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
+                << "current x " << currentPos->x << "current y " << currentPos->y << " x " << goalVec.x << " y "
+                << goalVec.y << " goal " << goal.x << " " << goal.y << endl;
 
         if (goalDistance > oldGoalDistance + 10)
         {
             if (!terminated)
             {
                 cout << "TestMotorControl::run Reached closest point to target at " << count << " with "
-                        << goalPointer->x << "," << goalPointer->y << "," << angleDistance << endl;
+                        << goalVec.x << "," << goalVec.y << "," << angleDistance << endl;
                 msl_actuator_msgs::MotionControl motorMsg;
                 motorMsg.motion.angle = 0;
                 motorMsg.motion.rotation = 0;
@@ -111,28 +109,28 @@ namespace alica
     void TestMotorControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1482163964536) ENABLED START*/ //Add additional options here
-        relGoalX = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalX", NULL);
-        relGoalY = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalY", NULL);
-        relGoalRot = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalRot", NULL) * M_PI;
+        this->relGoalX = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalX", NULL);
+        this->relGoalY = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalY", NULL);
+        this->relGoalRot = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.GoalRot", NULL) * M_PI;
 
-        while (relGoalRot > M_PI)
+        while (this->relGoalRot > M_PI)
         {
-            relGoalRot -= 2 * M_PI;
+            this->relGoalRot -= 2 * M_PI;
         }
-        while (relGoalRot <= -M_PI)
+        while (this->relGoalRot <= -M_PI)
         {
-            relGoalRot += 2 * M_PI;
+            this->relGoalRot += 2 * M_PI;
         }
 
-        straight = (*sc)["MotorControlTest"]->get<bool>("MotorControlTest.straight", NULL);
-        testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
+        this->straight = (*sc)["MotorControlTest"]->get<bool>("MotorControlTest.straight", NULL);
+        this->testSpeed = (*sc)["MotorControlTest"]->get<int>("MotorControlTest.testSpeed", NULL);
 
-        abortTime = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.abortTime", NULL)
+        this->abortTime = (*sc)["MotorControlTest"]->get<double>("MotorControlTest.abortTime", NULL)
                 * sqrt(relGoalX * relGoalX + relGoalY * relGoalY) / testSpeed;
 
-        count = 0;
-        terminated = false;
-        goal = make_shared<geometry::CNPosition>();
+        this->count = 0;
+        this->terminated = false;
+//        this->goal = make_shared<geometry::CNPosition>();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1482163964536) ENABLED START*/ //Add additional methods here

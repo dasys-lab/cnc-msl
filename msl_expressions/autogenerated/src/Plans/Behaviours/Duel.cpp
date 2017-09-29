@@ -42,7 +42,7 @@ void Duel::run(void *msg)
     auto egoBallPos = wm->ball->getPositionEgo();
 
     auto egoAlignPoint = geometry::CNPointAllo(fieldLength / 2, 0).toEgo(*ownPos);
-    geometry::CNPointAllo oppGoal = wm->field->posOppGoalMid();
+    auto oppGoal = wm->field->posOppGoalMid();
     msl_actuator_msgs::MotionControl mc;
     msl_actuator_msgs::BallHandleCmd bhc;
 
@@ -185,9 +185,7 @@ void Duel::run(void *msg)
             hadClosestOpp.at(itcounter % 10) = false;
             itcounter++;
 
-            // TODO hysteresis of last closest opps because sensor info might be faulty??
 
-            // attempt at weighted analysis , not sure if working
             int counter = 0;
 
             for (int i = 0; i < hadClosestOpp.size(); i++)

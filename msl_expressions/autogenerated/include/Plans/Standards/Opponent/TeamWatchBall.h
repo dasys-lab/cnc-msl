@@ -3,7 +3,9 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457015532224) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
+#include <cnc_geometry/CNPositionEgo.h>
+#include <cnc_geometry/CNPointEgo.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,14 +15,18 @@ namespace alica
         TeamWatchBall();
         virtual ~TeamWatchBall();
         virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1457015532224) ENABLED START*/ //Add additional public methods here
-        int maxSend;
-        double moveDistance;
-        shared_ptr<geometry::CNPoint2D> ballPos;
 
+        /*PROTECTED REGION ID(pub1457015532224) ENABLED START*/ //Add additional public methods here
+
+        nonstd::optional<geometry::CNPointEgo> ballPos;
+
+        double moveDistance;
+
+        int maxSend;
         int ballMovedOccurrences;
         int maxBallMovedOccurrences;
         int itcounter;
+
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();

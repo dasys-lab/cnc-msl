@@ -3,12 +3,12 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467039782450) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPoint3D.h"
+//#include "container/CNPoint2D.h"
+//#include "container/CNPoint3D.h"
 #include "MSLFootballField.h"
 #include <sstream>
-#include <container/CNVelocity2D.h>
-#include <GeometryCalculator.h>
+//#include <container/CNVelocity2D.h>
+//#include <GeometryCalculator.h>
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_actuator_msgs/KickControl.h"
 #include "msl_robot/robotmovement/RobotMovement.h"
@@ -56,11 +56,11 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1467039782450) ENABLED START*/ //Add additional private methods here
-        msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-                                                              shared_ptr<geometry::CNPoint2D> egoBallPos,
-                                                              double angleTolerance, double ballAngleTolerance);
-        void readConfigParameters();
-        shared_ptr<geometry::CNPoint2D> alloTarget;
+//        msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+//                                                              shared_ptr<geometry::CNPoint2D> egoBallPos,
+//                                                              double angleTolerance, double ballAngleTolerance);
+//        void readConfigParameters();
+//        shared_ptr<geometry::CNPoint2D> alloTarget;
 //        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
