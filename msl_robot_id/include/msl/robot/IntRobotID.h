@@ -1,6 +1,6 @@
 #pragma once
 
-#include <engine/IRobotID.h>
+#include <supplementary/IAgentID.h>
 
 #include <iostream>
 
@@ -9,7 +9,7 @@ namespace msl
 namespace robot
 {
 
-class IntRobotID : public alica::IRobotID
+class IntRobotID : public supplementary::IAgentID
 {
 	friend struct std::hash<msl::robot::IntRobotID>;
   public:
@@ -24,10 +24,10 @@ class IntRobotID : public alica::IRobotID
         os << obj.id;
         return os;
     }
-    bool operator== ( const IRobotID& obj ) const;
-    bool operator!= ( const IRobotID& obj ) const;
-    bool operator< (const IRobotID& other) const;
-    bool operator> (const IRobotID& other) const;
+    bool operator== ( const supplementary::IAgentID& obj ) const;
+    bool operator!= ( const supplementary::IAgentID& obj ) const;
+    bool operator< (const supplementary::IAgentID& other) const;
+    bool operator> (const supplementary::IAgentID& other) const;
 
     std::vector<uint8_t> toByteVector() const;
 

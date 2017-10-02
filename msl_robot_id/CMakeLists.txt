@@ -9,12 +9,12 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
         add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED alica_engine)
+find_package(catkin REQUIRED agent_id)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_robot_id
-  CATKIN_DEPENDS alica_engine
+  CATKIN_DEPENDS agent_id
 #  DEPENDS system_lib
 )
 

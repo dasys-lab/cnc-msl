@@ -1,5 +1,7 @@
 #include "msl/robot/IntRobotID.h"
 
+#include <supplementary/IAgentID.h>
+
 namespace msl
 {
 namespace robot
@@ -34,22 +36,22 @@ int IntRobotID::getSize() const
 	return sizeof(int);
 };
 
-bool IntRobotID::operator==(const IRobotID &other) const
+bool IntRobotID::operator==(const supplementary::IAgentID &other) const
 {
     return this->id == dynamic_cast<const IntRobotID&>(other).id;
 }
 
-bool IntRobotID::operator!=(const IRobotID &other) const
+bool IntRobotID::operator!=(const supplementary::IAgentID &other) const
 {
     return this->id != dynamic_cast<const IntRobotID&>(other).id;
 }
 
-bool IntRobotID::operator<(const IRobotID &other) const
+bool IntRobotID::operator<(const supplementary::IAgentID &other) const
 {
     return this->id < dynamic_cast<const IntRobotID&>(other).id;
 }
 
-bool IntRobotID::operator> (const IRobotID& other) const
+bool IntRobotID::operator> (const supplementary::IAgentID& other) const
 {
 	return this->id > dynamic_cast<const IntRobotID&>(other).id;
 }
