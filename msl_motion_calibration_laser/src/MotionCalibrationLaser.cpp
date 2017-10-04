@@ -29,7 +29,7 @@ MotionCalibrationLaser::MotionCalibrationLaser(int argc, char **argv)
     subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10, &MotionCalibrationLaser::onScan, (MotionCalibrationLaser *)this);
     this->filteredPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::PoseArray>("/filteredScan", 10));
     this->resultsPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::PoseArray>("/laserResults", 10));
-    this->positionPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::PoseStamped>("/positionLaserScanner", 10));
+    this->positionPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry::CNPoint2D>("/positionLaserScanner", 10));
 
     initialIntensityThreshold = (*sc)["LaserLocalization"]->get<double>("LaserLocalization.initialIntensityThreshold", NULL);
 }
@@ -120,22 +120,22 @@ void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr &laserS
     }
     auto alloPos = calculateCoordinatesInPillarSystem(pillarCenters);
 
-    geometry_msgs::Pose pose;
-    pose.position = *alloPos.get();
-    geometry_msgs::PoseStamped poseStamped;
-    poseStamped.pose = pose;
+    //geometry_msgs::Pose pose;
+    //pose.position = *alloPos.get();
+    //geometry_msgs::PoseStamped poseStamped;
+    //poseStamped.pose = pose;
     cout << endl;
 cout << "allopos: " << alloPos->x << "/" << alloPos->y << " (" << alloPos->length() << "m from first pillar)" << endl;
     cout << clock() - begin_time << " µs" << endl;
 
 #endif
 
-    poseStamped.header.frame_id = "laser";
+    //poseStamped.header.frame_id = "laser";
     resultPoses.header.frame_id = "laser";   // for debugging purposes
     filteredPoses.header.frame_id = "laser"; // for debugging purposes
     resultsPublisher->publish(resultPoses);
     filteredPublisher->publish(filteredPoses);
-    positionPublisher->publish(poseStamped);
+    positionPublisher->publish(alloPos);
 }
 
 shared_ptr<geometry::CNPoint2D> MotionCalibrationLaser::calculateCoordinatesInPillarSystem(vector<std::shared_ptr<geometry::CNPoint2D>> &pillarCenters)

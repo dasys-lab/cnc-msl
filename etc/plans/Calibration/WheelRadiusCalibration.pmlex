@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130066326"/>
+    <value xPos="34" yPos="140" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130066325"/>
+    <value width="657" height="443"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130066327"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130150009"/>
+    <value xPos="138" yPos="137" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130218746"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130223303"/>
+    <value xPos="350" yPos="120" width="171" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507130989734"/>
+    <value xPos="485" yPos="203" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507131118429"/>
+    <value>
+      <bendpoints xPos="428" yPos="284"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507131121008"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveForward.beh#1507131285711"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RestartMotion.beh#1472657588489"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507131359921"/>
+    <value xPos="253" yPos="19" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507131365490"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WheelRadiusCalibration.pml#1507131367548"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MeasureAndConfigure.beh#1507131484850"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
