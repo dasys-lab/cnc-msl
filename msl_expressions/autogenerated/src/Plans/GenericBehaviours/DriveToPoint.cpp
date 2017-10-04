@@ -16,6 +16,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
         query = make_shared<msl::MovementQuery>();
+        this->defaultTranslation = 1000;
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
@@ -29,7 +30,7 @@ namespace alica
         msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
-        if (!me.operator bool())
+        if (me == nullptr)
         {
             return;
         }

@@ -60,6 +60,7 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     void onLowShovelSelected(bool checked);
     void onHighShovelSelected(bool checked);
     void onBallHandleCheckBoxToggled(int checkState);
+    void onPTControllerCheckBoxToggled(int checkState);
 
   private:
     ros::NodeHandle *rosNode;
@@ -74,6 +75,7 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     short kickPower;
     int robotId;
     bool useBallHandle;
+    bool usePTController;
     short shovelIdx;
     double translation;
     double rotation;

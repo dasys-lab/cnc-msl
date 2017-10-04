@@ -35,6 +35,13 @@ namespace alica
                                                                                          NULL);
         this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
         this->canPass = true;
+        this->canPassCounter = 1;
+        // will be set in intialize parameters ...
+        this->maxTurnAngle = 0;
+        this->ballRadius = 0;
+        this->minOppDist = 0;
+        this->passCorridorWidth = 0;
+        this->canPassThreshold = 0;
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint2Receivers::~StandardAlignToPoint2Receivers()
@@ -173,14 +180,26 @@ namespace alica
             }
 
         }
-        shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
+
+        // Hack coimbra 17
         if (canPass)
         {
+            this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
+        }
+        else
+        {
+            this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
+        }
+        shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
+        if (this->canPassCounter > this->canPassThreshold)
+        {
+            this->canPassThreshold = -2;
             cout << "SAAG2R: aiming to receiver" << endl;
             receiverPos = recPos1;
         }
         else
         {
+            this->canPassThreshold = 2;
             cout << "SAAG2R: aiming to alternative receiver" << endl;
             receiverPos = recPos2;
         }
@@ -216,7 +235,8 @@ namespace alica
         this->m_Query = make_shared<MovementQuery>();
         this->alloReceiverTarget.reset();
         this->oldBallPos.reset();
-
+        this->canPassCounter = 1;
+        this->canPassThreshold = 0;
         string tmp;
         bool success = true;
         try

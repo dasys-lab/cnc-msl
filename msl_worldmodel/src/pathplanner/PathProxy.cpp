@@ -309,6 +309,7 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
         netMsg.linePoints.push_back(info);
     }
     voroniPub.publish(netMsg);
+	return;
 }
 
 /**
