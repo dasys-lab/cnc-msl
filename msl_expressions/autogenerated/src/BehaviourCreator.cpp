@@ -11,6 +11,8 @@ using namespace std;
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
+#include  "Plans/Calibration/DriveForward.h"
+
 #include  "Plans/Penalty/DriveToPenaltyStart.h"
 
 #include  "Plans/GenericBehaviours/Parking.h"
@@ -167,6 +169,8 @@ using namespace std;
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
+#include  "Plans/Calibration/MeasureAndConfigure.h"
+
 #include  "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
@@ -233,6 +237,11 @@ namespace alica
             case 1431531542052:
 
                 return make_shared<PenaltyAlignAndShoot>();
+                break;
+
+            case 1507131285711:
+
+                return make_shared<DriveForward>();
                 break;
 
             case 1459609537461:
@@ -683,6 +692,11 @@ namespace alica
             case 1456756164754:
 
                 return make_shared<RobotTest>();
+                break;
+
+            case 1507131484850:
+
+                return make_shared<MeasureAndConfigure>();
                 break;
 
             case 1479905216821:

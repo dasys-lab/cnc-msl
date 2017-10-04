@@ -44,6 +44,8 @@
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
+#include  "Plans/Calibration/WheelRadiusCalibration1507130066325.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -669,6 +671,36 @@ namespace alica
             case 1474288540200:
 
                 return make_shared<TransitionCondition1474288540200>();
+
+                break;
+
+            case 1507130219773:
+
+                return make_shared<TransitionCondition1507130219773>();
+
+                break;
+
+            case 1507131120023:
+
+                return make_shared<TransitionCondition1507131120023>();
+
+                break;
+
+            case 1507131122842:
+
+                return make_shared<TransitionCondition1507131122842>();
+
+                break;
+
+            case 1507131367115:
+
+                return make_shared<TransitionCondition1507131367115>();
+
+                break;
+
+            case 1507131368562:
+
+                return make_shared<TransitionCondition1507131368562>();
 
                 break;
 

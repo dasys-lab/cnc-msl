@@ -45,6 +45,8 @@
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
+#include  "Plans/Calibration/WheelRadiusCalibration1507130066325.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -239,6 +241,10 @@ namespace alica
 
             case 1442919721161:
                 return make_shared<UtilityFunction1442919721161>();
+                break;
+
+            case 1507130066325:
+                return make_shared<UtilityFunction1507130066325>();
                 break;
 
             case 1434046634656:

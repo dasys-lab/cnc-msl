@@ -45,6 +45,8 @@
 
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
 
+#include  "Plans/Calibration/constraints/WheelRadiusCalibration1507130066325Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/constraints/OwnInGamePenalty1466936775181Constraints.h"
