@@ -22,6 +22,10 @@ class IntRobotIDFactory : public supplementary::IAgentIDFactory
     virtual ~IntRobotIDFactory();
 
     const supplementary::IAgentID* create(std::vector<uint8_t> &robotID) const;
+    const supplementary::IAgentID* generateID() const;
+
+  private:
+
 };
 
 } /* namespace robot */

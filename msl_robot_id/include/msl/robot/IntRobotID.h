@@ -21,7 +21,7 @@ class IntRobotID : public supplementary::IAgentID
 
     friend std::ostream& operator<<(std::ostream& os, const msl::robot::IntRobotID& obj)
     {
-        os << obj.id;
+        os << std::to_string(obj.id);
         return os;
     }
     bool operator== ( const supplementary::IAgentID& obj ) const;
