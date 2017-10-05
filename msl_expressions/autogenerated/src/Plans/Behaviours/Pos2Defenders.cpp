@@ -3,13 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1444834678756) ENABLED START*/ //Add additional includes here
 #include <limits>
-#include <engine/RunningPlan.h>
-#include <engine/Assignment.h>
-#include <msl_robot/robotmovement/RobotMovement.h>
-#include <Ball.h>
-#include <Robots.h>
-#include <MSLWorldModel.h>
-#include <MSLFootballField.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,7 +13,6 @@ namespace alica
             DomainBehaviour("Pos2Defenders")
     {
         /*PROTECTED REGION ID(con1444834678756) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos2Defenders::~Pos2Defenders()
@@ -31,35 +24,39 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1444834678756) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        shared_ptr < geometry::CNPoint2D > alloBallPos = nullptr;
-        alloBallPos = wm->ball->getAlloBallPosition();
+        auto alloBallPos = wm->ball->getPositionAllo();
 
-        if (alloBallPos == nullptr)
+        if (!alloBallPos)
         {
-
-            alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
+            //assume ball is in the middle (this is at least true for the beginning phase of kick off standard)
+            alloBallPos = CNPointAllo(0, 0);
         }
 
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        nonstd::optional<std::vector<geometry::CNPointAllo>> additionalPoints;
         // add alloBall to path planning
-        additionalPoints->push_back(alloBallPos);
+        additionalPoints->push_back(*alloBallPos);
 
-        this->keeperPos = wm->robots->teammates.getTeamMatePosition(keeperId);
+        this->keeperPos = wm->robots->teammates.getTeammatePositionBuffer(keeperId).getLastValidContent();
         int ownId = this->wm->getOwnId();
         auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
         auto robotsInOwnEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getRobotsWorking(ownEp);
-        auto firstDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-2500, -600);
-        auto secondDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-4000, 2300);
-        auto firstDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[0]);
+        auto firstDefPos = alloBallPos + CNPointAllo(-2500, -600);
+        auto secondDefPos = alloBallPos + CNPointAllo(-4000, 2300);
+        auto firstDef = wm->robots->teammates.getTeammatePositionBuffer((*robotsInOwnEp)[0]).getLastValidContent();
         msl_actuator_msgs::MotionControl mc;
 
+        if(!firstDef) {
+            return;
+        }
         if (robotsInOwnEp->size() == 2)
         {
 
-            auto secondDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[1]);
+            auto secondDef = wm->robots->teammates.getTeammatePositionBuffer((*robotsInOwnEp)[1]).getLastValidContent();
+            if(!secondDef) {
+                return;
+            }
             //first Defender is closer to first position
-            if (firstDef->distanceTo(firstDefPos) < secondDef->distanceTo(firstDefPos))
+            if ((firstDef->distanceTo(*firstDefPos)) < secondDef->distanceTo(*firstDefPos))
             {
                 //i am first Defender
                 if (ownId == (*robotsInOwnEp)[0])
@@ -68,9 +65,9 @@ namespace alica
 //                    mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
 //                                                                  alloBallPos->alloToEgo(*firstDef), 0,
 //                                                                  additionalPoints);
-                    query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
-                    query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
-                    query->additionalPoints = additionalPoints;
+                    query.egoDestinationPoint = firstDefPos->toEgo(*firstDef);
+                    query.egoAlignPoint = alloBallPos->toEgo(*firstDef);
+                    query.additionalPoints = additionalPoints;
                     mc = rm.moveToPoint(query);
 
                 }
@@ -79,9 +76,9 @@ namespace alica
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
 //                                                                  alloBallPos->alloToEgo(*secondDef), 0,
 //                                                                  additionalPoints);
-                    query->egoDestinationPoint = secondDefPos->alloToEgo(*secondDef);
-                    query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
-                    query->additionalPoints = additionalPoints;
+                    query.egoDestinationPoint = secondDefPos->toEgo(*secondDef);
+                    query.egoAlignPoint = alloBallPos->toEgo(*secondDef);
+                    query.additionalPoints = additionalPoints;
                     mc = rm.moveToPoint(query);
                 }
 
@@ -95,8 +92,8 @@ namespace alica
 
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*firstDef),
 //                                                                  alloBallPos->alloToEgo(*firstDef), 0);
-                    query->egoDestinationPoint = secondDefPos->alloToEgo(*firstDef);
-                    query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
+                    query.egoDestinationPoint = secondDefPos->toEgo(*firstDef);
+                    query.egoAlignPoint = alloBallPos->toEgo(*firstDef);
                     mc = rm.moveToPoint(query);
 
                 }
@@ -104,8 +101,8 @@ namespace alica
                 {
 //                    mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*secondDef),
 //                                                                  alloBallPos->alloToEgo(*secondDef), 0);
-                    query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
-                    query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
+                    query.egoDestinationPoint = firstDefPos->toEgo(*secondDef);
+                    query.egoAlignPoint = alloBallPos->toEgo(*secondDef);
                     mc = rm.moveToPoint(query);
                 }
 
@@ -116,8 +113,8 @@ namespace alica
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
 //                                                          alloBallPos->alloToEgo(*firstDef), 0);
-            query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
-            query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
+            query.egoDestinationPoint = firstDefPos->toEgo(*firstDef);
+            query.egoAlignPoint = alloBallPos->toEgo(*firstDef);
             mc = rm.moveToPoint(query);
         }
 
@@ -140,15 +137,15 @@ namespace alica
         double smallestDist = std::numeric_limits<double>::max();
         for (auto pos : *positions)
         {
-            if (pos->second != nullptr)
+            /* check is obsolete as only existing positions are returned since NiceGeometry
+             if (pos.second != nullptr)*/
+
+            double tmpDist = pos.second.distanceTo(ownGoalMid);
+            if (tmpDist < smallestDist)
             {
-                double tmpDist = pos->second->distanceTo(ownGoalMid);
-                if (tmpDist < smallestDist)
-                {
-                    smallestDist = tmpDist;
-                    this->keeperId = pos->first;
-                    this->keeperPos = pos->second;
-                }
+                smallestDist = tmpDist;
+                this->keeperId = pos.first;
+                this->keeperPos = pos.second;
             }
         }
 

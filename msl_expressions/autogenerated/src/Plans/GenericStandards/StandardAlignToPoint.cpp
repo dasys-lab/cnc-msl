@@ -11,6 +11,8 @@ using namespace std;
 #include <Robots.h>
 #include <engine/Assignment.h>
 #include <MSLWorldModel.h>
+using geometry::CNPointAllo;
+using geometry::CNPointEgo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,13 +29,15 @@ namespace alica
         this->positionDistanceTolerance = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                         "positionDistanceTolerance",
                                                                                         NULL);
-        this->executerDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+        this->executorDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                      "executerDistanceToBall", NULL);
         this->receiverDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                      "receiverDistanceToBall", NULL);
         this->receiverBallMovedThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                          "receiverBallMovedThreshold",
                                                                                          NULL);
+        this->alloReceiverTarget = nonstd::make_optional<CNPointAllo>();
+        this->oldBallPos = nonstd::make_optional<CNPointAllo>();
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint::~StandardAlignToPoint()
@@ -44,25 +48,25 @@ namespace alica
     void StandardAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
 
         // return if necessary information is missing
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
 
         // Create allo ball
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
 
         // Create additional points for path planning
-        auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        nonstd::optional<std::vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional(vector<CNPointAllo>());
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        shared_ptr < geometry::CNPoint2D > egoTarget;
-        MotionControl mc;
-        RobotMovement rm;
+        CNPointEgo egoTarget;
+        msl_actuator_msgs::MotionControl mc;
+        msl::RobotMovement rm;
         if (!isReceiver)
         { // robot is executor
 
@@ -88,20 +92,20 @@ namespace alica
             }
 
             // get receiver position by id
-            auto receiverPos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (receiverPos == nullptr)
+            auto receiverPos = wm->robots->teammates.getTeammatePositionBuffer(ids->at(0)).getLastValidContent();
+            if (!receiverPos)
             {
                 return;
             }
 
             // calculate target executerDistanceToBall away from the ball and on a line with the receiver
-            egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
+            egoTarget = (alloBall + ((alloBall - receiverPos).normalize() * this->executorDistanceToBall)).toEgo(
                     *ownPos);
 
             // ask the path planner how to get there
-            this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
-            this->m_Query->additionalPoints = additionalPoints;
+            this->m_Query.egoDestinationPoint = egoTarget;
+            this->m_Query.egoAlignPoint = receiverPos->getPoint().toEgo(*ownPos);
+            this->m_Query.additionalPoints = additionalPoints;
             mc = rm.moveToPoint(m_Query);
         }
         else
@@ -112,30 +116,30 @@ namespace alica
              * we don't need the default positioning anymore.
              * -- Greetings Stopfer :P
              */
-            if (oldBallPos == nullptr)
+            if (!this->oldBallPos)
             {
                 oldBallPos = alloBall;
             }
-            if (alloReceiverTarget == nullptr || oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
+            if (!alloReceiverTarget || oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
             { // recalculate alloReceiverTarget if the ball moved more than "receiverBallMovedThreshold" mm
 
-                oldBallPos = alloBall;
+                oldBallPos = nonstd::make_optional<CNPointAllo>(alloBall);
 
                 //calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
-                alloReceiverTarget = (alloBall + (alloBall->normalize() * -this->receiverDistanceToBall));
+                alloReceiverTarget = nonstd::make_optional<CNPointAllo>(alloBall + (alloBall.normalize() * -this->receiverDistanceToBall));
             }
 
             // ask the path planner how to get there
-            egoTarget = alloReceiverTarget->alloToEgo(*ownPos);
-            this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = egoBallPos;
-            this->m_Query->additionalPoints = additionalPoints;
+            egoTarget = alloReceiverTarget->toEgo(*ownPos);
+            this->m_Query.egoDestinationPoint = egoTarget;
+            this->m_Query.egoAlignPoint = egoBallPos;
+            this->m_Query.additionalPoints = additionalPoints;
             mc = rm.moveToPoint(m_Query);
         }
 
         // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < this->positionDistanceTolerance
-                && fabs(egoBallPos->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
+        if (egoTarget.length() < this->positionDistanceTolerance
+                && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < this->alignAngleTolerance)
         {
             this->setSuccess(true);
         }
@@ -146,7 +150,6 @@ namespace alica
     void StandardAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
-        this->m_Query = make_shared<MovementQuery>();
         this->alloReceiverTarget.reset();
         this->oldBallPos.reset();
 

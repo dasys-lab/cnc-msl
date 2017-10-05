@@ -49,15 +49,15 @@ namespace alica
         }
 
         // get some data and make some checks
-        auto motion = wm->rawSensorData->getOwnVelocityMotion();
-        shared_ptr < geometry::CNPoint2D > ball = wm->ball->getEgoBallPosition();
+        auto motion = wm->rawSensorData->getOwnVelocityMotionBuffer().getLastValidContent();
+        auto ball = wm->ball->getPositionEgo();
 
         double l = 0;
         double r = 0;
         double orthoL = 0;
         double orthoR = 0;
         double speed = 0;
-        if (motion == nullptr)
+        if (!motion)
         {
             return;
         }
@@ -80,7 +80,7 @@ namespace alica
 //            cout << "DribbleControl: speedX:\t" << speedX << endl;
 //            cout << "DribbleControl: speedY:\t" << speedY << endl;
 
-            //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
+            //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation groeßer bzw kleiner 1/-1
             double rotation = motion->rotation;
 
             if (rotation < 0)

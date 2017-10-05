@@ -13,6 +13,8 @@ using namespace std;
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
+using geometry::CNPointEgo;
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -32,15 +34,15 @@ namespace alica
     void GenericExecutePass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1465040441324) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
 
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
+        CNPointEgo egoAlignPoint;
         EntryPoint* ep = getParentEntryPoint(taskName);
         int id = -1;
         if (ep != nullptr)
@@ -55,14 +57,21 @@ namespace alica
             int id = ids->at(0);
             if (id != -1)
             {
-                auto pos = wm->robots->teammates.getTeamMatePosition(id);
-                egoAlignPoint = pos->getPoint()->alloToEgo(*ownPos);
+                auto pos = wm->robots->teammates.getTeammatePositionBuffer(id).getLastValidContent();
+                if (pos)
+                {
+                    egoAlignPoint = pos->getPoint().toEgo(*ownPos);
+                }
+                else
+                {
+                    egoAlignPoint = CNPointAllo(0, 0).toEgo(*ownPos);
+                }
             }
         }
         else
         {
-            shared_ptr < geometry::CNPoint2D > alloAlignPoint = make_shared < geometry::CNPoint2D > (0, 0);
-            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+            CNPointAllo alloAlignPoint = CNPointAllo(0, 0);
+            egoAlignPoint = alloAlignPoint.toEgo(*ownPos);
         }
 
         /*msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
@@ -77,12 +86,12 @@ namespace alica
 
         msl_helper_msgs::PassMsg pm;
         pm.validFor = 2000000000ul;
-        auto dest = make_shared < geometry::CNPoint2D > (-1, 0);
-        dest = dest * egoAlignPoint->length();
-        dest = dest->egoToAllo(*ownPos);
+        auto dest = CNPointEgo(-1, 0);
+        dest = dest * egoAlignPoint.length();
+        dest = dest.toAllo(*ownPos);
 
-        pm.destination.x = dest->x;
-        pm.destination.y = dest->y;
+        pm.destination.x = dest.x;
+        pm.destination.y = dest.y;
         pm.origin.x = ownPos->x;
         pm.origin.y = ownPos->y;
         pm.receiverID = id;

@@ -3,10 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1433949970592) ENABLED START*/ //Add additional includes here
-using namespace msl;
+#include <nonstd/optional.hpp>
 namespace geometry
 {
-    class CNPoint2D;
+    class CNPointAllo;
 }
 namespace msl
 {
@@ -34,12 +34,12 @@ namespace alica
 
         double alignAngleTolerance;
         double positionDistanceTolerance;
-        double executerDistanceToBall;
+        double executorDistanceToBall;
         double receiverDistanceToBall;
         double receiverBallMovedThreshold;
-        shared_ptr<MovementQuery> m_Query;
-        shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
-        shared_ptr<geometry::CNPoint2D> oldBallPos;
+        msl::MovementQuery m_Query;
+        nonstd::optional<geometry::CNPointAllo> alloReceiverTarget;
+        nonstd::optional<geometry::CNPointAllo> oldBallPos;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
