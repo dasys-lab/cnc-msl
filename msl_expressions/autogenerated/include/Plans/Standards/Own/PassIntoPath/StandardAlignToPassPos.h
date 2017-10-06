@@ -26,7 +26,7 @@ namespace alica
         vector<double> result;
         double maxVel;
         int iterationCount;
-        shared_ptr<msl::MovementQuery> movQuery;
+        msl::MovementQuery movQuery;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

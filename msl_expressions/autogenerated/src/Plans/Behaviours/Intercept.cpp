@@ -1,26 +1,25 @@
-//using namespace std;
-//#include "Plans/Behaviours/Intercept.h"
-//
-///*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
-//#include <Ball.h>
-//#include <RawSensorData.h>
-//#include <Game.h>
-//#include <msl_robot/kicker/Kicker.h>
-//#include <pathplanner/PathProxy.h>
-//#include <container/CNVelocity2D.h>
-//#include <msl_robot/MSLRobot.h>
-//#include <msl_robot/robotmovement/RobotMovement.h>
-//#include <msl_robot/robotmovement/MovementQuery.h>
-//#include <pathplanner/PathPlannerQuery.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1458757170147) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    Intercept::Intercept() :
-//            DomainBehaviour("Intercept")
-//    {
-//        /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/Behaviours/Intercept.h"
+
+/*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <Game.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <pathplanner/PathProxy.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <pathplanner/PathPlannerQuery.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1458757170147) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    Intercept::Intercept() :
+            DomainBehaviour("Intercept")
+    {
+        /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
 //        sc = supplementary::SystemConfig::getInstance();
 //        pp = msl::PathProxy::getInstance();
 //
@@ -44,17 +43,17 @@
 //        maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 //
 //        query = make_shared<msl::MovementQuery>();
-//        /*PROTECTED REGION END*/
-//    }
-//    Intercept::~Intercept()
-//    {
-//        /*PROTECTED REGION ID(dcon1458757170147) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void Intercept::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-//        // ACQUIRE NECESSARY DATA
+        /*PROTECTED REGION END*/
+    }
+    Intercept::~Intercept()
+    {
+        /*PROTECTED REGION ID(dcon1458757170147) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void Intercept::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
+        // ACQUIRE NECESSARY DATA
 //        auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
 //        msl_actuator_msgs::MotionControl mc;
 //        if (ownPos == nullptr)
@@ -227,18 +226,18 @@
 //        {
 //            this->setSuccess(true);
 //        }
-//        /*PROTECTED REGION END*/
-//    }
-//    void Intercept::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void Intercept::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
 //        lastDistErr = 0;
 //        distIntErr = 0;
 //
 //        lastRotErr = 0;
 //        rotIntErr = 0;
-//        /*PROTECTED REGION END*/
-//    }
-///*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
-///*PROTECTED REGION END*/
-//} /* namespace alica */
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */

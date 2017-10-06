@@ -12,6 +12,7 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,14 +22,11 @@ namespace alica
             DomainBehaviour("BouncePassShoot")
     {
         /*PROTECTED REGION ID(con1459357144291) ENABLED START*/ //Add additional options here
-        ownPos = nullptr;
-        egoBallPos = nullptr;
         planName = "";
         teamMateTaskName = "";
         receiver = nullptr;
         counter = 0;
         driveSlowSpeed = 200.0;
-        query = make_shared<msl::MovementQuery>();
 
         /*PROTECTED REGION END*/
     }
@@ -42,39 +40,44 @@ namespace alica
         /*PROTECTED REGION ID(run1459357144291) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        ownPos = wm->rawSensorData->getOwnPositionVision(); //WM.OwnPositionCorrected;
-        egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); //WM.OwnPositionCorrected;
+        auto egoBallPos = wm->ball->getPositionEgo();
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
             mc = rm.driveRandomly(2000.0);
             send(mc);
             return;
         }
 
-        if (egoBallPos == nullptr)
+        if (!egoBallPos)
         {
             return;
         }
         auto robots = robotsInEntryPointOfHigherPlan(receiver);
-        shared_ptr < geometry::CNPosition > matePos = nullptr;
+        nonstd::optional<CNPointAllo> matePos = nonstd::nullopt;
         for (int rob : *robots)
         {
-            matePos = wm->robots->teammates.getTeamMatePosition(rob);
-            break;
+            matePos = wm->robots->teammates.getTeammatePositionBuffer(rob).getLastValidContent();
+            if (matePos)
+            {
+                break;
+            } else if (rob == robots->at(robots->size()-1)) {
+                return;
+            }
         }
-        auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
-        auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, 0);
+        auto egoMatePos = matePos->toEgo(*ownPos);
+        auto centerOppGoal = CNPointAllo(wm->field->getFieldLength() / 2, 0);
 
         //this might only need to be WorldHelper.HaveBall
         if (!wm->ball->haveBallDribble(false))
         {
             // removed method with new  moveToPoint method with Query-Object
 //            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
-            query->egoDestinationPoint = egoBallPos;
-            query->egoAlignPoint = egoMatePos;
+            query.egoDestinationPoint = egoBallPos;
+            query.egoAlignPoint = egoMatePos;
             mc = rm.moveToPoint(query);
             mc.motion.translation = driveSlowSpeed;
 

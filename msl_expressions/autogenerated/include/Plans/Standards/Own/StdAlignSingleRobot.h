@@ -3,11 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467385758084) ENABLED START*/ //Add additional includes here
-using namespace msl;
-namespace geometry
-{
-    class CNPoint2D;
-}
 namespace msl
 {
     class MovementQuery;
@@ -29,8 +24,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1467385758084) ENABLED START*/ //Add additional private methods here
-        shared_ptr<MovementQuery> m_Query;
-        double executerDistanceToBall;
+        msl::MovementQuery m_Query;
+        double executorDistanceToBall;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

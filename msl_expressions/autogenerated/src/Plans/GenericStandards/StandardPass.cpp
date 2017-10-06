@@ -1,38 +1,38 @@
-//using namespace std;
-//#include "Plans/GenericStandards/StandardPass.h"
-//
-///*PROTECTED REGION ID(inccpp1435760160067) ENABLED START*/ //Add additional includes here
-//#include "msl_robot/robotmovement/RobotMovement.h"
-//#include "engine/model/EntryPoint.h"
-//#include "engine/RunningPlan.h"
-//#include "engine/Assignment.h"
-//#include "engine/model/Plan.h"
-//#include <RawSensorData.h>
-//#include <Ball.h>
-//#include <Robots.h>
-//#include <msl_helper_msgs/PassMsg.h>
-//#include <msl_robot/MSLRobot.h>
-//#include <msl_robot/kicker/Kicker.h>
-//#include <MSLWorldModel.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1435760160067) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    StandardPass::StandardPass() :
-//            DomainBehaviour("StandardPass")
-//    {
-//        /*PROTECTED REGION ID(con1435760160067) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    StandardPass::~StandardPass()
-//    {
-//        /*PROTECTED REGION ID(dcon1435760160067) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardPass::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1435760160067) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/GenericStandards/StandardPass.h"
+
+/*PROTECTED REGION ID(inccpp1435760160067) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "engine/model/EntryPoint.h"
+#include "engine/RunningPlan.h"
+#include "engine/Assignment.h"
+#include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <MSLWorldModel.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1435760160067) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    StandardPass::StandardPass() :
+            DomainBehaviour("StandardPass")
+    {
+        /*PROTECTED REGION ID(con1435760160067) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    StandardPass::~StandardPass()
+    {
+        /*PROTECTED REGION ID(dcon1435760160067) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void StandardPass::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1435760160067) ENABLED START*/ //Add additional options here
 //        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
 //        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 //
@@ -90,12 +90,12 @@
 //        send(pm);
 //
 //        this->setSuccess(true);
-//
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardPass::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1435760160067) ENABLED START*/ //Add additional options here
+
+        /*PROTECTED REGION END*/
+    }
+    void StandardPass::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1435760160067) ENABLED START*/ //Add additional options here
 //        string tmp;
 //        bool success = true;
 //        try
@@ -114,8 +114,8 @@
 //        {
 //            cerr << "StandardPass: Parameter does not exist" << endl;
 //        }
-//        /*PROTECTED REGION END*/
-//    }
-///*PROTECTED REGION ID(methods1435760160067) ENABLED START*/ //Add additional methods here
-///*PROTECTED REGION END*/
-//} /* namespace alica */
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1435760160067) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */

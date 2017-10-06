@@ -20,7 +20,7 @@ namespace alica
         /*PROTECTED REGION ID(pro1473862842303) ENABLED START*/ //Add additional protected methods here
         double toX;
         double toY;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
 
         bool hadBall;
         /*PROTECTED REGION END*/

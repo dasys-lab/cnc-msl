@@ -24,7 +24,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1464787469281) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::Query > (this->wm->getEngine());
-        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos4ReceiverCornerKick::~Pos4ReceiverCornerKick()
@@ -36,31 +35,31 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1464787469281) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        nonstd::optional<vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional<
+                vector<geometry::CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        alloTarget->y = alloBall->y;
-        alloTarget->x = alloBall->x - 2800;
-        shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
+        alloTarget.y = alloBall.y;
+        alloTarget.x = alloBall.x - 2800;
+        auto egoTarget = alloTarget.toEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
 
-        mQuery->egoDestinationPoint = egoTarget;
-        mQuery->egoAlignPoint = egoBallPos;
-        mQuery->additionalPoints = additionalPoints;
+        mQuery.egoDestinationPoint = egoTarget;
+        mQuery.egoAlignPoint = egoBallPos;
+        mQuery.additionalPoints = additionalPoints;
         mc = rm.moveToPoint(mQuery);
 
         // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
+        if (egoTarget.length() < 250 && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < (M_PI / 180) * 5)
         {
             this->setSuccess(true);
         }
@@ -84,7 +83,6 @@ namespace alica
         result.clear();
         string tmp;
         bool success = true;
-        alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
         try
         {
             success &= getParameter("TeamMateTaskName", tmp);

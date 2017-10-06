@@ -4,11 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1464189819779) ENABLED START*/ //Add additional includes here
 #include <msl_actuator_msgs/MotionControl.h>
-namespace geometry
-{
-    class CNPoint2D;
-    class CNPosition;
-}
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -24,10 +20,10 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1464189819779) ENABLED START*/ //Add additional protected methods here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr<geometry::CNPoint2D> alloGoalLeft;
-        shared_ptr<geometry::CNPoint2D> alloGoalRight;
-        shared_ptr<geometry::CNPoint2D> alloGoalMid;
-        shared_ptr<geometry::CNPosition> ownPos;
+        geometry::CNPointAllo alloGoalLeft;
+        geometry::CNPointAllo alloGoalRight;
+        geometry::CNPointAllo alloGoalMid;
+        nonstd::optional<geometry::CNPositionAllo> ownPos;
         double pTrans, dTrans, alignMaxVel, prevTargetDist, avgTime;
         int snapDistance, goalieSize, driveToPost;
         long int startTime;

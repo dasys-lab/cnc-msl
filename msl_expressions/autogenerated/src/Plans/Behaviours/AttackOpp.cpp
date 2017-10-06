@@ -13,7 +13,6 @@
 using geometry::CNPointEgo;
 using geometry::CNVecEgo;
 using geometry::CNPositionAllo;
-using nonstd::optional;
 using std::cout;
 using std::endl;
 /*PROTECTED REGION END*/
@@ -94,12 +93,12 @@ namespace alica
                 if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
                 {
                     cout << "roll away" << endl;
-                    mc = this->driveToMovingBall(egoBallPos, egoBallVelocity);
+                    mc = this->driveToMovingBall(*egoBallPos, *egoBallVelocity);
                 }
                 else if (isMovingCloserIter >= maxIter)
                 {
                     cout << "get closer" << endl;
-                    mc = this->ballGetsCloser(me, egoBallVelocity, egoBallPos);
+                    mc = this->ballGetsCloser(*me, *egoBallVelocity, *egoBallPos);
                 }
                 else
                 {
@@ -128,7 +127,7 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ // Add additional methods here
-    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(optional<CNPointEgo> egoBallPos, optional<CNVecEgo> egoBallVel)
+    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(CNPointEgo egoBallPos, CNVecEgo egoBallVel)
     {
 
         msl_actuator_msgs::MotionControl mc;
@@ -158,8 +157,8 @@ namespace alica
         return mc;
     }
 
-    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(CNPositionAllo robotPosition, optional<CNVecEgo> ballVelocity,
-                                                               optional<CNPointEgo> egoBallPos)
+    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(CNPositionAllo robotPosition, CNVecEgo ballVelocity,
+                                                               CNPointEgo egoBallPos)
     {
         double yIntersection = egoBallPos.y + (-(egoBallPos.x / ballVelocity.x)) * ballVelocity.y;
 

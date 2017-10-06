@@ -7,10 +7,7 @@ namespace msl
 {
     class MovementQuery;
 }
-namespace geometry
-{
-    class CNPoint2D;
-}
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,10 +25,10 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1466940407563) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPoint2D> alloTarget;
+        geometry::CNPointAllo alloTarget;
         double translation;
         double catchRadius;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -9,6 +9,9 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <obstaclehandler/Obstacles.h>
+using nonstd::optional;
+using nonstd::make_optional;
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,7 +21,6 @@ namespace alica
             DomainBehaviour("PositionReceiverFreeKickOppHalf")
     {
         /*PROTECTED REGION ID(con1464780799716) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PositionReceiverFreeKickOppHalf::~PositionReceiverFreeKickOppHalf()
@@ -30,21 +32,20 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1464780799716) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = make_optional<vector<CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        shared_ptr < geometry::CNPoint2D > alloAlignPoint = nullptr;
+        optional<CNPointAllo> alloAlignPoint = nonstd::nullopt;
 //		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
 
         //the receiver should stand on a line with the middle of the goal with minimum allowed distance to ball in opp half
@@ -55,18 +56,17 @@ namespace alica
 //		alloTarget->y = alloBall->y;
 //		alloTarget->x = alloBall->x - 2300;
 
-        if (alloBall->y > 0)
+        if (alloBall.y > 0)
         {
-            alloAlignPoint =
-                    make_shared < geometry::CNPoint2D
-                            > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posRightOppGoalPost()->y
-                                    + 450);
+            alloAlignPoint = make_optional<CNPointAllo>(
+                    wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(),
+                    wm->field->posRightOppGoalPost().y + 450);
         } // align right-ish first to turn left later
         else
         {
-            alloAlignPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posLeftOppGoalPost()->y
-                            - 450);
+            alloAlignPoint = make_optional<CNPointAllo>(
+                    wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(),
+                    wm->field->posLeftOppGoalPost().y - 450);
         }
 //        else // standing in the middle so get biggest free area
 //        {
@@ -96,15 +96,15 @@ namespace alica
 //            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
 //        } // else egoalignpoint should be set
 
-        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloAlignPoint;
+        auto lineVect = alloBall - alloAlignPoint;
 
-        alloTarget = alloBall + lineVect->normalize() * 2300;
-        alloTarget = this->wm->field->mapInsideField(alloTarget);
-        shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
+        alloTarget = alloBall + lineVect.normalize() * 2300;
+        alloTarget = this->wm->field->mapInsideField(*alloTarget);
+        auto egoTarget = alloTarget->toEgo(*ownPos);
         msl_actuator_msgs::MotionControl mc;
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
-        query->additionalPoints = additionalPoints;
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = alloAlignPoint->toEgo(*ownPos);
+        query.additionalPoints = additionalPoints;
         mc = rm.moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))

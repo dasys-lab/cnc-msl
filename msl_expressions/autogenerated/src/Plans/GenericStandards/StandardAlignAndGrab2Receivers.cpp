@@ -1,29 +1,29 @@
-//using namespace std;
-//#include "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
-//
-///*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ //Add additional includes here
-//#include "msl_robot/robotmovement/RobotMovement.h"
-//#include "engine/model/EntryPoint.h"
-//#include "engine/RunningPlan.h"
-//#include "engine/Assignment.h"
-//#include "engine/model/Plan.h"
-//#include <RawSensorData.h>
-//#include <Ball.h>
-//#include <Robots.h>
-//#include <pathplanner/PathPlanner.h>
-//#include "obstaclehandler/Obstacles.h"
-//#include <msl_robot/MSLRobot.h>
-//#include <msl_robot/kicker/Kicker.h>
-//#include <MSLWorldModel.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1462368682104) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    StandardAlignAndGrab2Receivers::StandardAlignAndGrab2Receivers() :
-//            DomainBehaviour("StandardAlignAndGrab2Receivers")
-//    {
-//        /*PROTECTED REGION ID(con1462368682104) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
+
+/*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "engine/model/EntryPoint.h"
+#include "engine/RunningPlan.h"
+#include "engine/Assignment.h"
+#include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
+#include "obstaclehandler/Obstacles.h"
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <MSLWorldModel.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1462368682104) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    StandardAlignAndGrab2Receivers::StandardAlignAndGrab2Receivers() :
+            DomainBehaviour("StandardAlignAndGrab2Receivers")
+    {
+        /*PROTECTED REGION ID(con1462368682104) ENABLED START*/ //Add additional options here
 //        this->ratio = 0;
 //        this->ballRadius = 0;
 //        this->minOppDist = 0;
@@ -41,16 +41,16 @@
 //        this->haveBallCounter = 0;
 //
 //        query = make_shared<msl::MovementQuery>();
-//        /*PROTECTED REGION END*/
-//    }
-//    StandardAlignAndGrab2Receivers::~StandardAlignAndGrab2Receivers()
-//    {
-//        /*PROTECTED REGION ID(dcon1462368682104) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardAlignAndGrab2Receivers::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1462368682104) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    StandardAlignAndGrab2Receivers::~StandardAlignAndGrab2Receivers()
+    {
+        /*PROTECTED REGION ID(dcon1462368682104) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void StandardAlignAndGrab2Receivers::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1462368682104) ENABLED START*/ //Add additional options here
 //        msl::RobotMovement rm;
 //        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
 //        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
@@ -318,12 +318,12 @@
 //        }
 ////		cout << "SAAG2R: last mc ROT: \t" << mc.motion.rotation << endl;
 //        send(mc);
-//
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardAlignAndGrab2Receivers::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1462368682104) ENABLED START*/ //Add additional options here
+
+        /*PROTECTED REGION END*/
+    }
+    void StandardAlignAndGrab2Receivers::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1462368682104) ENABLED START*/ //Add additional options here
 //        this->haveBallCounter = 0;
 //        this->angleIntErr = 0;
 //        this->oldAngleErr = 0;
@@ -364,10 +364,10 @@
 //        {
 //            cerr << "SAAG2R: Parameter does not exist" << endl;
 //        }
-//
-//        /*PROTECTED REGION END*/
-//    }
-//    /*PROTECTED REGION ID(methods1462368682104) ENABLED START*/ //Add additional methods here
+
+        /*PROTECTED REGION END*/
+    }
+    /*PROTECTED REGION ID(methods1462368682104) ENABLED START*/ //Add additional methods here
 //    bool StandardAlignAndGrab2Receivers::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
 //                                                          shared_ptr<geometry::CNPoint2D> passPoint,
 //                                                          double passCorridorWidth,
@@ -429,5 +429,5 @@
 //			}
 //			return true;
 //		}
-///*PROTECTED REGION END*/
-//		} /* namespace alica */
+/*PROTECTED REGION END*/
+		} /* namespace alica */

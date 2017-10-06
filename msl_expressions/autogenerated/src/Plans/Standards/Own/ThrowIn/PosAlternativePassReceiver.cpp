@@ -12,6 +12,9 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <Robots.h>
+using geometry::CNPointEgo;
+using geometry::CNPointAllo;
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +24,6 @@ namespace alica
             DomainBehaviour("PosAlternativePassReceiver")
     {
         /*PROTECTED REGION ID(con1461674942156) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PosAlternativePassReceiver::~PosAlternativePassReceiver()
@@ -33,98 +35,98 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1461674942156) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
+        if (!ownPos || !egoBallPos)
         {
-            return;
-        }
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
-        // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
-        // add alloBall to path planning
-        additionalPoints->push_back(alloBall);
-        if (oldBallPos == nullptr)
-        {
-            oldBallPos = alloBall;
-        }
-        EntryPoint* ep = getParentEntryPoint(taskName);
-        if (ep != nullptr)
-        {
-            // get the plan in which the behavior is running
-            auto parent = this->runningPlan->getParent().lock();
-            if (parent == nullptr)
+            auto alloBall = egoBallPos->toAllo(*ownPos);
+            // Create additional points for path planning
+            auto additionalPoints = nonstd::make_optional<vector<geometry::CNPointAllo>>();
+            // add alloBall to path planning
+            additionalPoints->push_back(alloBall);
+            if (!oldBallPos)
             {
-                cout << "parent null" << endl;
-                return;
+                oldBallPos = alloBall;
             }
-            // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-            shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
-            // exactly one robot is receiver
-            if (ids->size() > 0 && ids->at(0) != -1)
+            EntryPoint* ep = getParentEntryPoint(taskName);
+            if (ep != nullptr)
             {
-                // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-                if (pos != nullptr)
+                // get the plan in which the behavior is running
+                auto parent = this->runningPlan->getParent().lock();
+                if (parent == nullptr)
                 {
-                    receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    cout << "parent null" << endl;
+                    return;
+                }
+                // get robot ids of robots in found entry point
+                auto ids = parent->getAssignment()->getRobotsWorking(ep);
+                geometry::CNPointAllo receiverPos;
+                // exactly one robot is receiver
+                if (ids->size() > 0 && ids->at(0) != -1)
+                {
+                    // get receiver position by id
+                    auto pos = wm->robots->teammates.getTeammatePositionBuffer(ids->at(0)).getLastValidContent();
+                    if (pos)
+                    {
+                        receiverPos.x = pos->x;
+                        receiverPos.y = pos->y;
+                    }
+                    else
+                    {
+                        cout << "PAPR: no receiver found looking at (0, 0)!" << endl;
+                        receiverPos.x = 0;
+                        receiverPos.y = 0;
+                    }
+                }
+                msl_actuator_msgs::MotionControl mc;
+                CNPointAllo alloTarget;
+                CNPointEgo egoTarget;
+                // if there is a receiver, align to it
+
+                // calculate target 60cm away from the ball and on a line with the receiver
+                if (receiverPos.y > 0)
+                {
+                    alloTarget.x = receiverPos.x;
+                    alloTarget.y = -receiverPos.y + 500;
+                    egoTarget = alloTarget.toEgo(*ownPos);
                 }
                 else
                 {
-                    cout << "PAPR: no receiver found looking at (0, 0)!" << endl;
-                    receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
+                    alloTarget.x = receiverPos.x;
+                    alloTarget.y = -receiverPos.y - 500;
+                    egoTarget = alloTarget.toEgo(*ownPos);
                 }
-            }
-            msl_actuator_msgs::MotionControl mc;
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
-            shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
-            // if there is a receiver, align to it
-
-            // calculate target 60cm away from the ball and on a line with the receiver
-            if (receiverPos->y > 0)
-            {
-                alloTarget->x = receiverPos->x;
-                alloTarget->y = -receiverPos->y + 500;
-                egoTarget = alloTarget->alloToEgo(*ownPos);
-            }
-            else
-            {
-                alloTarget->x = receiverPos->x;
-                alloTarget->y = -receiverPos->y - 500;
-                egoTarget = alloTarget->alloToEgo(*ownPos);
-            }
-            // ask the path planner how to get there
+                // ask the path planner how to get there
 //            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
 //                                                          additionalPoints);
-            query->egoDestinationPoint = egoTarget;
-            query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
-            query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(query);
+                query.egoDestinationPoint = egoTarget;
+                query.egoAlignPoint = receiverPos.toEgo(*ownPos);
+                query.additionalPoints = additionalPoints;
+                mc = rm.moveToPoint(query);
 
-            // if we reach the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
-            {
-                this->setSuccess(true);
+                // if we reach the point and are aligned, the behavior is successful
+                if (egoTarget.length() < 250 && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < (M_PI / 180) * 5)
+                {
+                    this->setSuccess(true);
+                }
+                if (!std::isnan(mc.motion.translation))
+                {
+                    send(mc);
+                }
+                else
+                {
+                    cout << "Motion command is NaN!" << endl;
+                }
             }
-            if (!std::isnan(mc.motion.translation))
-            {
-                send(mc);
-            }
-            else
-            {
-                cout << "Motion command is NaN!" << endl;
-            }
+            /*PROTECTED REGION END*/
         }
-        /*PROTECTED REGION END*/
     }
+
     void PosAlternativePassReceiver::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1461674942156) ENABLED START*/ //Add additional options here
         string tmp;
         bool success = true;
-        alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
         oldBallPos.reset();
         oldAlloTarget.reset();
         try

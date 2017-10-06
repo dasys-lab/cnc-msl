@@ -26,7 +26,7 @@ namespace alica
         vector<double> result;
         double sign;
         double maxVel;
-        shared_ptr<msl::MovementQuery> movQuery;
+        msl::MovementQuery movQuery;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

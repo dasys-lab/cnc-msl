@@ -6,6 +6,7 @@ using namespace std;
 #include "Game.h"
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,10 +21,8 @@ namespace alica
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 
         alloGoalMid = wm->field->posOwnGoalMid();
-        alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x + 200, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
-        alloGoalRight = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x + 200, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+        alloGoalLeft = CNPointAllo(alloGoalMid.x + 200, wm->field->posLeftOwnGoalPost().y - goalieSize / 2);
+        alloGoalRight = CNPointAllo(alloGoalMid.x + 200, wm->field->posRightOwnGoalPost().y + goalieSize / 2);
 
         pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
         dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
@@ -44,9 +43,9 @@ namespace alica
     void DriveToPost::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464189819779) ENABLED START*/ //Add additional options here
-        ownPos = wm->rawSensorData->getOwnPositionVision();
+        ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
             cout << "[DriveToPost] ownPos null!" << endl;
             return;
@@ -56,7 +55,8 @@ namespace alica
         {
             startTime = wm->getTime();
         }
-        shared_ptr < geometry::CNPoint2D > targetPost;
+
+        CNPointAllo targetPost;
 
         if (driveToPost == 0)
         {
@@ -67,17 +67,18 @@ namespace alica
             targetPost = alloGoalRight;
         }
 
-        if (targetPost->alloToEgo(*ownPos)->length() > snapDistance)
+        auto targerPostEgo = targetPost.toEgo(*ownPos);
+
+        if (targetPost.toEgo(*ownPos).length() > snapDistance)
         {
-            ownPos = wm->rawSensorData->getOwnPositionVision();
-            mc.motion.angle = targetPost->alloToEgo(*ownPos)->angleTo();
-            shared_ptr < geometry::CNPoint2D > alignPoint = make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y); // align to mirrored ownPos
-            mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+            mc.motion.angle = targetPost.toEgo(*ownPos).angleZ();
+            auto alignPoint = CNPointAllo(-ownPos->x, ownPos->y); // align to mirrored ownPos
+            mc.motion.rotation = alignPoint.toEgo(*ownPos).rotateZ(M_PI).angleZ();
             mc.motion.translation = std::min(
                     alignMaxVel,
-                    (targetPost->alloToEgo(*ownPos)->length() * pTrans)
-                            + ((targetPost->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
-            prevTargetDist = targetPost->alloToEgo(*ownPos)->length();
+                    (targetPost.toEgo(*ownPos).length() * pTrans)
+                            + ((targetPost.toEgo(*ownPos).length() - prevTargetDist) * dTrans));
+            prevTargetDist = targetPost.toEgo(*ownPos).length();
         }
         else
         {
@@ -107,7 +108,7 @@ namespace alica
             startTime = -1;
         }
         //cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
-        send (mc);
+        send(mc);
         /*PROTECTED REGION END*/
     }
     void DriveToPost::initialiseParameters()

@@ -4,7 +4,6 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1466940407563) ENABLED START*/ //Add additional includes here
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
-#include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
@@ -21,7 +20,7 @@ namespace alica
         this->translation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         this->catchRadius = (*this->sc)["Drive"]->get<double>("Drive", "Default", "CatchRadius", NULL);
         this->alloTarget = this->wm->field->posOppPenaltyMarker();
-        this->alloTarget->x -= 1000.0;
+        this->alloTarget.x -= 1000.0;
         /*PROTECTED REGION END*/
     }
     PenaltyPosExecuter::~PenaltyPosExecuter()
@@ -33,26 +32,26 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1466940407563) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         if (!ownPos)
         {
             return;
         }
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
-        auto alloBall = wm->ball->getAlloBallPosition();
-        if (alloBall != nullptr)
+        auto egoTarget = alloTarget.toEgo(*ownPos);
+        auto alloBall = wm->ball->getPositionAllo();
+        if (alloBall)
         {
-            auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-            additionalPoints->push_back(alloBall);
-            query->additionalPoints = additionalPoints;
+            auto additionalPoints = nonstd::make_optional<vector<geometry::CNPointAllo>>();
+            additionalPoints->push_back(*alloBall);
+            query.additionalPoints = additionalPoints;
         }
 
         msl_actuator_msgs::MotionControl mc;
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = this->wm->field->posOppGoalMid()->alloToEgo(*ownPos);
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = this->wm->field->posOppGoalMid().toEgo(*ownPos);
         mc = rm.moveToPoint(query);
 
-        if (egoTarget->length() < this->catchRadius)
+        if (egoTarget.length() < this->catchRadius)
         {
             this->setSuccess(true);
         }

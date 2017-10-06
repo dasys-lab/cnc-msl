@@ -11,6 +11,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <Robots.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +22,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1465474139420) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::Query > (this->wm->getEngine());
-        this->moveQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos2Penalty::~Pos2Penalty()
@@ -32,25 +32,25 @@ namespace alica
     void Pos2Penalty::run(void* msg)
     {
         /*PROTECTED REGION ID(run1465474139420) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionEgo();
 
-        if (ownPos == nullptr || ballPos == nullptr)
+        if (!ownPos ||!ballPos)
         {
             return;
         }
-        shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
+        auto alloBall = ballPos->toAllo(*ownPos);
 
         msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
+
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
             cout << "Pos2Penalty: FOUND a solution!" << endl;
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
+            nonstd::optional < vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional<
+                    vector<geometry::CNPoint2D>>();
             additionalPoints->push_back(alloBall);
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
-                    > (result.at(0), result.at(1));
+            auto alloTarget = CNPointAllo (result.at(0), result.at(1));
 
             //if solution is inside pen area and another robot is inside pen area already, map solution out of pen area
             if (wm->field->isInsideOppPenalty(alloTarget, 10) && wm->robots->teammates.teammatesInOppPenalty() > 0)
@@ -65,15 +65,15 @@ namespace alica
 //			trianglePoints->push_back(wm->field->posRightOppGoalPost());
 //			trianglePoints->push_back(alloBall);
 
-            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+//            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
 
-            shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
+            auto egoTarget = alloTarget.toEgo(*ownPos);
 
 //            moveQuery->fast = false;
-            moveQuery->egoDestinationPoint = egoTarget;
-            moveQuery->egoAlignPoint = alloBall->alloToEgo(*ownPos);
-            moveQuery->snapDistance = 100.0;
-            moveQuery->additionalPoints = additionalPoints;
+            moveQuery.egoDestinationPoint = egoTarget;
+            moveQuery.egoAlignPoint = alloBall.toEgo(*ownPos);
+            moveQuery.snapDistance = 100.0;
+            moveQuery.additionalPoints = additionalPoints;
 
             mc = rm.moveToPoint(moveQuery);
 

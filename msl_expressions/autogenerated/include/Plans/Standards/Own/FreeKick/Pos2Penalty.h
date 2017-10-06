@@ -5,10 +5,7 @@
 /*PROTECTED REGION ID(inc1465474139420) ENABLED START*/ //Add additional includes here
 #include <engine/constraintmodul/Query.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
-namespace geometry
-{
-    class CNPoint2D;
-}
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +25,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1465474139420) ENABLED START*/ //Add additional private methods here
-        shared_ptr<msl::MovementQuery> moveQuery;
+        msl::MovementQuery moveQuery;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

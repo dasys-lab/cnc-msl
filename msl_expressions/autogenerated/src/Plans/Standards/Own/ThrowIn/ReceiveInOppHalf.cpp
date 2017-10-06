@@ -15,6 +15,7 @@ using namespace std;
 #include <Ball.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -24,8 +25,7 @@ namespace alica
             DomainBehaviour("ReceiveInOppHalf")
     {
         /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ //Add additional options here
-        this->query = make_shared < alica::Query > (this->wm->getEngine());
-        this->mQuery = make_shared<msl::MovementQuery>();
+        this->query = make_shared<alica::Query>(this->wm->getEngine());
         /*PROTECTED REGION END*/
     }
     ReceiveInOppHalf::~ReceiveInOppHalf()
@@ -37,14 +37,14 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        auto alloBallPose = wm->ball->getAlloBallPosition();
-        if (!ownPos || !alloBallPose)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto alloBallPos = wm->ball->getPositionAllo();
+        if (!ownPos || !alloBallPos)
             return;
 
         double yCordOfReceiver = 0.0;
         double securityReceiver = 40.0;
-        if (alloBallPose->y < 0.0) // right side line
+        if (alloBallPos->y < 0.0) // right side line
         {
             // place the receiver 1m outside the sideline
 //            if (wm->field->getSurrounding() > 1300)
@@ -79,10 +79,10 @@ namespace alica
         }
 
         double lowestX = wm->field->getFieldLength() / 2;
-        auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+        auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
         for (auto opp : *opps)
         {
-            double distToLine = geometry::distancePointToLineSegment(opp->x, opp->y, 2000, yCordOfReceiver,
+            double distToLine = geometry::distancePointToLineSegment(opp.x, opp.y, 2000, yCordOfReceiver,
                                                                      wm->field->getFieldLength() / 2 - 2000,
                                                                      yCordOfReceiver);
             if (distToLine > 3000)
@@ -90,32 +90,31 @@ namespace alica
                 continue;
             }
 
-            if (lowestX > opp->x)
+            if (lowestX > opp.x)
             {
-                lowestX = opp->x;
+                lowestX = opp.x;
             }
         }
 
-        auto alloTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 4, yCordOfReceiver);
+        auto alloTarget = CNPointAllo(wm->field->getFieldLength() / 4, yCordOfReceiver);
 
         if (lowestX < wm->field->getFieldLength() / 2 - 2000)
         { // opponent close to pass line
-            alloTarget->x = min(alloTarget->x, max(lowestX - 2000, 2000.0));
+            alloTarget.x = min(alloTarget.x, max(lowestX - 2000, 2000.0));
         }
 
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = nonstd::make_optional<vector<CNPointAllo>>();
 
         // add alloBall to path planning
-        additionalPoints->push_back(alloBallPose);
+        additionalPoints->push_back(*alloBallPos);
 //        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos),
 //                                                                                       alloBallPose->alloToEgo(*ownPos),
 //                                                                                       100.0, additionalPoints);
-        mQuery->egoDestinationPoint = alloTarget->alloToEgo(*ownPos);
-        mQuery->egoAlignPoint = alloBallPose->alloToEgo(*ownPos);
-        mQuery->snapDistance = 100;
-        mQuery->additionalPoints = additionalPoints;
+        mQuery.egoDestinationPoint = alloTarget.toEgo(*ownPos);
+        mQuery.egoAlignPoint = alloBallPos->toEgo(*ownPos);
+        mQuery.snapDistance = 100;
+        mQuery.additionalPoints = additionalPoints;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(mQuery);
 
         send(mc);
@@ -130,7 +129,7 @@ namespace alica
         result.clear();
         string tmp;
         bool success = true;
-        alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
+        alloTarget = CNPointAllo(0, 0);
         try
         {
             success &= getParameter("TeamMateTaskName", tmp);

@@ -1,5 +1,5 @@
 using namespace std;
-#include "Plans/Attack/DribbleToAttackPoint.h"
+#include "DribbleToAttackPoint.h"
 
 /*PROTECTED REGION ID(inccpp1436855838589) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
@@ -11,6 +11,9 @@ using namespace std;
 #include <RawSensorData.h>
 #include <pathplanner/PathPlanner.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
+using geometry::CNPointEgo;
+using geometry::CNPointAllo;
+using geometry::CNVecEgo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,7 +34,7 @@ namespace alica
         this->orthoDriveWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.orthoDriveWeight", NULL);
         this->targetDriveWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.targetDriveWeight", NULL);
         this->maxDribbleSpeed = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxDribbleSpeed", NULL);
-        voroniPub = n.advertise < msl_msgs::VoronoiNetInfo > ("/PathPlanner/VoronoiNet", 10);
+        voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
         pastRotation.resize(pastRotationSize);
         lastRotError = 0;
         ownPenalty = false;
@@ -48,14 +51,15 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
         //get own Pos
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         //get voronoi net
         auto vNet = wm->pathPlanner->getCurrentVoronoiNet();
         //get ego bal pos
-        auto egoBallPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
+        auto egoBallPos = wm->ball->getPositionEgo();
+        CNPointEgo egoAlignPoint;
+        CNVecEgo alignPointVec;
         //check if need information is available
-        if (ownPos == nullptr || vNet == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !vNet || !egoBallPos)
         {
             cout << "returning" << endl;
             return;
@@ -70,29 +74,29 @@ namespace alica
         send(bhc);
 
         //get point of pos
-        auto ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
+        auto ownPoint = ownPos->getPoint();
         //claculate ego target
-        egoTargetPoint = alloTargetPoint->alloToEgo(*ownPos);
+        egoTargetPoint = alloTargetPoint.toEgo(*ownPos);
 
         //find closes opponent in maxOppDist
-        shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
+        nonstd::optional<CNPointAllo> closestOpponent = nonstd::nullopt;
         double lowestDist = numeric_limits<double>::max();
         double dist = 0;
         for (int i = 0; i < opponents->size(); i++)
         {
             auto opp = opponents->at(i);
-            dist = opp->distanceTo(ownPoint);
+            dist = opp.distanceTo(ownPoint);
             if (dist < maxOppDist)
             {
                 if (dist < lowestDist)
                 {
                     lowestDist = dist;
-                    closestOpponent = opp;
+                    closestOpponent = nonstd::make_optional<CNPointAllo>(opp);
                 }
             }
         }
         //if there is no oppen closer than maxOppDist
-        if (closestOpponent == nullptr)
+        if (!closestOpponent)
         {
             egoAlignPoint = egoTargetPoint;
         }
@@ -100,41 +104,41 @@ namespace alica
         else
         {
             //change to ego coordinates
-            closestOpponent = closestOpponent->alloToEgo(*ownPos);
+            auto closestOpponentEgo = closestOpponent->toEgo(*ownPos);
             //calculate weighted vector to ego opp
-            auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
-                    * (this->oppVectorWeight - closestOpponent->length())/*egoTargetPoint->length() / 5.0*/;
+            auto weightedOppVector = closestOpponentEgo.rotateZ(M_PI) * (1.0 / closestOpponentEgo.length())
+                    * (this->oppVectorWeight - closestOpponentEgo.length())/*egoTargetPoint->length() / 5.0*/;
             //calculate weighted vector to target point
-            auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
+            auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint.length()) * closestOpponentEgo.length();
             //calculate align point facing away from opp
-            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+            alignPointVec = (weightedOppVector + weightedTargetVector).normalize() * 1000;
         }
         //debug msg
         msl_msgs::VoronoiNetInfo netMsg;
-        if (closestOpponent != nullptr)
+        if (closestOpponent)
         {
             msl_msgs::Point2dInfo info;
-            info.x = closestOpponent->egoToAllo(*ownPos)->x;
-            info.y = closestOpponent->egoToAllo(*ownPos)->y;
+            info.x = closestOpponent->x;
+            info.y = closestOpponent->y;
             netMsg.sites.push_back(info);
 
 //			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
 //			{
 //				cout << "changed last closest opp" << endl;
 //			}
-            lastClosesOpp = closestOpponent;
+            lastClosestOpp = closestOpponent;
         }
         //create motion control
         msl_actuator_msgs::MotionControl mc;
 
         //get way from path planner
-        shared_ptr < geometry::CNPoint2D > temp = msl::PathProxy::getInstance()->getEgoDirection(egoTargetPoint, eval);
+        auto temp = msl::PathProxy::getInstance()->getEgoDirection(egoTargetPoint, *eval);
         //if angle to alignpoint is too high
-        if (egoAlignPoint->rotate(M_PI)->angleTo() > M_PI / 2)
+        if (alignPointVec.rotateZ(M_PI).angleZ() > M_PI / 2)
         {
             mc.motion.rotation = 2 * M_PI;
         }
-        else if (egoAlignPoint->rotate(M_PI)->angleTo() < -M_PI / 2)
+        else if (alignPointVec.rotateZ(M_PI).angleZ() < -M_PI / 2)
         {
             mc.motion.rotation = -2 * M_PI;
         }
@@ -151,7 +155,7 @@ namespace alica
             double clausenValue = 0.0;
             for (int i = 1; i < this->clausenDepth; i++)
             {
-                clausenValue += sin(i * egoAlignPoint->rotate(M_PI)->angleTo()) / pow(i, this->clausenPow);
+                clausenValue += sin(i * alignPointVec.rotateZ(M_PI).angleZ()) / pow(i, this->clausenPow);
             }
             // calculate past rotation average
             double sum = 0;
@@ -160,15 +164,15 @@ namespace alica
                 sum += pastRotation.at(i);
             }
             //adjust rotation
-            mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue))
+            mc.motion.rotation = (sum + alignPointVec.rotateZ(M_PI).angleZ() * abs(clausenValue))
                     / (this->pastRotationSize + 1); // *4
             counter++;
             //set past rotation
-            pastRotation.at(counter % this->pastRotationSize) = egoAlignPoint->rotate(M_PI)->angleTo()
+            pastRotation.at(counter % this->pastRotationSize) = alignPointVec.rotateZ(M_PI).angleZ()
                     * abs(clausenValue);
         }
         // crate the motion orthogonal to the ball
-        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+        auto driveTo = egoBallPos->rotateZ(-M_PI / 2.0);
         //TODO create 2 parameter
         double rotationWeight = mc.motion.rotation * this->orthoDriveWeight;
         driveTo = driveTo * rotationWeight;
@@ -178,21 +182,21 @@ namespace alica
                 + temp->normalize() * min(maxDribbleSpeed, temp->length())
                         / (1 + abs(mc.motion.rotation) * this->targetDriveWeight);
 
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = min(this->maxVel, driveTo->length());
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = min(this->maxVel, driveTo.length());
 //		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
         //debug msg
         msl_msgs::Point2dInfo info;
-        info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
-        info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
+        info.x = egoAlignPoint.toAllo(*ownPos).x;
+        info.y = egoAlignPoint.toAllo(*ownPos).y;
         netMsg.sites.push_back(info);
         //check if goal is reached
-        if (egoTargetPoint->length() < 250)
+        if (egoTargetPoint.length() < 250)
         {
             this->setSuccess(true);
         }
         //save last error
-        lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();
+        lastRotError = alignPointVec.rotateZ(M_PI).angleZ();
 
         // TODO von Taker: Am Arsch, richtige nachricht verwenden, dann klappts auch mit der Anzeige!!!!
 //        voroniPub.publish(netMsg);
@@ -238,7 +242,6 @@ namespace alica
             alloTargetPoint = wm->field->posOwnPenaltyMarker();
         }
         wheelSpeed = -80;
-        lastClosesOpp = nullptr;
         lastRotError = 0;
         for (int i = 0; i < pastRotation.size(); i++)
         {

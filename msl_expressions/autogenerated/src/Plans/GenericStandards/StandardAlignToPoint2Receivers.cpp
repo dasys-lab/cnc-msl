@@ -1,26 +1,26 @@
-//using namespace std;
-//#include "Plans/GenericStandards/StandardAlignToPoint2Receivers.h"
-//
-///*PROTECTED REGION ID(inccpp1467228931063) ENABLED START*/ //Add additional includes here
-//#include "msl_robot/robotmovement/RobotMovement.h"
-//#include "msl_robot/robotmovement/MovementQuery.h"
-//#include <engine/RunningPlan.h>
-//#include <engine/Assignment.h>
-//#include <RawSensorData.h>
-//#include <Ball.h>
-//#include <Robots.h>
-//#include <engine/Assignment.h>
-//#include <MSLWorldModel.h>
-//#include <MSLFootballField.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1467228931063) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    StandardAlignToPoint2Receivers::StandardAlignToPoint2Receivers() :
-//            DomainBehaviour("StandardAlignToPoint2Receivers")
-//    {
-//        /*PROTECTED REGION ID(con1467228931063) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/GenericStandards/StandardAlignToPoint2Receivers.h"
+
+/*PROTECTED REGION ID(inccpp1467228931063) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <engine/Assignment.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1467228931063) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    StandardAlignToPoint2Receivers::StandardAlignToPoint2Receivers() :
+            DomainBehaviour("StandardAlignToPoint2Receivers")
+    {
+        /*PROTECTED REGION ID(con1467228931063) ENABLED START*/ //Add additional options here
 //        this->alignAngleTolerance = (M_PI / 180)
 //                * (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint", "alignAngleTolerance", NULL);
 //        this->positionDistanceTolerance = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
@@ -35,16 +35,16 @@
 //                                                                                         NULL);
 //        this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
 //        this->canPass = true;
-//        /*PROTECTED REGION END*/
-//    }
-//    StandardAlignToPoint2Receivers::~StandardAlignToPoint2Receivers()
-//    {
-//        /*PROTECTED REGION ID(dcon1467228931063) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardAlignToPoint2Receivers::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1467228931063) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    StandardAlignToPoint2Receivers::~StandardAlignToPoint2Receivers()
+    {
+        /*PROTECTED REGION ID(dcon1467228931063) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void StandardAlignToPoint2Receivers::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1467228931063) ENABLED START*/ //Add additional options here
 //        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
 //        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 //
@@ -242,9 +242,9 @@
 //        {
 //            cerr << "SAAG2R: Parameter does not exist" << endl;
 //        }
-//        /*PROTECTED REGION END*/
-//    }
-//    /*PROTECTED REGION ID(methods1467228931063) ENABLED START*/ //Add additional methods here
+        /*PROTECTED REGION END*/
+    }
+    /*PROTECTED REGION ID(methods1467228931063) ENABLED START*/ //Add additional methods here
 //    bool StandardAlignToPoint2Receivers::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
 //                                                          shared_ptr<geometry::CNPoint2D> passPoint,
 //                                                          double passCorridorWidth,
@@ -306,5 +306,5 @@
 //			}
 //			return true;
 //		}
-///*PROTECTED REGION END*/
-//		} /* namespace alica */
+/*PROTECTED REGION END*/
+		} /* namespace alica */

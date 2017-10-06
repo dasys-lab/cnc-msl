@@ -3,10 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1462363192018) ENABLED START*/ //Add additional includes here
-namespace geometry
-{
-    class CNPoint2D;
-}
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,8 +24,8 @@ namespace alica
         bool canPass;
         string teamMateTaskName1;
         string teamMateTaskName2;
-        shared_ptr<geometry::CNPoint2D> recPos1;
-        shared_ptr<geometry::CNPoint2D> recPos2;
+        nonstd::optional<geometry::CNPointAllo> recPos1;
+        nonstd::optional<geometry::CNPointAllo> recPos2;
         double ratio;
         double ballRadius;
         double passCorridorWidth;
@@ -44,17 +41,15 @@ namespace alica
         double accel;
         double arrivalTimeOffset;
         bool sentPm;
-        bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                         shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D>passPoint,
-        							  double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-							double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
-									int mod(int x, int y);
-        /*PROTECTED REGION END*/			};
-		} /* namespace alica */
+        bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
+                             double tolerance, vector<geometry::CNPointAllo> &points);
+        bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                       double passCorridorWidth, vector<geometry::CNPointAllo> &points);
+        bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint, double passCorridorWidth,
+                              vector<geometry::CNPointAllo> &points);
+        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        int mod(int x, int y);
+        /*PROTECTED REGION END*/};
+} /* namespace alica */
 
 #endif /* ThrowInPass_H_ */

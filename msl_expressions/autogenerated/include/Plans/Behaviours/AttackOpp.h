@@ -40,8 +40,8 @@ namespace alica
         msl_actuator_msgs::MotionControl ballGetsCloser(geometry::CNPositionAllo robotPosition,
                                                         geometry::CNVecEgo ballVelocity,
                                                         geometry::CNPointEgo egoBallPos);
-        msl_actuator_msgs::MotionControl driveToMovingBall(nonstd::optional<geometry::CNPointEgo> egoBallPos,
-                                                           nonstd::optional<geometry::CNVecEgo> egoBallVel);
+        msl_actuator_msgs::MotionControl driveToMovingBall(geometry::CNPointEgo egoBallPos,
+                                                           geometry::CNVecEgo egoBallVel);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

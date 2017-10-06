@@ -9,6 +9,7 @@ using namespace std;
 #include <Robots.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,7 +19,7 @@ namespace alica
             DomainBehaviour("StdAlignSingleRobot")
     {
         /*PROTECTED REGION ID(con1467385758084) ENABLED START*/ //Add additional options here
-        this->executerDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+        this->executorDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                      "executerDistanceToBall", NULL);
         /*PROTECTED REGION END*/
     }
@@ -30,45 +31,40 @@ namespace alica
     void StdAlignSingleRobot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467385758084) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
 
         // return if necessary information is missing
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
 
         // Create allo ball
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
 
         // Create additional points for path planning
-        auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = nonstd::make_optional<vector<geometry::CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        shared_ptr < geometry::CNPoint2D > aimPoint = nullptr;
-        aimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field->posLeftOppRestartMarker()->x, wm->field->posLeftOppRestartMarker()->y + 1000);
-        if (alloBall->y > 0)
+        auto aimPoint = CNPointAllo(wm->field->posLeftOppRestartMarker().x,
+                                                    wm->field->posLeftOppRestartMarker().y + 1000);
+        if (alloBall.y > 0)
         {
-            aimPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->posRightOppRestartMarker()->x, wm->field->posRightOppRestartMarker()->y - 1000);
+            aimPoint =CNPointAllo(wm->field->posRightOppRestartMarker().x,
+                                                        wm->field->posRightOppRestartMarker().y - 1000);
         }
-        else
-        {
 
-        }
-        shared_ptr < geometry::CNPoint2D > egoTarget;
-        egoTarget = (alloBall + (alloBall - aimPoint)->normalize() * this->executerDistanceToBall)->alloToEgo(*ownPos);
+        auto egoTarget = (alloBall + (alloBall - aimPoint).normalize() * this->executorDistanceToBall).toEgo(*ownPos);
 //		egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
 //				*ownPos);
 
-        MotionControl mc;
-        RobotMovement rm;
-        this->m_Query->egoAlignPoint = egoBallPos;
-        this->m_Query->additionalPoints = additionalPoints;
-        this->m_Query->egoDestinationPoint = egoTarget;
+        msl_actuator_msgs::MotionControl mc;
+        msl::RobotMovement rm;
+        this->m_Query.egoAlignPoint = egoBallPos;
+        this->m_Query.additionalPoints = additionalPoints;
+        this->m_Query.egoDestinationPoint = egoTarget;
         mc = rm.moveToPoint(m_Query);
         /*PROTECTED REGION END*/
     }

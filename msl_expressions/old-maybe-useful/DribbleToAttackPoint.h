@@ -27,11 +27,11 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1436855838589) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPoint2D> alloTargetPoint;
-        shared_ptr<geometry::CNPoint2D> egoTargetPoint;
+        geometry::CNPointAllo alloTargetPoint;
+        geometry::CNPointEgo egoTargetPoint;
         supplementary::SystemConfig* sc;
         int wheelSpeed;
-        shared_ptr<geometry::CNPoint2D> lastClosesOpp;
+        geometry::CNPointAllo lastClosestOpp;
         ros::Publisher voroniPub;
         ros::NodeHandle n;
         double lastRotError;

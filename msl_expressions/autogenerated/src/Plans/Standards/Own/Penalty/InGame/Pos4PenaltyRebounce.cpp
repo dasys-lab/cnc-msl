@@ -1,10 +1,8 @@
-using namespace std;
 #include "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
 
 /*PROTECTED REGION ID(inccpp1466972686566) ENABLED START*/ //Add additional includes here
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
-#include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
@@ -32,19 +30,19 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1466972686566) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         if (!ownPos)
         {
             return;
         }
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
+        auto egoTarget = alloTarget.toEgo(*ownPos);
 
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = this->wm->field->posOppGoalMid()->alloToEgo(*ownPos);
-        query->snapDistance = this->catchRadius;
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = this->wm->field->posOppGoalMid().toEgo(*ownPos);
+        query.snapDistance = this->catchRadius;
         auto mc = rm.moveToPoint(query);
 
-        if (egoTarget->length() < this->catchRadius)
+        if (egoTarget.length() < this->catchRadius)
         {
             this->setSuccess(true);
         }
@@ -71,7 +69,7 @@ namespace alica
                 this->alloTarget = this->wm->field->posOppPenaltyMarker();
             }
         }
-        this->alloTarget->y += rules->getStayAwayRadiusOpp();
+        this->alloTarget.y += rules->getStayAwayRadiusOpp();
 
         /*PROTECTED REGION END*/
     }

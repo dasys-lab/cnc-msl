@@ -11,6 +11,8 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
+using geometry::CNPointAllo;
+using geometry::CNPointEgo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,7 +22,6 @@ namespace alica
             DomainBehaviour("PositionAlternativeReceiver")
     {
         /*PROTECTED REGION ID(con1462978634990) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PositionAlternativeReceiver::~PositionAlternativeReceiver()
@@ -32,40 +33,39 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1462978634990) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = nonstd::make_optional<vector<geometry::CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
-        shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
+        CNPointAllo alloTarget;
+        CNPointEgo egoTarget;
 
-        if (alloBall->y < 0)
+        if (alloBall.y < 0)
         {
-            alloTarget->y = alloBall->y + 2300.0;
+            alloTarget.y = alloBall.y + 2300.0;
         }
         else
         {
-            alloTarget->y = alloBall->y - 2300.0;
+            alloTarget.y = alloBall.y - 2300.0;
         }
 
-        alloTarget->x = alloBall->x;
+        alloTarget.x = alloBall.x;
 
-        egoTarget = alloTarget->alloToEgo(*ownPos);
+        egoTarget = alloTarget.toEgo(*ownPos);
 
 //        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
-        query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoBallPos;
-        query->additionalPoints = additionalPoints;
+        query.egoDestinationPoint = egoTarget;
+        query.egoAlignPoint = egoBallPos;
+        query.additionalPoints = additionalPoints;
         mc = rm.moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))

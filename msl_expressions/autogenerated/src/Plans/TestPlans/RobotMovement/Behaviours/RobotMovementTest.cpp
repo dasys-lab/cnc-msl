@@ -7,7 +7,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <pathplanner/PathPlanner.h>
 #include <MSLWorldModel.h>
-#include <container/CNPoint2D.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -35,15 +35,15 @@ namespace alica
 
         if (testFirst)
         {
-            auto ownPos = wm->rawSensorData->getOwnPositionVision();
-            if (ownPos == nullptr)
+            auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+            if (!ownPos)
                 return;
 
-            auto alloGoal = make_shared < geometry::CNPoint2D > (toX, toY);
-            auto egoGoal = alloGoal->alloToEgo(*ownPos);
-            auto egoBallPos = wm->ball->getEgoBallPosition();
+            auto alloGoal = CNPointAllo (toX, toY);
+            auto egoGoal = alloGoal.toEgo(*ownPos);
+            auto egoBallPos = wm->ball->getPositionEgo();
 
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             msl::RobotMovement rm;
 
 //        cout << "haveBall = " << (wm->ball->haveBall() == true ? "true" : "false") << endl;
@@ -51,8 +51,8 @@ namespace alica
             if (!wm->ball->haveBall() && !hadBall)
             {
 //        	cout << "getBall" << endl;
-                query->egoDestinationPoint = egoBallPos;
-                query->egoAlignPoint = egoBallPos;
+                query.egoDestinationPoint = egoBallPos;
+                query.egoAlignPoint = egoBallPos;
                 mc = rm.moveToPoint(query);
                 send(mc);
                 return;
@@ -60,41 +60,45 @@ namespace alica
 
 //        cout << "try to drive to " << toX << "|" << toY << endl;
             hadBall = true;
-            query->dribble = true;
-            query->egoDestinationPoint = egoGoal;
-            query->egoAlignPoint = egoGoal;
+            query.dribble = true;
+            query.egoDestinationPoint = egoGoal;
+            query.egoAlignPoint = egoGoal;
 
             auto motionCommand = rm.moveToPoint(query);
             this->send(motionCommand);
 
-            if (egoGoal->length() < 300)
+            if (egoGoal.length() < 300)
             {
                 this->setSuccess(true);
             }
         }
         else if (testSecond)
         {
-            auto egoBallPos = wm->ball->getEgoBallPosition();
+            auto egoBallPos = wm->ball->getPositionEgo();
             auto alloGoalPos = wm->field->posOwnGoalMid();
-            auto egoGoalPos = alloGoalPos->alloToEgo(*wm->rawSensorData->getOwnPositionVision());
+            auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+            if(!ownPos) {
+                return;
+            }
+            auto egoGoalPos = alloGoalPos.toEgo(*ownPos);
             msl::RobotMovement rm;
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             if (wm->ball->haveBall())
             {
 
                 if (egoBallPos == nullptr)
                     return;
 
-                query->egoAlignPoint = egoGoalPos;
-                query->rotateAroundTheBall = true;
+                query.egoAlignPoint = egoGoalPos;
+                query.rotateAroundTheBall = true;
                 double angleInDegree = 10;
-                query->angleTolerance = (2 * M_PI) / 360 * angleInDegree;
+                query.angleTolerance = (2 * M_PI) / 360 * angleInDegree;
                 mc = rm.alignTo(query);
             }
             else
             {
-                query->egoDestinationPoint = egoBallPos;
-                query->egoAlignPoint = egoBallPos;
+                query.egoDestinationPoint = egoBallPos;
+                query.egoAlignPoint = egoBallPos;
                 mc = rm.moveToPoint(query);
             }
 //            cout << "angle to goal = " << egoGoalPos->angleTo() << endl;
@@ -109,7 +113,6 @@ namespace alica
     void RobotMovementTest::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1473862842303) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1473862842303) ENABLED START*/ //Add additional methods here

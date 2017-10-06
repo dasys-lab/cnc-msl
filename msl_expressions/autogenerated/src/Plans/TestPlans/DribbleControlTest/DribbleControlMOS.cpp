@@ -123,7 +123,7 @@ namespace alica
          send(motorMsg);
          testCount++;
          */
-        auto odom = wm->rawSensorData->getOwnVelocityMotion();
+        auto odom = wm->rawSensorData->getOwnVelocityMotionBuffer().getLastValidContent();
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;

@@ -8,6 +8,7 @@ using namespace std;
 #include <msl_helper_msgs/PassMsg.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -33,21 +34,21 @@ namespace alica
         /*PROTECTED REGION ID(run1457532279657) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        auto ballPos = wm->ball->getAlloBallPosition();
-        if (ownPos == nullptr || ballPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionAllo();
+        if (!ownPos || !ballPos)
             return;
 
         bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
-        auto passGoal = make_shared < geometry::CNPoint2D > (result[0], result[1]);
-        auto p = ballPos + (ballPos - passGoal)->normalize() * (2000.0 / 3.0);
+        auto passGoal = CNPointAllo (result[0], result[1]);
+        auto p = *ballPos + (*ballPos - passGoal).normalize() * (2000.0 / 3.0);
         if (ret)
         {
             msl_helper_msgs::PassMsg pm;
             pm.origin.x = ownPos->x;
             pm.origin.y = ownPos->y;
-            pm.destination.x = passGoal->x;
-            pm.destination.y = passGoal->y;
+            pm.destination.x = passGoal.x;
+            pm.destination.y = passGoal.y;
             pm.validFor = 5000000000ul;
 
             //Reduce Communication
@@ -57,16 +58,16 @@ namespace alica
             }
         }
 
-        auto egoBall = wm->ball->getEgoBallPosition();
+        auto egoBall = ballPos->toEgo(*ownPos);
         if (result.size() > 0)
         {
-            auto driveTo = p->alloToEgo(*ownPos);
+            auto driveTo = p.toEgo(*ownPos);
             // replaced with new moveToPoint method
 //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, egoBall, maxVel);
-            movQuery->egoDestinationPoint = driveTo;
-            movQuery->egoAlignPoint = ballPos;
+            movQuery.egoDestinationPoint = driveTo;
+            movQuery.egoAlignPoint = ballPos;
             mc = rm.moveToPoint(movQuery);
-            if (driveTo->length() < 100)
+            if (driveTo.length() < 100)
             {
                 mc.motion.translation = 0;
             }

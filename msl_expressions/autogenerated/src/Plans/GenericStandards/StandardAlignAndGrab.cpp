@@ -1,40 +1,38 @@
-//using namespace std;
-//#include "Plans/GenericStandards/StandardAlignAndGrab.h"
-//
-///*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
-//#include "msl_robot/robotmovement/RobotMovement.h"
-//#include <RawSensorData.h>
-//#include <Ball.h>
-//#include <Robots.h>
-//#include <GeometryCalculator.h>
-//#include <msl_robot/MSLRobot.h>
-//#include <msl_robot/kicker/Kicker.h>
-//#include <MSLWorldModel.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1455888574532) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    StandardAlignAndGrab::StandardAlignAndGrab() :
-//            DomainBehaviour("StandardAlignAndGrab")
-//    {
-//        /*PROTECTED REGION ID(con1455888574532) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/GenericStandards/StandardAlignAndGrab.h"
+
+/*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <MSLWorldModel.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1455888574532) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    StandardAlignAndGrab::StandardAlignAndGrab() :
+            DomainBehaviour("StandardAlignAndGrab")
+    {
+        /*PROTECTED REGION ID(con1455888574532) ENABLED START*/ //Add additional options here
 //        this->maxTranslation = (*sc)["Behaviour"]->get<double>("StandardAlign.StandardSituationSpeed", NULL);
 //        this->tol = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignTolerance", NULL);
 //        this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
 //        this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);
-//
-//        query = make_shared<msl::MovementQuery>();
-//        /*PROTECTED REGION END*/
-//    }
-//    StandardAlignAndGrab::~StandardAlignAndGrab()
-//    {
-//        /*PROTECTED REGION ID(dcon1455888574532) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardAlignAndGrab::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
+
+        /*PROTECTED REGION END*/
+    }
+    StandardAlignAndGrab::~StandardAlignAndGrab()
+    {
+        /*PROTECTED REGION ID(dcon1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void StandardAlignAndGrab::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
 //        msl::RobotMovement rm;
 //        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
 //        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
@@ -197,11 +195,11 @@
 //        }
 //        cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;
 //        send(mc);
-//        /*PROTECTED REGION END*/
-//    }
-//    void StandardAlignAndGrab::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void StandardAlignAndGrab::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1455888574532) ENABLED START*/ //Add additional options here
 //        angleIntErr = 0;
 //        oldAngleErr = 0;
 //        haveBall = false;
@@ -230,8 +228,8 @@
 //        {
 //            cerr << "StdAlign: Receiver==null, because planName, teamMateTaskName does not match" << endl;
 //        }
-//        /*PROTECTED REGION END*/
-//    }
-///*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ //Add additional methods here
-///*PROTECTED REGION END*/
-//} /* namespace alica */
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */
