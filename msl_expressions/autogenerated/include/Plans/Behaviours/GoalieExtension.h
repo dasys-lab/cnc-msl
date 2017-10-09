@@ -18,8 +18,8 @@ namespace alica
     protected:
         int indexMax;
         int index;
-        vector<nonstd::optional<geometry::CNVecAllo>> buffer;
-        vector<double> gewichte;
+        vector<geometry::CNPointAllo> buffer;
+        vector<double> weights;
 
     public:
         ExperimentalRingbuffer(int size);
@@ -27,13 +27,14 @@ namespace alica
 
         geometry::CNPointAllo getAvgPoint(int count);
 
-        void addPoint(geometry::CNVecAllo p);
+        void addPoint(geometry::CNPointAllo p);
 
-        void overWrite(shared_ptr<geometry::CNPointAllo> p);
-        void addPoint(shared_ptr<geometry::CNPointAllo> p, double g);
+        void overWrite(geometry::CNPointAllo p);
+        void addPoint(geometry::CNPointAllo p, double g);
 
-        void overWrite(shared_ptr<geometry::CNPointAllo> p, double g);
+        void overWrite(geometry::CNPointAllo p, double g);
     };
+
 
 }
 /*PROTECTED REGION END*/

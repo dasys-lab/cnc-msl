@@ -5,11 +5,13 @@
 /*PROTECTED REGION ID(inc1436269017402) ENABLED START*/ //Add additional includes here
 #define BEH_DEBUG
 #include <vector>
-#include "MSLFootballField.h"
 #include <SystemConfig.h>
-#include "engine/model/EntryPoint.h"
+#include <engine/model/EntryPoint.h>
+#include <pathplanner/PathProxy.h>
+#include <cnc_geometry/CNVecAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
 #include "GameState.h"
-#include "pathplanner/PathProxy.h"
+#include "MSLFootballField.h"
 #define DBM_DEBUG 1
 /*PROTECTED REGION END*/
 namespace alica
@@ -43,25 +45,25 @@ namespace alica
         double closerFactor;
         double closerFactor2;
         msl::PathProxy* pathProxy;
-        shared_ptr<geometry::CNPoint2D> alloBall;
-        shared_ptr<geometry::CNPosition> alloPos;
-        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> matePoses;
+        nonstd::optional<geometry::CNPointAllo> alloBall;
+        nonstd::optional<geometry::CNPositionAllo> alloPos;
+        nonstd::optional<std::vector<geometry::CNPointAllo>> matePoses;
 #ifdef DBM_DEBUG
-    shared_ptr<msl_helper_msgs::DebugMsg> dbm;
+        shared_ptr<msl_helper_msgs::DebugMsg> dbm;
 #endif
-    static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-            shared_ptr<geometry::CNPoint2D> c, double tolerance,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-    static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-            shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-    static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-            double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-    bool passPossible(double cf, shared_ptr<geometry::CNPoint2D> passPoint, shared_ptr<geometry::CNPoint2D> receiver, shared_ptr<msl::VoronoiNet> vNet);
+        static bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
+                                    double tolerance, std::shared_ptr<std::vector<geometry::CNPointAllo>> points);
+        static bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                              double passCorridorWidth, vector<geometry::CNPointAllo>& points);
+        static bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                     double passCorridorWidth, std::shared_ptr<std::vector<geometry::CNPointAllo>> points);
+        bool passPossible(double cf, geometry::CNPointAllo passPoint,
+                          geometry::CNPointAllo receiver, shared_ptr<msl::VoronoiNet> vNet);
 
-    /*PROTECTED REGION END*/private:
-    /*PROTECTED REGION ID(prv1436269017402) ENABLED START*/ //Add additional private methods here
-    /*PROTECTED REGION END*/};
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1436269017402) ENABLED START*/ //Add additional private methods here
+        /*PROTECTED REGION END*/};
 }
 /* namespace alica */
 

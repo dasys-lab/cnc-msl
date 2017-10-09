@@ -19,9 +19,9 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1457967322925) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<geometry::CNPoint2D> alloGoalMid;
+        geometry::CNPointAllo alloGoalMid;
         bool before;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457967322925) ENABLED START*/ //Add additional private methods here

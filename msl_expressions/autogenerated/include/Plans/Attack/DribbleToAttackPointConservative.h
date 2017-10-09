@@ -24,9 +24,9 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458132872550) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPoint2D> currentTarget;
+        geometry::CNPointAllo currentTarget;
         vector<double> attackPosY;
-        shared_ptr<msl::MovementQuery> query;
+        smsl::MovementQuery query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

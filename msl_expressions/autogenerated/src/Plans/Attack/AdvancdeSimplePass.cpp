@@ -23,8 +23,6 @@ namespace alica
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;
-        shared_ptr < geometry::CNPosition > oldMatePos = nullptr;
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     AdvancdeSimplePass::~AdvancdeSimplePass()
@@ -43,13 +41,13 @@ namespace alica
             return; //give the ball a few milliseconds to leave the kicker
         }
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //Corrected;
-        if (ballPos == nullptr)
+        auto ballPos = wm->ball->getPositionEgo();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); //Corrected;
+        if (!ballPos)
         {
             return;
         }
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
 
             mc = rm.driveRandomly(1000);
@@ -57,36 +55,36 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoMatePos = nullptr;
-        shared_ptr < geometry::CNPosition > matePos = nullptr;
+        nonstd::optional<geometry::CNPointEgo > egoMatePos =  nonstd::nullopt;
+        nonstd::optional<geometry::CNPositionAllo > matePos =  nonstd::nullopt;
 
         if (receiver != nullptr)
         {
-            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver); //make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
+            auto robots = robotsInEntryPoint(receiver); //make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots->teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots->teammates.getTeammatePositionBuffer(robots->at(0)).getLastValidContent(); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
-            if (matePos != nullptr)
+            if (matePos)
             {
-                egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
+                egoMatePos = matePos->getPoint().toEgo(*ownPos);
                 oldMatePos = matePos;
             }
             else
             {
-                if (oldMatePos != nullptr)
+                if (oldMatePos)
                 {
-                    egoMatePos = oldMatePos->getPoint()->alloToEgo(*ownPos);
+                    egoMatePos = oldMatePos->getPoint().toEgo(*ownPos);
                 }
             }
         }
 
-        if (egoMatePos != nullptr)
+        if (egoMatePos)
         {
             // replaced with new method
 //            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
-            query->alloTeamMatePosition = egoMatePos->egoToAllo(*ownPos);
+            query.alloTeamMatePosition = egoMatePos->toAllo(*ownPos);
             rm.moveToFreeSpace(query);
             send(mc);
         }

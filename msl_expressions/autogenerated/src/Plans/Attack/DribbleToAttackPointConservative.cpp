@@ -15,11 +15,9 @@ namespace alica
             DomainBehaviour("DribbleToAttackPointConservative")
     {
         /*PROTECTED REGION ID(con1458132872550) ENABLED START*/ //Add additional options here
-        currentTarget = make_shared<geometry::CNPoint2D>();
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointConservative::~DribbleToAttackPointConservative()
@@ -32,8 +30,8 @@ namespace alica
         /*PROTECTED REGION ID(run1458132872550) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        auto ballPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionEgo());
         auto dstscan = wm->rawSensorData->getDistanceScan();
 
         if (ownPos == nullptr)

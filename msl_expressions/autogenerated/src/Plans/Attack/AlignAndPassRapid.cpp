@@ -48,11 +48,9 @@ namespace alica
         this->maxRot = M_PI * 4;
         this->accel = 2000;
         this->sc = supplementary::SystemConfig::getInstance();
-        this->alloAimPoint = nullptr;
         this->pathProxy = msl::PathProxy::getInstance();
-        this->alloBall = nullptr;
-        this->alloPos = nullptr;
-        this->bestAoc = nullptr;
+        this->alloBall = nonstd::nullopt;
+        this->alloPos = nonstd::nullopt;
         this->bestPassUtility = numeric_limits<double>::min();
         this->bestTeamMateId = -1;
         this->found = false;
@@ -68,8 +66,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436269063295) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        alloPos = this->wm->rawSensorData->getOwnPositionVision();
-        if (alloPos == nullptr)
+        alloPos = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!alloPos)
         {
 //			mc = DriveHelper.DriveRandomly(500,WM);
 //			Send(mc);
@@ -78,15 +76,15 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
-        if (egoBallPos == nullptr)
+        auto egoBallPos = this->wm->ball->getPositionEgo();
+        if (!egoBallPos)
         {
             cout << "AAPR: Ego Ball is null" << endl;
             return;
         }
 
-        alloBall = this->wm->ball->getAlloBallPosition();
-        if (alloBall == nullptr)
+        alloBall = this->wm->ball->getPositionAllo();
+        if (!alloBall)
         {
             cout << "AAPR: Allo Ball is null" << endl;
             return;
@@ -129,15 +127,15 @@ namespace alica
             return;
         }
 
-        matePoses = wm->robots->teammates.getTeammatesAlloClustered();
-        if (matePoses == nullptr)
+        matePoses = wm->robots->teammates.getTeammatesAlloClusteredBuffer().getLastValidContent();
+        if (!matePoses)
         {
             cout << "matePoses == nullptr" << endl;
             return;
         }
         for (auto i = matePoses->begin(); i != matePoses->end(); i++)
         {
-            if ((*i)->distanceTo(alloPos) < 100)
+            if (i->distanceTo(alloPos->getPoint()) < 100)
             {
                 matePoses->erase(i);
                 break;
@@ -156,21 +154,20 @@ namespace alica
 #endif
         for (int teamMateId : this->teamMateIds)
         {
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
-                    teamMateId);
-            shared_ptr < geometry::CNPosition > teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
+            auto vertices = vNet->getTeamMateVerticesCNPoint2D(teamMateId);
+            auto teamMatePos = wm->robots->teammates.getTeammatePositionBuffer(teamMateId).getLastValidContent();
 
-            if (vertices == nullptr || teamMatePos == nullptr)
+            if (vertices == nullptr || !teamMatePos)
                 continue;
             for (int i = 0; i < vertices->size(); i++)
             {
                 // make the passpoints closer to the receiver
-                shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
-                shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
-                        > (teamMatePos->x, teamMatePos->y);
-                findBestPassPoint(this->closerFactor, passPoint, receiver, vNet, teamMatePos, teamMateId);
-                findBestPassPoint(this->closerFactor2, passPoint, receiver, vNet, teamMatePos, teamMateId);
-                findBestPassPoint(0.0, receiver, receiver, vNet, teamMatePos, teamMateId);
+                auto passPoint = vertices->at(i);
+                auto receiver = teamMatePos->getPoint();
+
+                findBestPassPoint(this->closerFactor, passPoint, receiver, vNet, *teamMatePos, teamMateId);
+                findBestPassPoint(this->closerFactor2, passPoint, receiver, vNet, *teamMatePos, teamMateId);
+                findBestPassPoint(0.0, receiver, receiver, vNet, *teamMatePos, teamMateId);
 
             }
         }
@@ -189,36 +186,36 @@ namespace alica
             return;
         }
         //Turn to goal...
-        shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball->getVisionBallVelocity();
-        shared_ptr < geometry::CNPoint2D > ballVel2;
-        if (ballVel == nullptr)
+        auto ballVel = this->wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
+        geometry::CNVecEgo ballVel2;
+        if (!ballVel)
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (0, 0);
+            ballVel2 = geometry::CNVecEgo(0, 0);
         }
         else if (ballVel->length() > 5000)
         {
-            shared_ptr < geometry::CNVelocity2D > v = ballVel->normalize() * 5000;
-            ballVel2 = make_shared < geometry::CNPoint2D > (v->x, v->y);
+            auto v = ballVel->normalize() * 5000;
+            ballVel2 = geometry::CNVecEgo(v.x, v.y);
         }
         else
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
+            ballVel2 = geometry::CNVecEgo(ballVel->x, ballVel->y);
         }
-        shared_ptr < geometry::CNPoint2D > aimPoint = alloAimPoint->alloToEgo(*alloPos);
-        double aimAngle = aimPoint->angleTo();
-        double ballAngle = egoBallPos->angleTo();
-        double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
+        auto egoAimPoint = alloAimPoint.toEgo(*alloPos);
+        double egoAimAngle = egoAimPoint.angleZ();
+        double ballAngle = egoBallPos->angleZ();
+        double deltaAngle = geometry::deltaAngle(ballAngle, egoAimAngle);
         if (abs(deltaAngle) < M_PI / 36)
         { // +/-5 degree
           //Kick && PassMsg
             msl_helper_msgs::PassMsg pm;
             msl_msgs::Point2dInfo pinf;
             // Distance to aim point * direction of our kicker = actual pass point destination
-            double dist = aimPoint->length();
-            shared_ptr < geometry::CNPoint2D > dest = make_shared < geometry::CNPoint2D > (-dist, 0);
-            dest = dest->egoToAllo(*alloPos);
-            pinf.x = dest->x;
-            pinf.y = dest->y;
+            double dist = egoAimPoint.length();
+            auto dest =geometry::CNPointEgo(-dist, 0);
+            auto alloDest = dest.toAllo(*alloPos);
+            pinf.x = alloDest.x;
+            pinf.y = alloDest.y;
             pm.destination = pinf;
             pinf = msl_msgs::Point2dInfo();
             pinf.x = alloPos->x;
@@ -229,17 +226,17 @@ namespace alica
             km.enabled = true;
             km.kicker = 1; //(ushort)KickHelper.KickerToUseIndex(egoBallPos->angleTo());
 
-            shared_ptr < geometry::CNPoint2D > goalReceiverVec = dest - make_shared < geometry::CNPoint2D
-                    > (bestAoc->x, bestAoc->y);
+            auto goalReceiverVec = alloDest
+                    - geometry::CNVecAllo(bestAoc.x, bestAoc.y);
             double v0 = 0;
-            double distReceiver = goalReceiverVec->length();
+            double distReceiver = goalReceiverVec.length();
             double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
             //considering network delay and reaction time 1s?:
             estimatedTimeForReceiverToArrive += 1.0;
             pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
             {
-                km.power = (ushort)this->robot->kicker->getKickPowerPass(aimPoint->length());
+                km.power = (ushort)this->robot->kicker->getKickPowerPass(egoAimPoint.length());
             }
             else
             {
@@ -254,10 +251,10 @@ namespace alica
             }
 
         }
-        auto dstscan = this->wm->rawSensorData->getDistanceScan();
-        if (dstscan != nullptr && dstscan->size() != 0)
+        auto dstscan = this->wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+        if (dstscan && (*dstscan)->size() != 0)
         {
-            double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
+            double distBeforeBall = this->minFree(egoBallPos->angleZ(), 200, *dstscan);
             if (distBeforeBall < 250)
                 this->setFailure(true);
         }
@@ -267,16 +264,16 @@ namespace alica
         mc.motion.rotation = sign * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
         lastRotError = deltaAngle;
         double transBallOrth = egoBallPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = min(1000.0, ballVel2->length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
-        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo->normalize() * transBallOrth;
+        double transBallTo = min(1000.0, ballVel2.length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
+        auto driveTo = egoBallPos->rotateZ(-M_PI / 2.0);
+        driveTo = driveTo.normalize() * transBallOrth;
         driveTo = driveTo + egoBallPos->normalize() * transBallTo;
-        if (driveTo->length() > maxVel)
+        if (driveTo.length() > maxVel)
         {
-            driveTo = driveTo->normalize() * maxVel;
+            driveTo = driveTo.normalize() * maxVel;
         }
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = driveTo->length();
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = driveTo.length();
 
         send(mc);
 
@@ -388,14 +385,13 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ //Add additional methods here
-    void AlignAndPassRapid::findBestPassPoint(double cf, shared_ptr<geometry::CNPoint2D> passPoint,
-                                              shared_ptr<geometry::CNPoint2D> receiver,
-                                              shared_ptr<msl::VoronoiNet> vNet,
-                                              shared_ptr<geometry::CNPosition> teamMatePos, int teamMateId)
+    void AlignAndPassRapid::findBestPassPoint(double cf, geometry::CNPointAllo passPoint,
+                                              geometry::CNPointAllo receiver, shared_ptr<msl::VoronoiNet> vNet,
+                                              geometry::CNPositionAllo teamMatePos, int teamMateId)
     {
         double currPassUtility = 0;
-        shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
-        double rcv2PassPointDist = rcv2PassPoint->length();
+        auto rcv2PassPoint = passPoint - receiver;
+        double rcv2PassPointDist = rcv2PassPoint.length();
         double factor = closerFactor;
         if (factor * rcv2PassPointDist < minCloserOffset)
         {
@@ -406,9 +402,9 @@ namespace alica
             factor = rcv2PassPointDist - minCloserOffset;
         }
         factor = max(factor, 0.0);
-        if (rcv2PassPoint->x != 0 && rcv2PassPoint->y != 0)
+        if (rcv2PassPoint.x != 0 && rcv2PassPoint.y != 0)
         {
-            passPoint = receiver + rcv2PassPoint->normalize() * factor;
+            passPoint = receiver + rcv2PassPoint.normalize() * factor;
         }
         else
         {
@@ -416,8 +412,8 @@ namespace alica
         }
 #ifdef DBM_DEBUG
         msl_helper_msgs::DebugPoint dbp;
-        dbp.point.x = passPoint->x;
-        dbp.point.y = passPoint->y;
+        dbp.point.x = passPoint.x;
+        dbp.point.y = passPoint.y;
         dbp.radius = 0.3;
         dbm->points.push_back(dbp);
 #endif
@@ -434,7 +430,7 @@ namespace alica
             {
                 for (int i = 0; i < obs->size(); i++)
                 {
-                    if (obs->at(i) != nullptr && obs->at(i)->distanceTo(passPoint) < minOppDist)
+                    if (obs->at(i) != nullptr && obs->at(i).distanceTo(passPoint) < minOppDist)
                     {
                         opponentTooClose = true;
                         break;
@@ -451,10 +447,7 @@ namespace alica
                 return;
             }
             //small angle to turn to pass point
-            if (geometry::absDeltaAngle(
-                    alloPos->theta + M_PI,
-                    (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
-                    > maxTurnAngle)
+            if (geometry::absDeltaAngle(alloPos->theta + M_PI, (passPoint - alloPos->getPoint().angleZ()) > maxTurnAngle))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.4 * 255.0;
@@ -464,14 +457,14 @@ namespace alica
                 return;
             }
             // some calculation to check whether any opponent is inside the pass vector triangle
-            shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
-            double passLength = ball2PassPoint->length();
-            shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                    > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
-            shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
-            shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, vNet->getObstaclePositions()))
+            auto ball2PassPoint = passPoint - alloBall;
+            double passLength = ball2PassPoint.length();
+            auto ball2PassPointOrth = geometry::CNVecAllo(-ball2PassPoint.y, ball2PassPoint.x).normalize() * ratio
+                            * passLength;
+            auto left = passPoint + ball2PassPointOrth;
+            auto right = passPoint - ball2PassPointOrth;
+            if (!outsideTriangle(*alloBall, right, left, ballRadius, vNet->getObstaclePositions())
+                    && !outsideCorridore(*alloBall, passPoint, this->passCorridorWidth, vNet->getObstaclePositions()))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.6 * 255.0;
@@ -482,7 +475,7 @@ namespace alica
             }
 
             // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-            if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
+            if (!outsideCorridoreTeammates(*alloBall, passPoint, this->ballRadius * 4, *matePoses))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.8 * 255.0;
@@ -505,9 +498,9 @@ namespace alica
                 //Here we have to pick the best one...
                 currPassUtility = 0;
 
-                currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field->getFieldWidth();
+                currPassUtility += 1.0 - 2.0 * abs(passPoint.y) / wm->field->getFieldWidth();
 
-                currPassUtility += (wm->field->getFieldLength() / 2.0 + passPoint->x) / wm->field->getFieldLength();
+                currPassUtility += (wm->field->getFieldLength() / 2.0 + passPoint.x) / wm->field->getFieldLength();
 
                 if (currPassUtility > bestPassUtility)
                 {
@@ -516,7 +509,7 @@ namespace alica
 #endif
                     alloAimPoint = passPoint;
                     bestPassUtility = currPassUtility;
-                    bestAoc = make_shared < geometry::CNPoint2D > (teamMatePos->x, teamMatePos->y);
+                    bestAoc = teamMatePos.getPoint();
                     bestTeamMateId = teamMateId;
                 }
 
@@ -524,13 +517,13 @@ namespace alica
         }
     }
 
-    bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
-                                             shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+    bool AlignAndPassRapid::outsideCorridore(geometry::CNPointAllo ball,
+                                             geometry::CNPointAllo passPoint, double passCorridorWidth,
+                                             shared_ptr<vector<geometry::CNPointAllo>> points)
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth)
+            if (geometry::distancePointToLineSegment(points->at(i).x, points->at(i).y, ball, passPoint) < passCorridorWidth)
             {
                 return false;
             }
@@ -538,15 +531,15 @@ namespace alica
         return true;
     }
 
-    bool AlignAndPassRapid::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                                                      shared_ptr<geometry::CNPoint2D> passPoint,
+    bool AlignAndPassRapid::outsideCorridoreTeammates(geometry::CNPointAllo ball,
+                                                      geometry::CNPointAllo passPoint,
                                                       double passCorridorWidth,
-                                                      shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+                                                      vector<geometry::CNPointAllo> points)
     {
-        for (int i = 0; i < points->size(); i++)
+        for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
+            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
+            < passCorridorWidth && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;
             }
@@ -554,27 +547,23 @@ namespace alica
         return true;
     }
 
-    bool AlignAndPassRapid::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                                            shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+    bool AlignAndPassRapid::outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b,
+                                            geometry::CNPointAllo c, double tolerance,
+                                            shared_ptr<vector<geometry::CNPointAllo>> points)
     {
-        shared_ptr<geometry::CNPoint2D> a2b = b - a;
-        shared_ptr<geometry::CNPoint2D> b2c = c - b;
-        shared_ptr<geometry::CNPoint2D> c2a = a - c;
-        shared_ptr<geometry::CNPoint2D> a2p;
-        shared_ptr<geometry::CNPoint2D> b2p;
-        shared_ptr<geometry::CNPoint2D> c2p;
-        shared_ptr<geometry::CNPoint2D> p;
+        auto a2b = b - a;
+        auto b2c = c - b;
+        auto c2a = a - c;
         for (int i = 0; i < points->size(); i++)
         {
-            p = points->at(i);
-            a2p = p - a;
-            b2p = p - b;
-            c2p = p - c;
+            auto p = points->at(i);
+            auto a2p = p - a;
+            auto b2p = p - b;
+            auto c2p = p - c;
 
-            if ((a2p->x * a2b->y - a2p->y * a2b->x) / a2p->normalize()->length() < tolerance
-            && (b2p->x * b2c->y - b2p->y * b2c->x) / b2p->normalize()->length() < tolerance
-            && (c2p->x * c2a->y - c2p->y * c2a->x) / c2p->normalize()->length() < tolerance)
+            if ((a2p.x * a2b.y - a2p.y * a2b.x) / a2p.normalize().length() < tolerance
+            && (b2p.x * b2c.y - b2p.y * b2c.x) / b2p.normalize().length() < tolerance
+            && (c2p.x * c2a.y - c2p.y * c2a.x) / c2p.normalize().length() < tolerance)
             {
                 return false;
             }

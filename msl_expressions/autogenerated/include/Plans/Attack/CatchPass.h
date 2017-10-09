@@ -25,10 +25,10 @@ namespace alica
         msl::MSLFootballField* field;
         supplementary::SystemConfig* sc;
         double maxVel;
-        shared_ptr<geometry::CNPoint2D> passOrigin;
-        shared_ptr<geometry::CNPoint2D> passVector;
-        shared_ptr<geometry::CNPoint2D> passDestination;
-        shared_ptr<msl::MovementQuery> query;
+        geometry::CNPointAllo passOrigin;
+        geometry::CNVecAllo passVector;
+        geometry::CNPointAllo passDestination;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -29,8 +29,8 @@ namespace alica
         string teamMateTaskName;
         EntryPoint* receiver;
         int itcounter;
-        shared_ptr<geometry::CNPosition> oldMatePos;
-        shared_ptr<msl::MovementQuery> query;
+        nonstd::optional<geometry::CNPositionAllo > oldMatePos;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450176193656) ENABLED START*/ //Add additional private methods here

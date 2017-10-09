@@ -47,42 +47,43 @@ namespace alica
         int bestTeamMateId;
         bool found;
         int best_point;
-        shared_ptr<geometry::CNPoint2D> alloBall;
-        shared_ptr<geometry::CNPoint2D> bestAoc;
-        shared_ptr<geometry::CNPosition> alloPos;
-        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> matePoses;
+        nonstd::optional<geometry::CNPointAllo> alloBall;
+        geometry::CNPointAllo bestAoc;
+        nonstd::optional<geometry::CNPositionAllo> alloPos;
+        nonstd::optional<vector<geometry::CNPointAllo>> matePoses;
 #ifdef DBM_DEBUG
-    shared_ptr<msl_helper_msgs::DebugMsg> dbm;
+        shared_ptr<msl_helper_msgs::DebugMsg> dbm;
 #endif
 
-    //AlignStuff
-    double maxVel;
-    double pRot;
-    double dRot;
-    double lastRotError;
-    double minRot;
-    double maxRot;
-    double accel;
+        //AlignStuff
+        double maxVel;
+        double pRot;
+        double dRot;
+        double lastRotError;
+        double minRot;
+        double maxRot;
+        double accel;
 
-    supplementary::SystemConfig* sc;
-    shared_ptr<geometry::CNPoint2D> alloAimPoint;
-    msl::PathProxy* pathProxy;
-    static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-            shared_ptr<geometry::CNPoint2D> c, double tolerance,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+        supplementary::SystemConfig* sc;
+        geometry::CNPointAllo alloAimPoint;
+        msl::PathProxy* pathProxy;
+        static bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
+                                    double tolerance, shared_ptr<vector<geometry::CNPointAllo>> points);
 
-    static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-            shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+        static bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                              double passCorridorWidth,
+                                              vector<geometry::CNPointAllo> points);
 
-    static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-            double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-    double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
-    int mod(int x, int y);
-    void findBestPassPoint(double cf, shared_ptr<geometry::CNPoint2D> passPoint, shared_ptr<geometry::CNPoint2D> receiver, shared_ptr<msl::VoronoiNet> vNet, shared_ptr<geometry::CNPosition> teamMatePos, int teamMateId);
-    /*PROTECTED REGION END*/private:
-    /*PROTECTED REGION ID(prv1436269063295) ENABLED START*///Add additional private methods here
-    /*PROTECTED REGION END*/};
+        static bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                     double passCorridorWidth, shared_ptr<vector<geometry::CNPointAllo>> points);
+        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        int mod(int x, int y);
+        void findBestPassPoint(double cf, geometry::CNPointAllo passPoint, geometry::CNPointAllo receiver,
+                               shared_ptr<msl::VoronoiNet> vNet, geometry::CNPositionAllo teamMatePos, int teamMateId);
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1436269063295) ENABLED START*/ //Add additional private methods here
+        /*PROTECTED REGION END*/};
 }
 /* namespace alica */
 

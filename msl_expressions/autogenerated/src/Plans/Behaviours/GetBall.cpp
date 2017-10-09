@@ -62,8 +62,8 @@ namespace alica
             {
                 *egoBallVelocity = CNVecEgo();
             }
-            auto vector = egoBallVelocity + egoBallPos;
-            double vectorLength = vector->length();
+            auto vector =  *egoBallPos + *egoBallVelocity ;
+            double vectorLength = vector.length();
             if (wm->ball->haveBall())
             {
                 isMovingAwayIter = 0;
@@ -161,7 +161,7 @@ namespace alica
     {
         double yIntersection = egoBallPos.y + (-(egoBallPos.x / ballVelocity.x)) * ballVelocity.y;
 
-        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
+        auto interPoint = CNPointEgo (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;

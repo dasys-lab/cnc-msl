@@ -35,8 +35,8 @@ namespace alica
     void DribbleEmergencyKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706800035) ENABLED START*/ //Add additional options here
-        ballPos = wm->ball->getAlloBallPosition();
-        if (ballPos == nullptr || wm->ball->getBallPickupPosition() == nullptr)
+        ballPos = wm->ball->getPositionAllo();
+        if (!ballPos || !wm->ball->getBallPickupPosition())
         {
             haveKicked = false;
             return;
@@ -51,24 +51,29 @@ namespace alica
 
         msl_actuator_msgs::KickControl km;
         km.enabled = true;
+        //TODO nicegeom
+        auto odom = wm->rawSensorData->getCorrectedOdometryBuffer().getLastValidContent();
+        if (odom)
+        {
 
-        km.power = (ushort)(390.0 + 0.6 * wm->rawSensorData->getCorrectedOdometryInfo()->motion.translation / 100.0);
+            km.power = (ushort)(390.0 + 0.6 * odom->motion.translation / 100.0);
 
-        /*List<Point2D> opps = WM.GetOpponentListEgoClustered();
-         //If there is an opponent in front of us -> dont do it
-         if(opps != null) {
-         foreach(Point2D opp in opps) {
-         if(Math.Abs(opp.Angle()) > Math.PI-Math.PI/6.0 && opp.Distance() < 1200) {
-         return;
-         }
-         }
-         }*/
+            /*List<Point2D> opps = WM.GetOpponentListEgoClustered();
+             //If there is an opponent in front of us -> dont do it
+             if(opps != null) {
+             foreach(Point2D opp in opps) {
+             if(Math.Abs(opp.Angle()) > Math.PI-Math.PI/6.0 && opp.Distance() < 1200) {
+             return;
+             }
+             }
+             }*/
 
-        this->setSuccess(true);
+            this->setSuccess(true);
 
-        if (!haveKicked)
-            send(km);
-        haveKicked = true;
+            if (!haveKicked)
+                send(km);
+            haveKicked = true;
+        }
         /*PROTECTED REGION END*/
     }
     void DribbleEmergencyKick::initialiseParameters()

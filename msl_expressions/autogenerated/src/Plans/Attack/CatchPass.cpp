@@ -21,7 +21,6 @@ namespace alica
         maxVel = 0;
         sc = nullptr;
 
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     CatchPass::~CatchPass()
@@ -34,29 +33,29 @@ namespace alica
         /*PROTECTED REGION ID(run1440754525537) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPos)
         {
             return;
         }
 
-        shared_ptr < msl_helper_msgs::PassMsg > pm = wm->whiteBoard->getPassMsg();
+        auto pm = wm->whiteBoard->getPassMsgBuffer().getLastValidContent();
         msl_actuator_msgs::MotionControl mc;
         mc.senderID = -1;
-        if (pm != nullptr)
+        if (pm)
         { // next go for pass msg
-            passOrigin = make_shared < geometry::CNPoint2D > (pm->origin.x, pm->origin.y);
-            passDestination = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y);
-            passVector = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y) - passOrigin;
-            shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-            if (ballPos == nullptr)
+            passOrigin = geometry::CNPointAllo(pm->origin.x, pm->origin.y);
+            passDestination = geometry::CNPointAllo(pm->destination.x, pm->destination.y);
+            passVector = geometry::CNVecAllo (pm->destination.x, pm->destination.y) - passOrigin;
+            auto ballPos = wm->ball->getPositionEgo();
+            if (!ballPos)
             {
-                ballPos = passOrigin->alloToEgo(*ownPos);
+                ballPos = nonstd::make_optional<geometry::CNPointEgo>(passOrigin.toEgo(*ownPos));
             }
 
-            shared_ptr < geometry::CNPoint2D > egoDest = passDestination->alloToEgo(*ownPos);
+            auto egoDest = passDestination.toEgo(*ownPos);
 
-            double error = egoDest->length();
+            double error = egoDest.length();
             double trans = error * 3.0;
             if (error > 2000)
             {
@@ -65,14 +64,14 @@ namespace alica
             trans = min(maxVel, trans);
             // replaced with new moveToPoint method
 //            mc = msl::RobotMovement::moveToPointCarefully(egoDest, ballPos, 100);
-            query->egoDestinationPoint = egoDest;
-            query->egoAlignPoint = ballPos;
-            query->snapDistance = 100;
+            query.egoDestinationPoint = egoDest;
+            query.egoAlignPoint = ballPos;
+            query.snapDistance = 100;
             mc = rm.moveToPoint(query);
 
             mc.motion.translation = min(mc.motion.translation, trans);
 
-            if (egoDest->length() < 100)
+            if (egoDest.length() < 100)
             {
                 mc.motion.translation = 0;
             }
@@ -92,9 +91,6 @@ namespace alica
     void CatchPass::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1440754525537) ENABLED START*/ //Add additional options here
-        passOrigin = nullptr;
-        passDestination = nullptr;
-        passVector = nullptr;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1440754525537) ENABLED START*/ //Add additional methods here
