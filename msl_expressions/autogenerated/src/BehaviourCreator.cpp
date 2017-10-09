@@ -59,6 +59,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
+
 #include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
@@ -385,6 +387,11 @@ namespace alica
             case 1435159282996:
 
                 return make_shared<SpinSlowly>();
+                break;
+
+            case 1498664342592:
+
+                return make_shared<DribbleToAttackPointTest>();
                 break;
 
             case 1459355025721:

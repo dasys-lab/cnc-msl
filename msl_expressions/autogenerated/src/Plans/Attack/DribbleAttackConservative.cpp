@@ -45,7 +45,6 @@ namespace alica
         msl_actuator_msgs::MotionControl bm;
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
         query->egoDestinationPoint = goalMid;
-        query->dribble = true;
 
         auto tmpMC = rm.moveToPoint(query);
 
@@ -56,7 +55,6 @@ namespace alica
         else
         {
             query->egoDestinationPoint = corner;
-            query->dribble = true;
 
             auto tmpMC = rm.moveToPoint(query);
 

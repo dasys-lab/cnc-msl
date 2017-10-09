@@ -112,12 +112,6 @@ class RobotMovement
                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
     msl_actuator_msgs::MotionControl setNAN();
 
-    // for alignTO()
-    double rotationP;
-    double rotationD;
-    double transP;
-    double transI;
-
   protected:
     static double assume_enemy_velo;
     static double assume_ball_velo;

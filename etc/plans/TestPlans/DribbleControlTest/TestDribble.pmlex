@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestDribble.pml#1498664138705"/>
+    <value xPos="136" yPos="254" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664114905"/>
+    <value width="921" height="624"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664138706"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664172284"/>
+    <value xPos="557" yPos="293" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664180789"/>
+    <value>
+      <bendpoints xPos="512" yPos="299"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664188353"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToAttackPointTest.beh#1498664342592"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

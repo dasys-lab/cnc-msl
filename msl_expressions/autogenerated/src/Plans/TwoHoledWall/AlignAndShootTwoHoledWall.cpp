@@ -149,129 +149,130 @@ namespace alica
 //            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
 //                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
 //                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
-            this->timesOnTargetCounter = 0;
-        }
-
-        // Kick if aiming was correct long enough
-        if (this->timesOnTargetCounter > this->timesOnTargetThreshold)
-        {
-            KickControl kc;
-            kc.enabled = true;
-//            kc.kicker = egoBallPos->angleTo();
-            cout << "AlignAndShootTwoHoledWall: dist to hole: " << egoHole->length() << endl;
-            kc.power = setKickPower(egoHole->length());
-            float voltage;
-            if (!this->disableKicking)
-            {
-                send(kc);
-                this->kicked = true;
-                this->iterationsAfterKick = 0;
-                voltage = this->robot->kicker->getKickerVoltage();
-                cout << "voltage: " << voltage << endl;
-            }
-            else
-            {
-                // Send stop message to motion, in order to signal that the robot would shoot now
-                MotionControl empty;
-                empty.motion.angle = 0;
-                empty.motion.rotation = 0;
-                empty.motion.translation = 0;
-                send(empty);
-                cout << "return disablelkicking" << endl;
-                return;
-            }
-
-//            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
-//                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
-            this->setSuccess(true);
-//            cout << "return after kick" << endl;
-            return;
-            //return;
-        }
-
-        // Create Motion Command for aiming
-        MotionControl mc;
-
-        // PD Rotation Controller
-        mc.motion.rotation = -(deltaHoleAngle * this->pRot + (deltaHoleAngle - lastRotError) * this->dRot);
-        mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-                * min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
-
-        this->lastRotError = deltaHoleAngle;
-
-        // crate the motion orthogonal to the ball
-        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo * mc.motion.rotation;
-
-        // add the motion towards the ball
-        driveTo = driveTo + egoBallPos->normalize() * 10;
-
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = min(this->maxVel, driveTo->length());
-
-        cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: "
-                << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", "
-                << driveTo->y << ")" << endl;
-
-        send(mc);
-        /*PROTECTED REGION END*/
-    }
-    void AlignAndShootTwoHoledWall::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
         this->timesOnTargetCounter = 0;
-        this->kicked = false;
-        this->iterationsAfterKick = 0;
-        this->lastRotError = 0;
-        switch (this->holeMode)
-        {
-            case toggle:
-                // We toggle in RUN-Methode before kicking.
-                break;
-            case lower:
-                this->useLowerHole = true;
-                break;
-            case upper:
-                this->useLowerHole = false;
-                break;
-        }
-        /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
-    unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance)
+
+    // Kick if aiming was correct long enough
+    if (this->timesOnTargetCounter > this->timesOnTargetThreshold)
     {
-        vector < shared_ptr < geometry::CNPoint2D >> *kickList;
-        if (this->useLowerHole)
+        KickControl kc;
+        kc.enabled = true;
+//            kc.kicker = egoBallPos->angleTo();
+        cout << "AlignAndShootTwoHoledWall: dist to hole: " << egoHole->length() << endl;
+        kc.power = setKickPower(egoHole->length());
+        float voltage;
+        if (!this->disableKicking)
         {
-            kickList = &this->lowKickList;
+            send(kc);
+            this->kicked = true;
+            this->iterationsAfterKick = 0;
+            voltage = this->robot->kicker->getKickerVoltage();
+            cout << "voltage: " << voltage << endl;
         }
         else
         {
-            kickList = &this->highKickList;
+            // Send stop message to motion, in order to signal that the robot would shoot now
+            MotionControl empty;
+            empty.motion.angle = 0;
+            empty.motion.rotation = 0;
+            empty.motion.translation = 0;
+            send(empty);
+            cout << "return disablelkicking" << endl;
+            return;
         }
 
-        int i = 0;
-        while (i < kickList->size() && distance > kickList->at(i)->x)
-        {
-            i++;
-        }
 
-        // Don't interpolate for the first entry in the kick list ...
-        if (i == 0)
-        {
-            return kickList->at(0)->y;
-        }
-
-        // Don't interpolate for the last entry in the kick list ...
-        if (i == kickList->size())
-        {
-            return kickList->at(kickList->size() - 1)->y;
-        }
-
-        // Interpolate linear
-        return kickList->at(i - 1)->y
-                + (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x)
-                        * (kickList->at(i)->y - kickList->at(i - 1)->y);
+//            cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
+//                    << sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
+        this->setSuccess(true);
+//            cout << "return after kick" << endl;
+        return;
+        //return;
     }
+
+    // Create Motion Command for aiming
+    MotionControl mc;
+
+    // PD Rotation Controller
+    mc.motion.rotation = -(deltaHoleAngle * this->pRot + (deltaHoleAngle - lastRotError) * this->dRot);
+    mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+            * min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
+
+    this->lastRotError = deltaHoleAngle;
+
+    // crate the motion orthogonal to the ball
+    shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+    driveTo = driveTo * mc.motion.rotation;
+
+    // add the motion towards the ball
+    driveTo = driveTo + egoBallPos->normalize() * 10;
+
+    mc.motion.angle = driveTo->angleTo();
+    mc.motion.translation = min(this->maxVel, driveTo->length());
+
+    cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: "
+            << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", "
+            << driveTo->y << ")" << endl;
+
+    send(mc);
+    /*PROTECTED REGION END*/
+}
+void AlignAndShootTwoHoledWall::initialiseParameters()
+{
+    /*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
+    this->timesOnTargetCounter = 0;
+    this->kicked = false;
+    this->iterationsAfterKick = 0;
+    this->lastRotError = 0;
+    switch (this->holeMode)
+    {
+        case toggle:
+            // We toggle in RUN-Methode before kicking.
+            break;
+        case lower:
+            this->useLowerHole = true;
+            break;
+        case upper:
+            this->useLowerHole = false;
+            break;
+    }
+    /*PROTECTED REGION END*/
+}
+/*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
+unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance)
+{
+    vector < shared_ptr < geometry::CNPoint2D >> *kickList;
+    if (this->useLowerHole)
+    {
+        kickList = &this->lowKickList;
+    }
+    else
+    {
+        kickList = &this->highKickList;
+    }
+
+    int i = 0;
+    while (i < kickList->size() && distance > kickList->at(i)->x)
+    {
+        i++;
+    }
+
+    // Don't interpolate for the first entry in the kick list ...
+    if (i == 0)
+    {
+        return kickList->at(0)->y;
+    }
+
+    // Don't interpolate for the last entry in the kick list ...
+    if (i == kickList->size())
+    {
+        return kickList->at(kickList->size() - 1)->y;
+    }
+
+    // Interpolate linear
+    return kickList->at(i - 1)->y
+            + (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x)
+                    * (kickList->at(i)->y - kickList->at(i - 1)->y);
+}
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498663554105"/>
+    <value xPos="161" yPos="270" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498663554104"/>
+    <value xPos="2" yPos="-27" width="1001" height="703"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498663554106"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498663949107"/>
+    <value xPos="625" yPos="274" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498664085559"/>
+    <value>
+      <bendpoints xPos="552" yPos="253"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleAroundTheBall.pml#1498664098783"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribble.pml#1498664114905"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

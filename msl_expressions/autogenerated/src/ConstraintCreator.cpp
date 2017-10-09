@@ -61,6 +61,8 @@
 
 #include  "Plans/Standards/Own/GoalKick/constraints/GoalKick1469521732930Constraints.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleAroundTheBall1498663554104Constraints.h"
+
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
@@ -78,6 +80,8 @@
 #include  "Plans/TestPlans/MotorControlTest/constraints/PointToPoint1489068076224Constraints.h"
 
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallAlign1496753106611Constraints.h"
+
+#include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribble1498664114905Constraints.h"
 
 #include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
 
