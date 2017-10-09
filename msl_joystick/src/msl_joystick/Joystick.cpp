@@ -806,11 +806,11 @@ namespace msl_joystick
             auto trans = sqrt(pow(msg->axes.at(0), 2) + pow(msg->axes.at(1), 2)) * this->translation;
             if (trans < this->translation)
             {
-                cmd.motion.translation = this->translation;
+                cmd.motion.translation = trans;
             }
             else
             {
-                cmd.motion.translation = trans;
+                cmd.motion.translation = this->translation;
             }
             cmd.motion.angle = atan2(msg->axes.at(0), msg->axes.at(1)) + M_PI;
             cmd.motion.rotation = msg->axes.at(3) * this->rotation;
