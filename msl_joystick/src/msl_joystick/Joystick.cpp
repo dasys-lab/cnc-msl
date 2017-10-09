@@ -689,6 +689,12 @@ namespace msl_joystick
         // lb button => dead-man
         if (msg->buttons.at(4) == 0)
         {
+        	msl_msgs::JoystickCommand cmd = msl_msgs::JoystickCommand();
+        	cmd.motion.angle = 0;
+        	cmd.motion.translation = 0;
+        	cmd.motion.rotation = 0;
+            this->joycmd = cmd;
+            this->joyPub.publish(cmd);
             return; // dont send joystick message if dead-man is not pressed
         }
 
