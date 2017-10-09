@@ -817,11 +817,11 @@ namespace msl_joystick
         }
 
         // cross left/right => increase/decrease rotation
-        if (msg->axes.at(6) < 0)
+        if (msg->axes.at(6) > 0)
         {
             emit changeRotation(-this->rotationIncrease);
         }
-        else if (msg->axes.at(6) > 0)
+        else if (msg->axes.at(6) < 0)
         {
             emit changeRotation(this->rotationIncrease);
         }
