@@ -30,8 +30,8 @@ namespace alica
 
         supplementary::SystemConfig* sc;
         msl::PathProxy* pp;
-        shared_ptr<msl::PathEvaluator> eval;
-        shared_ptr<geometry::CNPoint2D> alloAimPoint;
+        msl::PathEvaluator eval;
+        nonstd::optional<geometry::CNPointAllo> alloAimPoint;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457706592232) ENABLED START*/ //Add additional private methods here

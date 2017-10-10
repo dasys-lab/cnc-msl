@@ -46,7 +46,7 @@ namespace alica
         { // next go for pass msg
             passOrigin = geometry::CNPointAllo(pm->origin.x, pm->origin.y);
             passDestination = geometry::CNPointAllo(pm->destination.x, pm->destination.y);
-            passVector = geometry::CNVecAllo (pm->destination.x, pm->destination.y) - passOrigin;
+            passVector = geometry::CNPointAllo(passOrigin.x,passOrigin.y) - geometry::CNPointAllo (pm->destination.x, pm->destination.y) ;
             auto ballPos = wm->ball->getPositionEgo();
             if (!ballPos)
             {

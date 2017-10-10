@@ -16,9 +16,10 @@ namespace alica
             DomainBehaviour("DribbleEmergencyKick")
     {
         /*PROTECTED REGION ID(con1457706800035) ENABLED START*/ //Add additional options here
-        kickpower = 0;
-        safeKick = false;
-        haveKicked = false;
+        this->kickpower = 0;
+        this->safeKick = false;
+        this->haveKicked = false;
+        this->ballPos = nonstd::nullopt;
 
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
@@ -35,8 +36,8 @@ namespace alica
     void DribbleEmergencyKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706800035) ENABLED START*/ //Add additional options here
-        ballPos = wm->ball->getPositionAllo();
-        if (!ballPos || !wm->ball->getBallPickupPosition())
+        this->ballPos = wm->ball->getPositionAllo();
+        if (!this->ballPos || !wm->ball->getBallPickupPosition())
         {
             haveKicked = false;
             return;
@@ -44,7 +45,8 @@ namespace alica
 
         //Console.WriteLine("PickUp Pos: ( "+WM.BallPickupPosition.X + " , " + WM.BallPickupPosition.Y+" )");
 
-        if (!safeKick && wm->ball->getBallPickupPosition()->distanceTo(ballPos) < 2800)
+        geometry::CNPointAllo bp = *ballPos;
+        if (!safeKick && wm->ball->getBallPickupPosition()->distanceTo(bp) < 2800)
         {
             return;
         }
@@ -80,6 +82,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1457706800035) ENABLED START*/ //Add additional options here
         haveKicked = false;
+        ballPos = nonstd::nullopt;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1457706800035) ENABLED START*/ //Add additional methods here

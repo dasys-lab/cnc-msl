@@ -5,10 +5,6 @@
 /*PROTECTED REGION ID(inc1434716215423) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <MSLEnums.h>
-namespace geometry
-{
-    class CNPoint2D;
-}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,20 +23,20 @@ namespace alica
         double SLOW_DOWN_DISTANCE;
         double maxTranslation;
         double translation;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPoints;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsOwnCorner;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsOppCorner;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsOwnGoalKick;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsOppGoalKick;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsThrowIn;
-        vector<shared_ptr<geometry::CNPoint2D>> targetPointsDropBall;
-        shared_ptr<geometry::CNPoint2D> currentTargetPoint;
+        vector<geometry::CNPointAllo> targetPoints;
+        vector<geometry::CNPointAllo> targetPointsOwnCorner;
+        vector<geometry::CNPointAllo> targetPointsOppCorner;
+        vector<geometry::CNPointAllo> targetPointsOwnGoalKick;
+        vector<geometry::CNPointAllo> targetPointsOppGoalKick;
+        vector<geometry::CNPointAllo> targetPointsThrowIn;
+        vector<geometry::CNPointAllo> targetPointsDropBall;
+        geometry::CNPointAllo currentTargetPoint;
         double fieldLength;
         double fieldWidth;
         int distToCorner;
         int distToOutLine;
         bool firstTargetSet;
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1434716215423) ENABLED START*/ //Add additional private methods here

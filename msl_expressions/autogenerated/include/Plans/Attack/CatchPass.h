@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1440754525537) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <MSLFootballField.h>
+#include <cnc_geometry/CNVecAllo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

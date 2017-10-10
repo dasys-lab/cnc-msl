@@ -18,21 +18,21 @@ namespace alica
     protected:
         int indexMax;
         int index;
-        vector<geometry::CNPointAllo> buffer;
+        vector<nonstd::optional<geometry::CNPointAllo>> buffer;
         vector<double> weights;
 
     public:
         ExperimentalRingbuffer(int size);
         ~ExperimentalRingbuffer();
 
-        geometry::CNPointAllo getAvgPoint(int count);
+        nonstd::optional<geometry::CNPointAllo> getAvgPoint(int count);
 
-        void addPoint(geometry::CNPointAllo p);
+        void addPoint(nonstd::optional<geometry::CNPointAllo> p);
 
-        void overWrite(geometry::CNPointAllo p);
-        void addPoint(geometry::CNPointAllo p, double g);
+        void overWrite(nonstd::optional<geometry::CNPointAllo> p);
+        void addPoint(nonstd::optional<geometry::CNPointAllo> p, double g);
 
-        void overWrite(geometry::CNPointAllo p, double g);
+        void overWrite(nonstd::optional<geometry::CNPointAllo> p, double g);
     };
 
 

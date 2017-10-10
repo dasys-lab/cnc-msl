@@ -18,10 +18,11 @@ namespace alica
         indexMax = size;
     }
 
-    ExperimentalRingbuffer::~ExperimentalRingbuffer() {
+    ExperimentalRingbuffer::~ExperimentalRingbuffer()
+    {
     }
 
-    geometry::CNPointAllo ExperimentalRingbuffer::getAvgPoint(int count)
+    nonstd::optional<geometry::CNPointAllo> ExperimentalRingbuffer::getAvgPoint(int count)
     {
         if (count > indexMax)
         {
@@ -32,8 +33,8 @@ namespace alica
             count = 1;
         }
         int count2 = 0;
-        double sum_gewichte = 0;
-        geometry::CNPointAllo tmp = geometry::CNPointAllo(0, 0);
+        double sum_weights = 0;
+        auto tmp = nonstd::make_optional<geometry::CNPointAllo>(0, 0);
         for (int i = 0; count2 < count && i < indexMax; ++i)
         {
             int pos = index - i;
@@ -44,47 +45,49 @@ namespace alica
             {
                 if (buffer.at(pos))
                 {
-                    tmp = tmp + *buffer.at(pos) * weights.at(pos);
+                    tmp = nonstd::make_optional < geometry::CNPointAllo
+                            > (tmp->x + buffer.at(pos)->x * weights.at(pos), tmp->y
+                                    + buffer.at(pos)->y * weights.at(pos));
                     ++count2;
-                    sum_gewichte += weights.at(pos);
+                    sum_weights += weights.at(pos);
                 }
             }
             catch (const std::out_of_range& e)
             {
-            	std::cout << "GoalieExtension-Error: " << e.what() << std::endl;
+                std::cout << "GoalieExtension-Error: " << e.what() << std::endl;
             }
         }
-        if (sum_gewichte == 0)
-            return nullptr;
-        tmp = tmp / sum_gewichte;
+        if (sum_weights == 0)
+            return nonstd::nullopt;
+        tmp = *tmp / sum_weights;
         return tmp;
     }
 
-    void ExperimentalRingbuffer::addPoint(geometry::CNPointAllo p)
+    void ExperimentalRingbuffer::addPoint(nonstd::optional<geometry::CNPointAllo> p)
     {
         addPoint(p, 1);
     }
 
-    void ExperimentalRingbuffer::overWrite(geometry::CNPointAllo p)
+    void ExperimentalRingbuffer::overWrite(nonstd::optional<geometry::CNPointAllo> p)
     {
         overWrite(p, 1);
     }
 
-    void ExperimentalRingbuffer::addPoint(geometry::CNPointAllo p, double w)
+    void ExperimentalRingbuffer::addPoint(nonstd::optional<geometry::CNPointAllo> p, double w)
     {
         if (++index > indexMax)
         {
             index = 0;
         }
         buffer.at(index) = p;
-        if (w)
+        if (w < 0.0001)
         {
             w = 0.0001;
         }
         weights.at(index) = w;
     }
 
-    void ExperimentalRingbuffer::overWrite( geometry::CNPointAllo p, double w)
+    void ExperimentalRingbuffer::overWrite(nonstd::optional<geometry::CNPointAllo> p, double w)
     {
         try
         {
@@ -150,8 +153,7 @@ namespace alica
         long currentTime = wm->getTime();
         if (currentTime - lastKickerTime >= KICKER_WAIT_TIME)
         {
-            if (useKicker == true && ballPos != nullptr && ballPos->length() < 420
-                    && (abs(ballPos->angleZ()) - M_PI) < 0.52)
+            if (useKicker == true && ballPos && ballPos->length() < 420 && (abs(ballPos->angleZ()) - M_PI) < 0.52)
             {
 
                 km.enabled = true;
@@ -205,7 +207,7 @@ namespace alica
                 double g5 = 1.0 / (1.0 + exp(0.0006 * (distBall - 6000)));
                 g = g1 * g2 * g3 * g4 * g5;
 
-                geometry::CNPointAllo ballVelo3DAllo = geometry::CNPointAllo (ballV3D->x, ballV3D->y, ballV3D->z);
+                geometry::CNPointAllo ballVelo3DAllo = geometry::CNPointAllo(ballV3D->x, ballV3D->y, ballV3D->z);
 
                 double x = -wm->field->getFieldLength() / 2 + 100;
                 double timeBallToGoal = (x - ballPosAllo.x) / ballVelo3DAllo.x;
@@ -219,8 +221,8 @@ namespace alica
                             y = wm->field->getGoalWidth() / 2;
                         if (y < -wm->field->getGoalWidth() / 2)
                             y = -wm->field->getGoalWidth() / 2;
-                        auto dstPoint = geometry::CNPointAllo (x, y);
-                        auto dstPointEgo = dstPoint.toEgo(*ownPos);
+                        auto dstPoint = nonstd::make_optional<geometry::CNPointAllo>(x, y);
+                        auto dstPointEgo = dstPoint->toEgo(*ownPos);
 
                         auto lookAt = geometry::CNPointAllo(0, 0);
                         auto lookAtEgo = lookAt.toEgo(*ownPos);
@@ -228,9 +230,9 @@ namespace alica
 
                         ballVelo3DAllo = ballVelo3DAllo.normalize();
 
-                        ballGoalProjection->overWrite(dstPoint, g);
-                        auto velCoords = geometry::CNPointAllo(ballV3D->x,ballV3D->y, ballV3D->z);
-                        ballVelocity->overWrite(velCoords,g);
+                        ballGoalProjection->overWrite(*dstPoint, g);
+                        auto velCoords = geometry::CNPointAllo(ballV3D->x, ballV3D->y, ballV3D->z);
+                        ballVelocity->overWrite(velCoords, g);
 
                         int count = (int)(ballPos->length() * ballPos->length()) / 1000000;
                         if (count > 3)
@@ -238,10 +240,10 @@ namespace alica
                             count = 3;
                         }
                         dstPoint = ballGoalProjection->getAvgPoint(count);
-                        dstPointEgo = dstPoint.toEgo(*ownPos);
+                        dstPointEgo = dstPoint->toEgo(*ownPos);
 
-                        auto ballVeloBuf = ballVelocity->getAvgPoint((int)(ballPos->length() - 2000) / 2000);
-                        double veloBuf = sqrt(ballVeloBuf.x * ballVeloBuf.x + ballVeloBuf.y * ballVeloBuf.y);
+                        auto ballVeloBuf = (ballVelocity->getAvgPoint((int)(ballPos->length() - 2000) / 2000));
+                        double veloBuf = sqrt(ballVeloBuf->x * ballVeloBuf->x + ballVeloBuf->y * ballVeloBuf->y);
                         double timeBallToGoal2 = ballPosAllo.distanceTo(wm->field->posOwnGoalMid()) / veloBuf;
                         double timeToDstPoint = dstPointEgo.length() / 800;
                         if (timeToDstPoint > timeBallToGoal2 && ballPos->length() < 5000)

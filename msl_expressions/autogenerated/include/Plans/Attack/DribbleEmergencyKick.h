@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457706800035) ENABLED START*/ //Add additional includes here
+#include <cnc_geometry/CNPointAllo.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,7 +22,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457706800035) ENABLED START*/ //Add additional private methods here
-        geometry::CNPointAllo ballPos;
+        nonstd::optional<geometry::CNPointAllo> ballPos;
         int kickpower;
         bool safeKick;
         bool haveKicked;

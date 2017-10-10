@@ -4,11 +4,12 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1434650892176) ENABLED START*/ //Add additional includes here
 #include "SystemConfig.h"
 #include "msl_actuator_msgs/MotionControl.h"
-#include "GeometryCalculator.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+using geometry::CNVecEgo;
+using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -35,64 +36,66 @@ namespace alica
     void OneEighty::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434650892176) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball->getEgoBallVelocity();
-        shared_ptr < geometry::CNPoint2D > ballVel2;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
+        auto ballPos = wm->ball->getPositionEgo();
+        auto ballVel = wm->ball->getVelocityEgo();
+        geometry::CNVecEgo ballVel2;
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
 
         msl_actuator_msgs::MotionControl mc;
-        if (ballPos == nullptr || ownPos == nullptr)
+        if (!ballPos || !ownPos)
         {
             return;
         }
 
-        if (ballVel == nullptr)
+        if (!ballVel)
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (0, 0);
+            ballVel2 = CNVecEgo(0, 0);
         }
         else if (ballVel->length() > 5000)
         {
-            shared_ptr < geometry::CNVelocity2D > v = ballVel->normalize() * 5000;
-            ballVel2 = make_shared < geometry::CNPoint2D > (v->x, v->y);
+            CNVecEgo v = ballVel->normalize() * 5000;
+            ballVel2 = v;
         }
         else
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
+            ballVel2 = ballVel;
         }
 
-        shared_ptr < geometry::CNPoint2D > aimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2.0 - 500, 0);
-        aimPoint = msl::PathProxy::getInstance()->getEgoDirection(aimPoint, make_shared<msl::PathEvaluator>());
-        shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
-        if (aimPoint != nullptr)
+        //TODO corrected possible allo/ego hiccup during nice geom
+        auto alloAim = CNPointAllo(wm->field->getFieldLength() / 2.0 - 500, 0);
+        auto aimPoint = nonstd::make_optional<geometry::CNPointEgo>(alloAim.toEgo(*ownPos));
+        aimPoint = msl::PathProxy::getInstance()->getEgoDirection(*aimPoint, msl::PathEvaluator());
+        geometry::CNPointAllo alloAimPoint = nullptr;
+        if (aimPoint)
         {
             aimPoint = aimPoint->normalize() * 10000;
-            alloAimPoint = aimPoint->egoToAllo(*ownPos);
+            alloAimPoint = aimPoint->toAllo(*ownPos);
         }
         aimPoint = nullptr;
-        if (alloAimPoint != nullptr)
+        if (alloAimPoint)
         {
-            aimPoint = alloAimPoint->alloToEgo(*ownPos);
+            aimPoint = alloAimPoint.toEgo(*ownPos);
         }
 
-        if (aimPoint == nullptr)
+        if (!aimPoint)
         {
             this->setFailure(true);
             return;
         }
-        double aimAngle = aimPoint->angleTo();
+        double aimAngle = aimPoint->angleZ();
 
-        double ballAngle = ballPos->angleTo();
+        double ballAngle = ballPos->angleZ();
 
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
             this->setSuccess(true);
         }
-        if (dstscan != nullptr)
+        if (dstscan)
         {
-            double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
+            shared_ptr<vector<double>> dstscn = *dstscan;
+            double distBeforeBall = minFree(ballPos->angleZ(), 200, dstscn);
             if (distBeforeBall < 600)
                 this->setFailure(true);
         }
@@ -117,20 +120,20 @@ namespace alica
         lastRotError = deltaAngle;
 
         double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = min(1000.0, ballVel2->length());
+        double transBallTo = min(1000.0, ballVel2.length());
 
-        shared_ptr < geometry::CNPoint2D > driveTo = ballPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo->normalize() * transBallOrth;
-        driveTo->x += ballPos->normalize()->x * transBallTo;
-        driveTo->y += ballPos->normalize()->y * transBallTo;
+        auto driveTo = CNVecEgo(ballPos->rotateZ(-M_PI / 2.0));
+        driveTo = driveTo.normalize() * transBallOrth;
+        driveTo.x += ballPos->normalize().x * transBallTo;
+        driveTo.y += ballPos->normalize().y * transBallTo;
 
-        if (driveTo->length() > maxVel)
+        if (driveTo.length() > maxVel)
         {
-            driveTo = driveTo->normalize() * maxVel;
+            driveTo = driveTo.normalize() * maxVel;
         }
 
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = driveTo->length();
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = driveTo.length();
 
         send(mc);
         /*PROTECTED REGION END*/

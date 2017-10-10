@@ -27,7 +27,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1444834678756) ENABLED START*/ //Add additional protected methods here
         int keeperId;
-        nonstd::optional<geometry::CNPositionEgo> keeperPos;
+        nonstd::optional<geometry::CNPositionAllo> keeperPos;
         msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:

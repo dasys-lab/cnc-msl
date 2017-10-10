@@ -60,8 +60,8 @@ namespace alica
 
             if (tmpMC.motion.translation != NAN)
             {
-                corner = nonstd::make_optional<geometry::CNPointAllo>(
-                        corner->toAllo(*ownPos) + geometry::CNPointAllo(-800, 0).toEgo(*ownPos));
+                corner = nonstd::make_optional<geometry::CNPointEgo>(
+                        (corner->toAllo(*ownPos) + geometry::CNPointAllo(-800, 0)).toEgo(*ownPos));
                 bm = tmpMC;
             }
         }

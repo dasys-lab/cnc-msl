@@ -17,7 +17,6 @@ namespace alica
             DomainBehaviour("RobotMovementDribbleTest")
     {
         /*PROTECTED REGION ID(con1462969724089) ENABLED START*/ //Add additional options here
-        currentTarget = make_shared<geometry::CNPoint2D>();
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
@@ -110,7 +109,6 @@ namespace alica
     void RobotMovementDribbleTest::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462969724089) ENABLED START*/ //Add additional options here
-        currentTarget = nullptr;
 //        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
@@ -135,7 +133,7 @@ namespace alica
         }
         else
         {
-            currentTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 4.0 - 1500, 0);
+            currentTarget = geometry::CNPointAllo (wm->field->getFieldLength() / 4.0 - 1500, 0);
         }
         currentTarget.y = attackPosY.at(index);
         if (currentTarget.toEgo(*ownPos).length() < 1500)

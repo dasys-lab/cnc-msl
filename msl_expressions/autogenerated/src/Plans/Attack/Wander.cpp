@@ -28,58 +28,43 @@ namespace alica
         currentTargetPoint = make_shared < geometry::CNPoint2D > (0, 0);
         //default targetpoints
         targetPoints.resize(5);
-        targetPoints[0] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - distToCorner), fieldWidth / 2 - distToCorner);
-        targetPoints[1] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - distToCorner), -(fieldWidth / 2 - distToCorner));
-        targetPoints[2] = make_shared < geometry::CNPoint2D > (0.0, 0.0);
-        targetPoints[3] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - distToCorner, fieldWidth / 2 - distToCorner);
-        targetPoints[4] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - distToCorner, -(fieldWidth / 2 - distToCorner));
+        targetPoints[0] = geometry::CNPointAllo (-(fieldLength / 2 - distToCorner), fieldWidth / 2 - distToCorner);
+        targetPoints[1] = geometry::CNPointAllo (-(fieldLength / 2 - distToCorner), -(fieldWidth / 2 - distToCorner));
+        targetPoints[2] = geometry::CNPointAllo (0.0, 0.0);
+        targetPoints[3] = geometry::CNPointAllo (fieldLength / 2 - distToCorner, fieldWidth / 2 - distToCorner);
+        targetPoints[4] = geometry::CNPointAllo (fieldLength / 2 - distToCorner, -(fieldWidth / 2 - distToCorner));
 
         //drive into both opps corners
         targetPointsOwnCorner.resize(2);
-        targetPointsOwnCorner[0] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - distToCorner, fieldWidth / 2 - distToCorner);
-        targetPointsOwnCorner[1] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - distToCorner, -(fieldWidth / 2 - distToCorner));
+        targetPointsOwnCorner[0] = geometry::CNPointAllo (fieldLength / 2 - distToCorner, fieldWidth / 2 - distToCorner);
+        targetPointsOwnCorner[1] = geometry::CNPointAllo (fieldLength / 2 - distToCorner, -(fieldWidth / 2 - distToCorner));
 
         //drive into both own corners
         targetPointsOppCorner.resize(2);
-        targetPointsOppCorner[0] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - distToCorner), fieldWidth / 2 - distToCorner);
-        targetPointsOppCorner[1] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - distToCorner), -(fieldWidth / 2 - distToCorner));
+        targetPointsOppCorner[0] = geometry::CNPointAllo (-(fieldLength / 2 - distToCorner), fieldWidth / 2 - distToCorner);
+        targetPointsOppCorner[1] = geometry::CNPointAllo (-(fieldLength / 2 - distToCorner), -(fieldWidth / 2 - distToCorner));
 
         //drive to both own penaltyarea corners
         targetPointsOwnGoalKick.resize(2);
-        targetPointsOwnGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - wm->field->getGoalAreaLength()), wm->field->getGoalAreaWidth() / 2);
-        targetPointsOwnGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - wm->field->getGoalAreaLength()), -wm->field->getGoalAreaWidth() / 2);
+        targetPointsOwnGoalKick[0] = geometry::CNPointAllo (-(fieldLength / 2 - wm->field->getGoalAreaLength()), wm->field->getGoalAreaWidth() / 2);
+        targetPointsOwnGoalKick[1] = geometry::CNPointAllo(-(fieldLength / 2 - wm->field->getGoalAreaLength()), -wm->field->getGoalAreaWidth() / 2);
 
         //drive to both opp penaltyarea corners
         targetPointsOppGoalKick.resize(2);
-        targetPointsOppGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - wm->field->getGoalAreaLength(), wm->field->getGoalAreaWidth() / 2);
-        targetPointsOppGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - wm->field->getGoalAreaLength(), -wm->field->getGoalAreaWidth() / 2);
+        targetPointsOppGoalKick[0] = geometry::CNPointAllo (fieldLength / 2 - wm->field->getGoalAreaLength(), wm->field->getGoalAreaWidth() / 2);
+        targetPointsOppGoalKick[1] = geometry::CNPointAllo (fieldLength / 2 - wm->field->getGoalAreaLength(), -wm->field->getGoalAreaWidth() / 2);
 
         //points on side lines (distToOutline away)
         targetPointsThrowIn.resize(6);
         //left
-        targetPointsThrowIn[0] = make_shared < geometry::CNPoint2D > (fieldLength / 3, fieldWidth / 2 - distToOutLine);
-        targetPointsThrowIn[1] = make_shared < geometry::CNPoint2D > (0.0, fieldWidth / 2 - distToOutLine);
-        targetPointsThrowIn[2] = make_shared < geometry::CNPoint2D > (-fieldLength / 3, fieldWidth / 2 - distToOutLine);
+        targetPointsThrowIn[0] = geometry::CNPointAllo (fieldLength / 3, fieldWidth / 2 - distToOutLine);
+        targetPointsThrowIn[1] = geometry::CNPointAllo (0.0, fieldWidth / 2 - distToOutLine);
+        targetPointsThrowIn[2] = geometry::CNPointAllo (-fieldLength / 3, fieldWidth / 2 - distToOutLine);
         //right
-        targetPointsThrowIn[3] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
-        targetPointsThrowIn[4] = make_shared < geometry::CNPoint2D > (0.0, -(fieldWidth / 2 - distToOutLine));
-        targetPointsThrowIn[5] = make_shared < geometry::CNPoint2D
-                > (-fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
+        targetPointsThrowIn[3] = geometry::CNPointAllo (fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
+        targetPointsThrowIn[4] = geometry::CNPointAllo (0.0, -(fieldWidth / 2 - distToOutLine));
+        targetPointsThrowIn[5] = geometry::CNPointAllo (-fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
 
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Wander::~Wander()
@@ -92,8 +77,8 @@ namespace alica
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData->getOwnPositionVision();
-        if (ownPosition == nullptr)
+        auto ownPosition = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (!ownPosition)
             return;
         msl::Situation situation = wm->game->getSituation();
         if (!firstTargetSet)
@@ -101,9 +86,9 @@ namespace alica
             setFirstTargetPoint(situation);
             firstTargetSet = true;
         }
-        shared_ptr < geometry::CNPoint2D > currentEgoTarget = currentTargetPoint->alloToEgo(*ownPosition);
+        auto currentEgoTarget = currentTargetPoint.toEgo(*ownPosition);
 
-        if (currentEgoTarget->length() < EPSILON_RADIUS)
+        if (currentEgoTarget.length() < EPSILON_RADIUS)
         {
             if (situation == msl::Situation::OwnCorner)
             {
@@ -132,9 +117,9 @@ namespace alica
             }
         }
 
-        shared_ptr < geometry::CNPoint2D > targetPoint = currentTargetPoint->alloToEgo(*ownPosition);
+        auto targetPoint = currentTargetPoint.toEgo(*ownPosition);
 
-        double targetDistance = targetPoint->length();
+        double targetDistance = targetPoint.length();
 
         translation = maxTranslation;
 
@@ -145,8 +130,8 @@ namespace alica
 
         // replaced with new moveToPoint method
 //        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
-        query->egoDestinationPoint = targetPoint;
-        query->egoAlignPoint = targetPoint;
+        query.egoDestinationPoint = targetPoint;
+        query.egoAlignPoint = targetPoint;
 
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
         if (!std::isnan(mc.motion.translation))

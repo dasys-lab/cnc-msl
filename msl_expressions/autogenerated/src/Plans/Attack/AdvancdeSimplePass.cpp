@@ -23,6 +23,7 @@ namespace alica
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;
+        oldMatePos = nonstd::nullopt;
         /*PROTECTED REGION END*/
     }
     AdvancdeSimplePass::~AdvancdeSimplePass()
@@ -55,8 +56,8 @@ namespace alica
             return;
         }
 
-        nonstd::optional<geometry::CNPointEgo > egoMatePos =  nonstd::nullopt;
-        nonstd::optional<geometry::CNPositionAllo > matePos =  nonstd::nullopt;
+        nonstd::optional<geometry::CNPointEgo> egoMatePos = nonstd::nullopt;
+        nonstd::optional<geometry::CNPositionAllo> matePos = nonstd::nullopt;
 
         if (receiver != nullptr)
         {
@@ -68,14 +69,14 @@ namespace alica
             }
             if (matePos)
             {
-                egoMatePos = matePos->getPoint().toEgo(*ownPos);
+                egoMatePos = nonstd::make_optional<geometry::CNPointEgo>(matePos->getPoint().toEgo(*ownPos));
                 oldMatePos = matePos;
             }
             else
             {
                 if (oldMatePos)
                 {
-                    egoMatePos = oldMatePos->getPoint().toEgo(*ownPos);
+                    egoMatePos = nonstd::make_optional<geometry::CNPointEgo>(oldMatePos->getPoint().toEgo(*ownPos));
                 }
             }
         }
@@ -94,7 +95,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1450176193656) ENABLED START*/ //Add additional options here
         maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
-        oldMatePos = nullptr;
+        oldMatePos = nonstd::nullopt;
         //planName = parameters["Plan"];
         receiver = getParentEntryPoint(teamMateTaskName);
         itcounter = 0;

@@ -54,7 +54,7 @@ namespace alica
         static bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
                                     double tolerance, std::shared_ptr<std::vector<geometry::CNPointAllo>> points);
         static bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
-                                              double passCorridorWidth, vector<geometry::CNPointAllo>& points);
+                                              double passCorridorWidth, vector<geometry::CNPointAllo> points);
         static bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
                                      double passCorridorWidth, std::shared_ptr<std::vector<geometry::CNPointAllo>> points);
         bool passPossible(double cf, geometry::CNPointAllo passPoint,

@@ -382,7 +382,7 @@ namespace alica
     }
 
     bool SearchForPassPoint::outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
-                                                       double passCorridorWidth, vector<geometry::CNPointAllo>& points)
+                                                       double passCorridorWidth, vector<geometry::CNPointAllo> points)
     {
         for (int i = 0; i < points.size(); i++)
         {

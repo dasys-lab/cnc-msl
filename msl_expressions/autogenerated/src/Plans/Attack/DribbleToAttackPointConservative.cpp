@@ -18,7 +18,7 @@ namespace alica
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
-        currentTarget = nonstd::make_optional<geometry::CNPointAllo>();
+        currentTarget = nonstd::nullopt;
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointConservative::~DribbleToAttackPointConservative()
@@ -63,8 +63,8 @@ namespace alica
     void DribbleToAttackPointConservative::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1458132872550) ENABLED START*/ //Add additional options here
-        currentTarget = nullptr;
 //        msl::RobotMovement::reset();
+        currentTarget = nonstd::nullopt;
         trueInitialize();
         /*PROTECTED REGION END*/
     }

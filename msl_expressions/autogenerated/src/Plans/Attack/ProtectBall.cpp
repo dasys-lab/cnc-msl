@@ -16,7 +16,7 @@ namespace alica
         /*PROTECTED REGION ID(con1457706592232) ENABLED START*/ //Add additional options here
         sc = supplementary::SystemConfig::getInstance();
         pp = msl::PathProxy::getInstance();
-        eval = make_shared<msl::PathEvaluator>();
+        eval = msl::PathEvaluator();
 
         maxVel = 2000;
         pRot = 2.1;
@@ -45,55 +45,55 @@ namespace alica
         /*PROTECTED REGION ID(run1457706592232) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        auto ballPos = wm->ball->getEgoBallPosition();
-        auto ballVel = wm->ball->getEgoBallVelocity();
-        shared_ptr < geometry::CNPoint2D > ballVel2;
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
+        auto ballPos = wm->ball->getPositionEgo();
+        auto ballVel = wm->ball->getVelocityEgo();
+        geometry::CNVecEgo ballVel2;
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
 
         msl_actuator_msgs::MotionControl mc;
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
             mc = rm.driveRandomly(500);
             send(mc);
             return;
         }
-        if (ballPos == nullptr || ownPos == nullptr)
+        if (!ballPos)
         {
             return;
         }
-        if (ballVel == nullptr)
+        if (!ballVel)
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (0, 0);
+            ballVel2 = geometry::CNVecEgo(0, 0);
         }
         else if (ballVel->length() > 5000)
         {
             auto v = ballVel->normalize() * 5000;
-            ballVel2 = make_shared < geometry::CNPoint2D > (v->x, v->y);
+            ballVel2 = v;
         }
         else
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
+            ballVel2 = ballVel;
         }
 
-        shared_ptr < geometry::CNPoint2D > aimPoint;
-        if (alloAimPoint != nullptr)
+        nonstd::optional<geometry::CNPointEgo> aimPoint;
+        if (!alloAimPoint)
         {
-            aimPoint = alloAimPoint->alloToEgo(*ownPos);
+            aimPoint = alloAimPoint->toEgo(*ownPos);
         }
         else
         {
             this->initialiseParameters();
         }
 
-        if (aimPoint == nullptr)
+        if (!aimPoint)
         {
             this->setSuccess(true);
             return;
         }
 
-        double aimAngle = aimPoint->angleTo();
-        double ballAngle = ballPos->angleTo();
+        double aimAngle = aimPoint->angleZ();
+        double ballAngle = ballPos->angleZ();
 
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         cout << "ProtectBall: angle:\t\t\t\t\t " << deltaAngle << endl;
@@ -104,9 +104,10 @@ namespace alica
             this->setSuccess(true);
         }
 
-        if (dstscan != nullptr)
+        if (dstscan)
         {
-            double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
+            shared_ptr<vector<double>> dstscn = *dstscan;
+            double distBeforeBall = minFree(ballPos->angleZ(), 200, dstscn);
             if (distBeforeBall < 600)
                 this->setSuccess(true);
         }
@@ -119,19 +120,19 @@ namespace alica
         lastRotError = deltaAngle;
 
         double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = min(1000.0, ballVel2->length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
+        double transBallTo = min(1000.0, ballVel2.length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
 
-        auto driveTo = ballPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo->normalize() * transBallOrth;
+        auto driveTo = ballPos->rotateZ(-M_PI / 2.0);
+        driveTo = driveTo.normalize() * transBallOrth;
         driveTo = driveTo + ballPos->normalize() * transBallTo;
 
-        if (driveTo->length() > maxVel)
+        if (driveTo.length() > maxVel)
         {
-            driveTo = driveTo->normalize() * maxVel;
+            driveTo = driveTo.normalize() * maxVel;
         }
 
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = driveTo->length();
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = driveTo.length();
 
         send(mc);
 //        msl::RobotMovement::updateLastTurnTime();
@@ -140,29 +141,29 @@ namespace alica
     void ProtectBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1457706592232) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ballPos = wm->ball->getPositionEgo();
 
-        if (ownPos == nullptr || ballPos == nullptr)
+        if (!ownPos || !ballPos)
         {
-            alloAimPoint = nullptr;
+            alloAimPoint = nonstd::nullopt;
         }
         else
         {
 
-            shared_ptr < geometry::CNPoint2D > egoGoalPoint = make_shared < geometry::CNPoint2D > (1000.0, 0);
+            auto egoGoalPoint = geometry::CNPointEgo(1000.0, 0);
 
-            shared_ptr < geometry::CNPoint2D > aimPoint = pp->getEgoDirection(egoGoalPoint, eval);
+            auto aimPoint = pp->getEgoDirection(egoGoalPoint, eval);
 
-            if (abs(aimPoint->angleTo()) > M_PI / 2.0)
+            if (abs(aimPoint->angleZ()) > M_PI / 2.0)
             {
                 aimPoint->x = 0;
                 aimPoint->y = 1000.0 * ((aimPoint->y) > 0 ? 1 : -1);
             }
 
-            if (aimPoint != nullptr)
+            if (aimPoint)
             {
-                alloAimPoint = (aimPoint->normalize() * 10000)->egoToAllo(*ownPos);
+                alloAimPoint = (aimPoint->normalize() * 10000).toAllo(*ownPos);
             }
         }
         lastRotError = 0;
