@@ -59,23 +59,23 @@ namespace alica
         }
         else
         {
-            ballVel2 = ballVel;
+            ballVel2 = *ballVel;
         }
 
         //TODO corrected possible allo/ego hiccup during nice geom
         auto alloAim = CNPointAllo(wm->field->getFieldLength() / 2.0 - 500, 0);
         auto aimPoint = nonstd::make_optional<geometry::CNPointEgo>(alloAim.toEgo(*ownPos));
         aimPoint = msl::PathProxy::getInstance()->getEgoDirection(*aimPoint, msl::PathEvaluator());
-        geometry::CNPointAllo alloAimPoint = nullptr;
+        nonstd::optional<geometry::CNPointAllo> alloAimPoint = nonstd::nullopt;
         if (aimPoint)
         {
             aimPoint = aimPoint->normalize() * 10000;
             alloAimPoint = aimPoint->toAllo(*ownPos);
         }
-        aimPoint = nullptr;
+        aimPoint = nonstd::nullopt;
         if (alloAimPoint)
         {
-            aimPoint = alloAimPoint.toEgo(*ownPos);
+            aimPoint = alloAimPoint->toEgo(*ownPos);
         }
 
         if (!aimPoint)
@@ -122,7 +122,8 @@ namespace alica
         double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
         double transBallTo = min(1000.0, ballVel2.length());
 
-        auto driveTo = CNVecEgo(ballPos->rotateZ(-M_PI / 2.0));
+        auto rotatedVec = ballPos->rotateZ(-M_PI / 2.0);
+        auto driveTo = CNVecEgo(rotatedVec.x, rotatedVec.y);
         driveTo = driveTo.normalize() * transBallOrth;
         driveTo.x += ballPos->normalize().x * transBallTo;
         driveTo.y += ballPos->normalize().y * transBallTo;

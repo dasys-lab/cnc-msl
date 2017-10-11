@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/TestPlans/RobotMovement/Behaviours/RobotMovementTest.h"
 
 /*PROTECTED REGION ID(inccpp1473862842303) ENABLED START*/ //Add additional includes here
@@ -86,7 +85,7 @@ namespace alica
             if (wm->ball->haveBall())
             {
 
-                if (egoBallPos == nullptr)
+                if (!egoBallPos)
                     return;
 
                 query.egoAlignPoint = egoGoalPos;

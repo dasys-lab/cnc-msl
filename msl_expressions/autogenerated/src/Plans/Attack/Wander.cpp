@@ -25,7 +25,7 @@ namespace alica
         SLOW_DOWN_DISTANCE = 1200.0;
         maxTranslation = 4000.0;
         translation = 0.0;
-        currentTargetPoint = make_shared < geometry::CNPoint2D > (0, 0);
+        currentTargetPoint = geometry::CNPointAllo (0, 0);
         //default targetpoints
         targetPoints.resize(5);
         targetPoints[0] = geometry::CNPointAllo (-(fieldLength / 2 - distToCorner), fieldWidth / 2 - distToCorner);

@@ -5,6 +5,8 @@
 /*PROTECTED REGION ID(inc1464189819779) ENABLED START*/ //Add additional includes here
 #include <msl_actuator_msgs/MotionControl.h>
 #include <nonstd/optional.hpp>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

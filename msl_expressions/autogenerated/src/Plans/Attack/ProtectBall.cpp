@@ -73,7 +73,7 @@ namespace alica
         }
         else
         {
-            ballVel2 = ballVel;
+            ballVel2 = *ballVel;
         }
 
         nonstd::optional<geometry::CNPointEgo> aimPoint;

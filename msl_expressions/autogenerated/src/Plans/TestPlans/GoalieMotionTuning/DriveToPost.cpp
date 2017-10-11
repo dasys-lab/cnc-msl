@@ -6,6 +6,7 @@ using namespace std;
 #include "Game.h"
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+
 using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
