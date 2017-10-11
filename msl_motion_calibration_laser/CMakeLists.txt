@@ -23,9 +23,9 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(msl_motion_calibration_laser
-  src/MotionCalibrationLaser.cpp
-  src/LaserPointGroup.cpp
-  src/LaserPoint.cpp
+  src/laserMotionCalibration/MotionCalibrationLaser.cpp
+  src/laserMotionCalibration/LaserPointGroup.cpp
+  src/laserMotionCalibration/LaserPoint.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})

@@ -61,6 +61,7 @@ catkin_package(
    src/Rules.cpp
    src/Prediction.cpp
    src/LightBarrier.cpp
+   src/LaserScannerPosition.cpp
    src/CubicSplineInterpolation/Spline.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp

@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1507131193237) ENABLED START*/ //Add additional includes here
+#include <container/CNPoint2D.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,6 +21,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1507131193237) ENABLED START*/ //Add additional private methods here
+        geometry::CNPoint2D startPositionMotion;
+    	geometry::CNPoint2D startPositionLaser;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
