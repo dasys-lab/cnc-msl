@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1507131193237) ENABLED START*/ //Add additional includes here
 #include <MSLWorldModel.h>
+#include <LaserScannerPosition.h>
 #include "msl_actuator_msgs/MotionControl.h"
 /*PROTECTED REGION END*/
 namespace alica
@@ -31,12 +32,18 @@ namespace alica
     	mc.motion.rotation = 0.0;
     	mc.motion.angle = 0.0;
     	mc.motion.translation = 1.0;
-    	// TODO continue
+    	send(mc);
+
         /*PROTECTED REGION END*/
     }
     void DriveForward::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1507131193237) ENABLED START*/ //Add additional options here
+    	startPositionMotion.x = wm->rawOdometry->position.x;
+    	startPositionMotion.y = wm->rawOdometry->position.y;
+
+    	//startPositionLaser.x = wm->laserScannerPosition->getPosition()->x;
+    	//startPositionLaser.y = wm->laserScannerPosition->getPosition()->y;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1507131193237) ENABLED START*/ //Add additional methods here

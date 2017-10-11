@@ -14,6 +14,7 @@ using namespace std;
 #include <ITrigger.h>
 #include <EventTrigger.h>
 #include <MSLEnums.h>
+#include <container/CNPoint2D.h>
 
 namespace std_msgs
 {
@@ -71,6 +72,7 @@ class MSLFootballField;
 class Prediction;
 class Monitoring;
 class LightBarrier;
+class LaserScannerPosition;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
@@ -94,6 +96,7 @@ class MSLWorldModel
     void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
     void onLightBarrierInfo(std_msgs::BoolPtr msg);
     void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
+    void onPositionLaserScanner(geometry_msgs::PointPtr msg);
 
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
@@ -125,6 +128,7 @@ class MSLWorldModel
 		Prediction* prediction;
 		LightBarrier* lightBarrier;
 		msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
+		LaserScannerPosition* laserScannerPosition;
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
@@ -160,6 +164,7 @@ class MSLWorldModel
 		ros::Subscriber lightBarrierSub;
 		ros::Subscriber imuDataSub;
 		ros::Publisher processCommandPub;
+		ros::Subscriber laserMeasurementSub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

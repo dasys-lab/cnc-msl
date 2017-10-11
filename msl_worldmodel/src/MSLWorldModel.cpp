@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "InformationElement.h"
 #include "LightBarrier.h"
+#include "LaserScannerPosition.h"
 #include "MSLFootballField.h"
 #include "Monitoring.h"
 #include "Prediction.h"
@@ -113,6 +114,8 @@ namespace msl
 
         processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
 
+        laserMeasurementSub = n.subscribe("/positionLaserScanner", 10, &MSLWorldModel::onPositionLaserScanner, (MSLWorldModel *) this);
+
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->timeLastSimMsgReceived = 0;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
@@ -122,6 +125,7 @@ namespace msl
         this->ball = new Ball(this, ringBufferLength);
         this->lightBarrier = new LightBarrier(this);
         this->rawSensorData = new RawSensorData(this, ringBufferLength);
+        this->laserScannerPosition = new LaserScannerPosition(this, ringBufferLength);
         this->robots = new Robots(this, ringBufferLength);
         this->game = new Game(this, ringBufferLength);
         this->pathPlanner = new PathPlanner(this, ringBufferLength);
@@ -135,6 +139,11 @@ namespace msl
     supplementary::ITrigger *MSLWorldModel::getVisionDataEventTrigger()
     {
         return this->visionDataEventTrigger;
+    }
+
+    void MSLWorldModel::onPositionLaserScanner(geometry_msgs::PointPtr msg)
+    {
+    	this->laserScannerPosition->processWorldModelData(msg);
     }
 
     void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)

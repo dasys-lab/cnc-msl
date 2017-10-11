@@ -29,7 +29,7 @@ MotionCalibrationLaser::MotionCalibrationLaser(int argc, char **argv)
     subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10, &MotionCalibrationLaser::onScan, (MotionCalibrationLaser *)this);
     this->filteredPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::PoseArray>("/filteredScan", 10));
     this->resultsPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::PoseArray>("/laserResults", 10));
-    this->positionPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry::CNPoint2D>("/positionLaserScanner", 10));
+    this->positionPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::Point>("/positionLaserScanner", 10));
 
     initialIntensityThreshold = (*sc)["LaserLocalization"]->get<double>("LaserLocalization.initialIntensityThreshold", NULL);
 }
@@ -119,6 +119,9 @@ void MotionCalibrationLaser::onScan(const sensor_msgs::LaserScanConstPtr &laserS
         }
     }
     auto alloPos = calculateCoordinatesInPillarSystem(pillarCenters);
+    geometry_msgs::Point position;
+    position.x = alloPos->x;
+    position.y = alloPos->y;
 
     //geometry_msgs::Pose pose;
     //pose.position = *alloPos.get();
@@ -135,7 +138,7 @@ cout << "allopos: " << alloPos->x << "/" << alloPos->y << " (" << alloPos->lengt
     filteredPoses.header.frame_id = "laser"; // for debugging purposes
     resultsPublisher->publish(resultPoses);
     filteredPublisher->publish(filteredPoses);
-    positionPublisher->publish(alloPos);
+    positionPublisher->publish(position);
 }
 
 shared_ptr<geometry::CNPoint2D> MotionCalibrationLaser::calculateCoordinatesInPillarSystem(vector<std::shared_ptr<geometry::CNPoint2D>> &pillarCenters)
