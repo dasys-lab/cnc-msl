@@ -1,6 +1,0 @@
-int32 senderID
-uint32 validFor
-CNMessages/Point2dInfo[] points
-float64[] values
-Edge[] edges
-CNMessages/Point2dInfo aimPoint

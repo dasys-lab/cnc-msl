@@ -1,5 +1,0 @@
-int32 senderID
-int32 receiverID
-uint32 validFor
-CNMessages/Point2dInfo origin
-CNMessages/Point2dInfo destination

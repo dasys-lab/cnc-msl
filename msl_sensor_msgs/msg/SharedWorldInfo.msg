@@ -5,7 +5,7 @@ uint8 NOT_IN_KICKER_DISTANCE = 2
 uint8 ASIDE_OF_KICKER = 3
 uint8 NO_BALL_SEEN = 4
 
-int32 senderID
+agent_id/AgentID senderID
 bool participating
 bool ownTeamIsMagenta
 bool ownGoalIsYellow

@@ -7,7 +7,7 @@ namespace msl
 namespace robot
 {
 
-IntRobotID::IntRobotID(uint8_t *idBytes, int idSize)
+IntRobotID::IntRobotID(const uint8_t *idBytes, int idSize)
     : id(0)
 {
     if (idSize != 4)
@@ -56,7 +56,7 @@ bool IntRobotID::operator> (const supplementary::IAgentID& other) const
 	return this->id > dynamic_cast<const IntRobotID&>(other).id;
 }
 
-std::vector<uint8_t > IntRobotID::toByteVector() const {
+std::vector<uint8_t> IntRobotID::toByteVector() const {
 
 	std::vector<uint8_t> bytes;
 

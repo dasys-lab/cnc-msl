@@ -1,6 +1,0 @@
-JoystickRobotIDs robotIDs
-CNMessages/MotionInfo motion
-KickControl kick
-BallHandleCmd ballHandle
-ShovelSelectCmd shovel
-BallCatchCmd ballCatch

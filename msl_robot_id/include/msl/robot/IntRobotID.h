@@ -13,7 +13,7 @@ class IntRobotID : public supplementary::IAgentID
 {
 	friend struct std::hash<msl::robot::IntRobotID>;
   public:
-    IntRobotID(uint8_t* idBytes, int idSize);
+    IntRobotID(const uint8_t* idBytes, int idSize);
     virtual ~IntRobotID();
 
     uint8_t* getRaw() const;

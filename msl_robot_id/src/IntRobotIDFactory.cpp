@@ -17,9 +17,9 @@ IntRobotIDFactory::~IntRobotIDFactory()
 {
 }
 
-const supplementary::IAgentID *IntRobotIDFactory::create(std::vector<uint8_t> &robotID) const
+const supplementary::IAgentID *IntRobotIDFactory::create(const std::vector<uint8_t> &robotID) const
 {
-    unsigned char *_robotRosID = reinterpret_cast<unsigned char *>(robotID.data());
+    const unsigned char *_robotRosID = reinterpret_cast<const unsigned char *>(robotID.data());
     return new IntRobotID(_robotRosID, robotID.size());
 }
 
