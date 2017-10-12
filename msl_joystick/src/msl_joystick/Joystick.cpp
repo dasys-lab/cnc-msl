@@ -12,7 +12,7 @@ namespace msl_joystick
     using namespace std;
 
     Joystick::Joystick() :
-            rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0), gamePadTimer(0)
+            rqt_gui_cpp::Plugin(), uiWidget(nullptr)
     {
         setObjectName("Joystick");
 
@@ -111,6 +111,7 @@ namespace msl_joystick
         connect(this, SIGNAL(toggleShovelSelect(bool)), this, SLOT(onToggleShovel(bool)));
 
         this->gamePadTimer = new QTimer(this);
+        this->gamePadTimer->setInterval(this->sendInterval);
         connect(this->gamePadTimer, SIGNAL(timeout()), this, SLOT(resendJoyCmd()));
         connect(this, SIGNAL(stopJoyTimer()), this->gamePadTimer, SLOT(stop()));
         connect(this, SIGNAL(startJoyTimer()), this->gamePadTimer, SLOT(start()));
@@ -269,7 +270,7 @@ namespace msl_joystick
         }
 #ifdef RQT_MSL_JOYSTICK_DEBUG
         this->printControlValues();
-// this->printJoystickMessage(msg);
+        this->printJoystickMessage(msg);
 #endif
         this->joyPub.publish(msg);
     }
@@ -684,7 +685,6 @@ namespace msl_joystick
 
     void Joystick::onJoyMsg(sensor_msgs::JoyPtr msg)
     {
-        emit stopJoyTimer();
 
         // lb button => dead-man
         if (msg->buttons.at(4) == 0)
@@ -697,6 +697,8 @@ namespace msl_joystick
             this->joyPub.publish(cmd);
             return; // dont send joystick message if dead-man is not pressed
         }
+
+        emit stopJoyTimer();
 
         // both axes are set to 0.0 if they have not been triggered
         // after first trigger they are set to 1.0 ...
@@ -847,8 +849,8 @@ namespace msl_joystick
         {
             if (this->ltPressedOnce && this->rtPressedOnce)
             {
-                cmd.ballHandleLeftMotor = this->ballHandleSign * ((msg->axes.at(2) - 1) / 2) * this->ballHandleMax;
-                cmd.ballHandleRightMotor = this->ballHandleSign * ((msg->axes.at(5) - 1) / 2) * this->ballHandleMax;
+                cmd.ballHandleLeftMotor = this->ballHandleSign * ((msg->axes.at(2) - 1) / 2) * this->ballHandleLeftSlider->value();
+                cmd.ballHandleRightMotor = this->ballHandleSign * ((msg->axes.at(5) - 1) / 2) * this->ballHandleRightSlider->value();
             }
         }
         else
@@ -867,7 +869,6 @@ namespace msl_joystick
         cmd.kickPower = this->kickPower;
         cmd.shovelIdx = this->shovelIdx;
         cmd.ptControllerState = this->usePTController;
-        cmd.ballHandleState = this->useBallHandle;
         printJoystickMessage(cmd);
         this->joycmd = cmd;
         this->joyPub.publish(cmd);
