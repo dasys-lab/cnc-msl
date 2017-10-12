@@ -64,6 +64,7 @@ void DribbleControlMOS::run(void *msg)
 
     if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
     {
+    	cout << "DribbleControlMOS: overridden by joystick!" << endl;
     	return;
     }
 
