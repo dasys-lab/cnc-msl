@@ -64,7 +64,7 @@ namespace alica
                 auto pos1 = b1->getInformation();
                 if (pos1.length() < 6300)
                 {
-                    posV = pos1;
+                    posV = nonstd::make_optional<geometry::CNPointEgo>(pos1);
                 }
             }
 
@@ -76,35 +76,35 @@ namespace alica
                 {
                     if (pos2.length() < 6300)
                     {
-                        posV = pos2;
+                        posV = nonstd::make_optional<geometry::CNPointEgo>(pos2);
                     }
                 }
                 else if (pos2.length() < 6300)
                 {
-                    posV = posV + pos2;
-                    posV = posV / 2;
+                    posV = geometry::CNPointEgo(posV->x + pos2.x, posV->y + pos2.y);
+                    posV = geometry::CNPointEgo(posV->x / 2, posV->y / 2);
                 }
             }
             /*auto b1 = wm->ball->getVisionBallPosition(0);
-            if (b1 != nullptr && b1->length() < 6300)
-                posV = b1->clone();
-            auto b2 = wm->ball->getVisionBallPosition(1);
-            if (posV == nullptr && b2 != nullptr && b2->length() < 6300)
-            {
-                posV = b2->clone();
-            }
-            else if (b2 != nullptr)
-            {
-                posV = posV + b2->clone();
-                posV = posV / 2.0;
-            }
+             if (b1 != nullptr && b1->length() < 6300)
+             posV = b1->clone();
+             auto b2 = wm->ball->getVisionBallPosition(1);
+             if (posV == nullptr && b2 != nullptr && b2->length() < 6300)
+             {
+             posV = b2->clone();
+             }
+             else if (b2 != nullptr)
+             {
+             posV = posV + b2->clone();
+             posV = posV / 2.0;
+             }
 
-            if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.5)
-                posV = nullptr;
-            if (ballPos != nullptr && ballPos->length() > 4000)
-                posV = nullptr;
-            if (posV != nullptr)
-                posV = posV - ballPos;*/
+             if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.5)
+             posV = nullptr;
+             if (ballPos != nullptr && ballPos->length() > 4000)
+             posV = nullptr;
+             if (posV != nullptr)
+             posV = posV - ballPos;*/
 
         }
         else
@@ -195,10 +195,10 @@ namespace alica
         ballPos = nullopt;
         ballMovedOccurrences = 0;
         /*
-        auto b1 = wm->ball->getVisionBallPosition(0);
-        if (b1 != nullptr && b1->length() < 6300)
-            ballPos = b1->clone();
-        */
+         auto b1 = wm->ball->getVisionBallPosition(0);
+         if (b1 != nullptr && b1->length() < 6300)
+         ballPos = b1->clone();
+         */
 
         auto b1 = wm->ball->getVisionBallPositionBuffer().getLast(0);
         if (b1)
@@ -206,7 +206,7 @@ namespace alica
             auto pos1 = b1->getInformation();
             if (pos1.length() < 6300)
             {
-                this->ballPos = pos1;
+                this->ballPos = nonstd::make_optional<geometry::CNPointEgo>(pos1);
             }
         }
 
@@ -218,13 +218,13 @@ namespace alica
             {
                 if (pos2.length() < 6300)
                 {
-                    this->ballPos = pos2;
+                    this->ballPos = nonstd::make_optional<geometry::CNPointEgo>(pos2);
                 }
             }
             else if (pos2.length() < 6300)
             {
-                ballPos = ballPos + pos2;
-                ballPos = ballPos / 2;
+                ballPos = nonstd::make_optional<geometry::CNPointEgo>(ballPos->x + pos2.x, ballPos->y + pos2.y);
+                ballPos = nonstd::make_optional<geometry::CNPointEgo>(ballPos->x / 2, ballPos->y / 2);
             }
         }
         /*
@@ -242,8 +242,8 @@ namespace alica
 
         //TODO this method doesn't exist anymore :<
         /*if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.4)
-            ballPos = nullopt;
-        */
+         ballPos = nullopt;
+         */
         if (ballPos && ballPos->length() > (msl::Rules::getInstance()->getStayAwayRadius() + 750))
             ballPos = nullopt;
 

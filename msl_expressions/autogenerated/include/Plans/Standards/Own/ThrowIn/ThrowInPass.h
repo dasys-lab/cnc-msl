@@ -4,6 +4,10 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1462363192018) ENABLED START*/ //Add additional includes here
 #include <nonstd/optional.hpp>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPositionEgo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

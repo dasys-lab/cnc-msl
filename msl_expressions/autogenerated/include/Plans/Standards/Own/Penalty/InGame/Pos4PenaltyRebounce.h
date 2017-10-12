@@ -3,10 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1466972686566) ENABLED START*/ //Add additional includes here
-namespace msl
-{
-    class MovementQuery;
-}
+#include <msl_robot/robotmovement/MovementQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

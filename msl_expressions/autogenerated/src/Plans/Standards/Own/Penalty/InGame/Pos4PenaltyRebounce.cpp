@@ -7,6 +7,11 @@
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include <Rules.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPositionEgo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -16,7 +21,6 @@ namespace alica
             DomainBehaviour("Pos4PenaltyRebounce")
     {
         /*PROTECTED REGION ID(con1466972686566) ENABLED START*/ //Add additional options here
-        this->query = make_shared<msl::MovementQuery>();
         this->translation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         this->catchRadius = (*this->sc)["Drive"]->get<double>("Drive", "Default", "CatchRadius", NULL);
         /*PROTECTED REGION END*/
@@ -37,8 +41,9 @@ namespace alica
         }
         auto egoTarget = alloTarget.toEgo(*ownPos);
 
-        query.egoDestinationPoint = egoTarget;
-        query.egoAlignPoint = this->wm->field->posOppGoalMid().toEgo(*ownPos);
+        query.egoDestinationPoint = nonstd::make_optional<geometry::CNPointEgo>(egoTarget);
+        query.egoAlignPoint = nonstd::make_optional<geometry::CNPointEgo>(
+                this->wm->field->posOppGoalMid().toEgo(*ownPos));
         query.snapDistance = this->catchRadius;
         auto mc = rm.moveToPoint(query);
 

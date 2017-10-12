@@ -7,6 +7,11 @@ using namespace std;
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPositionEgo.h>
+#include <nonstd/optional.hpp>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -16,7 +21,6 @@ namespace alica
             DomainBehaviour("PenaltyPosExecuter")
     {
         /*PROTECTED REGION ID(con1466940407563) ENABLED START*/ //Add additional options here
-        this->query = make_shared<msl::MovementQuery>();
         this->translation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         this->catchRadius = (*this->sc)["Drive"]->get<double>("Drive", "Default", "CatchRadius", NULL);
         this->alloTarget = this->wm->field->posOppPenaltyMarker();
@@ -47,7 +51,7 @@ namespace alica
         }
 
         msl_actuator_msgs::MotionControl mc;
-        query.egoDestinationPoint = egoTarget;
+        query.egoDestinationPoint = nonstd::make_optional<geometry::CNPointEgo>(egoTarget);
         query.egoAlignPoint = this->wm->field->posOppGoalMid().toEgo(*ownPos);
         mc = rm.moveToPoint(query);
 

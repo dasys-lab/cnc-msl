@@ -198,12 +198,12 @@ namespace alica
         int bestReceiverId = -1;
         if (canPass)
         {
-            alloTarget = recPos1;
+            alloTarget = *recPos1;
             bestReceiverId = recId;
         }
         else
         {
-            alloTarget = recPos2;
+            alloTarget = *recPos2;
             bestReceiverId = aRecId;
         }
         msl_actuator_msgs::MotionControl mc;
@@ -220,7 +220,7 @@ namespace alica
         }
         else
         {
-            ballVel2 = ballVel;
+            ballVel2 = *ballVel;
         }
         auto aimPoint = passPoint.toEgo(*ownPos);
         double aimAngle = aimPoint.angleZ();
@@ -234,9 +234,9 @@ namespace alica
             // Distance to aim point * direction of our kicker = actual pass point destination
             double dist = aimPoint.length();
             auto dest = CNPointEgo(-dist, 0);
-            dest = dest.toAllo(*ownPos);
-            pinf.x = dest.x;
-            pinf.y = dest.y;
+            auto destAllo = dest.toAllo(*ownPos);
+            pinf.x = destAllo.x;
+            pinf.y = destAllo.y;
             pm.destination = pinf;
             pinf = msl_msgs::Point2dInfo();
             pinf.x = ownPos->x;
@@ -247,7 +247,7 @@ namespace alica
             km.enabled = true;
             km.kicker = 1; //(ushort)KickHelper.KickerToUseIndex(egoBallPos->angleTo());
 
-            auto goalReceiverVec = dest - alloTarget;
+            auto goalReceiverVec = destAllo - alloTarget;
             double v0 = 0;
             double distReceiver = goalReceiverVec.length();
             double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;

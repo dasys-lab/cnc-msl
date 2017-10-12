@@ -12,6 +12,11 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
+#include <nonstd/optional.hpp>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPositionEgo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPointEgo.h>
 using geometry::CNPointAllo;
 /*PROTECTED REGION END*/
 namespace alica
@@ -57,14 +62,16 @@ namespace alica
             return;
         }
         auto robots = robotsInEntryPointOfHigherPlan(receiver);
-        nonstd::optional<CNPointAllo> matePos = nonstd::nullopt;
+        nonstd::optional<geometry::CNPositionAllo> matePos = nonstd::nullopt;
         for (int rob : *robots)
         {
             matePos = wm->robots->teammates.getTeammatePositionBuffer(rob).getLastValidContent();
             if (matePos)
             {
                 break;
-            } else if (rob == robots->at(robots->size()-1)) {
+            }
+            else if (rob == robots->at(robots->size() - 1))
+            {
                 return;
             }
         }
@@ -77,7 +84,7 @@ namespace alica
             // removed method with new  moveToPoint method with Query-Object
 //            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
             query.egoDestinationPoint = egoBallPos;
-            query.egoAlignPoint = egoMatePos;
+            query.egoAlignPoint = geometry::CNPointEgo(egoMatePos.x, egoMatePos.y);
             mc = rm.moveToPoint(query);
             mc.motion.translation = driveSlowSpeed;
 

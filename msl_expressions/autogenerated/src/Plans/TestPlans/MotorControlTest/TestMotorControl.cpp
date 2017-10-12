@@ -41,7 +41,7 @@ namespace alica
         }
 
         currentPos = wm->rawSensorData->getOwnPositionMotionBuffer().getLastValidContent();
-        goalVec = goal - currentPos;
+        goalVec = goal - *currentPos;
         angleDistance = goal.theta - currentPos->theta;
         goalDistance = sqrt(
                 goalVec.x * goalVec.x + goalVec.y * goalVec.y
