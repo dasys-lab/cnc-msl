@@ -17,13 +17,13 @@ IntRobotIDFactory::~IntRobotIDFactory()
 {
 }
 
-const supplementary::IAgentID *IntRobotIDFactory::create(const std::vector<uint8_t> &robotID) const
+const IntRobotID *IntRobotIDFactory::create(const std::vector<uint8_t> &robotID) const
 {
     const unsigned char *_robotRosID = reinterpret_cast<const unsigned char *>(robotID.data());
     return new IntRobotID(_robotRosID, robotID.size());
 }
 
-const supplementary::IAgentID *IntRobotIDFactory::generateID() const
+const IntRobotID *IntRobotIDFactory::generateID() const
 {
 	std::random_device rd;
 	std::mt19937_64 gen(rd());
