@@ -1,1 +1,1 @@
-int32[] receiverID
+agent_id/AgentID[] receiverIDs

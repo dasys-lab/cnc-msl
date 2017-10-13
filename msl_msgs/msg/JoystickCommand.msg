@@ -5,7 +5,7 @@ int8 PT_CONTROLLER_ON = 1
 int8 PT_CONTROLLER_OFF = 0
 
 bool kick
-int32 robotId 
+agent_id/AgentID robotId 
 MotionInfo motion
 uint16 kickPower
 int8 shovelIdx

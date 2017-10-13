@@ -1,4 +1,4 @@
-int32 senderID
+agent_id/AgentID senderID
 msl_msgs/Point2dInfo[] list
 msl_msgs/PositionInfo position
 DistanceScanInfo distanceScan
