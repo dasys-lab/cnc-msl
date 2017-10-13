@@ -23,6 +23,17 @@ const IntRobotID *IntRobotIDFactory::create(const std::vector<uint8_t> &robotID)
     return new IntRobotID(_robotRosID, robotID.size());
 }
 
+const IntRobotID *IntRobotIDFactory::create(int intID) const
+{
+	std::vector<uint8_t> robotIDVector;
+
+	for (int i = 0; i < sizeof(int); i++)
+	{
+		robotIDVector.push_back(*(((uint8_t *)&intID) + i));
+	}
+	return this->create(robotIDVector);
+}
+
 const IntRobotID *IntRobotIDFactory::generateID() const
 {
 	std::random_device rd;
