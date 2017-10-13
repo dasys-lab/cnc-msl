@@ -15,7 +15,13 @@
   <build_depend>msl_msgs</build_depend>
   <build_depend>alica_ros_proxy</build_depend>
   <build_depend>rqt_gui_cpp</build_depend>
+  <build_depend>msl_robot_id</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>agent_id</build_depend>
   
+  <run_depend>agent_id</run_depend>  
+  <run_depend>msl_sensor_msgs</run_depend>  
+  <run_depend>msl_robot_id</run_depend>  
   <run_depend>rqt_gui</run_depend>
   <run_depend>msl_msgs</run_depend>
   <run_depend>alica_ros_proxy</run_depend>

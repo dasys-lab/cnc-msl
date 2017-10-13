@@ -15,6 +15,7 @@ Joystick::Joystick()
     : rqt_gui_cpp::Plugin()
     , uiWidget(0)
     , sendMsgTimer(0)
+	, usePTController(false)
 {
     setObjectName("Joystick");
 

@@ -1,2 +1,2 @@
-int32 senderID
+agent_id/AgentID senderID
 bool passing

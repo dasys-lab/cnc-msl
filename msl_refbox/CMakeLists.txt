@@ -11,7 +11,7 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 # Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs alica_ros_proxy)
+find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs alica_ros_proxy msl_robot_id agent_id)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -45,7 +45,7 @@ set(msl_refbox_INCLUDE_DIRECTORIES
 catkin_package(
   INCLUDE_DIRS ${msl_refbox_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS rqt_gui rqt_gui_cpp
+  CATKIN_DEPENDS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs alica_ros_proxy msl_robot_id agent_id
 )
 catkin_python_setup()
 

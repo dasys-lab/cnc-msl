@@ -1,5 +1,5 @@
-int32 senderID
-int32 receiverID
+agent_id/AgentID senderID
+agent_id/AgentID receiverID
 bool useBrightness
 int32 brightness
 int32 exposure
