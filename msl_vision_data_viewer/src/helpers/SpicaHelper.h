@@ -20,10 +20,8 @@
  *
  * <description>
  */
-#ifndef SpicaHelper_h
-#define SpicaHelper_h 1
+#pragma once
 
-#include "ros/ros.h"
 #include <msl_sensor_msgs/BallInfo.h>
 #include <msl_sensor_msgs/LocalizationType.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
@@ -31,9 +29,19 @@
 #include <msl_sensor_msgs/VisionDebug.h>
 #include <msl_sensor_msgs/VisionImage.h>
 
-#include <vector>
+#include <msl/robot/IntRobotIDFactory.h>
 
-using namespace std;
+#include <vector>
+#include "ros/ros.h"
+
+namespace msl
+{
+namespace robot
+{
+	class IntRobotID;
+}
+}
+
 
 class SpicaHelper
 {
@@ -53,18 +61,20 @@ class SpicaHelper
     bool lpdirty;
     bool wmdirty;
     bool vidirty;
-    int receiverID;
+    const msl::robot::IntRobotID* receiverID;
     ros::NodeHandle *nh;
-    vector<msl_msgs::Point2dInfo> linePoints;
-    vector<msl_sensor_msgs::ObstacleInfo> obstacles;
-    vector<double> distanceScan;
+    std::vector<msl_msgs::Point2dInfo> linePoints;
+    std::vector<msl_sensor_msgs::ObstacleInfo> obstacles;
+    std::vector<double> distanceScan;
 
-    vector<unsigned char> imageData;
-    int width, height;
-    vector<int> params;
+    std::vector<unsigned char> imageData;
+    int width;
+	int height;
+    std::vector<int> params;
 
     msl_msgs::PositionInfo pos;
     ros::AsyncSpinner *spinner;
+  private:
+    msl::robot::IntRobotIDFactory factory;
 };
 
-#endif

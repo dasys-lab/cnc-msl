@@ -9,14 +9,14 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED roscpp msl_sensor_msgs system_config)
+find_package(catkin REQUIRED roscpp msl_sensor_msgs system_config msl_robot_id)
 
 find_package(Boost REQUIRED COMPONENTS system iostreams)
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES msl_vision_data_viewer
-  CATKIN_DEPENDS roscpp msl_sensor_msgs system_config
+  CATKIN_DEPENDS roscpp msl_sensor_msgs system_config msl_robot_id
   DEPENDS ${Boost_LIBRARIES} m util
 )
 

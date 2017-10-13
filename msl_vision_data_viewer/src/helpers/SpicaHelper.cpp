@@ -21,14 +21,20 @@
  * <description>
  */
 #include "SpicaHelper.h"
+#include <msl/robot/IntRobotID.h>
 #include <iostream>
 
 using namespace std;
 
 void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr &msg)
 {
-    if (msg->senderID != receiverID)
+
+	auto tmpID = factory.create(msg->senderID.id);
+    if (tmpID != receiverID)
+    {
+    	delete tmpID;
         return;
+    }
     if (msg->locType.type == msl_sensor_msgs::LocalizationType::ParticleFilter)
         cout << "P";
     else
@@ -45,8 +51,12 @@ void SpicaHelper::handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr
 {
     if (vidirty)
         return;
-    if (msg->senderID != receiverID)
+	auto tmpID = factory.create(msg->senderID.id);
+    if (tmpID != receiverID)
+    {
+    	delete tmpID;
         return;
+    }
     imageData = msg->imageData;
     height = msg->height;
     width = msg->width;
@@ -80,6 +90,6 @@ void SpicaHelper::sendVisionControl(char key, char debugMode)
     msl_sensor_msgs::VisionControl vc;
     vc.key = key;
     vc.debugMode = debugMode;
-    vc.receiverID = receiverID;
+    vc.receiverID.id = receiverID->toByteVector();
     VCPub.publish(vc);
 }
