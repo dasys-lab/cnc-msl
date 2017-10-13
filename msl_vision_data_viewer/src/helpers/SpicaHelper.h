@@ -31,17 +31,13 @@
 
 #include <msl/robot/IntRobotIDFactory.h>
 
-#include <vector>
 #include "ros/ros.h"
+#include <vector>
 
-namespace msl
+namespace supplementary
 {
-namespace robot
-{
-	class IntRobotID;
+	class IAgentID;
 }
-}
-
 
 class SpicaHelper
 {
@@ -61,7 +57,7 @@ class SpicaHelper
     bool lpdirty;
     bool wmdirty;
     bool vidirty;
-    const msl::robot::IntRobotID* receiverID;
+    const supplementary::IAgentID* receiverID;
     ros::NodeHandle *nh;
     std::vector<msl_msgs::Point2dInfo> linePoints;
     std::vector<msl_sensor_msgs::ObstacleInfo> obstacles;
@@ -69,12 +65,12 @@ class SpicaHelper
 
     std::vector<unsigned char> imageData;
     int width;
-	int height;
+    int height;
     std::vector<int> params;
 
     msl_msgs::PositionInfo pos;
     ros::AsyncSpinner *spinner;
+
   private:
     msl::robot::IntRobotIDFactory factory;
 };
-

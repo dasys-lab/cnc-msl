@@ -1,21 +1,23 @@
-#include <iostream>
-#include <math.h>
-#include <unistd.h>
-#include <vector>
 
 #define GNUPLOT_ENABLE_PTY
 #include "helpers/KeyHelper.h"
 #include "helpers/LocalizeDebug.h"
 #include "helpers/SpicaHelper.h"
 #include "helpers/gnuplot-iostream.h"
-#include "ros/ros.h"
+
+#include <supplementary/BroadcastID.h>
+#include <msl/robot/IntRobotID.h>
+#include <msl/robot/IntRobotIDFactory.h>
 
 #include <SystemConfig.h>
 
-#include <signal.h>
+#include "ros/ros.h"
 
-using namespace std;
-using namespace supplementary;
+#include <iostream>
+#include <math.h>
+#include <signal.h>
+#include <unistd.h>
+#include <vector>
 
 SpicaHelper *sh;
 
@@ -41,9 +43,9 @@ int main(int argc, char *argv[])
     int n = 1;
     bool plotopen = false;
     sh = new SpicaHelper();
-    sh->receiverID = 0;
+    sh->receiverID = new supplementary::BroadcastID(nullptr, 0);
     sh->initialize("CNVisionDataViewer", false);
-
+    msl::robot::IntRobotIDFactory factory;
     if (argc > 1)
     {
         for (int i = 1; i < argc; i++)
@@ -52,7 +54,14 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < argc)
                 {
-                    sh->receiverID = atoi(argv[i + 1]);
+                    auto intID = atoi(argv[i + 1]);
+                    std::vector<uint8_t> robotId;
+
+                    for (int i = 0; i < sizeof(int); i++)
+                    {
+                        robotId.push_back(*(((uint8_t *)&intID) + i));
+                    }
+                    sh->receiverID = factory.create(robotId);
                     i++;
                 }
             }
@@ -60,8 +69,15 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < argc)
                 {
-                    Configuration *globals = (*SystemConfig::getInstance())["Globals"];
-                    sh->receiverID = globals->get<int>("Globals", "Team", argv[i + 1], "ID", NULL);
+                    supplementary::Configuration *globals = (*supplementary::SystemConfig::getInstance())["Globals"];
+                    auto intID = globals->get<int>("Globals", "Team", argv[i + 1], "ID", NULL);
+                    std::vector<uint8_t> robotId;
+
+                    for (int i = 0; i < sizeof(int); i++)
+                    {
+                        robotId.push_back(*(((uint8_t *)&intID) + i));
+                    }
+                    sh->receiverID = factory.create(robotId);
                     cout << "Robot: " << argv[i + 1] << " [" << sh->receiverID << "]" << endl;
                     i++;
                 }
@@ -69,10 +85,18 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (sh->receiverID == 0)
+    if (dynamic_cast<const supplementary::BroadcastID *>(sh->receiverID) != nullptr)
     {
         cout << "Robot ID: ";
-        cin >> sh->receiverID;
+        int intID;
+        cin >> intID;
+        std::vector<uint8_t> robotId;
+
+        for (int i = 0; i < sizeof(int); i++)
+        {
+            robotId.push_back(*(((uint8_t *)&intID) + i));
+        }
+        sh->receiverID = factory.create(robotId);
     }
 
     int currentKey = EOF;
@@ -151,11 +175,17 @@ int main(int argc, char *argv[])
         usleep(50000);
         // if(plotopen) gp.getMouse(mx, my, mb, "right click to exit.");
         if (currentKey != EOF)
+        {
             sh->sendVisionControl(currentKey, 0);
+        }
 
         // printf("You pressed mouse button %d at x=%f y=%f\n", mb, mx, my);
         if (mb == 3)
+        {
+            delete sh->receiverID;
             return 1;
+        }
     }
     sh->sendVisionControl((int)'p', 0);
+    delete sh->receiverID;
 }

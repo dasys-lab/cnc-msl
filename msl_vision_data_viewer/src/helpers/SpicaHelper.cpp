@@ -22,6 +22,7 @@
  */
 #include "SpicaHelper.h"
 #include <msl/robot/IntRobotID.h>
+#include <supplementary/IAgentID.h>
 #include <iostream>
 
 using namespace std;
