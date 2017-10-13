@@ -3,7 +3,7 @@ uint8 LEFT_EXTENSION = 1
 uint8 RIGHT_EXTENSION = 2
 uint8 UPPER_EXTENSION = 3
 
-int32 senderID
+agent_id/AgentID senderID
 bool enabled
 uint16 kicker
 uint16 power
