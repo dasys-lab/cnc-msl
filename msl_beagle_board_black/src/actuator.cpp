@@ -7,7 +7,9 @@
 
 
 #include "actuator.h"
-
+#include <msl/robot/IntRobotID.h>
+#include <msl/robot/IntRobotIDFactory.h>
+#include <vector>
 
 using namespace std;
 using namespace BlackLib;
@@ -115,10 +117,19 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 }
 
 void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub) {
-	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
+
+	int intID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
+	std::vector<uint8_t> robotIDVector;
+
+	for (int i = 0; i < sizeof(int); i++)
+	{
+		robotIDVector.push_back(*(((uint8_t *)&intID) + i));
+	}
+
 	enum	button {	bundle = 0,
 						vision = 1,
 						power = 2, };
+
 	msl_actuator_msgs::VisionRelocTrigger msg_v;
 	process_manager::ProcessCommand msg_pm;
 
@@ -155,8 +166,12 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 			if (state[bundle]) {
 				static uint8_t bundle_state = 0;
 
-				msg_pm.receiverId = ownID;
-				msg_pm.robotIds = {ownID};
+
+
+				msg_pm.receiverId.id = robotIDVector;
+				std::vector< process_manager::ProcessCommand::_receiverId_type > robotIntIDs;
+				robotIntIDs.push_back(msg_pm.receiverId);
+				msg_pm.robotIds = robotIntIDs;
 				msg_pm.processKeys = {2,3,4,5,7};
 				msg_pm.paramSets = {1,0,0,0,3};
 
@@ -177,7 +192,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 			state[vision] = newstate[vision];
 
 			if (state[vision]) {
-				msg_v.receiverID = ownID;
+				msg_v.receiverID.id = robotIDVector;
 				msg_v.usePose = false;
 				vrtPub->publish(msg_v);
 				LED_Vision.setValue(high);

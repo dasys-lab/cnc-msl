@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_beagle_board_black
-#  CATKIN_DEPENDS msl_black_lib
+#  CATKIN_DEPENDS msl_black_lib msl_robot_id
 #  DEPENDS system_lib
 )
 
