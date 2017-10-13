@@ -1,13 +1,9 @@
-/*
- * GameData.cpp
- *
- *  Created on: May 28, 2015
- *      Author: Stephan Opfer
- */
-
 #include "msl_refbox/GameData.h"
 #include "msl_msgs/RefBoxCommand.h"
-#include "qstring.h"
+
+#include <msl/robot/IntRobotID.h>
+
+#include <QString>
 #include <chrono>
 #include <iostream>
 #include <ros/node_handle.h>
@@ -61,6 +57,27 @@ GameData::~GameData()
     {
         disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
         delete tcpsocket;
+    }
+    auto itraei = this->aeiData.begin();
+    while (itraei != this->aeiData.end())
+    {
+        auto keyCopy = itraei->first;
+        itraei = this->aeiData.erase(itraei);
+        delete keyCopy;
+    }
+    auto itrshwm = this->shwmData.begin();
+    while (itrshwm != this->shwmData.end())
+    {
+        auto keyCopy = itrshwm->first;
+        itrshwm = this->shwmData.erase(itrshwm);
+        delete keyCopy;
+    }
+    auto itrdate = this->date.begin();
+    while (itrdate != this->date.end())
+    {
+        auto keyCopy = itrdate->first;
+        itrdate = this->date.erase(itrdate);
+        delete keyCopy;
     }
     delete sendRefBoxLogtimer;
     delete rosNode;
@@ -156,14 +173,16 @@ void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
     }
 
     lock_guard<mutex> lock(this->shwmMutex);
-    this->date[msg->senderID] = chrono::system_clock::now();
-    shwmData[msg->senderID] = msg;
+    auto sender = factory.create(msg->senderID.id);
+    this->date[sender] = std::chrono::system_clock::now();
+    shwmData[sender] = msg;
 }
 
 void GameData::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei)
 {
     lock_guard<mutex> lock(this->aeiMutex);
-    aeiData[aei->senderID] = aei;
+    auto sender = factory.create(aei->senderID.id);
+    aeiData[sender] = aei;
 }
 
 void GameData::PlayOnPressed(void)
@@ -766,27 +785,26 @@ void GameData::sendRefBoxLog()
         // robots
         logString += QString(",\"robots\": [");
         msl_sensor_msgs::SharedWorldInfoPtr robotForObs;
-        int sID = 9999999;
+        bool robotFound = false;
+        const msl::robot::IntRobotID *tmpID = nullptr;
         for (auto robot : this->shwmData)
         {
-            auto now = chrono::system_clock::now();
-            if (chrono::duration_cast<chrono::milliseconds>(now - date[robot.second->senderID]).count() > 1000)
+            auto now = std::chrono::system_clock::now();
+            auto sender = factory.create(robot.second->senderID.id);
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - date[sender]).count() > 1000)
             {
                 continue;
             }
-            if (sID > robot.second->senderID)
-            {
-                sID = robot.second->senderID;
-                robotForObs = robot.second;
-            }
 
-            logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"pose\": [" +
-                         QString().sprintf("%.3f", robot.second->odom.position.x) + "," + QString().sprintf("%.3f", robot.second->odom.position.y) + "," +
-                         QString::number(robot.second->odom.position.angle, 'f', 4) + "]," + "\"targetPos\": [null,null,null]," + "\"velocity\":[" +
+            stringstream ss;
+            ss << sender;
+            logString += "{\"id\": " + QString(ss.str().c_str()) + ", \"pose\": [" + QString().sprintf("%.3f", robot.second->odom.position.x) + "," +
+                         QString().sprintf("%.3f", robot.second->odom.position.y) + "," + QString::number(robot.second->odom.position.angle, 'f', 4) + "]," +
+                         "\"targetPos\": [null,null,null]," + "\"velocity\":[" +
                          QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle), 'f', 3) + "," +
                          QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle), 'f', 3) + "," +
                          QString::number(robot.second->odom.motion.rotation, 'f', 4) + QString("], \"intention\": \"");
-            auto iter = this->aeiData.find(robot.second->senderID);
+            auto iter = this->aeiData.find(sender);
             if (iter != this->aeiData.end())
             {
                 logString += QString(iter->second->currentTask.c_str()) + " - " + QString(iter->second->currentPlan.c_str()) + " - " +
@@ -797,9 +815,23 @@ void GameData::sendRefBoxLog()
                 logString += QString("\",");
             }
             logString += QString("\"batteryLevel\": null, \"ballEngaged\": null },");
+            if (tmpID == nullptr || tmpID > sender)
+            {
+                delete tmpID;
+                tmpID = sender;
+                robotFound = true;
+                robotForObs = robot.second;
+            }
+            else
+            {
+                delete sender;
+            }
         }
-        if (sID == 9999999)
+        delete tmpID;
+        if (!robotFound)
+        {
             return;
+        }
         // remove last comma
         logString.remove(logString.length() - 1, 1);
         logString += "]";
@@ -810,7 +842,8 @@ void GameData::sendRefBoxLog()
         for (auto robot : this->shwmData)
         {
             auto now = chrono::system_clock::now();
-            if (chrono::duration_cast<chrono::milliseconds>(now - date[robot.second->senderID]).count() > 1000)
+            auto tmp = factory.create(robot.second->senderID.id);
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - date[tmp]).count() > 1000)
             {
                 continue;
             }
@@ -823,6 +856,7 @@ void GameData::sendRefBoxLog()
                                      QString::number(robot.second->ball.velocity.vy, 'f', 3) + "," + QString::number(robot.second->ball.velocity.vz, 'f', 3) +
                                      "], \"confidence\": " + QString::number(robot.second->ball.confidence, 'f', 3) + "},");
             }
+            delete tmp;
         }
         if (integratedBalls > 0)
         {

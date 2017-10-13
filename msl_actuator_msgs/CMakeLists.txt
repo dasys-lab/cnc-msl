@@ -11,13 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  BallCatchCmd.msg
   BallHandleCmd.msg
   BallHandleMode.msg
   HaveBallInfo.msg
-  JoystickControl.msg
   CanMsg.msg
-  JoystickRobotIDs.msg
   KickControl.msg
   KickerStatInfo.msg
   KickTime.msg

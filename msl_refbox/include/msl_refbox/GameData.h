@@ -1,18 +1,15 @@
-/*
- * GameData.h
- *
- *  Created on: May 28, 2015
- *      Author: Stephan Opfer
- */
-
-#ifndef CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_GAMEDATA_H_
-#define CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_GAMEDATA_H_
+#pragma once
 
 #include "alica_ros_proxy/AlicaEngineInfo.h"
 #include "msl_msgs/RefBoxCommand.h"
+#include "msl_refbox/RefBox.h"
 #include "msl_refbox/XMLProtocolParser.h"
 #include "msl_refbox/tinyxml2.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+
+#include <supplementary/IAgentID.h>
+#include <msl/robot/IntRobotIDFactory.h>
+
 #include "ros/ros.h"
 #include <QFile>
 #include <QTcpSocket>
@@ -21,10 +18,15 @@
 #include <QtGui>
 #include <chrono>
 #include <map>
-#include <msl_refbox/RefBox.h>
 #include <mutex>
 
-using namespace std;
+namespace msl
+{
+namespace robot
+{
+	class IntRobotID;
+}
+}
 
 namespace msl_refbox
 {
@@ -132,11 +134,12 @@ class GameData : public QObject
         UDP_CONNECTED,
     } connectionState;
 
+    msl::robot::IntRobotIDFactory factory;
     msl_msgs::RefBoxCommand ref;
-    map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
-    map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
-    map<int, chrono::system_clock::time_point> date;
-    mutex shwmMutex, aeiMutex;
+    std::map<const msl::robot::IntRobotID *, msl_sensor_msgs::SharedWorldInfoPtr, supplementary::IAgentIDComparator> shwmData;
+    std::map<const msl::robot::IntRobotID *, alica_ros_proxy::AlicaEngineInfoConstPtr, supplementary::IAgentIDComparator> aeiData;
+    std::map<const msl::robot::IntRobotID *, std::chrono::system_clock::time_point, supplementary::IAgentIDComparator> date;
+    std::mutex shwmMutex, aeiMutex;
     ros::Publisher RefereeBoxInfoBodyPublisher;
     ros::Subscriber shwmSub, aliceClientSubscriber;
     ros::NodeHandle *rosNode;
@@ -161,5 +164,3 @@ class GameData : public QObject
 };
 
 } /* namespace rqt_pm_control */
-
-#endif /* CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_GAMEDATA_H_ */
