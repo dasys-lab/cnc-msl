@@ -129,7 +129,12 @@ void Joystick::sendJoystickMessage()
     msl_msgs::JoystickCommand msg;
 
     // robotid
-    msg.robotId = this->robotId;
+    std::vector<uint8_t> robotID;
+
+    for(int i = 0; i < sizeof(int); i++) {
+    	robotID.push_back( *(((uint8_t*)&this->robotId) + i) );
+    }
+    msg.robotId.id = robotID;
 
     // ballHandle stuff
     msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
