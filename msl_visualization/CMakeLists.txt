@@ -14,9 +14,7 @@ SET( CAMBADA_SRC_DIR ${BASE_DIR}/src )
 
 # Define where to find modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules CACHE INTERNAL "" FORCE)
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS
   alica_engine
   system_config
@@ -24,7 +22,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   msl_msgs
   msl_helper_msgs
-  msl_sensor_msgs)
+  msl_sensor_msgs
+  msl_robot_id)
+  
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)
@@ -43,13 +43,6 @@ find_package(Qt5Core REQUIRED)
 SET( QT_WRAP_CPP        TRUE )
 SET( QT_USE_QTXML       TRUE )
 
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES msl_visualization

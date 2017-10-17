@@ -22,6 +22,7 @@
 
 #include "FieldWidget3D.h"
 #include "MainWindow.h"
+#include <msl/robot/IntRobotID.h>
 
 //#include "ConfigXML.h"
 
@@ -396,7 +397,7 @@ void FieldWidget3D::update_robot_info(void)
 
     for (auto robot : robots)
     {
-        int myId = robot->getId();
+    	int myId = robot->getId();
         int selectedIndex = mainWindow->robotSelector->currentIndex();
 
         // detect change on robot selector
@@ -1244,7 +1245,8 @@ void FieldWidget3D::onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> in
 {
     lock_guard<mutex> lock(pathMutex);
 
-    auto robot = this->getRobotById(info->senderId);
+    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto robot = this->getRobotById(id);
     robot->setPathPlannerInfo(info);
     //        robot->updateTimeStamp();
 }
@@ -1253,7 +1255,8 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
 {
     lock_guard<mutex> lock(swmMutex);
 
-    auto robot = this->getRobotById(info->senderID);
+    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto robot = this->getRobotById(id);
 
     robot->setSharedWorldInfo(info);
     robot->updateTimeStamp();
@@ -1263,7 +1266,8 @@ void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> 
 {
     lock_guard<mutex> lock(voronoiMutex);
 
-    auto robot = this->getRobotById(info->senderId);
+    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto robot = this->getRobotById(id);
     robot->setVoronoiNetInfo(info);
     //        robot->updateTimeStamp();
 }
@@ -1272,7 +1276,8 @@ void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck
 {
     lock_guard<mutex> lock(corridorMutex);
 
-    auto robot = this->getRobotById(info->senderId);
+    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto robot = this->getRobotById(id);
     robot->setCorridorCheckInfo(info);
     //        robot->updateTimeStamp();
 }
@@ -1281,7 +1286,8 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
 {
     lock_guard<mutex> lock(debugMutex);
 
-    auto robot = this->getRobotById(info->senderID);
+    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto robot = this->getRobotById(id);
     robot->addDebugMsg(info);
     //        robot->updateTimeStamp();
 }
@@ -1290,7 +1296,8 @@ void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
 {
     lock_guard<mutex> lock(debugMutex);
 
-    auto robot = this->getRobotById(info->senderID);
+    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto robot = this->getRobotById(id);
     robot->setPassMsg(info);
     //        robot->updateTimeStamp();
 }

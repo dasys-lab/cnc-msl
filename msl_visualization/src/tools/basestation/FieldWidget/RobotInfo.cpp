@@ -6,7 +6,8 @@
  */
 
 #include "FieldWidget3D.h"
-#include <RobotInfo.h>
+#include "RobotInfo.h"
+#include <msl/robot/IntRobotID.h>
 
 RobotInfo::RobotInfo(FieldWidget3D *field)
 {
