@@ -8,7 +8,6 @@
 #include <supplementary/BroadcastID.h>
 #include <msl/robot/IntRobotID.h>
 #include <msl/robot/IntRobotIDFactory.h>
-
 #include <SystemConfig.h>
 
 #include "ros/ros.h"

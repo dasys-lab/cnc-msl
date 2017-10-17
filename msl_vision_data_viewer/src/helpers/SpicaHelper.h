@@ -57,7 +57,7 @@ class SpicaHelper
     bool lpdirty;
     bool wmdirty;
     bool vidirty;
-    const supplementary::IAgentID* receiverID;
+    const supplementary::IAgentID *receiverID;
     ros::NodeHandle *nh;
     std::vector<msl_msgs::Point2dInfo> linePoints;
     std::vector<msl_sensor_msgs::ObstacleInfo> obstacles;
