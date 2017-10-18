@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Calibration/MeasureAndConfigure.h"
 
 /*PROTECTED REGION ID(inccpp1507131462459) ENABLED START*/ //Add additional includes here
+#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include "Plans/Calibration/DriveForward.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,6 +28,9 @@ namespace alica
     void MeasureAndConfigure::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1507131462459) ENABLED START*/ //Add additional options here
+    	/*
+    	 * TODO we want to split the current behaviours into its atomic components: measuring distance, measuring time and driving forward.
+    	 */
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1507131462459) ENABLED START*/ //Add additional methods here
