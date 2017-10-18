@@ -37,4 +37,9 @@ shared_ptr<geometry::CNPoint2D> LaserScannerPosition::getPosition(int index)
 	return positions.getLast(index)->getInformation();
 }
 
+shared_ptr<geometry::CNPoint2D> LaserScannerPosition::getPosition()
+{
+	return getPosition(0);
+}
+
 } /* namespace msl */

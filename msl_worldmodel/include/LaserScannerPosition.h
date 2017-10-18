@@ -24,6 +24,7 @@ class LaserScannerPosition
     virtual ~LaserScannerPosition();
     void processWorldModelData(geometry_msgs::PointPtr data);
     shared_ptr<geometry::CNPoint2D> getPosition(int index);
+    shared_ptr<geometry::CNPoint2D> getPosition();
   private:
     MSLWorldModel* wm;
     RingBuffer<InformationElement<geometry::CNPoint2D>> positions;

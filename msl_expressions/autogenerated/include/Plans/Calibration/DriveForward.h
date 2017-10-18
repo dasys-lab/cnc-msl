@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1507131193237) ENABLED START*/ //Add additional includes here
+#include <chrono>
+#include <ratio>
 #include <container/CNPoint2D.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -12,7 +14,10 @@ namespace alica
     public:
         DriveForward();
         virtual ~DriveForward();
+        static geometry::CNPoint2D startPositionMotion;
+        static geometry::CNPoint2D startPositionLaser;
         virtual void run(void* msg);
+        const std::chrono::duration<int,std::ratio<5> > FIVE_SECONDS (1);
         /*PROTECTED REGION ID(pub1507131193237) ENABLED START*/ //Add additional public methods here
         /*PROTECTED REGION END*/
     protected:
@@ -21,8 +26,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1507131193237) ENABLED START*/ //Add additional private methods here
-        geometry::CNPoint2D startPositionMotion;
-    	geometry::CNPoint2D startPositionLaser;
+    	std::chrono::system_clock::time_point begin_time;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
