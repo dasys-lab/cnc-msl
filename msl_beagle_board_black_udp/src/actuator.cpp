@@ -1,37 +1,4 @@
-/*
- * actuator.cpp
- *
- *  Created on: Mar 10, 2015
- *      Author: Lukas Will
- */
-
-
 #include "actuator.h"
-
-
-
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <unistd.h>
-#include "ros/ros.h"
-#include <ros/transport_hints.h>
-#include <stdio.h>
-
-
-#include <SystemConfig.h>
-#include <Configuration.h>
-#include <exception>
-
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
-
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-#include <usbcanconnection.h>
 
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/BallHandleMode.h"
@@ -45,6 +12,30 @@
 #include "msl_actuator_msgs/IMUData.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "../include/CanHandler.h"
+
+#include <SystemConfig.h>
+#include <Configuration.h>
+
+#include <usbcanconnection.h>
+
+#include <exception>
+
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <unistd.h>
+#include "ros/ros.h"
+#include <ros/transport_hints.h>
+#include <stdio.h>
 
 using boost::asio::ip::udp;
 
@@ -500,6 +491,11 @@ void getSwitches() {
 	sc = supplementary::SystemConfig::getInstance();
 	enum	Pin { sw_vision, sw_bundle, sw_power, led_power, led_bundle, led_vision };
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
+    std::vector<uint8_t> robotId;
+
+    for(int i = 0; i < sizeof(int); i++) {
+    	robotId.push_back( *(((uint8_t*)&ownID) + i) );
+    }
 	msl_actuator_msgs::VisionRelocTrigger msg_v;
 	process_manager::ProcessCommand msg_pm;
 
@@ -544,8 +540,9 @@ void getSwitches() {
 			if (state[sw_bundle]) {
 				static uint8_t bundle_state = 0;
 
-				msg_pm.receiverId = ownID;
-				msg_pm.robotIds = {ownID};
+				msg_pm.receiverId.id = robotId;
+				msg_pm.robotIds.push_back(process_manager::ProcessCommand::_robotIds_type::value_type());
+				msg_pm.robotIds.at(0).id = robotId;
 				msg_pm.processKeys = {2,3,4,5,7};
 				msg_pm.paramSets = {1,0,0,0,3};
 
@@ -567,7 +564,7 @@ void getSwitches() {
 			state[sw_vision] = newstate[sw_vision];
 
 			if (state[sw_vision]) {
-				msg_v.receiverID = ownID;
+				msg_v.receiverID.id = robotId;
 				msg_v.usePose = false;
 				onRosVisionRelocTrigger2772566283(msg_v);
 				//vrtPub->publish(msg_v);
