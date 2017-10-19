@@ -1,10 +1,3 @@
-/*
- * PriorityList.cpp
- *
- *  Created on: Oct 27, 2014
- *      Author: Tobias Schellien
- */
-
 #include <PriorityList.h>
 #include "MSLWorldModel.h"
 
@@ -48,7 +41,7 @@ namespace alica
 
 		for (int i = 0; i< this->relevantEntryPoints.size(); i++)
 		{
-			shared_ptr<list<int> > robots = ass->getUniqueRobotsWorkingAndFinished(relevantEntryPoints.at(i));
+			shared_ptr<list<const supplementary::IAgentID*> > robots = ass->getUniqueRobotsWorkingAndFinished(relevantEntryPoints.at(i));
 			if(robots->size() > c->at(i))
 			{
 				ui.setMin(ui.getMin() + this->w->at(i));

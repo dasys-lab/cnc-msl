@@ -51,12 +51,12 @@ class DomainBehaviour : public BasicBehaviour
 
 	protected:
 		supplementary::SystemConfig* sc;
+		msl::robot::IntRobotIDFactory factory;
 
 	private:
 
 		double __maxTranslation;
 		const msl::robot::IntRobotID* ownID;
-		msl::robot::IntRobotIDFactory factory;
 		ros::Publisher simlatorPub;
 		ros::Publisher motionControlPub;
 		ros::Publisher ballHandlePub;

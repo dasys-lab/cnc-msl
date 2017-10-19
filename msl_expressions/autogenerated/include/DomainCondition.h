@@ -1,7 +1,7 @@
-#ifndef DomainBehaviour_H_
-#define DomainBehaviour_H_
-
+#pragma once
 #include "engine/BasicCondition.h"
+
+#include <msl/robot/IntRobotIDFactory.h>
 
 namespace msl{
 	class MSLWorldModel;
@@ -31,8 +31,10 @@ namespace alica
 		 * the standard right away. [ns]
 		 */
 		uint64_t timeUntilEmergencyExecute;
+
+	protected:
+		msl::robot::IntRobotIDFactory factory;
 	};
 } /* namespace alica */
 
-#endif /* DomainBehaviour_H_ */
 

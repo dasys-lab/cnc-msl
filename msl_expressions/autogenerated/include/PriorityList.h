@@ -1,13 +1,4 @@
-/*
- * PriorityList.h
- *
- *  Created on: Oct 27, 2014
- *      Author: Tobias Schellien
- */
-
-#ifndef ALICA_ALICA_TEST_INCLUDE_PRIORITYLIST_H_
-#define ALICA_ALICA_TEST_INCLUDE_PRIORITYLIST_H_
-
+#pragma once
 #include <engine/USummand.h>
 #include <container/CNPoint2D.h>
 #include <vector>
@@ -40,4 +31,3 @@ namespace alica
 
 } /* namespace alica */
 
-#endif /* ALICA_ALICA_TEST_INCLUDE_PRIORITYLIST_H_ */
