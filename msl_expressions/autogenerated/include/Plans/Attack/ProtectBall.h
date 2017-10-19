@@ -35,7 +35,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457706592232) ENABLED START*/ //Add additional private methods here
-        double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
+        double minFree(double angle, double width, shared_ptr<const vector<double>> dstscan);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

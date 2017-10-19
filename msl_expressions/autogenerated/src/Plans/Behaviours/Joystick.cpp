@@ -1,34 +1,34 @@
-//using namespace std;
-//#include "Plans/Behaviours/Joystick.h"
-//
-///*PROTECTED REGION ID(inccpp1421854975890) ENABLED START*/ //Add additional includes here
-//#include <msl_msgs/JoystickCommand.h>
-//#include <msl_actuator_msgs/KickControl.h>
-//#include <msl_actuator_msgs/BallHandleCmd.h>
-//#include <msl_actuator_msgs/MotionControl.h>
-//#include <msl_actuator_msgs/KickControl.h>
-//#include <msl_actuator_msgs/ShovelSelectCmd.h>
-//#include "MSLWorldModel.h"
-//#include <RawSensorData.h>
-///*PROTECTED REGION END*/
-//namespace alica
-//{
-//    /*PROTECTED REGION ID(staticVars1421854975890) ENABLED START*/ //initialise static variables here
-//    /*PROTECTED REGION END*/
-//    Joystick::Joystick() :
-//            DomainBehaviour("Joystick")
-//    {
-//        /*PROTECTED REGION ID(con1421854975890) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    Joystick::~Joystick()
-//    {
-//        /*PROTECTED REGION ID(dcon1421854975890) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-//    void Joystick::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
+using namespace std;
+#include "Plans/Behaviours/Joystick.h"
+
+/*PROTECTED REGION ID(inccpp1421854975890) ENABLED START*/ //Add additional includes here
+#include <msl_msgs/JoystickCommand.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/ShovelSelectCmd.h>
+#include "MSLWorldModel.h"
+#include <RawSensorData.h>
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1421854975890) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    Joystick::Joystick() :
+            DomainBehaviour("Joystick")
+    {
+        /*PROTECTED REGION ID(con1421854975890) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    Joystick::~Joystick()
+    {
+        /*PROTECTED REGION ID(dcon1421854975890) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void Joystick::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
 //        auto joy = wm->rawSensorData->getJoystickCommandsBuffer().getLastValidContent();
 //        if (!joy)
 //        {
@@ -90,14 +90,14 @@
 //        }
 //
 //        lastProcessedCmd = joy;
-//
-//        /*PROTECTED REGION END*/
-//    }
-//    void Joystick::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
-//        /*PROTECTED REGION END*/
-//    }
-///*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
-///*PROTECTED REGION END*/
-//} /* namespace alica */
+
+        /*PROTECTED REGION END*/
+    }
+    void Joystick::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */

@@ -252,10 +252,9 @@ namespace alica
 
         }
         auto dstscan = this->wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
-        shared_ptr<vector<double>> ds = (*dstscan);
         if (dstscan && (*dstscan)->size() != 0)
         {
-            double distBeforeBall = this->minFree(egoBallPos->angleZ(), 200, ds);
+            double distBeforeBall = this->minFree(egoBallPos->angleZ(), 200, *dstscan);
             if (distBeforeBall < 250)
                 this->setFailure(true);
         }
@@ -527,7 +526,7 @@ namespace alica
         for (int i = 0; i < points->size(); i++)
         {
             auto point = points->at(i);
-            if (geometry::distancePointToLineSegment(point.x, point.y, ball, passPoint) < passCorridorWidth)
+            if (geometry::distancePointToLineSegment2(point.x, point.y, ball, passPoint) < passCorridorWidth)
             {
                 return false;
             }
@@ -541,7 +540,7 @@ namespace alica
         for (int i = 0; i < points.size(); i++)
         {
             auto point = points.at(i);
-            if (geometry::distancePointToLineSegment(point.x, point.y, ball, passPoint) < passCorridorWidth
+            if (geometry::distancePointToLineSegment2(point.x, point.y, ball, passPoint) < passCorridorWidth
                     && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;
@@ -574,7 +573,7 @@ namespace alica
         return true;
     }
 
-    double AlignAndPassRapid::minFree(double angle, double width, shared_ptr<vector<double> > dstscan)
+    double AlignAndPassRapid::minFree(double angle, double width, shared_ptr<const vector<double> > dstscan)
     {
         double sectorWidth = 2.0 * M_PI / dstscan->size();
         int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());

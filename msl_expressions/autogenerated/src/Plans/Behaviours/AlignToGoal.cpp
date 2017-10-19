@@ -129,18 +129,6 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1415205272843) ENABLED START*/ //Add additional methods here
-    double AlignToGoal::goalLineHitPoint(shared_ptr<geometry::CNPositionAllo> ownPos, double egoAngle)
-    {
-        geometry::CNPointAllo hitVector = geometry::CNPointAllo();
-        hitVector.x = cos(egoAngle + ownPos->theta);
-        hitVector.y = sin(egoAngle + ownPos->theta);
-        double t = (wm->field->getFieldLength() / 2 - ownPos->x) / hitVector.x;
-        if (t < 0)
-        {
-            return numeric_limits<double>::max();
-        }
-        return ownPos->y + t * hitVector.y;
-    }
 
     int AlignToGoal::mod(int x, int y)
     {
@@ -150,5 +138,55 @@ namespace alica
         else
             return z;
     }
+
+
+    nonstd::optional<geometry::CNPointEgo> AlignToGoal::getFreeGoalVector()
+    {
+
+        auto ownPos= wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+        if (!ownPos|| !dstscan)
+        {
+            return nonstd::nullopt;
+        }
+        vector < nonstd::optional<geometry::CNPointEgo >> validGoalPoints;
+        double x = wm->field->getFieldLength() / 2;
+        //TODO add config param
+        double y = -1000 + 150;
+        geometry::CNPointAllo aim(x, y);
+        double samplePoints = 4;
+
+        for (double i = 0.0; i < samplePoints; i += 1.0)
+        {
+            auto egoAim = aim.toEgo(*ownPos);
+            double dist = egoAim.length();
+            double opDist = this->robot->kicker->minFree(egoAim.angleZ(), 200, *(*dstscan));
+            if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
+            {
+                validGoalPoints.push_back(nonstd::make_optional<geometry::CNPointEgo>(egoAim));
+                //std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
+            }
+            aim.y += 2 * abs(y) / samplePoints;
+        }
+
+        if (validGoalPoints.size() > 0)
+        {
+            nonstd::optional< geometry::CNPointEgo > ret = nonstd::nullopt;
+            double max = numeric_limits<double>::min();
+            for (int i = 0; i < validGoalPoints.size(); i++)
+            {
+                if (validGoalPoints[i]->length() > max)
+                {
+                    max = validGoalPoints[i]->length();
+                    ret = validGoalPoints[i];
+                }
+            }
+            return ret;
+        }
+        else
+        {
+            return nonstd::nullopt;
+        }
+}
 /*PROTECTED REGION END*/
 } /* namespace alica */

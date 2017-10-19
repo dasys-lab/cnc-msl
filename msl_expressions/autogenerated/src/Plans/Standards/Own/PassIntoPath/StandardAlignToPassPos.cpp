@@ -65,7 +65,7 @@ namespace alica
             // replaced with new moveToPoint method
 //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, egoBall, maxVel);
             movQuery.egoDestinationPoint = driveTo;
-            movQuery.egoAlignPoint = ballPos;
+            movQuery.egoAlignPoint = egoBall;
             mc = rm.moveToPoint(movQuery);
             if (driveTo.length() < 100)
             {

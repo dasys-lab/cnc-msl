@@ -48,7 +48,7 @@ namespace alica
         {
             cout << "Pos2Penalty: FOUND a solution!" << endl;
             nonstd::optional < vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional<
-                    vector<geometry::CNPoint2D>>();
+                    vector<geometry::CNPointAllo>>();
             additionalPoints->push_back(alloBall);
             auto alloTarget = CNPointAllo (result.at(0), result.at(1));
 

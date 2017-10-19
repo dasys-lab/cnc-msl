@@ -42,7 +42,7 @@ class Ball
     bool haveBallDribble(bool hadBefore);
 
     std::shared_ptr<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
-    std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
+    std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertainty(int index = 0);
     nonstd::optional<geometry::CNPointAllo> getAlloBallGuessPosition() const;
     int getSharedBallSupporter();
     bool ballMovedSignificantly();

@@ -34,14 +34,14 @@ namespace alica
         msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-        auto ballPos = wm->ball->getPositionAllo();
+        auto ballPos = wm->ball->getPositionEgo();
         if (!ownPos || !ballPos )
             return;
 
         bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
         auto passGoal = CNPointAllo (result[0], result[1]);
 
-        auto passBallVec = passGoal - ballPos;
+        auto passBallVec = passGoal - ballPos->toAllo(*ownPos);
         //Place Robot 75cm left/right and 50cm before passpoint
         //Check for obstacles (shouldnt be there as opponents are not allowed to be here)
         if (sign > 0 && passGoal.y > 0)

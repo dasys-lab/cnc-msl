@@ -385,7 +385,7 @@ void MSLWorldModel::sendSharedWorldModelData()
     }
 
     // add shared ball
-    auto sb = this->ball->getAlloSharedBallPositionAndCertaincy();
+    auto sb = this->ball->getAlloSharedBallPositionAndCertainty();
     if (sb != nullptr && this->ball->getSharedBallSupporter() > 1)
     {
         msg.sharedBall.point.x = sb->first.x;

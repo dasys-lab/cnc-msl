@@ -51,7 +51,7 @@ namespace alica
                                        double passCorridorWidth, vector<geometry::CNPointAllo> &points);
         bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint, double passCorridorWidth,
                               vector<geometry::CNPointAllo> &points);
-        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        double minFree(double angle, double width, shared_ptr<const vector<double> > dstscan);
         int mod(int x, int y);
         /*PROTECTED REGION END*/};
 } /* namespace alica */

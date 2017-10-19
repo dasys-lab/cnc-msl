@@ -52,7 +52,7 @@ namespace alica
         {
             return;
         }
-        shared_ptr<geometry::CNPoint2D> alloTarget = nullptr;
+        nonstd::optional<geometry::CNPointAllo> alloTarget = nonstd::nullopt;
         auto alloBall = egoBallPos->toAllo(*ownPos);
 
         CNPointAllo passPoint;
@@ -82,13 +82,12 @@ namespace alica
           // Distance to aim point * direction of our kicker = actual pass point destination
             double dist = aimPoint.length();
             auto dest = CNPointEgo(-dist, 0);
-            dest = dest.toAllo(*ownPos);
+            auto alloDest = dest.toAllo(*ownPos);
 
             msl_actuator_msgs::KickControl km;
             km.enabled = true;
             km.kicker = 1; //(ushort)KickHelper.KickerToUseIndex(egoBallPos->angleTo());
 
-            auto goalReceiverVec = dest - aimPoint;
             double v0 = 0;
             //considering network delay and reaction time 1s?:
             km.power = (ushort)this->robot->kicker->getKickPowerPass(aimPoint.length());
@@ -106,11 +105,11 @@ namespace alica
         else if (ballVel->length() > 5000)
         {
             auto v = ballVel->normalize() * 5000;
-            ballVel2 = v;
+            ballVel2 = geometry::CNVecEgo(v.x, v.y);
         }
         else
         {
-            ballVel2 = ballVel;
+            ballVel2 = geometry::CNVecEgo(ballVel->x,ballVel->y);
         }
 
         msl_actuator_msgs::MotionControl mc;

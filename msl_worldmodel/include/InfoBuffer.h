@@ -252,6 +252,28 @@ class InfoBuffer
         return true;
     }
 
+    /** FIXME
+     * DELEEEETE ME
+     */
+    bool add(const std::shared_ptr< InformationElement<T>> element)
+    {
+        std::lock_guard<std::mutex> guard(mtx_);
+
+        auto last = this->getLast();
+
+        // only allow newer information
+        if (last && element->getCreationTime() < last->getCreationTime())
+        {
+            return false;
+        }
+
+        this->infoElementCounter++;
+        this->index = (++this->index) % this->bufferSize;
+        this->ringBuffer[index] = element;
+
+        return true;
+    }
+
   private:
     mutable std::mutex mtx_;
     std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */

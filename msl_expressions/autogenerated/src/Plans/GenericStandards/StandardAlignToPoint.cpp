@@ -3,7 +3,6 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
-#include "msl_robot/robotmovement/MovementQuery.h"
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
 #include <RawSensorData.h>
@@ -61,7 +60,8 @@ namespace alica
         auto alloBall = egoBallPos->toAllo(*ownPos);
 
         // Create additional points for path planning
-        nonstd::optional<std::vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional(vector<CNPointAllo>());
+        nonstd::optional<std::vector<geometry::CNPointAllo>> additionalPoints = nonstd::make_optional(
+                vector<CNPointAllo>());
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
         CNPointEgo egoTarget;
@@ -99,8 +99,9 @@ namespace alica
             }
 
             // calculate target executerDistanceToBall away from the ball and on a line with the receiver
-            egoTarget = (alloBall + ((alloBall - receiverPos).normalize() * this->executorDistanceToBall)).toEgo(
-                    *ownPos);
+            egoTarget =
+                    (alloBall + ((alloBall - receiverPos->getPoint()).normalize() * this->executorDistanceToBall)).toEgo(
+                            *ownPos);
 
             // ask the path planner how to get there
             this->m_Query.egoDestinationPoint = egoTarget;
@@ -126,7 +127,9 @@ namespace alica
                 oldBallPos = nonstd::make_optional<CNPointAllo>(alloBall);
 
                 //calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
-                alloReceiverTarget = nonstd::make_optional<CNPointAllo>(alloBall + (alloBall.normalize() * -this->receiverDistanceToBall));
+                alloReceiverTarget = nonstd::make_optional<CNPointAllo>(
+                        alloBall.x + (alloBall.normalize() * -this->receiverDistanceToBall).x,
+                        alloBall.y + (alloBall.normalize() * -this->receiverDistanceToBall).y);
             }
 
             // ask the path planner how to get there

@@ -106,8 +106,7 @@ namespace alica
 
         if (dstscan)
         {
-            shared_ptr<vector<double>> dstscn = *dstscan;
-            double distBeforeBall = minFree(ballPos->angleZ(), 200, dstscn);
+            double distBeforeBall = minFree(ballPos->angleZ(), 200, *dstscan);
             if (distBeforeBall < 600)
                 this->setSuccess(true);
         }
@@ -170,7 +169,7 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1457706592232) ENABLED START*/ //Add additional methods here
-    double ProtectBall::minFree(double angle, double width, shared_ptr<vector<double>> dstscan)
+    double ProtectBall::minFree(double angle, double width, shared_ptr<const vector<double>> dstscan)
     {
 
         double sectorWidth = 2 * M_PI / dstscan->size();

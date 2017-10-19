@@ -88,10 +88,10 @@ namespace alica
         pm.validFor = 2000000000ul;
         auto dest = CNPointEgo(-1, 0);
         dest = dest * egoAlignPoint.length();
-        dest = dest.toAllo(*ownPos);
+        auto alloDest = dest.toAllo(*ownPos);
 
-        pm.destination.x = dest.x;
-        pm.destination.y = dest.y;
+        pm.destination.x = alloDest.x;
+        pm.destination.y = alloDest.y;
         pm.origin.x = ownPos->x;
         pm.origin.y = ownPos->y;
         pm.receiverID = id;

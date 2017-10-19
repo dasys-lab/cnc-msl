@@ -96,7 +96,7 @@ namespace alica
 //            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
 //        } // else egoalignpoint should be set
 
-        auto lineVect = alloBall - alloAlignPoint;
+        auto lineVect = alloBall - *alloAlignPoint;
 
         alloTarget = alloBall + lineVect.normalize() * 2300;
         alloTarget = this->wm->field->mapInsideField(*alloTarget);

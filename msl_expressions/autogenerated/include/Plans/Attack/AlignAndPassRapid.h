@@ -76,7 +76,7 @@ namespace alica
 
         static bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
                                      double passCorridorWidth, shared_ptr<vector<geometry::CNPointAllo>> points);
-        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        double minFree(double angle, double width, shared_ptr<const vector<double> > dstscan);
         int mod(int x, int y);
         void findBestPassPoint(double cf, geometry::CNPointAllo passPoint, geometry::CNPointAllo receiver,
                                shared_ptr<msl::VoronoiNet> vNet, geometry::CNPositionAllo teamMatePos, int teamMateId);

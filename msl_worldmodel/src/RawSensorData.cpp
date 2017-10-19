@@ -189,6 +189,7 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
 
     if (data->odometry.certainty > 0)
     {
+        cout << "test" << endl;
         // full odometry
         auto odo = make_shared<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(
             data->odometry, time, this->maxValidity, data->odometry.certainty);

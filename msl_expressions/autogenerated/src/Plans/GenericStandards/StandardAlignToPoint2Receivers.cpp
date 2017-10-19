@@ -44,7 +44,8 @@ namespace alica
     }
     void StandardAlignToPoint2Receivers::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1467228931063) ENABLED START*/ //Add additional options here
+    }
+    /*PROTECTED REGION ID(run1467228931063) ENABLED START*/ //Add additional options here
 //        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
 //        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 //
@@ -206,8 +207,8 @@ namespace alica
 //
 //        /*PROTECTED REGION END*/
 //    }
-//    void StandardAlignToPoint2Receivers::initialiseParameters()
-//    {
+    void StandardAlignToPoint2Receivers::initialiseParameters()
+    {
 //        /*PROTECTED REGION ID(initialiseParameters1467228931063) ENABLED START*/ //Add additional options here
 //        this->minOppDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "minOppDist", NULL);
 //        this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
@@ -241,10 +242,11 @@ namespace alica
 //        if (!success)
 //        {
 //            cerr << "SAAG2R: Parameter does not exist" << endl;
-//        }
-        /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1467228931063) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+//    }
+//    }
+/*PROTECTED REGION ID(methods1467228931063) ENABLED START*///Add additional methods here
 //    bool StandardAlignToPoint2Receivers::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
 //                                                          shared_ptr<geometry::CNPoint2D> passPoint,
 //                                                          double passCorridorWidth,
@@ -307,4 +309,4 @@ namespace alica
 //			return true;
 //		}
 /*PROTECTED REGION END*/
-		} /* namespace alica */
+} /* namespace alica */

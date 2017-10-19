@@ -352,7 +352,7 @@ namespace alica
     {
         for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
+            if (geometry::distancePointToLineSegment2(points.at(i).x, points.at(i).y, ball, passPoint)
                     < passCorridorWidth)
             {
                 return false;
@@ -366,7 +366,7 @@ namespace alica
     {
         for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
+            if (geometry::distancePointToLineSegment2(points.at(i).x, points.at(i).y, ball, passPoint)
                     < passCorridorWidth && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;
@@ -403,7 +403,7 @@ namespace alica
         return true;
     }
 
-    double ThrowInPass::minFree(double angle, double width, shared_ptr<vector<double>> dstscan)
+    double ThrowInPass::minFree(double angle, double width, shared_ptr<const vector<double>> dstscan)
     {
         double sectorWidth = 2.0 * M_PI / dstscan->size();
         int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());

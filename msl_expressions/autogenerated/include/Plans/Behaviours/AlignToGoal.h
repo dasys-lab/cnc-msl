@@ -32,10 +32,9 @@ namespace alica
         double dRot;
         int iter;
         bool kicked;
-        double goalLineHitPoint(std::shared_ptr<geometry::CNPositionAllo> ownPos, double egoAngle);
         double minFree(double angle, double width, std::shared_ptr<std::vector<double> > dstscan);
         int mod(int x, int y);
-        geometry::CNPointEgo getFreeGoalVector();
+        nonstd::optional<geometry::CNPointEgo> getFreeGoalVector();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1415205272843) ENABLED START*/ //Add additional private methods here
