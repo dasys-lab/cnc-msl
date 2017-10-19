@@ -1,15 +1,10 @@
-/*
- * DistBallRobot.cpp
- *
- *  Created on: 15.03.2016
- *      Author: endy
- */
-
 #include "DistBallRobot.h"
 #include <Ball.h>
 #include <Robots.h>
 #include <MSLFootballField.h>
 #include <container/CNPosition.h>
+#include <msl/robot/IntRobotID.h>
+
 
 namespace msl
 {
@@ -86,9 +81,9 @@ namespace msl
 		shared_ptr<geometry::CNPosition> curPosition;
 		if (relevantRobots != nullptr)
 		{
-			for (int& robot : *relevantRobots)
+			for (auto robot : *relevantRobots)
 			{
-				curPosition = this->getPositionOfTeammate(robot);
+				curPosition = this->getPositionOfTeammate(dynamic_cast<const msl::robot::IntRobotID*>(robot));
 				if (curPosition == nullptr)
 					continue; // This player was not 'positionReceived'
 
@@ -127,7 +122,7 @@ namespace msl
 			for (int i = 0; i < ass->getNumUnAssignedRobotIds(); ++i)
 			{
 				//curPosition = this.playerPositions.GetValue(ass.UnAssignedRobots[i]);
-				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobotIds().at(i));
+				curPosition = this->getPositionOfTeammate(dynamic_cast<const msl::robot::IntRobotID*>(ass->getUnassignedRobotIds().at(i)));
 				if (curPosition == nullptr)
 					continue;
 				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(sb) / wm->field->getMaxDistance()));
@@ -138,7 +133,7 @@ namespace msl
 		return ui;
 	}
 
-	shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(int robotId)
+	shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(const msl::robot::IntRobotID*  robotId)
 	{
 		if (this->teammates == nullptr)
 			return nullptr;

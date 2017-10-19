@@ -14,6 +14,10 @@
 
 namespace msl
 {
+	namespace robot
+	{
+		class IntRobotID;
+	}
 
 	class DistBallRobot : public alica::USummand
 	{
@@ -28,13 +32,13 @@ namespace msl
 		bool validAngle;
 		double angleBallOpp;
 		double velAngle;
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teammates;
+		shared_ptr<vector<shared_ptr<pair< const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> teammates;
 
 		virtual void cacheEvalData();
 
 		virtual alica::UtilityInterval eval(alica::IAssignment* ass);
 		string toString();
-		shared_ptr<geometry::CNPosition> getPositionOfTeammate(int robotId);
+		shared_ptr<geometry::CNPosition> getPositionOfTeammate(const msl::robot::IntRobotID*  robotId);
 	};
 
 } /* namespace msl */
