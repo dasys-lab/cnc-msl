@@ -1,7 +1,8 @@
-#ifndef DomainBehaviour_H_
-#define DomainBehaviour_H_
-
+#pragma once
 #include "engine/BasicBehaviour.h"
+
+#include <msl/robot/IntRobotIDFactory.h>
+
 #include "ros/ros.h"
 
 namespace msl_helper_msgs{
@@ -24,6 +25,10 @@ namespace supplementary {
 namespace msl{
 	class MSLRobot;
 	class MSLWorldModel;
+namespace robot
+{
+	class IntRobotID;
+}
 }
 
 namespace alica
@@ -38,7 +43,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_actuator_msgs::KickControl& kc);
 		void send(msl_actuator_msgs::ShovelSelectCmd& ssc);
 		void send(msl_helper_msgs::PassMsg& pm);
-		void send(msl_helper_msgs::PassMsg& pm, int senderID);
+		void send(msl_helper_msgs::PassMsg& pm, std::vector<uint8_t> senderID);
 		void send(msl_helper_msgs::WatchBallMsg& wb);
 		void send(msl_helper_msgs::DebugMsg& dbm);
 		msl::MSLRobot* robot;
@@ -50,7 +55,8 @@ class DomainBehaviour : public BasicBehaviour
 	private:
 
 		double __maxTranslation;
-		int ownID;
+		const msl::robot::IntRobotID* ownID;
+		msl::robot::IntRobotIDFactory factory;
 		ros::Publisher simlatorPub;
 		ros::Publisher motionControlPub;
 		ros::Publisher ballHandlePub;
@@ -61,6 +67,3 @@ class DomainBehaviour : public BasicBehaviour
 		ros::Publisher debugMsgPublisher;
 	};
 } /* namespace alica */
-
-#endif /* DomainBehaviour_H_ */
-
