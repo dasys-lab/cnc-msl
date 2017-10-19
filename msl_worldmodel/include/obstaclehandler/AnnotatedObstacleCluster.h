@@ -1,12 +1,4 @@
-/*
- * AnnotatedObstacleCluster.h
- *
- *  Created on: Feb 11, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_
+#pragma once
 
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
@@ -82,5 +74,3 @@ class AnnotatedObstacleCluster
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_ */

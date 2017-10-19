@@ -1,12 +1,4 @@
-/*
- * Game.h
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
+#pragma once
 
 #include "GameState.h"
 #include "InformationElement.h"
@@ -26,6 +18,11 @@ class SystemConfig;
 
 namespace msl
 {
+
+namespace robot
+{
+	class IntRobotID;
+}
 
 class MSLWorldModel;
 class Game
@@ -65,7 +62,7 @@ class Game
     int oppGoal;
     unsigned long timeSinceStart;
     GameState gameState;
-    int teamMateWithBall;
+    const msl::robot::IntRobotID* teamMateWithBall;
     bool passReceived;
     bool mayScore;
     void setMayScore();
@@ -73,4 +70,3 @@ class Game
 
 } /* namespace alica */
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_ */

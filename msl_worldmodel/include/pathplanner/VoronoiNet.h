@@ -1,12 +1,4 @@
-/*
- * VoronoiNet.h
- *
- *  Created on: Apr 26, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_
+#pragma once
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -44,6 +36,11 @@ using namespace std;
 namespace msl
 {
 
+namespace robot
+{
+	class IntRobotID;
+}
+
 /**
  * Class containing a CGAL Voronoi Diagram and its current status
  */
@@ -62,27 +59,6 @@ class VoronoiNet
      * @return shared_ptr<VoronoiDiagram>
      */
     void generateVoronoiDiagram(bool ownPosAvail);
-    /**
-     * Gets the SearchNode with lowest dist to goal
-     * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
-     * @return shared_ptr<SearchNode>
-     */
-    //		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
-    /**
-     * Gets the closest vertex to a given point
-     * @param ownPos shared_ptr<geometry::CNPoint2D>
-     * @return shared_ptr<VoronoiDiagram::Vertex>
-     */
-    //		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> ownPos);
-
-    /**
-     * Return the sites near an egde defined by 2 points
-     * @param v1 shared_ptr<geometry::CNPoint2D>
-     * @param v2 shared_ptr<geometry::CNPoint2D>
-     * @return pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>>
-     */
-    // pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<Vertex> v1,
-    // shared_ptr<Vertex> v2);
     /**
      * Print the voronoi diagrams sites
      */
@@ -139,21 +115,6 @@ class VoronoiNet
     shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
 
     /**
-     * Check if an edge belongs to face of given point
-     * @param pos shared_ptr<geometry::CNPoint2D>
-     * @param currentNode shared_ptr<SearchNode>
-     * @param nextNode shared_ptr<SearchNode>
-     * @return bool
-     */
-    //		bool isOwnCellEdge(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
-
-    /**
-     * Return the teammate positions
-     * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
-     */
-    // shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
-
-    /**
      * Return the obstacle positions
      * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
      */
@@ -187,18 +148,11 @@ class VoronoiNet
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAdditionalObstacles();
 
     /**
-     * Return vertices teammates voronoi face
-     * @param teamMateId int
-     * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-     */
-    //		shared_ptr<vector<shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
-
-    /**
      * Return Vertices of teammates Voronoi Face
      * @param teamMateId int
      * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
      */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVerticesCNPoint2D(int teamMateId);
+    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVerticesCNPoint2D(const msl::robot::IntRobotID* teamMateId);
     /**
      * Removes given sites from Voronoi Diagram
      * @param shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites to remove
@@ -287,5 +241,3 @@ class VoronoiNet
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_ */

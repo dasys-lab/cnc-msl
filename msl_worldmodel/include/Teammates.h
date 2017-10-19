@@ -32,8 +32,8 @@ class Teammates
     virtual ~Teammates();
     int teamMatesInOwnPenalty();
     int teamMatesInOppPenalty();
-    shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
+    shared_ptr<geometry::CNPosition> getTeamMatePosition(const msl::robot::IntRobotID* teamMateId, int index = 0);
+    shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered(int index = 0);
     void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);

@@ -1,16 +1,12 @@
-/*
- * VoronoiNet.cpp
- *
- *  Created on: Apr 26, 2015
- *      Author: Stefan Jakob
- */
-
 #include "pathplanner/VoronoiNet.h"
 #include "Ball.h"
 #include "MSLWorldModel.h"
 #include "Robots.h"
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
+
+#include <msl/robot/IntRobotID.h>
+
 #include <SystemConfig.h>
 
 namespace msl
@@ -71,59 +67,6 @@ int VoronoiNet::getTypeOfSite(Site_2 site)
 }
 
 /**
- * gets the closest vertex to a given point
- * @param ownPos shared_ptr<geometry::CNPoint2D>
- * @return shared_ptr<VoronoiDiagram::Vertex>
- */
-//	shared_ptr<VoronoiDiagram::Vertex> VoronoiNet::findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> pos)
-//	{
-//		shared_ptr<VoronoiDiagram::Vertex> ret = nullptr;
-//		// get all vertices
-//		VoronoiDiagram::Vertex_iterator iter = voronoi->vertices_begin();
-//		int minDist = std::numeric_limits<int>::max();
-//		//iterate over them and find closest
-//		while (iter != voronoi->vertices_end())
-//		{
-//			//if there has been no closest so far
-//			if (ret == nullptr)
-//			{
-//				ret = make_shared<VoronoiDiagram::Vertex>(*iter);
-//				iter++;
-//			}
-//			else
-//			{
-//				//change if current vertex is closer
-//				int dist = pos->distanceTo(make_shared<geometry::CNPoint2D>(iter->point().x(), iter->point().y()));
-//				if (dist < minDist)
-//				{
-//					ret = make_shared<VoronoiDiagram::Vertex>(*iter);
-//					minDist = dist;
-//					iter++;
-//				}
-//			}
-//		}
-//		return ret;
-//	}
-/**
- * gets the SearchNode with lowest dist to goal
- * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
- * @return shared_ptr<SearchNode>
- */
-//	shared_ptr<SearchNode> VoronoiNet::getMin(shared_ptr<vector<shared_ptr<SearchNode> > > open)
-//	{
-//		if (open->size() > 0)
-//		{
-//			sort(open->begin(), open->end(), SearchNode::compare);
-//			return open->at(0);
-//		}
-//		else
-//		{
-//			return nullptr;
-//		}
-//
-//	}
-
-/**
  * generates a VoronoiDiagram and inserts given points
  * @param points vector<shared_ptr<geometry::CNPoint2D>>
  * @return shared_ptr<VoronoiDiagram>
@@ -145,7 +88,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
         for (auto cluster : *alloObs)
         {
             Site_2 site(cluster->x, cluster->y);
-            pointRobotKindMapping[site] = cluster->id;
+            pointRobotKindMapping[site] = *reinterpret_cast<const int*>(cluster->id->toByteVector().data());
             sites.push_back(site);
             this->alloClusteredObsWithMe->push_back(cluster);
         }
@@ -165,49 +108,6 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
 
     //		cout << "VoronoiNet: obstWithMe " << alloClusteredObs->size() << " : sites " << sites.size() << " : artObs " << artObs->size() << endl;
 }
-
-/**
- * check if an edge belongs to face of given point
- * @param pos shared_ptr<geometry::CNPoint2D>
- * @param currentNode shared_ptr<SearchNode>
- * @param nextNode shared_ptr<SearchNode>
- * @return bool
- */
-//	bool VoronoiNet::isOwnCellEdge(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<SearchNode> currentNode,
-//									shared_ptr<SearchNode> nextNode)
-//	{
-//		//locate point
-//		VoronoiDiagram::Locate_result loc = this->voronoi->locate(Point_2(startPos->x, startPos->y));
-//		//if location == face
-//		if (loc.which() == 0)
-//		{
-//			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-//			//iterate over halfedges of face
-//			VoronoiDiagram::Halfedge_handle begin = handle->halfedge();
-//			VoronoiDiagram::Halfedge_handle edge = begin;
-//			do
-//			{
-//				//finite edge
-//				if (edge->has_source() && edge->has_target()
-//						/* edge points fit*/
-//						&& ((edge->source()->point().x() == currentNode->getVertex()->point().x()
-//								&& edge->source()->point().y() == currentNode->getVertex()->point().y()
-//								&& edge->target()->point().x() == nextNode->getVertex()->point().x()
-//								&& edge->target()->point().y() == nextNode->getVertex()->point().y())
-//								|| (edge->source()->point().x() == nextNode->getVertex()->point().x()
-//										&& edge->source()->point().y() == nextNode->getVertex()->point().y()
-//										&& edge->target()->point().x() == currentNode->getVertex()->point().x()
-//										&& edge->target()->point().y() == currentNode->getVertex()->point().y())))
-//				{
-//					//part of own edge
-//					return true;
-//				}
-//				//get next edge
-//				edge = edge->previous();
-//			} while (edge != begin);
-//		}
-//		return false;
-//	}
 
 /**
  * insert additional points into the voronoi diagram
@@ -239,48 +139,18 @@ void VoronoiNet::insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::C
             ++point;
         }
     }
-    //		for (auto point : *points)
-    //		{
-    //			if(!this->field->isInsideField(point)) {
-    //
-    //			} else {
-    //
-    //				Site_2 site(point->x, point->y);
-    //				this->pointRobotKindMapping[site] = type;
-    //				sites.push_back(site);
-    //
-    //				if (type == EntityType::Opponent)
-    //						this->additionalObstacles->push_back(point);
-    //				else if (type == EntityType::ArtificialObstacle)
-    //						this->artificialObstacles->push_back(point);
-    //			}
-    //		}
     this->voronoi->insert(sites.begin(), sites.end());
 }
 
-/**
- * return vertices teammates voronoi face
- * @param teamMateId int
- * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
- */
-//	shared_ptr<vector<shared_ptr<Vertex> > > VoronoiNet::getTeamMateVertices(int teamMateId)
-//	{
-//		//locate teammate
-//		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
-//		//get vertices
-//		shared_ptr<vector<shared_ptr<Vertex> > > ret = this->getVerticesOfFace(
-//				make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
-//		return ret;
-//
-//	}
-
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
+shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getTeamMateVerticesCNPoint2D(const msl::robot::IntRobotID* teamMateId)
 {
     // locate teammate
     shared_ptr<geometry::CNPosition> teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
 
     if (teamMatePos == nullptr)
+    {
         return nullptr;
+    }
 
     // get vertices
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -324,74 +194,6 @@ void VoronoiNet::clearVoronoiNet()
     this->artificialObstacles->clear();
     this->additionalObstacles->clear();
 }
-
-//	/**
-//	 * return the sites near an egde defined by 2 points
-//	 * @param v1 VoronoiDiagram::Vertex
-//	 * @param v2 VoronoiDiagram::Vertex
-//	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
-//	 */
-//	pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> VoronoiNet::getSitesNextToHalfEdge(
-//			shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
-//	{
-//		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> ret;
-//		ret.first.first = nullptr;
-//		ret.second.first = nullptr;
-//		//iterate over faces
-//		bool foundFirst = false;
-//		bool foundSecond = false;
-//		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
-//		{
-//			//iterate over halfedges
-//			VoronoiDiagram::Halfedge_handle begin = fit->halfedge();
-//			VoronoiDiagram::Halfedge_handle edge = begin;
-//			do
-//			{
-//				//look for fitting halfedge with right source
-//				if (edge->has_source() && abs(edge->source()->point().x() - v1->point().x()) < 10
-//						&& abs(edge->source()->point().y() - v1->point().y()) < 10)
-//				{
-//					foundFirst = true;
-//				}
-//				if (edge->has_target() && abs(edge->target()->point().x() - v2->point().x()) < 10
-//						&& abs(edge->target()->point().y() - v2->point().y()) < 10)
-//				{
-//					foundSecond = true;
-//				}
-//				if (foundFirst && foundSecond)
-//				{
-//					break;
-//				}
-//				edge = edge->previous();
-//			} while (edge != begin);
-//			foundFirst = false;
-//			foundSecond = false;
-//			//get face next to halfedge => get dual Point in delaunay
-//			auto firstSite = edge->face()->dual()->point();
-//			//get opposite halfedge => get face next to halfedge => get dual Point in delaunay
-//			auto secondSite = edge->opposite()->face()->dual()->point();
-//			for (auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
-//			{
-//				if (abs(current->first->x - firstSite.x()) < 0.01 && abs(current->first->y - firstSite.y()) < 0.01)
-//				{
-//					ret.first = *current;
-//					foundFirst = true;
-//					continue;
-//				}
-//				if (abs(current->first->x - secondSite.x()) < 0.01 && abs(current->first->y - secondSite.y()) < 0.01)
-//				{
-//					ret.second = *current;
-//					foundSecond = true;
-//					continue;
-//				}
-//				if (foundFirst && foundSecond)
-//				{
-//					return ret;
-//				}
-//			}
-//		}
-//		return ret;
-//	}
 
 /**
  * locates face of point and returns verticespointRobotKindMapping
@@ -461,24 +263,6 @@ shared_ptr<VoronoiDiagram::Site_2> VoronoiNet::getSiteOfFace(VoronoiDiagram::Poi
 }
 
 /**
- * return the teammate positions
- * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
- */
-//	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getTeamMatePositions()
-//	{
-//		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
-//				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
-//		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
-//		{
-//			//teammates have positive ids
-//			if (iter->second > 0 && iter->second != SystemConfig::getOwnRobotID())
-//			{
-//				ret->push_back(*iter);
-//			}
-//		}
-//		return ret;
-//	}
-/**
  * return the obstacle positions
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
  */
@@ -500,26 +284,12 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getObstaclePosit
  * return the site positions
  * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
  */
-//	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getSitePositions()
-//	{
-//		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
-//				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
-//		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
-//		{
-//			ret->push_back(*iter);
-//		}
-//		return ret;
-//	}
-/**
- * return the site positions
- * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
- */
 shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getOpponentPositions()
 {
     auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
     for (auto cluster : *alloClusteredObsWithMe)
     {
-        if (cluster->id == EntityType::Opponent)
+        if (*reinterpret_cast<const int*>(cluster->id->toByteVector().data()) == EntityType::Opponent)
         {
             ret->push_back(cluster->getPoint());
         }

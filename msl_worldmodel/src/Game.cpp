@@ -1,14 +1,10 @@
-/*
- * Game.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Game.h"
 #include "Ball.h"
 #include "MSLWorldModel.h"
 #include "Robots.h"
+
+#include <msl/robot/IntRobotID.h>
+
 #include <SystemConfig.h>
 
 namespace msl
@@ -22,7 +18,7 @@ Game::Game(MSLWorldModel *wm, int ringBufferLength)
     this->timeSinceStart = 0;
     this->passReceived = false;
     this->mayScore = false;
-    this->teamMateWithBall = 0;
+    this->teamMateWithBall = nullptr;
     ownGoal = 0;
     oppGoal = 0;
     gameTime = 0;
@@ -78,7 +74,8 @@ Game::~Game()
 
 void Game::onRobotCommand(robot_control::RobotCommandPtr msg)
 {
-    if (msg->receiverId != 0 && msg->receiverId != wm->getOwnId())
+    if (*reinterpret_cast<const int *>(msg->receiverId.id.data()) != 0 &&
+        !equal(msg->receiverId.id.begin(), msg->receiverId.id.end(), wm->getOwnId()->toByteVector().begin()))
     {
         return;
     }
@@ -361,7 +358,7 @@ void Game::updateGameState()
 {
     // Find robot closest to ball
     auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
-    shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot;
+    shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> closestRobot;
     double minDist = numeric_limits<double>::max();
     auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
     if (sharedBallPosition == nullptr)
@@ -369,7 +366,7 @@ void Game::updateGameState()
         return;
     }
     bool ballPossession = false;
-    for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
+    for (shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
     {
         double currDist = shwmData->second->distanceTo(sharedBallPosition);
         if (closestRobot == nullptr || currDist < minDist)
@@ -406,7 +403,7 @@ void Game::updateGameState()
         cout << "Game::updateGameState(): State changed: Duel state" << endl;
         gs = GameState::Duel;
         this->teamMateWithBall = 0;
-//        passReceived = false;
+        //        passReceived = false;
     }
     else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
     {
@@ -439,11 +436,11 @@ bool Game::isMayScore()
 void Game::setMayScore()
 {
     shared_ptr<geometry::CNPosition> capturePos = nullptr;
-    int teamMateWithBallNow = 0;
+    const msl::robot::IntRobotID* teamMateWithBallNow = nullptr;
     auto robotPoses = this->wm->robots->teammates.getPositionsOfTeamMates();
     if (robotPoses != nullptr)
     {
-        for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
+        for (shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
         {
             if (shwmData != nullptr)
             {
@@ -463,7 +460,7 @@ void Game::setMayScore()
     {
         mayScore = false;
     }
-    if (teamMateWithBall != 0 && teamMateWithBallNow != 0 && teamMateWithBall != teamMateWithBallNow)
+    if (teamMateWithBall != nullptr && teamMateWithBallNow != nullptr && teamMateWithBall != teamMateWithBallNow)
     {
         passReceived = true;
     }

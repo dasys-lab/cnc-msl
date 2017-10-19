@@ -75,7 +75,7 @@ class Ball
     void processHypothesis();
     void updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
-    shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
+    shared_ptr<bool> getTeamMateBallPossession(const msl::robot::IntRobotID* teamMateId, int index = 0);
     shared_ptr<bool> getOppBallPossession(int index = 0);
     double getBallDiameter();
 

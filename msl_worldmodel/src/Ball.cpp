@@ -637,7 +637,7 @@ namespace msl
 		oppBallPossession.add(inf);
 	}
 
-	shared_ptr<bool> Ball::getTeamMateBallPossession(int teamMateId, int index)
+	shared_ptr<bool> Ball::getTeamMateBallPossession(const msl::robot::IntRobotID* teamMateId, int index)
 	{
 		if (ballPossession.find(teamMateId) == ballPossession.end())
 		{

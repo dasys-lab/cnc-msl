@@ -1,9 +1,3 @@
-/*
- * AnnotatedObstacleCluster.cpp
- *
- *  Created on: Feb 11, 2016
- *      Author: Stefan Jakob
- */
 
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
 #include "MSLEnums.h"

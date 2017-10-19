@@ -613,7 +613,6 @@ namespace msl
 		mc.motion.rotation = NAN;
 		mc.motion.translation = NAN;
 		mc.motion.angle = NAN;
-		mc.senderID = -1;
 		return mc;
 	}
 

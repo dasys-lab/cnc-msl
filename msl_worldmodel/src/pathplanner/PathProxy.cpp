@@ -1,10 +1,3 @@
-/*
- * PathProxy.cpp
- *
- *  Created on: May 17, 2015
- *      Author: Stefan Jakob
- */
-
 #include "pathplanner/PathProxy.h"
 #include "RawSensorData.h"
 #include "container/CNPosition.h"
@@ -13,6 +6,8 @@
 #include "pathplanner/PathPlanner.h"
 #include "pathplanner/PathPlannerQuery.h"
 #include "pathplanner/VoronoiNet.h"
+
+#include <msl/robot/IntRobotID.h>
 
 namespace msl
 {
@@ -264,7 +259,7 @@ PathProxy *PathProxy::getInstance()
 void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path)
 {
     msl_msgs::PathPlanner pathMsg;
-    pathMsg.senderId = this->wm->getOwnId();
+    pathMsg.senderId.id = this->wm->getOwnId()->toByteVector();
     for (int i = 0; i < path->size(); i++)
     {
         msl_msgs::Point2dInfo info;
@@ -283,7 +278,7 @@ void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoin
 void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
 {
     msl_msgs::VoronoiNetInfo netMsg;
-    netMsg.senderId = this->wm->getOwnId();
+    netMsg.senderId.id = this->wm->getOwnId()->toByteVector();
     for (auto cluster : *voronoi->getAlloClusteredObsWithMe())
     {
         msl_msgs::Point2dInfo info;

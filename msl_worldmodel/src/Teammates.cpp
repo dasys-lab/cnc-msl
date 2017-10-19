@@ -1,13 +1,8 @@
-/*
- * Teammates.cpp
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
 #include "Teammates.h"
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
+
+#include <msl/robot/IntRobotID.h>
 
 namespace msl
 {
@@ -27,11 +22,10 @@ Teammates::~Teammates()
 int Teammates::teamMatesInOwnPenalty()
 {
     int count = 0;
-    int myId = wm->getOwnId();
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teamMatePositions = getPositionsOfTeamMates();
+    auto teamMatePositions = getPositionsOfTeamMates();
     for (int i = 0; i < teamMatePositions->size(); i++)
     {
-        if (teamMatePositions->at(i)->first != myId)
+        if (teamMatePositions->at(i)->first != wm->getOwnId())
         {
             if (wm->field->isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
             {
@@ -45,11 +39,10 @@ int Teammates::teamMatesInOwnPenalty()
 int Teammates::teamMatesInOppPenalty()
 {
     int count = 0;
-    int myId = wm->getOwnId();
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teamMatePositions = getPositionsOfTeamMates();
+    auto teamMatePositions = getPositionsOfTeamMates();
     for (int i = 0; i < teamMatePositions->size(); i++)
     {
-        if (teamMatePositions->at(i)->first != myId)
+        if (teamMatePositions->at(i)->first != wm->getOwnId())
         {
             if (wm->field->isInsideOppPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
             {
@@ -60,7 +53,7 @@ int Teammates::teamMatesInOppPenalty()
     return count;
 }
 
-shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(int teamMateId, int index)
+shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(const msl::robot::IntRobotID* teamMateId, int index)
 {
     if (robotPositions.find(teamMateId) == robotPositions.end())
     {
@@ -74,16 +67,16 @@ shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(int teamMateId, 
     return x->getInformation();
 }
 
-shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> Teammates::getPositionsOfTeamMates()
+shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> Teammates::getPositionsOfTeamMates()
 {
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ret =
-        make_shared<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>>();
+    shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> ret =
+        make_shared<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>>();
     for (auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
     {
         if (wm->getTime() - iter->second->getLast()->timeStamp < maxInformationAge)
         {
-            shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> element =
-                make_shared<pair<int, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
+            shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> element =
+                make_shared<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
             ret->push_back(element);
         }
     }

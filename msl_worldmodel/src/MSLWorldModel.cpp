@@ -540,15 +540,13 @@ namespace msl
 
         int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
 
-        std::vector< process_manager::ProcessCommand::_receiverId_type > ownRobotIds;
-        ownRobotIds.push_back(this->getOwnId()->toByteVector());
-
         std::vector<int> pKeys;
         pKeys.push_back(processId);
         process_manager::ProcessCommand command;
         command.cmd = 1;
         command.receiverId.id = this->getOwnId()->toByteVector();
-        command.robotIds = ownRobotIds;
+        command.robotIds.push_back(process_manager::ProcessCommand::_robotIds_type::value_type());
+        command.robotIds.at(0).id = this->getOwnId()->toByteVector();
         command.processKeys = pKeys;
         std::vector<int> paramsets;
         paramsets.push_back(0);
@@ -562,14 +560,13 @@ namespace msl
         supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
         int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
-        std::vector<int> ownRobotId;
-        ownRobotId.push_back(this->getOwnId());
         std::vector<int> pKeys;
         pKeys.push_back(processId);
         process_manager::ProcessCommand command;
         command.cmd = 0;
-        command.receiverId = this->getOwnId();
-        command.robotIds = ownRobotId;
+        command.receiverId.id = this->getOwnId()->toByteVector();
+        command.robotIds.push_back(process_manager::ProcessCommand::_robotIds_type::value_type());
+        command.robotIds.at(0).id = this->getOwnId()->toByteVector();
         command.processKeys = pKeys;
         std::vector<int> paramsets;
         paramsets.push_back(0);

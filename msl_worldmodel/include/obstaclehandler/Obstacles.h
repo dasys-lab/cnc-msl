@@ -21,7 +21,10 @@
 #include "msl_sensor_msgs/ObstacleInfo.h"
 #include "msl_sensor_msgs/WorldModelData.h"
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
-#include "vector"
+
+#include <msl/robot/IntRobotIDFactory.h>
+
+#include <vector>
 
 namespace msl
 {
@@ -80,6 +83,7 @@ class Obstacles
     RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
     RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
     unsigned long maxInformationAge = 1000000000;
+    msl::robot::IntRobotIDFactory factory;
 };
 
 } /* namespace msl */

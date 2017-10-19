@@ -187,7 +187,6 @@ namespace msl
 
 	shared_ptr<msl_actuator_msgs::MotionControl> DribbleCalibrationContainer::setNaN(shared_ptr<msl_actuator_msgs::MotionControl> mc)
 	{
-		mc->senderID = -1;
 		mc->motion.translation = NAN;
 		mc->motion.rotation = NAN;
 		mc->motion.angle = NAN;

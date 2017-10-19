@@ -388,7 +388,6 @@ namespace msl
 
 	MotionControl MovementContainer::setNaN(MotionControl mc)
 	{
-		mc.senderID = -1;
 		mc.motion.translation = NAN;
 		mc.motion.rotation = NAN;
 		mc.motion.angle = NAN;

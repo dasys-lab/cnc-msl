@@ -1,15 +1,10 @@
-/*
- * PathPlanner.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Ball.h"
 #include "GeometryCalculator.h"
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
 #include <pathplanner/PathPlanner.h>
+
+#include <msl/robot/IntRobotID.h>
 
 namespace msl
 {
@@ -511,7 +506,7 @@ bool PathPlanner::corridorCheckBall(shared_ptr<geometry::CNPoint2D> currentPos, 
 void PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> points)
 {
     msl_msgs::CorridorCheck cc;
-    cc.senderId = this->wm->getOwnId();
+    cc.senderId.id = this->wm->getOwnId()->toByteVector();
     for (int i = 0; i < points.size(); i++)
     {
         msl_msgs::Point2dInfo info;
@@ -551,7 +546,7 @@ bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<
     {
         // if the goal vertices are reached
         shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
-        if (voronoi->getTypeOfSite(*obstacle) == this->wm->getOwnId())
+        if (voronoi->getTypeOfSite(*obstacle) == *reinterpret_cast<const int*>(this->wm->getOwnId()->toByteVector().data()))
             return true;
         shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(obstacle->x(), obstacle->y());
         // check if there is an obstacle on the way to the goal
