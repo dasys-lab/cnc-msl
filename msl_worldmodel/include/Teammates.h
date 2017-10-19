@@ -20,6 +20,10 @@ using namespace std;
 namespace msl
 {
 
+namespace robot {
+	class IntRobotID;
+}
+
 class MSLWorldModel;
 class Teammates
 {
@@ -35,7 +39,7 @@ class Teammates
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);
     void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
 
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
 
   private:
     MSLWorldModel *wm;

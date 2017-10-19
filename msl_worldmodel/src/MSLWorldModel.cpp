@@ -1,10 +1,3 @@
-/*
- * MSLWorldModel.cpp
- *
- *  Created on: 27.10.2014
- *      Author: Andreas Witsch
- */
-
 #include "MSLWorldModel.h"
 #include "Ball.h"
 #include "EventTrigger.h"
@@ -17,29 +10,32 @@
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "WhiteBoard.h"
-#include "engine/AlicaEngine.h"
-#include "engine/IAlicaClock.h"
-#include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "tf/tf.h"
-#include "process_manager/ProcessCommand.h"
 #include <GeometryCalculator.h>
+
+#include <engine/AlicaEngine.h>
+#include <engine/IAlicaClock.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <gazebo_msgs/ModelStates.h>
-#include <msl_actuator_msgs/IMUData.h>
+#include <msl/robot/IntRobotID.h>
+#include <msl/robot/IntRobotIDFactory.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
+#include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_msgs/JoystickCommand.h>
+#include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
+#include <process_manager/ProcessCommand.h>
 #include <std_msgs/Bool.h>
 
 namespace msl
@@ -71,7 +67,9 @@ namespace msl
 
     MSLWorldModel::MSLWorldModel()
     {
-        ownID = supplementary::SystemConfig::getOwnRobotID();
+    	msl::robot::IntRobotIDFactory factory;
+        ownID = factory.create(supplementary::SystemConfig::getOwnRobotID());
+
         spinner = new ros::AsyncSpinner(4);
         spinner->start();
         sc = supplementary::SystemConfig::getInstance();
@@ -144,7 +142,9 @@ namespace msl
 
     void MSLWorldModel::onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg)
     {
-        if (msg->receiverID == this->ownID)
+
+    	if( equal(msg->receiverID.id.begin(), msg->receiverID.id.end(), this->ownID->toByteVector().begin()) )
+//        if (msg->receiverID == this->ownID)
         {
             msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(
                     msg->worldModel);
@@ -370,7 +370,8 @@ namespace msl
             return;
         }
         msl_sensor_msgs::SharedWorldInfo msg;
-        msg.senderID = this->ownID;
+
+        msg.senderID.id = this->ownID->toByteVector();
         msg.ownGoalIsYellow = this->game->ownGoalColor == Color::Yellow;
         msg.ownTeamIsMagenta = this->game->ownTeamColor == Color::Magenta;
         msg.ballPossessionStatus = this->ball->getBallPossessionStatus();
@@ -497,7 +498,7 @@ namespace msl
         rawSensorData->processBallHypothesisList(msg);
     }
 
-    int MSLWorldModel::getOwnId()
+    const msl::robot::IntRobotID* msl::MSLWorldModel::getOwnId()
     {
         return ownID;
     }
@@ -538,14 +539,16 @@ namespace msl
         supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
         int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
-        std::vector<int> ownRobotId;
-        ownRobotId.push_back(this->getOwnId());
+
+        std::vector< process_manager::ProcessCommand::_receiverId_type > ownRobotIds;
+        ownRobotIds.push_back(this->getOwnId()->toByteVector());
+
         std::vector<int> pKeys;
         pKeys.push_back(processId);
         process_manager::ProcessCommand command;
         command.cmd = 1;
-        command.receiverId = this->getOwnId();
-        command.robotIds = ownRobotId;
+        command.receiverId.id = this->getOwnId()->toByteVector();
+        command.robotIds = ownRobotIds;
         command.processKeys = pKeys;
         std::vector<int> paramsets;
         paramsets.push_back(0);

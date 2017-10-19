@@ -1,10 +1,3 @@
-/*
- * Ball.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Ball.h"
 #include "MSLWorldModel.h"
 
@@ -21,6 +14,8 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPoint3D.h"
 #include "container/CNVelocity2D.h"
+
+#include <msl/robot/IntRobotIDFactory.h>
 
 namespace msl
 {
@@ -397,7 +392,7 @@ namespace msl
 
 		for (auto &pair : wm->robots->sharedWolrdModelData)
 		{
-			if (pair.first == 1) // No Shared ball for goalie!
+			if (*(pair.first->getRaw()) == 1) // No Shared ball for goalie!
 			{
 				continue;
 			}
@@ -592,7 +587,7 @@ namespace msl
 		hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
 	}
 
-	bool Ball::robotHasBall(int robotId)
+	bool Ball::robotHasBall(const msl::robot::IntRobotID* robotId)
 	{
 
 		auto shwmData = wm->robots->getSHWMData(robotId);
@@ -605,34 +600,38 @@ namespace msl
 
 	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
 	{
-		if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
+
+		msl::robot::IntRobotIDFactory factory;
+		const msl::robot::IntRobotID* senderID = factory.create(data.senderID.id);
+
+		if (ballPositionsByRobot.find(senderID) == ballPositionsByRobot.end())
 		{
 			shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>> buffer =
 			make_shared<RingBuffer<InformationElement<geometry::CNPoint2D>>>(wm->getRingBufferLength());
-			pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(data.senderID, buffer);
+			pair<const msl::robot::IntRobotID* , shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(senderID, buffer);
 			ballPositionsByRobot.insert(pair);
 		}
 		shared_ptr<InformationElement<geometry::CNPoint2D>> info =
 		make_shared<InformationElement<geometry::CNPoint2D>>(make_shared<geometry::CNPoint2D>(data.ball.point.x, data.ball.point.y), wm->getTime());
-		ballPositionsByRobot.at(data.senderID)->add(info);
-		if (ballVelocitiesByRobot.find(data.senderID) == ballVelocitiesByRobot.end())
+		ballPositionsByRobot.at(senderID)->add(info);
+		if (ballVelocitiesByRobot.find(senderID) == ballVelocitiesByRobot.end())
 		{
 			shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>> buffer =
 			make_shared<RingBuffer<InformationElement<geometry::CNVelocity2D>>>(wm->getRingBufferLength());
-			pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(data.senderID, buffer);
+			pair<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(senderID, buffer);
 			ballVelocitiesByRobot.insert(pair);
 		}
 		shared_ptr<InformationElement<geometry::CNVelocity2D>> i = make_shared<InformationElement<geometry::CNVelocity2D>>(
 				make_shared<geometry::CNVelocity2D>(data.ball.velocity.vx, data.ball.velocity.vy), wm->getTime());
-		ballVelocitiesByRobot.at(data.senderID)->add(i);
-		if (ballPossession.find(data.senderID) == ballPossession.end())
+		ballVelocitiesByRobot.at(senderID)->add(i);
+		if (ballPossession.find(senderID) == ballPossession.end())
 		{
 			shared_ptr<RingBuffer<InformationElement<bool>>> buffer = make_shared<RingBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
-			pair<int, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
+			pair<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(senderID, buffer);
 			ballPossession.insert(pair);
 		}
 		shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(make_shared<bool>(data.ballInPossession), wm->getTime());
-		ballPossession.at(data.senderID)->add(in);
+		ballPossession.at(senderID)->add(in);
 		bool r = oppHasBall();
 		shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(make_shared<bool>(r), wm->getTime());
 		oppBallPossession.add(inf);

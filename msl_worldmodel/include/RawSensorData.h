@@ -33,6 +33,10 @@ using namespace std;
 
 namespace msl
 {
+namespace robot
+{
+    class IntRobotID;
+}
 
 	class MSLWorldModel;
 	class RawSensorData
@@ -83,7 +87,7 @@ namespace msl
 
 
 		unsigned long maxInformationAge;
-		int ownID;
+		const msl::robot::IntRobotID* ownID;
 		bool loggingEnabled;
 	};
 

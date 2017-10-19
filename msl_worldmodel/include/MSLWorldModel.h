@@ -62,6 +62,11 @@ class CNPosition;
 
 namespace msl
 {
+	namespace robot
+	{
+	    class IntRobotID;
+	}
+
 class RawSensorData;
 class Robots;
 class Ball;
@@ -103,7 +108,7 @@ class MSLWorldModel
     void sendSharedWorldModelData();
 
     int getRingBufferLength();
-    int getOwnId();
+    const msl::robot::IntRobotID* getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
 		bool isUsingSimulator();
@@ -136,7 +141,7 @@ class MSLWorldModel
 		supplementary::ITrigger* visionDataEventTrigger;
 		supplementary::SystemConfig* sc;
 
-		int ownID;
+		const msl::robot::IntRobotID* ownID;
 		int ringBufferLength;
 		bool maySendMessages;
 

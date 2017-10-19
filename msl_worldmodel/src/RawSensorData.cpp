@@ -1,17 +1,13 @@
 #define IMULOG false
-/*
-
- * RawSensorData.cpp
- *
- *  Created on: Feb 18, 2015
- *      Author: Stefan Jakob
- */
 
 #include "RawSensorData.h"
 #include "Ball.h"
 #include "MSLWorldModel.h"
-#include <SystemConfig.h>
+
 #include <container/CNPoint3D.h>
+#include <msl/robot/IntRobotID.h>
+#include <msl/robot/IntRobotIDFactory.h>
+#include <SystemConfig.h>
 #include <math.h>
 
 namespace msl
@@ -27,7 +23,8 @@ namespace msl
                     ringbufferLength)
     {
         this->wm = wm;
-        ownID = supplementary::SystemConfig::getOwnRobotID();
+        msl::robot::IntRobotIDFactory factory;
+        ownID = factory.create(supplementary::SystemConfig::getOwnRobotID());
         maxInformationAge = 1000000000;
         loggingEnabled = false;
     }
@@ -199,7 +196,8 @@ namespace msl
 
     void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
     {
-        if (msg->robotId == this->ownID)
+
+    	if( equal(msg->robotId.id.begin(), msg->robotId.id.end(), this->ownID->toByteVector().begin()) )
         {
             /*
              * In order to convert the boost::shared_ptr to a std::shared_ptr

@@ -29,6 +29,12 @@ class SystemConfig;
 
 namespace msl
 {
+
+namespace robot
+{
+	class IntRobotID;
+}
+
 class MSLWorldModel;
 
 class BallVoting
@@ -109,10 +115,10 @@ class Ball
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
     RingBuffer<InformationElement<bool>> oppBallPossession;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
     RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballGuessPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
@@ -121,7 +127,7 @@ class Ball
     RingBuffer<InformationElement<geometry::CNPoint3D>> ballPoint3D;
     RingBuffer<InformationElement<geometry::CNPoint3D>> ballVel3D;
 
-    bool robotHasBall(int robotId);
+    bool robotHasBall(const msl::robot::IntRobotID*  robotId);
     bool oppHasBall();
     Point allo2Ego(Point p, Position pos);
     Velocity allo2Ego(Velocity vel, Position pos);
