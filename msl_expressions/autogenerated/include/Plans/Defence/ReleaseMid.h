@@ -4,6 +4,13 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1458033482289) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/MovementQuery.h>
+namespace msl
+{
+namespace robot
+{
+	class IntRobotID;
+}
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +28,7 @@ namespace alica
         string teamMateTaskName;
         string teamMatePlanName;
         EntryPoint* ep;
-        int teamMateId;
+        const msl::robot::IntRobotID* teamMateId;
         double threshold;
         double yHysteresis;
         double vMax;

@@ -9,6 +9,8 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
+
+#include <msl/robot/IntRobotID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -60,9 +62,9 @@ namespace alica
         auto teammates = robotsInEntryPointOfHigherPlan(ep);
         if (teammates)
         {
-            for (int mateId : *teammates)
+            for (auto mateId : *teammates)
             {
-                this->teamMateId = mateId;
+                this->teamMateId = dynamic_cast<const msl::robot::IntRobotID*>(mateId);
                 break;
             }
         }

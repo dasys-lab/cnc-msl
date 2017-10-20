@@ -8,6 +8,13 @@ namespace geometry
 {
     class CNPosition;
 }
+namespace msl
+{
+namespace robot
+{
+	class IntRobotID;
+}
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,7 +29,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1444834678756) ENABLED START*/ //Add additional protected methods here
-        int keeperId;
+        const msl::robot::IntRobotID* keeperId;
         shared_ptr<geometry::CNPosition> keeperPos;
         shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/

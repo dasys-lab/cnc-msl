@@ -10,6 +10,8 @@ using namespace std;
 #include <Robots.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+
+#include <msl/robot/IntRobotID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -46,18 +48,18 @@ namespace alica
         additionalPoints->push_back(alloBallPos);
 
         this->keeperPos = wm->robots->teammates.getTeamMatePosition(keeperId);
-        int ownId = this->wm->getOwnId();
+        auto ownId = this->wm->getOwnId();
         auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
         auto robotsInOwnEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getRobotsWorking(ownEp);
         auto firstDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-2500, -600);
         auto secondDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-4000, 2300);
-        auto firstDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[0]);
+        auto firstDef = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>((*robotsInOwnEp)[0]));
         msl_actuator_msgs::MotionControl mc;
 
         if (robotsInOwnEp->size() == 2)
         {
 
-            auto secondDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[1]);
+            auto secondDef = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>((*robotsInOwnEp)[1]));
             //first Defender is closer to first position
             if (firstDef->distanceTo(firstDefPos) < secondDef->distanceTo(firstDefPos))
             {

@@ -10,6 +10,8 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -98,7 +100,7 @@ namespace alica
 
             if (robots != nullptr && robots->size() > 0)
             {
-                matePos = wm->robots->teammates.getTeamMatePosition(robots->at(0));
+                matePos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(robots->at(0)));
             }
             if (matePos != nullptr)
             {

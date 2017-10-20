@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
     msl_actuator_msgs
     msl_robot
     msl_robot_id
+    agent_id
 )
 
 
@@ -45,6 +46,7 @@ catkin_package(
     msl_actuator_msgs
     msl_robot
     msl_robot_id
+    agent_id
   DEPENDS
 )
 

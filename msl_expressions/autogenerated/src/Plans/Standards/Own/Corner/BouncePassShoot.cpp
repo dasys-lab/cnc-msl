@@ -12,6 +12,10 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
+
+#include <supplementary/IAgentID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -60,9 +64,9 @@ namespace alica
         }
         auto robots = robotsInEntryPointOfHigherPlan(receiver);
         shared_ptr < geometry::CNPosition > matePos = nullptr;
-        for (int rob : *robots)
+        for (auto rob : *robots)
         {
-            matePos = wm->robots->teammates.getTeamMatePosition(rob);
+            matePos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(rob));
             break;
         }
         auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);

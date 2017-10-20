@@ -13,6 +13,10 @@ using namespace std;
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
+#include <supplementary/IAgentID.h>
+#include <supplementary/BroadcastID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,7 +46,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         EntryPoint* ep = getParentEntryPoint(taskName);
-        int id = -1;
+        const supplementary::IAgentID* id = nullptr;
         if (ep != nullptr)
         {
             auto parent = this->runningPlan->getParent().lock();
@@ -51,11 +55,11 @@ namespace alica
                 cout << "parent null" << endl;
                 return;
             }
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-            int id = ids->at(0);
-            if (id != -1)
+            auto ids = parent->getAssignment()->getRobotsWorking(ep);
+            id = ids->at(0);
+            if (!dynamic_cast<const supplementary::BroadcastID*>(ids->at(0)))
             {
-                auto pos = wm->robots->teammates.getTeamMatePosition(id);
+                auto pos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(id));
                 egoAlignPoint = pos->getPoint()->alloToEgo(*ownPos);
             }
         }
@@ -85,7 +89,16 @@ namespace alica
         pm.destination.y = dest->y;
         pm.origin.x = ownPos->x;
         pm.origin.y = ownPos->y;
-        pm.receiverID = id;
+        if(id == nullptr)
+        {
+        	auto tmp = new supplementary::BroadcastID(nullptr, 0);
+        	pm.receiverID.id = tmp->toByteVector();
+        	delete tmp;
+        }
+        else
+        {
+            pm.receiverID.id = id->toByteVector();
+        }
         send(pm);
 
         this->setSuccess(true);

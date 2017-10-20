@@ -11,6 +11,10 @@ using namespace std;
 #include <Robots.h>
 #include <engine/Assignment.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
+#include <supplementary/BroadcastID.h>
+#include <supplementary/IAgentID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -81,14 +85,14 @@ namespace alica
             }
 
             // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-            if (ids->empty() || ids->at(0) == -1)
+            auto ids = parent->getAssignment()->getRobotsWorking(ep);
+            if (ids->empty() || dynamic_cast<const supplementary::BroadcastID*>(ids->at(0)))
             {
                 return;
             }
 
             // get receiver position by id
-            auto receiverPos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+            auto receiverPos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(ids->at(0)));
             if (receiverPos == nullptr)
             {
                 return;

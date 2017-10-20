@@ -18,6 +18,8 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <Robots.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -86,7 +88,7 @@ namespace alica
         // Sending debug message for visualization
         msl_helper_msgs::DebugMsg debugMsg;
         debugMsg.topic = "CheckGoalKick";
-        debugMsg.senderID = this->getOwnId();
+        debugMsg.senderID.id = this->getOwnId()->toByteVector();
         debugMsg.validFor = 2000000000;
 
         msl_helper_msgs::DebugPoint point;

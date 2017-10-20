@@ -58,8 +58,9 @@ namespace alica
     void Parking::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1429111623710) ENABLED START*/ //Add additional options here
+
         this->parkingSlotIdx = (*this->sc)["Parking"]->get<double>("ParkingPositions",
-                                                                   to_string(this->getOwnId()).c_str(), NULL);
+                                                                   to_string(*reinterpret_cast<const int*>(this->getOwnId()->toByteVector().data())).c_str(), NULL);
         this->parkingPosition = make_shared < geometry::CNPoint2D
                 > (this->parkingSlotIdx * -this->offset, wm->field->getFieldWidth() / 2.0);
         /*PROTECTED REGION END*/

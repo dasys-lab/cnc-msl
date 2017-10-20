@@ -12,6 +12,10 @@ using namespace std;
 #include <engine/Assignment.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+
+#include <msl/robot/IntRobotID.h>
+#include <supplementary/BroadcastID.h>
+#include <supplementary/IAgentID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -83,12 +87,12 @@ namespace alica
                 return;
             }
             // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+            auto ids = parent->getAssignment()->getRobotsWorking(ep);
             // exactly one robot is receiver
-            if (ids->size() > 0 && ids->at(0) != -1)
+            if (ids->size() > 0 && !dynamic_cast<const supplementary::BroadcastID*>(ids->at(0)))
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                auto pos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(ids->at(0)));
                 if (pos != nullptr)
                 {
                     recPos1 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
@@ -111,12 +115,12 @@ namespace alica
                 return;
             }
             // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep2);
+            auto ids = parent->getAssignment()->getRobotsWorking(ep2);
             // exactly one robot is receiver
-            if (ids->size() > 0 && ids->at(0) != -1)
+            if (ids->size() > 0 && !dynamic_cast<const supplementary::BroadcastID*>(ids->at(0)))
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                auto pos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(ids->at(0)));
                 if (pos != nullptr)
                 {
                     recPos2 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);

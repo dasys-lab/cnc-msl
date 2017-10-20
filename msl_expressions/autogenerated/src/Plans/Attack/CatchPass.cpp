@@ -42,7 +42,6 @@ namespace alica
 
         shared_ptr < msl_helper_msgs::PassMsg > pm = wm->whiteBoard->getPassMsg();
         msl_actuator_msgs::MotionControl mc;
-        mc.senderID = -1;
         if (pm != nullptr)
         { // next go for pass msg
             passOrigin = make_shared < geometry::CNPoint2D > (pm->origin.x, pm->origin.y);

@@ -7,6 +7,8 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
+#include <msl/robot/IntRobotID.h>
+#include <supplementary/IAgentID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -62,11 +64,11 @@ namespace alica
 
         if (receiver != nullptr)
         {
-            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver); //make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
+            shared_ptr<vector<const supplementary::IAgentID*>> robots = robotsInEntryPoint(receiver); //make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots->teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(robots->at(0))); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
             if (matePos != nullptr)
             {

@@ -5,6 +5,13 @@
 /*PROTECTED REGION ID(inc1458034268108) ENABLED START*/ //Add additional includes here
 #include "engine/constraintmodul/Query.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
+namespace msl
+{
+namespace robot
+{
+	class IntRobotID;
+}
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +35,7 @@ namespace alica
         string teamMateTaskName;
         string teamMatePlanName;
         EntryPoint* ep;
-        int teamMateId;
+        const msl::robot::IntRobotID* teamMateId;
         shared_ptr<msl::MovementQuery> movQuery;
         /*PROTECTED REGION END*/
     private:

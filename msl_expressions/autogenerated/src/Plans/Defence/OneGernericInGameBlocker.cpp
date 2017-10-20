@@ -11,6 +11,8 @@ using namespace std;
 #include <Robots.h>
 #include <msl_helper_msgs/DebugMsg.h>
 #include <MSLWorldModel.h>
+
+#include <msl/robot/IntRobotID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +30,7 @@ namespace alica
         teamMateTaskName = "";
         teamMatePlanName = "";
         ep = nullptr;
-        teamMateId = 0;
+        teamMateId = nullptr;
         movQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -62,15 +64,15 @@ namespace alica
         auto teammates = robotsInEntryPointOfHigherPlan(ep);
         if (teammates)
         {
-            for (int mateId : *teammates)
+            for (auto mateId : *teammates)
             {
-                this->teamMateId = mateId;
+                this->teamMateId = dynamic_cast<const msl::robot::IntRobotID*>(mateId);
                 break;
             }
         }
         shared_ptr < geometry::CNPosition > attackerPos = nullptr;
         // determine the best reference point
-        if (this->teamMateId != 0)
+        if (this->teamMateId != nullptr)
         { // take the teammate as reference point
             attackerPos = wm->robots->teammates.getTeamMatePosition(teamMateId);
         }
@@ -120,7 +122,7 @@ namespace alica
         // Sending debug message for visualization
         msl_helper_msgs::DebugMsg debugMsg;
         debugMsg.topic = "OneGenericInGameBlocker";
-        debugMsg.senderID = this->getOwnId();
+        debugMsg.senderID.id = this->getOwnId()->toByteVector();
         debugMsg.validFor = 2000000000;
 
         msl_helper_msgs::DebugPoint point;

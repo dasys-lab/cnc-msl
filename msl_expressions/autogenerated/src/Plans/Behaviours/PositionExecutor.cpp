@@ -16,6 +16,9 @@ using namespace std;
 #include <Robots.h>
 #include <Game.h>
 
+#include <msl/robot/IntRobotID.h>
+#include <supplementary/IAgentID.h>
+#include <supplementary/BroadcastID.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -69,14 +72,13 @@ namespace alica
                 return;
             }
             // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(receiverEp);
+            shared_ptr<vector<const supplementary::IAgentID*>> ids = parent->getAssignment()->getRobotsWorking(receiverEp);
             shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
             // exactly one robot is receiver
-            int id = ids->at(0);
-            if (id != -1)
+            if (!dynamic_cast<const supplementary::BroadcastID*>(ids->at(0)))
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(id);
+                auto pos = wm->robots->teammates.getTeamMatePosition(dynamic_cast<const msl::robot::IntRobotID*>(ids->at(0)));
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
             msl_actuator_msgs::MotionControl mc;

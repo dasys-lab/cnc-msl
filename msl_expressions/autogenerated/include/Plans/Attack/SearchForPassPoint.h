@@ -10,6 +10,10 @@
 #include "engine/model/EntryPoint.h"
 #include "GameState.h"
 #include "pathplanner/PathProxy.h"
+namespace supplementary
+{
+	class IAgentID;
+}
 #define DBM_DEBUG 1
 /*PROTECTED REGION END*/
 namespace alica
@@ -29,7 +33,7 @@ namespace alica
         vector<string> teamMateTaskName;
         vector<string> teamMatePlanName;
         vector<EntryPoint*> eps;
-        vector<int> teamMateIds;
+        vector<const supplementary::IAgentID*> teamMateIds;
         double freeOppAngle;
         double ratio;
         double ballRadius;
