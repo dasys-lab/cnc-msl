@@ -16,9 +16,9 @@ IntRobotID::IntRobotID(const uint8_t *idBytes, int idSize)
         return;
     }
 
-    for (int i = idSize; i > 0; i--)
+    for (int i = 0; i < idSize; i++)
     {
-        this->id += (*idBytes << (idSize * 8));
+        this->id += ((*(idBytes + i)) << (i * 8));
     }
 }
 
@@ -62,11 +62,18 @@ std::vector<uint8_t> IntRobotID::toByteVector() const {
 
     for (int i = 0; i < this->getSize(); i++)
     {
-    	bytes.push_back(*this->getRaw() + i);
+    	bytes.push_back(*(this->getRaw() + i));
     }
 
     return bytes;
 }
 
+int IntRobotID::getId() const
+{
+    return id;
+}
+
 } /* namespace robot */
 } /* namespace msl */
+
+

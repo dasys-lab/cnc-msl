@@ -30,6 +30,7 @@ class IntRobotID : public supplementary::IAgentID
     bool operator> (const supplementary::IAgentID& other) const;
 
     std::vector<uint8_t> toByteVector() const;
+    int getId() const;
 
   private:
     int id;
