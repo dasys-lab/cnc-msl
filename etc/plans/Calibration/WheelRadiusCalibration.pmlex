@@ -66,4 +66,12 @@
     <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="MeasureDistance.beh#1508940977696"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CountDown.beh#1508941007133"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

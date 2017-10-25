@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1508940993195" name="CountDown" comment="" destinationPath="Plans/Calibration">
+  <configurations id="1508941007133" name="CountDownDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1508941179005" name="MISSING_NAME" comment="" key="countDownMs" value="5000"/>
+  </configurations>
+</alica:Behaviour>

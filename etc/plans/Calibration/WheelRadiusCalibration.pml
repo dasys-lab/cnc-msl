@@ -6,6 +6,8 @@
   </states>
   <states id="1507130150009" name="Drive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">DriveForward.beh#1507131285711</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">MeasureDistance.beh#1508940977696</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">CountDown.beh#1508941007133</plans>
     <inTransitions>#1507130218746</inTransitions>
     <inTransitions>#1507131367548</inTransitions>
     <outTransitions>#1507131118429</outTransitions>
