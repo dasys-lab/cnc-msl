@@ -68,6 +68,12 @@ std::vector<uint8_t> IntRobotID::toByteVector() const {
     return bytes;
 }
 
+
+std::string IntRobotID::toString() const
+{
+	return std::to_string(this->id);
+}
+
 int IntRobotID::getId() const
 {
     return id;
@@ -75,5 +81,4 @@ int IntRobotID::getId() const
 
 } /* namespace robot */
 } /* namespace msl */
-
 
