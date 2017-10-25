@@ -2,8 +2,10 @@ using namespace std;
 #include "Plans/Calibration/MeasureAndConfigure.h"
 
 /*PROTECTED REGION ID(inccpp1507131462459) ENABLED START*/ //Add additional includes here
+#include <math.h>
+#include <MSLWorldModel.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
-#include "Plans/Calibration/DriveForward.h"
+#include "Plans/Calibration/MeasureDistance.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,10 +29,20 @@ namespace alica
     }
     void MeasureAndConfigure::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1507131462459) ENABLED START*/ //Add additional options here
-    	/*
-    	 * TODO we want to split the current behaviours into its atomic components: measuring distance, measuring time and driving forward.
-    	 */
+        /*PROTECTED REGION ID(initialiseParameters1507131462459) ENABLED START*/ // Add additional options here
+        double laserDistance = MeasureDistance::getLaserDistance(this);
+        double odometryDistance = MeasureDistance::getOdometryDistance(this);
+        if (max(odometryDistance / laserDistance, laserDistance / odometryDistance) > 1.01)
+        {
+        	// increase wheel radius
+        	wm->setWheelRadius(wm->getWheelRadius() * (odometryDistance / laserDistance));
+        	this->setSuccess(false);
+        }
+        else
+        {
+        	// done
+			this->setSuccess(true);
+        }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1507131462459) ENABLED START*/ //Add additional methods here

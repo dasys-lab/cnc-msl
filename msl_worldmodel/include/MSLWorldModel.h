@@ -115,6 +115,8 @@ class MSLWorldModel
 		double getRobotRadius();
 		void setRobotRadius(double newRadius);
 		double adjustRobotRadius(double difference);
+		void setWheelRadius(double wheelRadius);
+		double getWheelRadius();
 
 		Monitoring* monitoring;
 		RawSensorData* rawSensorData;

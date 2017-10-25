@@ -525,6 +525,20 @@ namespace msl
         return motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
     }
 
+    double msl::MSLWorldModel::getWheelRadius()
+    {
+    	supplementary::Configuration *motion = (*sc)["Motion"];
+
+    	return motion->get<double>("Motion", "MotionControl", "WheelRadius", NULL);
+    }
+
+    void msl::MSLWorldModel::setWheelRadius(double wheelRadius)
+    {
+    	supplementary::Configuration *motion = (*sc)["Motion"];
+		motion->set(boost::lexical_cast<string>(wheelRadius), "Motion.MotionControl.WheelRadius", NULL);
+		motion->store();
+    }
+
     void msl::MSLWorldModel::setRobotRadius(double newRadius)
     {
         // TODO test if this breaks anything, remove line otherwise
