@@ -141,6 +141,8 @@ using namespace std;
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
 
+#include  "Plans/Attack/PassIntoFreeZone.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
@@ -610,6 +612,11 @@ namespace alica
             case 1482163995843:
 
                 return make_shared<TestMotorControl>();
+                break;
+
+            case 1508951680585:
+
+                return make_shared<PassIntoFreeZone>();
                 break;
 
             case 1434650910857:

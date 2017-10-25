@@ -121,6 +121,8 @@
 
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
 
+#include  "Plans/Attack/constraints/FreeZonePassing1508950989519Constraints.h"
+
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/constraints/StopRobots1457015643757Constraints.h"
@@ -208,6 +210,10 @@ namespace alica
 
             case 1458033723845:
                 return make_shared<Constraint1458033723845>();
+                break;
+
+            case 1508951693560:
+                return make_shared<Constraint1508951693560>();
                 break;
 
             case 1467206311808:

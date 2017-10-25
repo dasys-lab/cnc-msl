@@ -58,7 +58,7 @@ namespace alica
         {
             send(tmpMC);
         }
-        else if(std::isnan(bm.motion.translation))
+        else if (std::isnan(bm.motion.translation))
         {
             send(bm);
         }

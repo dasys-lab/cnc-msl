@@ -128,4 +128,8 @@
     <key href="../Behaviours/GoalieExtension.beh#1459249287791"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="PassPlayType.pty#1508950344228"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

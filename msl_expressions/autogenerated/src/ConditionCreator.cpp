@@ -120,6 +120,8 @@
 
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
 
+#include  "Plans/Attack/FreeZonePassing1508950989519.h"
+
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
@@ -1801,6 +1803,12 @@ namespace alica
             case 1458033705136:
 
                 return make_shared<TransitionCondition1458033705136>();
+
+                break;
+
+            case 1508951693560:
+
+                return make_shared<RunTimeCondition1508951693560>();
 
                 break;
 

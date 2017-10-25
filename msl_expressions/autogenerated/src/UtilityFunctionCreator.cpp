@@ -121,6 +121,8 @@
 
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
 
+#include  "Plans/Attack/FreeZonePassing1508950989519.h"
+
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
@@ -395,6 +397,10 @@ namespace alica
 
             case 1458033620834:
                 return make_shared<UtilityFunction1458033620834>();
+                break;
+
+            case 1508950989519:
+                return make_shared<UtilityFunction1508950989519>();
                 break;
 
             case 1464532006730:
