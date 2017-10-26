@@ -12,7 +12,7 @@ IntRobotID::IntRobotID(const uint8_t *idBytes, int idSize)
 {
     if (idSize != 4)
     {
-        std::cerr << "IntRobotID expects 4 bytes to create an integer!" << std::endl;
+        std::cerr << "IntRobotID expects 4 bytes to create an integer! Received " << idSize << " Bytes instead!" << std::endl;
         return;
     }
 

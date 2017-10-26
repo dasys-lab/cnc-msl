@@ -20,6 +20,11 @@ IntRobotIDFactory::~IntRobotIDFactory()
 const IntRobotID *IntRobotIDFactory::create(const std::vector<uint8_t> &robotID) const
 {
     const unsigned char *_robotRosID = reinterpret_cast<const unsigned char *>(robotID.data());
+    //TODO remove
+    if(robotID.size() == 0)
+    {
+    	return nullptr;
+    }
     return new IntRobotID(_robotRosID, robotID.size());
 }
 
