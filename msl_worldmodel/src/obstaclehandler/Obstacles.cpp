@@ -597,6 +597,8 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
         {
             cout << "OH: removed this obstacle X: " << newClusterArray->at(i)->x << " Y:" << newClusterArray->at(i)->y << endl;
             newClusterArray->erase(newClusterArray->begin() + i);
+            // was missing
+            i--;
         }
     }
 }
