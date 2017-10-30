@@ -221,7 +221,6 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
 
     // rotation results in y velocity of the ball
     velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
-    cout << "velY 1 = " << velY << endl;
     // factor so robot can hold the ball if driving sideways
     velY = velY * velYFactor;
 
@@ -253,9 +252,6 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
     translationOld = translation;
     rotationOld = rotation;
     angleOld = angle;
-
-    cout << "velX = " << velX << endl;
-    cout << "velY = " << velY << endl;
 
     // if we start moving forward, we don't want to push directly
     if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound && velYTemp >= staticMiddleBound && rotation <= 0.1 &&
@@ -412,8 +408,9 @@ double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAn
         // rotate left
         angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
     }
-
+#ifdef DBMOSDEBUG
     cout << "angleConst right = " << angleConst << endl;
+#endif
     return ballVelocity * angleConst * velToInput;
 }
 
