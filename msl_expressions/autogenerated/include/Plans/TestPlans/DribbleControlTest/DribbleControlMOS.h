@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1479905178049) ENABLED START*/ //Add additional includes here
+//#define DBMOSDEBUG
 /*PROTECTED REGION END*/
 namespace alica
 {
