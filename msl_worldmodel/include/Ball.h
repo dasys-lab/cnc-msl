@@ -17,6 +17,9 @@
 #include "container/CNVelocity2D.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "MSLEnums.h"
+
+#include <supplementary/IAgentID.h>
+
 #include <map>
 #include <memory>
 
@@ -115,10 +118,10 @@ class Ball
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<bool>>>, supplementary::IAgentIDComparator> ballPossession;
     RingBuffer<InformationElement<bool>> oppBallPossession;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>, supplementary::IAgentIDComparator> ballPositionsByRobot;
+    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>, supplementary::IAgentIDComparator> ballVelocitiesByRobot;
     RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballGuessPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
