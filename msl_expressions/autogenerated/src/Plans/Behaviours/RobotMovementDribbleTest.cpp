@@ -39,10 +39,10 @@ namespace alica
         auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
 
         // move to ball
-        query.egoDestinationPoint = ballPos;
-        query.dribble = false;
-        query.egoAlignPoint = query.egoDestinationPoint;
-        query.fast = true;
+        msl_actuator_msgs::MotionControl bm;
+        query->egoDestinationPoint = ballPos;
+        query->egoAlignPoint = query->egoDestinationPoint;
+        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->toAllo(*ownPos).x << " y: " << ballPos->toAllo(*ownPos).y
                 << endl;
@@ -50,8 +50,7 @@ namespace alica
 
         if (wm->ball->haveBall())
         {
-            query.dribble = true;
-            query.egoDestinationPoint = CNPointAllo (1, 1).toEgo(*ownPos);
+            query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
         }
         bm = rm.moveToPoint(query);
 

@@ -45,6 +45,7 @@ catkin_package(
     msl_helper_msgs
     robot_control
     nonstd
+    process_manager
   DEPENDS cgal
   CFG_EXTRAS ${PROJECT_NAME}-extras.cmake
 )
@@ -114,4 +115,4 @@ catkin_add_gtest(${PROJECT_NAME}-test src/pathplanner/test/test_path_planner.cpp
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
-
+ 

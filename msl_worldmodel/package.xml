@@ -27,6 +27,7 @@
   <build_depend>robot_control</build_depend> 
   <build_depend>constraintsolver</build_depend>
   <build_depend>tf</build_depend>
+  <build_depend>process_manager</build_depend> 
   <build_depend>nonstd</build_depend>  
 
   <run_depend>roscpp</run_depend>
@@ -45,6 +46,7 @@
   <run_depend>constraintsolver</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>nonstd</run_depend>
+  <run_depend>process_manager</run_depend>
 
   <test_depend>gtest</test_depend>
 

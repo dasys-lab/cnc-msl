@@ -1,12 +1,13 @@
 #ifndef msl_joystick__Joystick_H
 #define msl_joystick__Joystick_H
-#define RQT_MSL_JOYSTICK_DEBUG
+//#define RQT_MSL_JOYSTICK_DEBUG
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_Joystick.h>
 
 #include "ros/ros.h"
 #include <msl_msgs/JoystickCommand.h>
+#include <sensor_msgs/Joy.h>
 #include <ros/macros.h>
 
 #include <QDialog>
@@ -14,6 +15,10 @@
 #include <QtWidgets>
 #include <stdint.h>
 #include <vector>
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 
 namespace msl_joystick
 {
@@ -60,11 +65,24 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     void onLowShovelSelected(bool checked);
     void onHighShovelSelected(bool checked);
     void onBallHandleCheckBoxToggled(int checkState);
+    void onPTControllerCheckBoxToggled(int checkState);
+
+    void onUseGamePadCheckBoxToggled(int checkState);
+    void onJoyMsg(sensor_msgs::JoyPtr msg);
+    void onToggleShovel(bool shovel);
+    void onToggleBallHandle();
+    void onToggleUsePt();
+    void onKickPowerChanged(int value);
+    void onTranslationChanged(int value);
+    void onRotationChanged(int value);
+    void resendJoyCmd();
 
   private:
     ros::NodeHandle *rosNode;
     ros::Publisher joyPub;
     ros::AsyncSpinner *spinner;
+
+    ros::Subscriber joySub;
 
     vector<bool> keyPressed;
 
@@ -74,6 +92,7 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     short kickPower;
     int robotId;
     bool useBallHandle;
+    bool usePTController;
     short shovelIdx;
     double translation;
     double rotation;
@@ -88,8 +107,33 @@ class Joystick : public rqt_gui_cpp::Plugin, public Ui::JoystickWidget
     double rotationMin;
     double rotationMax;
 
-    QTimer *sendMsgTimer;
+    //game pad
+    bool useGamePad;
+    bool dribbleManually;
+    bool ltPressedOnce;
+    bool rtPressedOnce;
+    int ballHandleSign;
+    pid_t joyNodePID;
+    string joyExec;
+    msl_msgs::JoystickCommand joycmd;
+    int kickIncrease;
+    int translationIncrease;
+    int rotationIncrease;
+
+    QTimer* sendMsgTimer;
+    QTimer* gamePadTimer;
+
     int sendInterval;
+
+    Q_SIGNALS:
+	void startJoyTimer();
+	void stopJoyTimer();
+	void toggleShovelSelect(bool pass);
+	void toggleBallHandle();
+	void toggleUsePt();
+	void changeKickPower(int value);
+	void changeTranslation(int value);
+	void changeRotation(int value);
 };
 }
 

@@ -6,12 +6,8 @@
 #include <SystemConfig.h>
 #include <Configuration.h>
 #include <limits>
-#include <nonstd/optional.hpp>
-#include "cnc_geometry/CNPositionAllo.h"
-#include "cnc_geometry/CNVecAllo.h"
-#include "msl_actuator_msgs/MotionControl.h"
-#include "RawSensorData.h"
-#include "MSLWorldModel.h"
+#include "container/CNPosition.h"
+#include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -29,24 +25,10 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1482163964536) ENABLED START*/ //Add additional private methods here
-        nonstd::optional<geometry::CNPositionAllo> start;
-        geometry::CNPositionAllo goal;
-        nonstd::optional<geometry::CNPositionAllo> currentPos;
-        double relGoalX;
-        double relGoalY;
-        double relGoalRot;
-        bool straight;
         int count;
         int testSpeed;
-
-        double abortTime;
-
-        geometry::CNVecAllo goalVec;
-        double goalDistance = 0;
-        double oldGoalDistance = std::numeric_limits<double>::max();
-        double angleDistance;
-
-        bool terminated;
+        int angle;
+        msl::InfoTime startTime;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

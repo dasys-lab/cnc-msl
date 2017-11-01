@@ -42,10 +42,10 @@ namespace alica
 
         defenderPos = wm->field->mapOutOfOwnPenalty(defenderPos, goaltoball);
 
-        query.egoDestinationPoint = defenderPos.toEgo(*ownPos);
-        query.egoAlignPoint = alloBallPos->toEgo(*ownPos);
-        query.snapDistance = 1000;
-        query.fast = true;
+        query->egoDestinationPoint = defenderPos->alloToEgo(*ownPos);
+        query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
+        query->snapDistance = 1000;
+        query->velocityMode = msl::MovementQuery::Velocity::FAST;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);

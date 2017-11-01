@@ -549,6 +549,7 @@ void PathPlanner::sendCorridorCheck(vector<geometry::CNPointAllo> points)
         cc.corridorPoints.push_back(info);
     }
     this->corridorPub.publish(cc);
+	return;
 }
 
 shared_ptr<const vector<geometry::CNPointAllo>> PathPlanner::getLastPath() const

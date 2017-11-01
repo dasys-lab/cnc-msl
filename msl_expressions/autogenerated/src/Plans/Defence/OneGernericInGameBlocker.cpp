@@ -152,12 +152,12 @@ void OneGernericInGameBlocker::run(void *msg)
     }
     else
     {
-        // replaced method with new moveToPoint method
-        //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
-        movQuery.egoDestinationPoint = driveTo.toEgo(*ownPos);
-        movQuery.egoAlignPoint = ballPos;
-        movQuery.fast = true;
-        mc = rm.moveToPoint(movQuery);
+            // replaced method with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+            movQuery->egoDestinationPoint = driveTo;
+            movQuery->egoAlignPoint = ballPos;
+            movQuery->velocityMode = msl::MovementQuery::Velocity::FAST;
+            mc = rm.moveToPoint(movQuery);
     }
 
     send(mc);

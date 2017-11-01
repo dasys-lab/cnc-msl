@@ -15,10 +15,11 @@ namespace alica
             DomainBehaviour("DribbleToAttackPointConservative")
     {
         /*PROTECTED REGION ID(con1458132872550) ENABLED START*/ //Add additional options here
+        currentTarget = make_shared<geometry::CNPoint2D>();
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
-        currentTarget = nonstd::nullopt;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointConservative::~DribbleToAttackPointConservative()
@@ -31,48 +32,51 @@ namespace alica
         /*PROTECTED REGION ID(run1458132872550) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-        auto ballPos = wm->ball->getPositionEgo();
-        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getEgoBallPosition();
+        auto dstscan = wm->rawSensorData->getDistanceScan();
 
-        if (!ownPos)
+        if (ownPos == nullptr)
             return;
-        if (!currentTarget)
+        if (currentTarget == nullptr)
             trueInitialize();
-        if (!currentTarget)
+        if (currentTarget == nullptr)
             return;
-        auto egoTarget = currentTarget->toEgo(*ownPos);
-        if (egoTarget.length() < 1200)
+        auto egoTarget = currentTarget->alloToEgo(*ownPos);
+        if (egoTarget->length() < 1200)
         {
             this->setSuccess(true);
         }
 
-        query.egoDestinationPoint = egoTarget;
-        query.dribble = true;
+        shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
+        query->egoDestinationPoint = egoTarget;
 
         auto bm = rm.moveToPoint(query);
-        auto tmpMC = rm.ruleActionForBallGetter();
 
+        auto tmpMC = rm.ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
         {
             send(tmpMC);
         }
-        send(bm);
+        else if (std::isnan(bm.motion.translation))
+        {
+            send(bm);
+        }
         /*PROTECTED REGION END*/
     }
     void DribbleToAttackPointConservative::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1458132872550) ENABLED START*/ //Add additional options here
+        currentTarget = nullptr;
 //        msl::RobotMovement::reset();
-        currentTarget = nonstd::nullopt;
         trueInitialize();
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1458132872550) ENABLED START*/ //Add additional methods here
     void DribbleToAttackPointConservative::trueInitialize() // so true and so evil
     {
-        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-        if (!ownPos)
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        if (ownPos == nullptr)
             return;
 //		Random rand = new Random();
 //		int index = (int)Math.Round(rand.NextDouble()*2.0);
@@ -82,16 +86,16 @@ namespace alica
 
         if (ownPos->x < wm->field->getFieldLength() / 6.0)
         {
-            currentTarget = nonstd::make_optional < geometry::CNPointAllo > (wm->field->getFieldLength() / 6.0 - 1500, 0);
+            currentTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 6.0 - 1500, 0);
             //} else if (ownPos.X < field.FieldLength/2.0) {
             //	currentTarget = new Point2D(field.FieldLength/2.0,0);
         }
         else
         {
-            currentTarget = nonstd::make_optional < geometry::CNPointAllo >  (wm->field->getFieldLength() / 4.0 - 1500, 0);
+            currentTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 4.0 - 1500, 0);
         }
         currentTarget->y = attackPosY.at(index);
-        if (currentTarget->toEgo(*ownPos).length() < 1500)
+        if (currentTarget->alloToEgo(*ownPos)->length() < 1500)
         {
             index = (index + 1) % attackPosY.size(); // select next point in vector
             currentTarget->y = attackPosY.at(index);

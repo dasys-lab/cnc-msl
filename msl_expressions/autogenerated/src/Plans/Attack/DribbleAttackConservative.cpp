@@ -18,6 +18,7 @@ namespace alica
         alloGoalMid = wm->field->posOppGoalMid();
         before = false;
         this->setTrigger(wm->getVisionDataEventTrigger());
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DribbleAttackConservative::~DribbleAttackConservative()
@@ -30,39 +31,37 @@ namespace alica
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
         ;
-        auto ballPos = wm->ball->getPositionEgo();
+        auto ballPos = wm->ball->getEgoBallPosition();
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (!ownPos)
+        if (ownPos == nullptr)
         {
             return;
         }
 
-        auto goalMid = alloGoalMid.toEgo(*ownPos);
+        auto goalMid = alloGoalMid->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
-        query.egoDestinationPoint = goalMid;
-        query.dribble = true;
+        shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
+        query->egoDestinationPoint = goalMid;
 
         auto tmpMC = rm.moveToPoint(query);
 
-        if (!corner && tmpMC.motion.translation != NAN)
+        if (corner == nullptr && tmpMC.motion.translation != NAN)
         {
             bm = tmpMC;
         }
         else
         {
-            query.egoDestinationPoint = corner;
-            query.dribble = true;
+            query->egoDestinationPoint = corner;
 
             auto tmpMC = rm.moveToPoint(query);
 
             if (tmpMC.motion.translation != NAN)
             {
-                geometry::CNVecAllo vec(-800,0);
-                corner = nonstd::make_optional<geometry::CNPointEgo>(
-                        (corner->toAllo(*ownPos) + vec).toEgo(*ownPos));
+                corner =
+                        (corner->egoToAllo(*ownPos) + make_shared < geometry::CNPoint2D > (-800, 0)->alloToEgo(*ownPos));
                 bm = tmpMC;
             }
         }
@@ -73,7 +72,7 @@ namespace alica
         {
             send(mc);
         }
-        else if (!std::isnan(bm.motion.translation))
+        else
         {
             send(bm);
         }

@@ -1,5 +1,6 @@
 #include "MSLWorldModel.h"
 #include "Ball.h"
+#include "EventTrigger.h"
 #include "Game.h"
 #include "InformationElement.h"
 #include "LightBarrier.h"
@@ -64,7 +65,6 @@ alica::AlicaEngine *MSLWorldModel::getEngine()
 {
     return this->alicaEngine;
 }
-
 MSLWorldModel::MSLWorldModel()
 {
     ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -146,7 +146,6 @@ bool MSLWorldModel::isUsingSimulator()
 {
     return this->timeLastSimMsgReceived > 10;
 }
-
 void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 {
     if (this->timeLastSimMsgReceived == 0)

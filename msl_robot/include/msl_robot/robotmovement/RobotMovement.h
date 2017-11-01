@@ -74,17 +74,25 @@ class RobotMovement
      */
     double defaultTranslation;
     /**
-     * Default rotation P controller value
-     */
-    double defaultRotateP;
-    /**
      * Default fast translation speed
      */
     double fastTranslation;
     /**
+     * Default carefully translation speed
+     */
+    double carefullyTranslation;
+    /**
+     * Default rotation P controller value
+     */
+    double defaultRotation;
+    /**
      * Default fast rotation speed
      */
     double fastRotation;
+    /**
+     * Default carefully rotation speed
+     */
+    double carefullyRotation;
 
   private:
     static int randomCounter;
@@ -100,12 +108,6 @@ class RobotMovement
     double evalPointDynamic(geometry::CNPointAllo alloP, geometry::CNPointAllo alloPassee,
                             geometry::CNPositionAllo ownPos, const std::vector<geometry::CNPointAllo> &opponents);
     msl_actuator_msgs::MotionControl setNAN();
-
-    // for alignTO()
-    double rotationP;
-    double rotationD;
-    double transP;
-    double transI;
 
   protected:
     static double assume_enemy_velo;

@@ -28,7 +28,6 @@ using supplementary::SystemConfig;
 
 namespace msl
 {
-
     Ball::Ball(MSLWorldModel *wm, int ringbufferLength) :
             visionBallPositionBuffer(ringbufferLength), visionBallVelocityBuffer(ringbufferLength), ballBuf(30), oppBallPossession(
                     ringbufferLength), sharedBallPosition(ringbufferLength), ballGuessPosition(ringbufferLength)
@@ -53,9 +52,9 @@ namespace msl
         sharedBallSupporters = 0;
     }
 
-    Ball::~Ball()
-    {
-    }
+	Ball::~Ball()
+	{
+	}
 
     const InfoBuffer<geometry::CNPointEgo> &Ball::getVisionBallPositionBuffer() const
     {

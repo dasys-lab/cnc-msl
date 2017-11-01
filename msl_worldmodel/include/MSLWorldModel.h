@@ -19,6 +19,7 @@
 #include <InformationElement.h>
 #include <MSLEnums.h>
 
+
 namespace std_msgs
 {
 ROS_DECLARE_MESSAGE(Bool)
@@ -112,7 +113,12 @@ class MSLWorldModel
     int getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
-    bool isUsingSimulator();
+		bool isUsingSimulator();
+		void sendKillMotionCommand();
+		void sendStartMotionCommand();
+		double getRobotRadius();
+		void setRobotRadius(double newRadius);
+		double adjustRobotRadius(double difference);
 
     // Raw Sensor Data
     RawSensorData *rawSensorData;
@@ -159,11 +165,11 @@ class MSLWorldModel
     ros::Subscriber sharedWorldSub;
     ros::Subscriber passMsgSub;
     ros::Subscriber watchBallMsgSub;
+    ros::Publisher sharedWorldPub;
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
-
-    ros::Publisher sharedWorldPub;
+    ros::Publisher processCommandPub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
@@ -173,7 +179,8 @@ class MSLWorldModel
     mutex correctedOdemetryMutex;
     ros::AsyncSpinner *spinner;
 
-  protected:
-};
+	protected:
+
+	};
 
 } /* namespace msl */

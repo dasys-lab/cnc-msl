@@ -16,7 +16,7 @@ namespace alica
             DomainBehaviour("DriveToPoint")
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
-    	this->defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
+        this->defaultTranslation = 1000;
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
@@ -79,6 +79,7 @@ namespace alica
         {
             cerr << "D2P: Parameter does not exist" << endl;
         }
+        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1417620568675) ENABLED START*/ //Add additional methods here

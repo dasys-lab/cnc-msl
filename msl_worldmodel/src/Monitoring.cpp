@@ -89,6 +89,7 @@ void Monitoring::setMaySendMessages(bool maySend)
     }
 }
 
+//Detection of a loose Wheel; exceeding a threshold three times in a row causes an error message
 void Monitoring::looseWheel()
 {
     if (!this->isUsingSimulator)
@@ -132,6 +133,8 @@ void Monitoring::looseWheel()
     }
 }
 
+
+//euclidean distance between vision and motion pos in a specified time interval
 double Monitoring::looseWheelCalc()
 {
     auto ownPosMotionInfo = this->wm->rawSensorData->getOwnPositionMotionBuffer().getLastValid();

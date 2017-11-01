@@ -96,10 +96,6 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GoalKick.beh#1415205578139"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
@@ -109,7 +105,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785237103"/>
-    <value xPos="740" yPos="41" width="161" height="67" collapsed="false"/>
+    <value xPos="848" yPos="41" width="165" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785250936"/>
@@ -164,15 +160,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1467206311808"/>
     <value xPos="838" yPos="546"/>
   </extensions>
   <extensions>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1467265292648"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

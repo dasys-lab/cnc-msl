@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347589"/>
+    <value xPos="56" yPos="247" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347588"/>
+    <value xPos="-1" yPos="2" width="1048" height="639"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347590"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396438734"/>
+    <value xPos="521" yPos="255" width="190" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396616225"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotateOnce.beh#1467398000539"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1470227765155"/>
+    <value xPos="696" yPos="159" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1470227878581"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1470237789517"/>
+    <value xPos="228" yPos="149" width="341" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1470237803234"/>
+    <value>
+      <bendpoints xPos="619" yPos="227"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="RestartMotion.beh#1472657588489"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationCalculation.beh#1475074454339"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationDeleteLogfile.beh#1479315306711"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1480520547022"/>
+    <value>
+      <bendpoints xPos="630" yPos="208"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

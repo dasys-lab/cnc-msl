@@ -35,6 +35,8 @@ using namespace std;
 
 #include  "Plans/DribbleCalibration/Behaviours/DribbleCalibration.h"
 
+#include  "Plans/Calibration/TestRotationRotation.h"
+
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
 #include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
@@ -51,9 +53,13 @@ using namespace std;
 
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
 
+#include  "Plans/TestPlans/MotorControlTest/PointToPoint.h"
+
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
+
+#include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
 
 #include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
@@ -69,11 +75,17 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionReceiver.h"
 
+#include  "Plans/Calibration/RestartMotion.h"
+
+#include  "Plans/Calibration/RotationCalibrationDeleteLogfile.h"
+
 #include  "Plans/Behaviours/Pos2Defenders.h"
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
+
+#include  "Plans/Calibration/RotateOnce.h"
 
 #include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
@@ -103,7 +115,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/Duel.h"
 
+#include  "Plans/Calibration/RotationCalibrationCalculation.h"
+
 #include  "Plans/Behaviours/PositionExecutor.h"
+
+#include  "Plans/TwoHoledWall/DribbleConstTwoHoledWall.h"
 
 #include  "Plans/Dribble/DribbleControl.h"
 
@@ -124,6 +140,8 @@ using namespace std;
 #include  "Plans/Behaviours/GoalieExtension.h"
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
+
+#include  "Plans/Attack/PassIntoFreeZone.h"
 
 #include  "Plans/Attack/OneEighty.h"
 
@@ -148,6 +166,8 @@ using namespace std;
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/Defence/ReleaseMid.h"
+
+#include  "Plans/DribbleCalibration/Behaviours/CalcDribbleParams.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
@@ -307,6 +327,11 @@ namespace alica
                 return make_shared<DribbleCalibration>();
                 break;
 
+            case 1492620523847:
+
+                return make_shared<TestRotationRotation>();
+                break;
+
             case 1450176216458:
 
                 return make_shared<AdvancdeSimplePass>();
@@ -349,6 +374,11 @@ namespace alica
                 return make_shared<Pos2Penalty>();
                 break;
 
+            case 1489068194261:
+
+                return make_shared<PointToPoint>();
+                break;
+
             case 1455537928849:
 
             case 1455537979559:
@@ -359,6 +389,11 @@ namespace alica
             case 1435159282996:
 
                 return make_shared<SpinSlowly>();
+                break;
+
+            case 1498664342592:
+
+                return make_shared<DribbleToAttackPointTest>();
                 break;
 
             case 1459355025721:
@@ -402,6 +437,16 @@ namespace alica
                 return make_shared<PositionReceiver>();
                 break;
 
+            case 1472657588489:
+
+                return make_shared<RestartMotion>();
+                break;
+
+            case 1479315306711:
+
+                return make_shared<RotationCalibrationDeleteLogfile>();
+                break;
+
             case 1444835591397:
 
                 return make_shared<Pos2Defenders>();
@@ -417,6 +462,11 @@ namespace alica
                 return make_shared<StandardAlignToPassPos>();
                 break;
 
+            case 1467398000539:
+
+                return make_shared<RotateOnce>();
+                break;
+
             case 1457698689219:
 
                 return make_shared<LaserBallTracking>();
@@ -430,6 +480,8 @@ namespace alica
             case 1435156714286:
 
             case 1435156811453:
+
+            case 1493396908662:
 
                 return make_shared<ShovelSelect>();
                 break;
@@ -491,9 +543,19 @@ namespace alica
                 return make_shared<Duel>();
                 break;
 
+            case 1475074454339:
+
+                return make_shared<RotationCalibrationCalculation>();
+                break;
+
             case 1438790487994:
 
                 return make_shared<PositionExecutor>();
+                break;
+
+            case 1496840164871:
+
+                return make_shared<DribbleConstTwoHoledWall>();
                 break;
 
             case 1449742099555:
@@ -550,6 +612,11 @@ namespace alica
             case 1482163995843:
 
                 return make_shared<TestMotorControl>();
+                break;
+
+            case 1508951680585:
+
+                return make_shared<PassIntoFreeZone>();
                 break;
 
             case 1434650910857:
@@ -620,6 +687,11 @@ namespace alica
             case 1458033497042:
 
                 return make_shared<ReleaseMid>();
+                break;
+
+            case 1488286078729:
+
+                return make_shared<CalcDribbleParams>();
                 break;
 
             case 1456756164754:

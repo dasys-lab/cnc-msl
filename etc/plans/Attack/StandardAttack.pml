@@ -18,7 +18,7 @@
     <outTransitions>#1457687426425</outTransitions>
   </states>
   <states id="1434048705508" name="HaveBall" comment="">
-    <plans xsi:type="alica:Plan">PassPlay.pml#1436268896671</plans>
+    <plans xsi:type="alica:PlanType">PassPlayType.pty#1508950344228</plans>
     <inTransitions>#1434048720937</inTransitions>
     <inTransitions>#1434048734889</inTransitions>
     <inTransitions>#1434716048579</inTransitions>

@@ -85,4 +85,14 @@ enum EntityType
     UndefinedEntity = -4
 };
 
+enum BallPossessionStatus
+{
+	HaveBall = 0,
+	LightBarrierUnblocked = 1,
+	NotInKickerDistance = 2,
+	AsideOfKicker = 3,
+	NoBallSeen = 4
+};
+}
+
 } /* namespace msl */

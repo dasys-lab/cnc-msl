@@ -52,21 +52,21 @@ namespace alica
         { // they already pressed start and we are still positioning, so speed up!
           // remeoved with new moveToPoint method
 //            mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
-            query.egoDestinationPoint = egoTarget;
-            query.egoAlignPoint = egoBallPos;
-            query.snapDistance = fastCatchRadius;
-            query.additionalPoints = additionalPoints;
-            query.fast = true;
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoBallPos;
+            query->snapDistance = fastCatchRadius;
+            query->additionalPoints = additionalPoints;
+            query->velocityMode = msl::MovementQuery::Velocity::FAST;
             mc = rm.moveToPoint(query);
         }
         else
         { // still enough time to position ...
 //            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
-            query.egoDestinationPoint = egoTarget;
-            query.egoAlignPoint = egoBallPos;
-            query.snapDistance = slowCatchRadius;
-            query.additionalPoints = additionalPoints;
-            query.fast = false;
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoBallPos;
+            query->snapDistance = slowCatchRadius;
+            query->additionalPoints = additionalPoints;
+            query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
             mc = rm.moveToPoint(query);
         }
 

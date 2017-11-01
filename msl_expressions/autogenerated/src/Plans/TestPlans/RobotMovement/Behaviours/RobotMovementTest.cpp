@@ -59,9 +59,8 @@ namespace alica
 
 //        cout << "try to drive to " << toX << "|" << toY << endl;
             hadBall = true;
-            query.dribble = true;
-            query.egoDestinationPoint = egoGoal;
-            query.egoAlignPoint = egoGoal;
+            query->egoDestinationPoint = egoGoal;
+            query->egoAlignPoint = egoGoal;
 
             auto motionCommand = rm.moveToPoint(query);
             this->send(motionCommand);
