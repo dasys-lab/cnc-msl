@@ -1,10 +1,3 @@
-/*
- * MSLConstraintBuilder.cpp
- *
- *  Created on: Sep 2, 2014
- *      Author: psp
- */
-
 #include "MSLConstraintBuilder.h"
 #include "Ball.h"
 #include "Game.h"
@@ -750,40 +743,39 @@ shared_ptr<Term> MSLConstraintBuilder::oppPenaltyAreaRule(vector<shared_ptr<TVec
     return oppPenaltyConstrains;
 }
 
-shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, shared_ptr<TVec> point)
+shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, shared_ptr<TVec> point, double tolerance)
 {
     vector<shared_ptr<TVec>> points;
     points.push_back(point);
-    return outsideArea(area, points);
+    return outsideArea(area, points, tolerance);
 }
 
-shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, vector<shared_ptr<TVec>> &points)
+shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance)
 {
     shared_ptr<geometry::CNPoint2D> lowerRightCornerP;
     shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
     resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
-    shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
-    shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
+    shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - tolerance, lowerRightCornerP->y - tolerance});
+    shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + tolerance, upperLeftCornerP->y + tolerance});
     return outsideRectangle(lowerRightCorner, upperLeftCorner, points);
 }
 
-shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, shared_ptr<TVec> point)
+shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, shared_ptr<TVec> point, double tolerance)
 {
-
     vector<shared_ptr<TVec>> points;
     points.push_back(point);
-    return insideArea(area, points);
+    return insideArea(area, points, tolerance);
 }
 
-shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<TVec>> &points)
+shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance)
 {
     if (points.size() <= 0)
         return autodiff::Term::TRUE;
     shared_ptr<geometry::CNPoint2D> lowerRightCornerP;
     shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
     resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
-    shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
-    shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
+    shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - tolerance, lowerRightCornerP->y - tolerance});
+    shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + tolerance, upperLeftCornerP->y + tolerance});
     return insideRectangle(lowerRightCorner, upperLeftCorner, points);
 }
 
