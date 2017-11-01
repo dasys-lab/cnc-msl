@@ -93,6 +93,4 @@ enum BallPossessionStatus
 	AsideOfKicker = 3,
 	NoBallSeen = 4
 };
-}
-
 } /* namespace msl */

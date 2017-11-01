@@ -6,7 +6,6 @@
 #include "MSLWorldModel.h"
 
 #include <SystemConfig.h>
-#include <container/CNPoint3D.h>
 #include <math.h>
 
 namespace msl
