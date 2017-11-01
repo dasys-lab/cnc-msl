@@ -285,12 +285,16 @@ void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
             msg->odometry.motion.angle -= 2 * M_PI;
         }
     }
-
     lock_guard<mutex> lock(wmMutex);
+    cout << "2" << endl;
     rawSensorData->processWorldModelData(msg);
+    cout << "3" << endl;
     obstacles->processWorldModelData(*msg);
+    cout << "4" << endl;
     pathPlanner->prepareVoronoiDiagram();
+    cout << "5" << endl;
     visionTrigger.run();
+    cout << "6" << endl;
 }
 
 void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)

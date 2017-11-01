@@ -139,7 +139,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
         for (auto cluster : *(*alloObs))
         {
             Site_2 site(cluster.position.x, cluster.position.y);
-            this->pointRobotKindMapping.at(site) = cluster.id;
+            this->pointRobotKindMapping[site] = cluster.id;
             sites.push_back(site);
             this->alloClusteredObsWithMe->push_back(cluster);
         }
@@ -152,6 +152,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
     auto iter = wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_begin();
     do
     {
+
         this->pointRobotKindMapping[*iter] = EntityType::ArtificialObstacle;
     } while (++iter != wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_end());
 
