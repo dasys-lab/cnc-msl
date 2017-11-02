@@ -34,7 +34,12 @@ uint8_t* IntRobotID::getRaw() const
 int IntRobotID::getSize() const
 {
 	return sizeof(int);
-};
+}
+
+uint8_t IntRobotID::getType() const
+{
+	return IntRobotID::TYPE;
+}
 
 bool IntRobotID::operator==(const supplementary::IAgentID &other) const
 {

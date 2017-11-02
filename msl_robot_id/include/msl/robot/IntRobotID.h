@@ -18,7 +18,7 @@ class IntRobotID : public supplementary::IAgentID
 
     uint8_t* getRaw() const;
     int getSize() const;
-
+    uint8_t getType() const;
     std::string toString() const;
 
     bool operator== ( const supplementary::IAgentID& obj ) const;
@@ -28,6 +28,8 @@ class IntRobotID : public supplementary::IAgentID
 
     std::vector<uint8_t> toByteVector() const;
     int getId() const;
+
+    static const uint8_t TYPE = 0;
 
   private:
     int id;

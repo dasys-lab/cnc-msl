@@ -55,5 +55,10 @@ const IntRobotID *IntRobotIDFactory::generateID() const
 	return this->create(agentIDVector);
 }
 
+uint8_t IntRobotIDFactory::getType() const
+{
+	return IntRobotID::TYPE;
+}
+
 } /* namespace robot */
 } /* namespace msl */
