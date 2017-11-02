@@ -24,6 +24,7 @@
 #define __MAINWINDOW_H
 
 #include <QtGui>
+#include <QSocketNotifier>
 
 #include "ui_MainWindow.h"
 
@@ -40,6 +41,8 @@ class MWind : public QMainWindow, public Ui::MainWindow
     MWind(QMainWindow *parent = 0);
     ~MWind();
 
+    static void signalHandler(int sig);
+
     // LMOTA
     void incrementOurGoals()
     {
@@ -53,12 +56,15 @@ class MWind : public QMainWindow, public Ui::MainWindow
       return db_coach_info->TeamColor;}
     const WSColor theirColor() const{assert(db_coach_info!=NULL);
       return (db_coach_info->TeamColor==Magenta?Cyan:Magenta);}*/
+    static int signalFd[2];
 
   private:
     bool fullscreenflag;         // indica se a janela se encontra no modo fullscreen
     QMainWindow *mwind;          // ponteiro para o mainwindow pai (parent*)
     QMainWindow *fullinfowindow; // ponteiro para a fullinfowindow
     QTimer *UpdateTimer;
+
+    QSocketNotifier *signalSocket;
 
   protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -70,6 +76,8 @@ class MWind : public QMainWindow, public Ui::MainWindow
 
     void UpdateGameTime(void);
     void UpdateGameParameters(void);
+
+    void handleSignal();
   private Q_SLOTS:
 };
 

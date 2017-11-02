@@ -28,39 +28,30 @@
 
 QApplication *app = NULL;
 
-void closeMe(int sig)
-{
-    if (sig == SIGINT)
-    {
-        if (app != NULL)
-        {
-            app->closeAllWindows();
-        }
-    }
-}
-
 int main(int argc, char *argv[])
 {
-    if (signal(SIGINT, closeMe) == SIG_ERR)
-    {
-        cerr << "basetation :: Register SIGINT Error" << endl;
-        return 1;
-    }
     ros::init(argc, argv, "basestation");
     app = new QApplication(argc, argv);
     QMainWindow Mwind;
 
     glutInit(&argc, argv);
 
-    // LMOTA
-    // variable went global
-    //	MWind wind(&Mwind);
     wind = new MWind(&Mwind);
 
     Mwind.adjustSize();
     Mwind.showMaximized();
 
-    QApplication::setStyle("fusion"); // Descomentar Quando o Qt não se passar...
+    QApplication::setStyle("fusion");
+
+    struct sigaction term;
+
+    term.sa_handler = MWind::signalHandler;
+    sigemptyset(&term.sa_mask);
+    term.sa_flags = 0;
+    term.sa_flags |= SA_RESTART;
+
+    if (sigaction(SIGINT, &term, 0))
+        return 1;
 
     int ret = app->exec();
 
@@ -68,7 +59,5 @@ int main(int argc, char *argv[])
         delete wind;
     wind = NULL;
 
-    //	system("./rtdb_clean");
-    //	fprintf(stderr, "fui-me\n");
     return ret;
 }

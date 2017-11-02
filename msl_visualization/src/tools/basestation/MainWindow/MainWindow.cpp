@@ -21,8 +21,11 @@
  */
 
 #include "MainWindow.h"
+#include <sys/socket.h>
 
 MWind *wind;
+
+int MWind::signalFd[] = {0,0};
 
 MWind::MWind(QMainWindow *parent)
 {
@@ -65,13 +68,6 @@ MWind::MWind(QMainWindow *parent)
     // Debug
     connect(actionDebug_All_On_Off, SIGNAL(triggered()), FieldW, SLOT(showDebugPointsToggle()));
 
-    // Path planner
-    //	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
-    //	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
-    //	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
-    //	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
-    //	connect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
-
     // Robot filtering
 
     /* instalar o filtro de eventos */
@@ -87,37 +83,15 @@ MWind::MWind(QMainWindow *parent)
     GTime.setHMS(0, 0, 0);
     Game_time_clock->setText(GTime.toString("mm:ss"));
 
-    /* Formation */
-    // no fomration file
-    //	QFile file("../config/formation.conf");
-    //	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    //	{
-    //		int nFormations = 0;
-    //		QTextStream in(&file);
-    //
-    //		while (!in.atEnd())
-    //		{
-    //			QString line = in.readLine();
-    //			if (line.contains("FORMATIONDT"))
-    //			{
-    //				line.remove("FORMATIONDT");
-    //				line = line.trimmed();
-    //			}
-    //			else if (line.contains("FORMATION"))
-    //			{
-    //				line.remove("FORMATION");
-    //			}
-    //		}
-    //
-    //	}
-    //	else
-    //	{
-    //		printf("Error Opening the Formation File\n");
-    //	}
-
     connect(actionVisible, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMapVisible(bool)));
     connect(action3D, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMap3D(bool)));
     connect(actionColor, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMapColor(bool)));
+
+    // for handling ctrl+c
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, MWind::signalFd))
+        qFatal("Couldn't create TERM socketpair");
+    this->signalSocket = new QSocketNotifier(MWind::signalFd[1], QSocketNotifier::Read, this);
+    connect(signalSocket, SIGNAL(activated(int)), this, SLOT(handleSignal()));
 }
 
 MWind::~MWind()
@@ -125,11 +99,6 @@ MWind::~MWind()
     // Disconnect
     disconnect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
     disconnect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
-    //	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
-    //	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
-    //	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
-    //	disconnect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
-    //	disconnect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 
     // Delete
     if (UpdateTimer != NULL)
@@ -146,7 +115,7 @@ MWind::~MWind()
 
 void MWind::TeamColorChanged(int team)
 {
-    QColor Mag = QColor::fromRgb(222, 111, 161, 255); // Qt::magenta;//
+    QColor Mag = QColor::fromRgb(222, 111, 161, 255);
     QColor Cy = QColor::fromRgb(128, 160, 191, 255);
     QPalette plt;
 
@@ -162,24 +131,16 @@ void MWind::TeamColorChanged(int team)
 
 void MWind::RobotVisChanged(int team, int robot_id)
 {
-    QColor Mag = QColor::fromRgb(222, 111, 161, 255); // Qt::magenta;//
+    QColor Mag = QColor::fromRgb(222, 111, 161, 255);
     QColor Cy = QColor::fromRgb(128, 160, 191, 255);
     QPalette plt;
-
-    /*	for (int robots = 0; robots < robotCount; robots++)
-            {
-                    plt.setColor(QPalette::Button, robots);
-            }
-
-            RobotVisCombo->setPalette(plt);
-    */
 }
 
 void MWind::GoalColorChanged(int goal)
 {
 
     QColor Yell = QColor::fromRgb(255, 191, 105, 255);
-    QColor Bl = QColor::fromRgb(0, 180, 247, 255); // Qt::blue;//
+    QColor Bl = QColor::fromRgb(0, 180, 247, 255);
     QPalette plt;
 
     if (goal == 0)
@@ -296,4 +257,22 @@ void MWind::UpdateGameTime(void)
 
 void MWind::UpdateGameParameters(void)
 {
+}
+
+void MWind::signalHandler(int sig)
+{
+    char a = 1;
+    ::write(MWind::signalFd[0], &a, sizeof(a));
+}
+
+void MWind::handleSignal()
+{
+	this->signalSocket->setEnabled(false);
+	char tmp;
+	::read(MWind::signalFd[1], &tmp, sizeof(tmp));
+
+	this->close();
+	QCoreApplication::quit();
+
+	this->signalSocket->setEnabled(true);
 }
