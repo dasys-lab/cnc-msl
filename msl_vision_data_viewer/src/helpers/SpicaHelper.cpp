@@ -30,12 +30,13 @@ using namespace std;
 void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr &msg)
 {
 
-	auto tmpID = factory.create(msg->senderID.id);
-    if (tmpID != receiverID)
+    auto tmpID = factory.create(msg->senderID.id);
+    if (*tmpID != *receiverID)
     {
     	delete tmpID;
         return;
     }
+    delete tmpID;
     if (msg->locType.type == msl_sensor_msgs::LocalizationType::ParticleFilter)
         cout << "P";
     else
@@ -52,12 +53,13 @@ void SpicaHelper::handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr
 {
     if (vidirty)
         return;
-	auto tmpID = factory.create(msg->senderID.id);
-    if (tmpID != receiverID)
+    auto tmpID = factory.create(msg->senderID.id);
+    if (*tmpID != *receiverID)
     {
     	delete tmpID;
         return;
     }
+    delete tmpID;
     imageData = msg->imageData;
     height = msg->height;
     width = msg->width;
