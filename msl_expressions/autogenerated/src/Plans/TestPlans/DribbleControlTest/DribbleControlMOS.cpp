@@ -102,6 +102,7 @@ namespace alica
         {
             msgback.rightMotor = -speedNoBall;
             msgback.leftMotor = -speedNoBall;
+            cout << "DribbleControlMOS::run: sent speed 0" << endl;
             sendWheelSpeed(msgback);
             return;
         }
@@ -248,7 +249,7 @@ namespace alica
                     || angleTolerance <= fabs(angle - angleOld))
             {
                 // powerFactor decays over the iterations
-                //cout << "decayFactor" << endl;
+                cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
                 decayedPowerFactor = powerFactor;
              }
 
