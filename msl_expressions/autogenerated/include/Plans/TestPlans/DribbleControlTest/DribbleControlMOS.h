@@ -47,6 +47,7 @@ namespace alica
 
         // to increase initial actuator speed
         double powerFactor;
+        double decayedPowerFactor;
         double transTolerance;
         double rotTolerance;
         double angleTolerance;
