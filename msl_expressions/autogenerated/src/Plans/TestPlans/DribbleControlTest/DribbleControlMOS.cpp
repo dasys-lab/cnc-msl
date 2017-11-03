@@ -178,7 +178,7 @@ void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback
         msgback.rightMotor > this->wheelSpeedRightOld && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta &&
         fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
     {
-        cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
+        //cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
         msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
         msgback.rightMotor = wheelSpeedRightOld + maxDelta;
     }
@@ -237,7 +237,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
         if (transTolerance <= fabs(translation - translationOld) && rotTolerance <= fabs(rotation - rotationOld) && angleTolerance <= fabs(angle - angleOld))
         {
             // powerFactor decays over the iterations
-            cout << "decayFactor" << endl;
+            //cout << "decayFactor" << endl;
             double newPowerFactor = powerFactor * decayFactor;
             velY = velY * newPowerFactor;
             velX = velX * newPowerFactor;
