@@ -13,16 +13,13 @@
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "tf/tf.h"
-#include <GeometryCalculator.h>
 
+#include <GeometryCalculator.h>
 #include <engine/AlicaEngine.h>
 #include <engine/IAlicaClock.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <gazebo_msgs/ModelStates.h>
-#include <msl/robot/IntRobotID.h>
-#include <msl/robot/IntRobotIDFactory.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -37,6 +34,7 @@
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <process_manager/ProcessCommand.h>
 #include <std_msgs/Bool.h>
+#include <tf/tf.h>
 
 namespace msl
 {
@@ -52,6 +50,8 @@ namespace msl
         if (this->alicaEngine == nullptr)
         {
             this->alicaEngine = ae;
+            int id = supplementary::SystemConfig::getOwnRobotID();
+            this->ownID = this->alicaEngine->getID<int>(id);
             return true;
         }
         else
@@ -65,11 +65,8 @@ namespace msl
         return this->alicaEngine;
     }
 
-    MSLWorldModel::MSLWorldModel()
+    MSLWorldModel::MSLWorldModel() : ownID(nullptr)
     {
-    	msl::robot::IntRobotIDFactory factory;
-        ownID = factory.create(supplementary::SystemConfig::getOwnRobotID());
-
         spinner = new ros::AsyncSpinner(4);
         spinner->start();
         sc = supplementary::SystemConfig::getInstance();
@@ -498,7 +495,7 @@ namespace msl
         rawSensorData->processBallHypothesisList(msg);
     }
 
-    const msl::robot::IntRobotID* msl::MSLWorldModel::getOwnId()
+    const supplementary::IAgentID* msl::MSLWorldModel::getOwnId()
     {
         return ownID;
     }

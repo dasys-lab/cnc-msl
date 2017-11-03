@@ -31,6 +31,10 @@
 
 using namespace std;
 
+namespace supplementary {
+	class IAgentID;
+}
+
 namespace msl
 {
 namespace robot
@@ -87,7 +91,7 @@ namespace robot
 
 
 		unsigned long maxInformationAge;
-		const msl::robot::IntRobotID* ownID;
+		const supplementary::IAgentID* ownID;
 		bool loggingEnabled;
 	};
 

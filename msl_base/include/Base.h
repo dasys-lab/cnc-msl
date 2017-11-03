@@ -1,23 +1,17 @@
-/*
- * Base.h
- *
- *  Created on: 22.10.2014
- *      Author: Andreas Witsch
- */
+#pragma once
 
-#ifndef BASE_H_
-#define BASE_H_
+#include <BehaviourCreator.h>
+#include <ConditionCreator.h>
+#include <ConstraintCreator.h>
+#include <MSLWorldModel.h>
+#include <UtilityFunctionCreator.h>
+#include <engine/AlicaEngine.h>
 
 #include <iostream>
 
-#include "BehaviourCreator.h"
-#include "ConditionCreator.h"
-#include "ConstraintCreator.h"
-#include "MSLWorldModel.h"
-#include "UtilityFunctionCreator.h"
-#include "engine/AlicaEngine.h"
-
-using namespace std;
+namespace supplementary {
+	class AgentIDManager;
+}
 
 namespace msl
 {
@@ -25,7 +19,7 @@ namespace msl
 class Base
 {
   public:
-    Base(string roleSetName, string masterPlanName, string roleSetDir, bool sim);
+    Base(std::string roleSetName, std::string masterPlanName, std::string roleSetDir, bool sim);
     virtual ~Base();
 
     void start();
@@ -35,9 +29,8 @@ class Base
     alica::ConditionCreator *cc;
     alica::UtilityFunctionCreator *uc;
     alica::ConstraintCreator *crc;
+    supplementary::AgentIDManager* idManager;
     MSLWorldModel *wm;
 };
 
 } /* namespace msl */
-
-#endif /* BASE_H_ */

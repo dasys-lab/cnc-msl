@@ -14,8 +14,7 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPoint3D.h"
 #include "container/CNVelocity2D.h"
-
-#include <msl/robot/IntRobotIDFactory.h>
+#include <engine/AlicaEngine.h>
 
 namespace msl
 {
@@ -395,10 +394,11 @@ void Ball::updateSharedBall()
 
     double m = 0.5 / (sure - unknown);
     double t = 1.0 - sure * m;
+    int goalieId = 1;
 
     for (auto &pair : wm->robots->sharedWolrdModelData)
     {
-        if (*(pair.first->getId()) == 1) // No Shared ball for goalie!
+        if (*(pair.first) == *(wm->getEngine()->getID<int>(goalieId))) // No Shared ball for goalie!
         {
             continue;
         }
@@ -594,7 +594,7 @@ void Ball::updateHaveBall()
     hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
 }
 
-bool Ball::robotHasBall(const msl::robot::IntRobotID *robotId)
+bool Ball::robotHasBall(const supplementary::IAgentID *robotId)
 {
 
     auto shwmData = wm->robots->getSHWMData(robotId);
@@ -607,15 +607,13 @@ bool Ball::robotHasBall(const msl::robot::IntRobotID *robotId)
 
 void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
 {
-
-    msl::robot::IntRobotIDFactory factory;
-    const msl::robot::IntRobotID *senderID = factory.create(data.senderID.id);
+    const supplementary::IAgentID *senderID = this->wm->getEngine()->getIDFromBytes(data.senderID.id);
 
     if (ballPositionsByRobot.find(senderID) == ballPositionsByRobot.end())
     {
         shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>> buffer =
             make_shared<RingBuffer<InformationElement<geometry::CNPoint2D>>>(wm->getRingBufferLength());
-        pair<const msl::robot::IntRobotID *, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(
+        pair<const supplementary::IAgentID *, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(
             senderID, buffer);
         ballPositionsByRobot.insert(pair);
     }
@@ -626,7 +624,7 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     {
         shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>> buffer =
             make_shared<RingBuffer<InformationElement<geometry::CNVelocity2D>>>(wm->getRingBufferLength());
-        pair<const msl::robot::IntRobotID *, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(
+        pair<const supplementary::IAgentID *, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(
             senderID, buffer);
         ballVelocitiesByRobot.insert(pair);
     }
@@ -637,7 +635,7 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     {
         shared_ptr<RingBuffer<InformationElement<bool>>> buffer =
             make_shared<RingBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
-        pair<const msl::robot::IntRobotID *, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(senderID, buffer);
+        pair<const supplementary::IAgentID *, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(senderID, buffer);
         ballPossession.insert(pair);
     }
     shared_ptr<InformationElement<bool>> in =
@@ -649,7 +647,7 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     oppBallPossession.add(inf);
 }
 
-shared_ptr<bool> Ball::getTeamMateBallPossession(const msl::robot::IntRobotID *teamMateId, int index)
+shared_ptr<bool> Ball::getTeamMateBallPossession(const supplementary::IAgentID *teamMateId, int index)
 {
     if (ballPossession.find(teamMateId) == ballPossession.end())
     {
@@ -798,13 +796,13 @@ bool Ball::simpleHaveBallDribble(bool hadBefore)
     if (hadBefore)
     {
         if ((KICKER_DISTANCE + haveDistance < ballDist && wm->timeLastSimMsgReceived == 0) ||
-            (KICKER_DISTANCE_SIMULATOR + haveDistance < ballPos->length() && wm->timeLastSimMsgReceived > 0))
+            (KICKER_DISTANCE_SIMULATOR + haveDistance < ballDist && wm->timeLastSimMsgReceived > 0))
         {
             ret = false;
         }
     }
     else if ((KICKER_DISTANCE < ballDist && wm->timeLastSimMsgReceived == 0) ||
-             (KICKER_DISTANCE_SIMULATOR < ballPos->length() && wm->timeLastSimMsgReceived > 0))
+             (KICKER_DISTANCE_SIMULATOR < ballDist && wm->timeLastSimMsgReceived > 0))
     {
         ret = false;
     }

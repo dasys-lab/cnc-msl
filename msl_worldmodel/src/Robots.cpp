@@ -1,15 +1,7 @@
-/*
- * Robots.cpp
- *
- *  Created on: Feb 23, 2015
- *      Author: Stefan Jakob
- */
-
-#include "MSLWorldModel.h"
 #include "Robots.h"
 
-#include <msl/robot/IntRobotIDFactory.h>
-
+#include "MSLWorldModel.h"
+#include <engine/AlicaEngine.h>
 
 namespace msl
 {
@@ -30,24 +22,21 @@ Robots::~Robots()
 
 void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
 {
-
-	msl::robot::IntRobotIDFactory factory;
-
-	const msl::robot::IntRobotID* senderID = factory.create(data->senderID.id);
+	const supplementary::IAgentID* senderID = this->wm->getEngine()->getIDFromBytes(data->senderID.id);
 
     if (sharedWolrdModelData.find(senderID) == sharedWolrdModelData.end())
     {
         shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> buffer =
             make_shared<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>(wm->getRingBufferLength());
 
-        pair<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(senderID, buffer);
+        pair<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(senderID, buffer);
         sharedWolrdModelData.insert(pair);
     }
     if (teammates.robotPositions.find(senderID) == teammates.robotPositions.end())
     {
         shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>> buffer =
             make_shared<RingBuffer<InformationElement<geometry::CNPosition>>>(wm->getRingBufferLength());
-        pair<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> pair(senderID, buffer);
+        pair<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> pair(senderID, buffer);
         teammates.robotPositions.insert(pair);
     }
     shared_ptr<InformationElement<geometry::CNPosition>> info = make_shared<InformationElement<geometry::CNPosition>>(
@@ -62,12 +51,12 @@ void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr dat
 
 }
 
-shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(const msl::robot::IntRobotID* robotID, int index)
+shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(const supplementary::IAgentID* robotID, int index)
 {
-    auto shwm = sharedWolrdModelData.at(robotID);
-    if (shwm != nullptr)
+    auto shwm = sharedWolrdModelData.find(robotID);
+    if (shwm != sharedWolrdModelData.end())
     {
-        auto x = shwm->getLast(index);
+        auto x = shwm->second->getLast(index);
         if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
         {
             return nullptr;

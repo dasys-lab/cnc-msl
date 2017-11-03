@@ -8,7 +8,6 @@
 
 #include "actuator.h"
 #include <msl/robot/IntRobotID.h>
-#include <msl/robot/IntRobotIDFactory.h>
 #include <vector>
 
 using namespace std;

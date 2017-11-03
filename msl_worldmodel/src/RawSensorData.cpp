@@ -4,9 +4,8 @@
 #include "Ball.h"
 #include "MSLWorldModel.h"
 
+#include <engine/AlicaEngine.h>
 #include <container/CNPoint3D.h>
-#include <msl/robot/IntRobotID.h>
-#include <msl/robot/IntRobotIDFactory.h>
 #include <SystemConfig.h>
 #include <math.h>
 
@@ -23,8 +22,8 @@ namespace msl
                     ringbufferLength)
     {
         this->wm = wm;
-        msl::robot::IntRobotIDFactory factory;
-        ownID = factory.create(supplementary::SystemConfig::getOwnRobotID());
+        int id = supplementary::SystemConfig::getOwnRobotID();
+        ownID = wm->getEngine()->getID(id);
         maxInformationAge = 1000000000;
         loggingEnabled = false;
     }

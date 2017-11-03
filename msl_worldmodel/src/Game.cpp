@@ -358,7 +358,7 @@ void Game::updateGameState()
 {
     // Find robot closest to ball
     auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
-    shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> closestRobot;
+    shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>> closestRobot;
     double minDist = numeric_limits<double>::max();
     auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
     if (sharedBallPosition == nullptr)
@@ -366,7 +366,7 @@ void Game::updateGameState()
         return;
     }
     bool ballPossession = false;
-    for (shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
+    for (auto shwmData : *robots)
     {
         double currDist = shwmData->second->distanceTo(sharedBallPosition);
         if (closestRobot == nullptr || currDist < minDist)
@@ -436,11 +436,11 @@ bool Game::isMayScore()
 void Game::setMayScore()
 {
     shared_ptr<geometry::CNPosition> capturePos = nullptr;
-    const msl::robot::IntRobotID* teamMateWithBallNow = nullptr;
+    const supplementary::IAgentID* teamMateWithBallNow = nullptr;
     auto robotPoses = this->wm->robots->teammates.getPositionsOfTeamMates();
     if (robotPoses != nullptr)
     {
-        for (shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
+        for (auto shwmData : *robotPoses)
         {
             if (shwmData != nullptr)
             {

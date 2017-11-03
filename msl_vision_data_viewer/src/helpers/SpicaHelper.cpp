@@ -29,7 +29,6 @@ using namespace std;
 
 void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr &msg)
 {
-
     auto tmpID = factory.create(msg->senderID.id);
     if (*tmpID != *receiverID)
     {

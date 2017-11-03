@@ -1,8 +1,6 @@
 #pragma once
 #include "engine/BasicCondition.h"
 
-#include <msl/robot/IntRobotIDFactory.h>
-
 namespace msl{
 	class MSLWorldModel;
 	class MSLRobot;
@@ -31,9 +29,6 @@ namespace alica
 		 * the standard right away. [ns]
 		 */
 		uint64_t timeUntilEmergencyExecute;
-
-	protected:
-		msl::robot::IntRobotIDFactory factory;
 	};
 } /* namespace alica */
 

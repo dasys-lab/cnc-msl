@@ -1,12 +1,4 @@
-/*
- * Ball.h
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
@@ -78,7 +70,7 @@ class Ball
     void processHypothesis();
     void updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
-    shared_ptr<bool> getTeamMateBallPossession(const msl::robot::IntRobotID* teamMateId, int index = 0);
+    shared_ptr<bool> getTeamMateBallPossession(const supplementary::IAgentID* teamMateId, int index = 0);
     shared_ptr<bool> getOppBallPossession(int index = 0);
     double getBallDiameter();
 
@@ -118,10 +110,10 @@ class Ball
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<bool>>>, supplementary::IAgentIDComparator> ballPossession;
+    map<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<bool>>>, supplementary::IAgentIDComparator> ballPossession;
     RingBuffer<InformationElement<bool>> oppBallPossession;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>, supplementary::IAgentIDComparator> ballPositionsByRobot;
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>, supplementary::IAgentIDComparator> ballVelocitiesByRobot;
+    map<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>, supplementary::IAgentIDComparator> ballPositionsByRobot;
+    map<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>, supplementary::IAgentIDComparator> ballVelocitiesByRobot;
     RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballGuessPosition;
     RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
@@ -130,7 +122,7 @@ class Ball
     RingBuffer<InformationElement<geometry::CNPoint3D>> ballPoint3D;
     RingBuffer<InformationElement<geometry::CNPoint3D>> ballVel3D;
 
-    bool robotHasBall(const msl::robot::IntRobotID*  robotId);
+    bool robotHasBall(const supplementary::IAgentID*  robotId);
     bool oppHasBall();
     Point allo2Ego(Point p, Position pos);
     Velocity allo2Ego(Velocity vel, Position pos);
@@ -142,5 +134,3 @@ class Ball
 };
 
 } /* namespace alica */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_ */

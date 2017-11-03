@@ -22,10 +22,6 @@ using namespace std;
 namespace msl
 {
 
-namespace robot {
-	class IntRobotID;
-}
-
 class MSLWorldModel;
 class Teammates
 {
@@ -34,14 +30,14 @@ class Teammates
     virtual ~Teammates();
     int teamMatesInOwnPenalty();
     int teamMatesInOppPenalty();
-    shared_ptr<geometry::CNPosition> getTeamMatePosition(const msl::robot::IntRobotID* teamMateId, int index = 0);
-    shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
+    shared_ptr<geometry::CNPosition> getTeamMatePosition(const supplementary::IAgentID* teamMateId, int index = 0);
+    shared_ptr<vector<shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered(int index = 0);
     void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
     shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);
     void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
 
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>, supplementary::IAgentIDComparator> robotPositions;
+    map<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>, supplementary::IAgentIDComparator> robotPositions;
 
   private:
     MSLWorldModel *wm;

@@ -53,7 +53,7 @@ int Teammates::teamMatesInOppPenalty()
     return count;
 }
 
-shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(const msl::robot::IntRobotID* teamMateId, int index)
+shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(const supplementary::IAgentID* teamMateId, int index)
 {
     if (robotPositions.find(teamMateId) == robotPositions.end())
     {
@@ -67,16 +67,16 @@ shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(const msl::robot
     return x->getInformation();
 }
 
-shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> Teammates::getPositionsOfTeamMates()
+shared_ptr<vector<shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>>> Teammates::getPositionsOfTeamMates()
 {
-    shared_ptr<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> ret =
-        make_shared<vector<shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>>();
+    shared_ptr<vector<shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>>> ret =
+        make_shared<vector<shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>>>();
     for (auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
     {
         if (wm->getTime() - iter->second->getLast()->timeStamp < maxInformationAge)
         {
-            shared_ptr<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>> element =
-                make_shared<pair<const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
+            shared_ptr<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>> element =
+                make_shared<pair<const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
             ret->push_back(element);
         }
     }

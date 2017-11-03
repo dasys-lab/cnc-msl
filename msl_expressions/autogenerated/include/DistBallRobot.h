@@ -1,24 +1,15 @@
-/*
- * DistBallRobot.h
- *
- *  Created on: 15.03.2016
- *      Author: endy
- */
-
-#ifndef DISTBALLROBOT_H_
-#define DISTBALLROBOT_H_
+#pragma once
 
 #include <engine/USummand.h>
 #include <engine/IAssignment.h>
 #include "MSLWorldModel.h"
 
+namespace supplementary{
+	class IAgentID;
+}
+
 namespace msl
 {
-	namespace robot
-	{
-		class IntRobotID;
-	}
-
 	class DistBallRobot : public alica::USummand
 	{
 	public:
@@ -32,15 +23,13 @@ namespace msl
 		bool validAngle;
 		double angleBallOpp;
 		double velAngle;
-		shared_ptr<vector<shared_ptr<pair< const msl::robot::IntRobotID*, shared_ptr<geometry::CNPosition>>>>> teammates;
+		shared_ptr<vector<shared_ptr<pair< const supplementary::IAgentID*, shared_ptr<geometry::CNPosition>>>>> teammates;
 
 		virtual void cacheEvalData();
 
 		virtual alica::UtilityInterval eval(alica::IAssignment* ass);
 		string toString();
-		shared_ptr<geometry::CNPosition> getPositionOfTeammate(const msl::robot::IntRobotID*  robotId);
+		shared_ptr<geometry::CNPosition> getPositionOfTeammate(const supplementary::IAgentID*  robotId);
 	};
 
 } /* namespace msl */
-
-#endif /* DISTBALLROBOT_H_ */

@@ -83,7 +83,7 @@ namespace msl
 		{
 			for (auto robot : *relevantRobots)
 			{
-				curPosition = this->getPositionOfTeammate(dynamic_cast<const msl::robot::IntRobotID*>(robot));
+				curPosition = this->getPositionOfTeammate(robot);
 				if (curPosition == nullptr)
 					continue; // This player was not 'positionReceived'
 
@@ -133,14 +133,14 @@ namespace msl
 		return ui;
 	}
 
-	shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(const msl::robot::IntRobotID*  robotId)
+	shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(const supplementary::IAgentID*  robotId)
 	{
 		if (this->teammates == nullptr)
 			return nullptr;
 
 		for (auto robot : *this->teammates)
 		{
-			if (robot->first == robotId)
+			if (*(robot->first) == *robotId)
 				return robot->second;
 		}
 

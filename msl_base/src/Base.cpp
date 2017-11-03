@@ -1,25 +1,19 @@
-/*
- * Base.cpp
- *
- *  Created on: 22.10.2014
- *      Author: Andreas Witsch
- */
-
-#include <iostream>
-
 #include "Base.h"
 
-#include "CGSolver.h"
-#include "SigFault.h"
-#include "SolverType.h"
+#include <CGSolver.h>
+#include <SigFault.h>
+#include <SolverType.h>
 #include <clock/AlicaROSClock.h>
 #include <communication/AlicaRosCommunication.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <supplementary/AgentIDManager.h>
 #include <msl/robot/IntRobotIDFactory.h>
+
 #include <ros/ros.h>
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 using namespace std;
 using namespace msl;
@@ -34,7 +28,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     cc = new alica::ConditionCreator();
     uc = new alica::UtilityFunctionCreator();
     crc = new alica::ConstraintCreator();
-    ae->setRobotIDFactory(new msl::robot::IntRobotIDFactory());
+    idManager = new supplementary::AgentIDManager(new msl::robot::IntRobotIDFactory());
     ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
     ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
     if (sim)
@@ -53,7 +47,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     }
     wm->setEngine(ae);
 
-    ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);
+    ae->init(bc, cc, uc, crc, idManager, roleSetName, masterPlanName, roleSetDir, false);
 }
 
 void Base::start()
@@ -64,7 +58,6 @@ void Base::start()
 Base::~Base()
 {
     ae->shutdown();
-    delete ae->getRobotIDFactory();
     delete ae->getIAlicaClock();
     delete ae->getCommunicator();
     delete ae;
@@ -72,6 +65,7 @@ Base::~Base()
     delete bc;
     delete uc;
     delete crc;
+    delete idManager;
 }
 
 } /* namespace msl */

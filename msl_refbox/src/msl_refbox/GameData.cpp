@@ -176,6 +176,7 @@ void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
     auto sender = factory.create(msg->senderID.id);
     this->date[sender] = std::chrono::system_clock::now();
     shwmData[sender] = msg;
+    delete sender;
 }
 
 void GameData::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei)
@@ -183,6 +184,7 @@ void GameData::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei)
     lock_guard<mutex> lock(this->aeiMutex);
     auto sender = factory.create(aei->senderID.id);
     aeiData[sender] = aei;
+    delete sender;
 }
 
 void GameData::PlayOnPressed(void)

@@ -14,15 +14,11 @@ using namespace std;
 namespace supplementary
 {
 class SystemConfig;
+class IAgentID;
 }
 
 namespace msl
 {
-
-namespace robot
-{
-	class IntRobotID;
-}
 
 class MSLWorldModel;
 class Game
@@ -62,11 +58,10 @@ class Game
     int oppGoal;
     unsigned long timeSinceStart;
     GameState gameState;
-    const msl::robot::IntRobotID* teamMateWithBall;
+    const supplementary::IAgentID *teamMateWithBall;
     bool passReceived;
     bool mayScore;
     void setMayScore();
 };
 
 } /* namespace alica */
-

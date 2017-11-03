@@ -53,6 +53,7 @@ class AlicaEngine;
 namespace supplementary
 {
 class SystemConfig;
+class IAgentID;
 }
 namespace geometry
 {
@@ -62,10 +63,6 @@ class CNPosition;
 
 namespace msl
 {
-namespace robot
-{
-class IntRobotID;
-}
 
 class RawSensorData;
 class Robots;
@@ -108,7 +105,7 @@ class MSLWorldModel
     void sendSharedWorldModelData();
 
     int getRingBufferLength();
-    const msl::robot::IntRobotID *getOwnId();
+    const supplementary::IAgentID *getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
@@ -141,7 +138,7 @@ class MSLWorldModel
     supplementary::ITrigger *visionDataEventTrigger;
     supplementary::SystemConfig *sc;
 
-    const msl::robot::IntRobotID *ownID;
+    const supplementary::IAgentID *ownID;
     int ringBufferLength;
     bool maySendMessages;
 

@@ -12,6 +12,8 @@
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 #include "obstaclehandler/SimpleCluster.h"
 #include <obstaclehandler/Obstacles.h>
+#include <engine/AlicaEngine.h>
+#include <msl/robot/IntRobotID.h>
 
 namespace msl
 {
@@ -158,14 +160,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
     {
         shared_ptr<geometry::CNRobot> clusterInfo = make_shared<geometry::CNRobot>();
         auto current = newClusterArray->at(i);
-        int tmpID = current->ident;
-        std::vector<uint8_t> robotId;
-
-        for (int i = 0; i < sizeof(int); i++)
-        {
-            robotId.push_back(*(((uint8_t *)&tmpID) + i));
-        }
-        clusterInfo->id = factory.create(robotId);
+        clusterInfo->id = wm->getEngine()->getID<int>(current->ident);;
         clusterInfo->radius = current->radius;
         clusterInfo->x = current->x;
         clusterInfo->y = current->y;
@@ -451,7 +446,7 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
     shared_ptr<geometry::CNPoint2D> curPoint2 = make_shared<geometry::CNPoint2D>();
     bool sightIsBlocked;
 
-    for (pair<const msl::robot::IntRobotID *, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> curRobot :
+    for (pair<const supplementary::IAgentID *, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> curRobot :
          wm->robots->sharedWolrdModelData)
     {
         // cout << "Robot: " << curRobot.first << endl;

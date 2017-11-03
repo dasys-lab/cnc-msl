@@ -28,10 +28,7 @@ using namespace std;
 
 namespace msl
 {
-namespace robot
-{
-	class IntRobotID;
-}
+
 
 class MSLWorldModel;
 class Robots
@@ -40,9 +37,9 @@ class Robots
     Robots(MSLWorldModel *wm, int ringBufferLength);
     virtual ~Robots();
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data);
-    map<const msl::robot::IntRobotID*, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>, supplementary::IAgentIDComparator> sharedWolrdModelData;
+    map<const supplementary::IAgentID*, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>, supplementary::IAgentIDComparator> sharedWolrdModelData;
 
-    shared_ptr<msl_sensor_msgs::SharedWorldInfo> getSHWMData(const msl::robot::IntRobotID* robotID, int index = 0);
+    shared_ptr<msl_sensor_msgs::SharedWorldInfo> getSHWMData(const supplementary::IAgentID* robotID, int index = 0);
 
     Teammates teammates;
     Opponents opponents;
