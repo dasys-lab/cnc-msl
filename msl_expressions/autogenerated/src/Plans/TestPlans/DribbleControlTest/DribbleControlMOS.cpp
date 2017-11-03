@@ -68,12 +68,13 @@ namespace alica
             //cout << "DribbleControlMOS: overridden by joystick!" << endl;
             return;
         }
+	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
         if (wm->isUsingSimulator())
         {
-        	auto odom = wm->rawSensorData->getOwnVelocityVision();
+        	odom = wm->rawSensorData->getOwnVelocityVision();
         }
         else {
-        	auto odom = wm->rawSensorData->getOwnVelocityMotion();
+        	odom = wm->rawSensorData->getOwnVelocityMotion();
         }
 
         if (odom == nullptr)
