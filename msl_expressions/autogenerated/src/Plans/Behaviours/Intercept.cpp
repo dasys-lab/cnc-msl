@@ -208,7 +208,6 @@ void Intercept::run(void *msg)
     if (!std::isnan(tmpMC.motion.translation))
     {
         send(tmpMC);
-        cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
     }
     else
     {
