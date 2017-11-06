@@ -88,7 +88,8 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
         for (auto cluster : *alloObs)
         {
             Site_2 site(cluster->x, cluster->y);
-            pointRobotKindMapping[site] = *reinterpret_cast<const int*>(cluster->id->toByteVector().data());
+            std::cout << "VoronoiNet IDContent: " << *cluster->id << std::endl;
+            pointRobotKindMapping[site] = dynamic_cast<const msl::robot::IntRobotID*>(cluster->id)->getId();
             sites.push_back(site);
             this->alloClusteredObsWithMe->push_back(cluster);
         }

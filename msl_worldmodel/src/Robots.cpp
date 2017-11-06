@@ -23,6 +23,7 @@ Robots::~Robots()
 void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
 {
 	const supplementary::IAgentID* senderID = this->wm->getEngine()->getIDFromBytes(data->senderID.id);
+	std::cout << "Robots: ID Content: " << *senderID << std::endl;
 
     if (sharedWolrdModelData.find(senderID) == sharedWolrdModelData.end())
     {

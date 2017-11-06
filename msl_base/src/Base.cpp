@@ -39,6 +39,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     }
 
     ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
+    ae->init(bc, cc, uc, crc, idManager, roleSetName, masterPlanName, roleSetDir, false);
 
     wm = MSLWorldModel::get();
     if (sim)
@@ -46,8 +47,6 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
         wm->timeLastSimMsgReceived = 1;
     }
     wm->setEngine(ae);
-
-    ae->init(bc, cc, uc, crc, idManager, roleSetName, masterPlanName, roleSetDir, false);
 }
 
 void Base::start()

@@ -23,7 +23,7 @@ namespace msl
     {
         this->wm = wm;
         int id = supplementary::SystemConfig::getOwnRobotID();
-        ownID = wm->getEngine()->getID(id);
+        ownID = wm->getOwnId();
         maxInformationAge = 1000000000;
         loggingEnabled = false;
     }
