@@ -48,6 +48,7 @@ namespace std
 
         result_type operator()(argument_type & pa) const
         {
+        	std::cout << "IntRobotID: hash" << std::hash<int>()(pa.id) << std::endl;
             return std::hash<int>()(pa.id);
         }
     };
