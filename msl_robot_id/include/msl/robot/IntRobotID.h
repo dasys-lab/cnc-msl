@@ -9,10 +9,12 @@ namespace msl
 namespace robot
 {
 
+class IntRobotIDFactory;
 class IntRobotID : public supplementary::IAgentID
 {
+	friend msl::robot::IntRobotIDFactory;
+
   public:
-    IntRobotID(const uint8_t* idBytes, int idSize);
     virtual ~IntRobotID();
 
     uint8_t* getRaw() const;
@@ -32,6 +34,7 @@ class IntRobotID : public supplementary::IAgentID
     static const uint8_t TYPE = 0;
 
   private:
+	IntRobotID(const uint8_t* idBytes, int idSize);
     int id;
 };
 } /* namespace robot */

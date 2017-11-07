@@ -8,6 +8,7 @@
 #include <supplementary/BroadcastID.h>
 #include <msl/robot/IntRobotID.h>
 #include <msl/robot/IntRobotIDFactory.h>
+#include <supplementary/AgentIDManager.h>
 #include <SystemConfig.h>
 
 #include "ros/ros.h"
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     sh = new SpicaHelper();
     sh->receiverID = new supplementary::BroadcastID(nullptr, 0);
     sh->initialize("CNVisionDataViewer", false);
-    msl::robot::IntRobotIDFactory factory;
+    supplementary::AgentIDManager* manager = new supplementary::AgentIDManager(new msl::robot::IntRobotIDFactory());
     if (argc > 1)
     {
         for (int i = 1; i < argc; i++)
@@ -54,13 +55,7 @@ int main(int argc, char *argv[])
                 if (i + 1 < argc)
                 {
                     auto intID = atoi(argv[i + 1]);
-                    std::vector<uint8_t> robotId;
-
-                    for (int i = 0; i < sizeof(int); i++)
-                    {
-                        robotId.push_back(*(((uint8_t *)&intID) + i));
-                    }
-                    sh->receiverID = factory.create(robotId);
+                    sh->receiverID = manager->getID(intID);
                     i++;
                 }
             }
@@ -70,13 +65,7 @@ int main(int argc, char *argv[])
                 {
                     supplementary::Configuration *globals = (*supplementary::SystemConfig::getInstance())["Globals"];
                     auto intID = globals->get<int>("Globals", "Team", argv[i + 1], "ID", NULL);
-                    std::vector<uint8_t> robotId;
-
-                    for (int i = 0; i < sizeof(int); i++)
-                    {
-                        robotId.push_back(*(((uint8_t *)&intID) + i));
-                    }
-                    sh->receiverID = factory.create(robotId);
+                    sh->receiverID = manager->getID(intID);
                     cout << "Robot: " << argv[i + 1] << " [" << sh->receiverID << "]" << endl;
                     i++;
                 }
@@ -89,13 +78,7 @@ int main(int argc, char *argv[])
         cout << "Robot ID: ";
         int intID;
         cin >> intID;
-        std::vector<uint8_t> robotId;
-
-        for (int i = 0; i < sizeof(int); i++)
-        {
-            robotId.push_back(*(((uint8_t *)&intID) + i));
-        }
-        sh->receiverID = factory.create(robotId);
+        sh->receiverID = manager->getID(intID);
     }
 
     int currentKey = EOF;
@@ -181,10 +164,9 @@ int main(int argc, char *argv[])
         // printf("You pressed mouse button %d at x=%f y=%f\n", mb, mx, my);
         if (mb == 3)
         {
-            delete sh->receiverID;
             return 1;
         }
     }
     sh->sendVisionControl((int)'p', 0);
-    delete sh->receiverID;
+    delete manager;
 }

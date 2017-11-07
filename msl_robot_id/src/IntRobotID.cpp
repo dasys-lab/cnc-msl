@@ -80,7 +80,7 @@ std::string IntRobotID::toString() const
 
 std::size_t IntRobotID::hash() const
 {
-	return std::hash<int>()(this->id);
+ 	return std::hash<int>()(this->id);
 }
 
 int IntRobotID::getId() const
