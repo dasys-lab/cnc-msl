@@ -62,7 +62,6 @@ bool IntRobotID::operator> (const supplementary::IAgentID& other) const
 }
 
 std::vector<uint8_t> IntRobotID::toByteVector() const {
-
 	std::vector<uint8_t> bytes;
 
     for (int i = 0; i < this->getSize(); i++)
@@ -77,6 +76,11 @@ std::vector<uint8_t> IntRobotID::toByteVector() const {
 std::string IntRobotID::toString() const
 {
 	return std::to_string(this->id);
+}
+
+std::size_t IntRobotID::hash() const
+{
+	return std::hash<int>()(this->id);
 }
 
 int IntRobotID::getId() const

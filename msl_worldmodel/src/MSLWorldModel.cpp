@@ -51,7 +51,8 @@ namespace msl
         {
             this->alicaEngine = ae;
             int id = supplementary::SystemConfig::getOwnRobotID();
-            this->ownID = this->alicaEngine->getID<int>(id);
+            std::cout << "MSLWorldModel::setEngine!" << std::endl;
+            this->ownID = this->alicaEngine->getID(id);
             return true;
         }
         else

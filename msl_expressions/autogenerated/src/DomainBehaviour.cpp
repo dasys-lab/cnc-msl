@@ -55,7 +55,6 @@ DomainBehaviour::DomainBehaviour(string name)
 
 DomainBehaviour::~DomainBehaviour()
 {
-	delete this->ownID;
 }
 
 void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl &mc)

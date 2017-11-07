@@ -11,7 +11,6 @@ namespace robot
 
 class IntRobotID : public supplementary::IAgentID
 {
-	friend struct std::hash<msl::robot::IntRobotID>;
   public:
     IntRobotID(const uint8_t* idBytes, int idSize);
     virtual ~IntRobotID();
@@ -20,6 +19,7 @@ class IntRobotID : public supplementary::IAgentID
     int getSize() const;
     uint8_t getType() const;
     std::string toString() const;
+    std::size_t hash() const;
 
     bool operator== ( const supplementary::IAgentID& obj ) const;
     bool operator!= ( const supplementary::IAgentID& obj ) const;
@@ -37,21 +37,20 @@ class IntRobotID : public supplementary::IAgentID
 } /* namespace robot */
 } /* namespace msl */
 
-
-namespace std
-{
-    template<>
-    struct hash<msl::robot::IntRobotID>
-    {
-        typedef const msl::robot::IntRobotID& argument_type;
-        typedef std::size_t result_type;
-
-        result_type operator()(argument_type & pa) const
-        {
-        	std::cout << "IntRobotID: hash" << std::hash<int>()(pa.id) << std::endl;
-            return std::hash<int>()(pa.id);
-        }
-    };
-}
+//namespace std
+//{
+//    template<>
+//    struct hash<msl::robot::IntRobotID>
+//    {
+//        typedef const msl::robot::IntRobotID& argument_type;
+//        typedef std::size_t result_type;
+//
+//        result_type operator()(argument_type & pa) const
+//        {
+//        	std::cout << "hash<" << std::hash<int>()(pa.id) << std::endl;
+//            return std::hash<int>()(pa.id);
+//        }
+//    };
+//}
 
 

@@ -160,7 +160,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
     {
         shared_ptr<geometry::CNRobot> clusterInfo = make_shared<geometry::CNRobot>();
         auto current = newClusterArray->at(i);
-        clusterInfo->id = wm->getEngine()->getID<int>(current->ident);;
+        clusterInfo->id = wm->getEngine()->getID(current->ident);;
         clusterInfo->radius = current->radius;
         clusterInfo->x = current->x;
         clusterInfo->y = current->y;

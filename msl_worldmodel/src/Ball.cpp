@@ -398,7 +398,7 @@ void Ball::updateSharedBall()
 
     for (auto &pair : wm->robots->sharedWolrdModelData)
     {
-        if (*(pair.first) == *(wm->getEngine()->getID<int>(goalieId))) // No Shared ball for goalie!
+        if (*(pair.first) == *(wm->getEngine()->getID(goalieId))) // No Shared ball for goalie!
         {
             continue;
         }
