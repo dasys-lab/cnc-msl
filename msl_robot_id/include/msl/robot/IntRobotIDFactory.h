@@ -18,8 +18,6 @@ namespace robot
 
 class IntRobotIDFactory : public supplementary::IAgentIDFactory
 {
-	friend supplementary::AgentIDManager;
-
   public:
     IntRobotIDFactory();
     virtual ~IntRobotIDFactory();

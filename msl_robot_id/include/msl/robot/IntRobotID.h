@@ -39,21 +39,3 @@ class IntRobotID : public supplementary::IAgentID
 };
 } /* namespace robot */
 } /* namespace msl */
-
-//namespace std
-//{
-//    template<>
-//    struct hash<msl::robot::IntRobotID>
-//    {
-//        typedef const msl::robot::IntRobotID& argument_type;
-//        typedef std::size_t result_type;
-//
-//        result_type operator()(argument_type & pa) const
-//        {
-//        	std::cout << "hash<" << std::hash<int>()(pa.id) << std::endl;
-//            return std::hash<int>()(pa.id);
-//        }
-//    };
-//}
-
-

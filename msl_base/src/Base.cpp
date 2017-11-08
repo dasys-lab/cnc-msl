@@ -28,7 +28,8 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     cc = new alica::ConditionCreator();
     uc = new alica::UtilityFunctionCreator();
     crc = new alica::ConstraintCreator();
-    idManager = new supplementary::AgentIDManager(new msl::robot::IntRobotIDFactory());
+    auto factory = new msl::robot::IntRobotIDFactory();
+    idManager = new supplementary::AgentIDManager(factory);
     ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
     ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
     if (sim)
