@@ -14,6 +14,7 @@
 #include <SystemConfig.h>
 #include <msl_robot/kicker/Kicker.h>
 
+using std::string;
 namespace alica
 {
 DomainBehaviour::DomainBehaviour(string name)

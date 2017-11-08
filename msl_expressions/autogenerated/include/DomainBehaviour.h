@@ -36,7 +36,7 @@ namespace alica
 class DomainBehaviour : public BasicBehaviour
 {
 	public:
-		DomainBehaviour(string name);
+		DomainBehaviour(std::string name);
 		virtual ~DomainBehaviour();
 		void send(msl_actuator_msgs::MotionControl& mc);
 		void send(msl_actuator_msgs::BallHandleCmd& bh);
