@@ -253,7 +253,7 @@ namespace alica
                 decayedPowerFactor = powerFactor;
              }
 
-            velY = velY * (1 + decayedPowerFactor);
+            //velY = velY * (1 + decayedPowerFactor);
             velX = velX * (1 + decayedPowerFactor);
             decayedPowerFactor *= decayFactor;
 
