@@ -375,7 +375,7 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::C
             {
                 obs = AnnotatedObstacleCluster::getNew(this->pool);
                 obs->init(round(ob.x), round(ob.y), // pos
-                          DFLT_OB_RADIUS, EntityType::Opponent, *reinterpret_cast<const int *>(swmd.first->toByteVector().data()));
+                          DFLT_OB_RADIUS, EntityType::Opponent, dynamic_cast<const msl::robot::IntRobotID *>(swmd.first)->getId());
                 clusterArray->push_back(obs);
             }
         }
@@ -395,7 +395,7 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::C
         obs = AnnotatedObstacleCluster::getNew(this->pool);
         obs->init(round(codo.position.x + seconds * velX), round(codo.position.y + seconds * velY), // pos
                   DFLT_ROB_RADIUS, velX, velY,                                                      // velocity
-                  *reinterpret_cast<const int *>(swmd.first->toByteVector().data()), *reinterpret_cast<const int *>(swmd.first->toByteVector().data()));
+				  dynamic_cast<const msl::robot::IntRobotID *>(swmd.first)->getId(), dynamic_cast<const msl::robot::IntRobotID *>(swmd.first)->getId());
         clusterArray->push_back(obs);
     }
 
@@ -409,7 +409,7 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::C
         {
             obs = AnnotatedObstacleCluster::getNew(this->pool);
             obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent,
-                      *reinterpret_cast<const int *>(wm->getOwnId()->toByteVector().data()));
+            		dynamic_cast<const msl::robot::IntRobotID *>(wm->getOwnId())->getId());
             clusterArray->push_back(obs);
         }
     }
@@ -423,8 +423,8 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::C
     velY = (int)round(myOdo->motion.translation * sin(alloMotAngle));
     obs = AnnotatedObstacleCluster::getNew(this->pool);
     obs->init((int)(myOdo->position.x + 0.5), (int)(myOdo->position.y + 0.5), myOdo->position.angle, DFLT_ROB_RADIUS, velX, velY, myOdo->motion.rotation,
-              myOdo->position.certainty, *reinterpret_cast<const int *>(wm->getOwnId()->toByteVector().data()),
-              *reinterpret_cast<const int *>(wm->getOwnId()->toByteVector().data()));
+              myOdo->position.certainty, dynamic_cast<const msl::robot::IntRobotID *>(wm->getOwnId())->getId(),
+			  dynamic_cast<const msl::robot::IntRobotID *>(wm->getOwnId())->getId());
     clusterArray->push_back(obs);
 
     std::sort(this->clusterArray->begin(), this->clusterArray->end(), AnnotatedObstacleCluster::compareTo);
@@ -449,7 +449,6 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
     for (pair<const supplementary::IAgentID *, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> curRobot :
          wm->robots->sharedWolrdModelData)
     {
-        // cout << "Robot: " << curRobot.first << endl;
         /* Ignore every robot, which is:
          * - unlocalised
          * - myself
@@ -458,13 +457,11 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
         if (currentRobot == nullptr || currentRobot->odom.certainty < 0.8 ||
             equal(currentRobot->senderID.id.begin(), currentRobot->senderID.id.end(), wm->getOwnId()->toByteVector().begin()))
         {
-            //				 	cout << "Skip" << endl;
             continue;
         }
 
         for (int i = 0; i < newClusterArray->size(); ++i)
         {
-            // cout << "Cluster: " << (newClusterArray->at(i)->x /1000.0) <<  " " << (newClusterArray->at(i)->y / 1000.0) << endl;
             // continue, if the curRobot is a supporter of the curCluster or
             // the curCluster is out of the sight of the curRobot or
             // the curCluster is near me (<TERRITORY_RADIUS) so nobody was allowed to merg
@@ -476,14 +473,12 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
                 make_shared<geometry::CNPosition>(currentRobot->odom.position.x, currentRobot->odom.position.y, currentRobot->odom.position.angle));
             if (curDist > SIGHT_RADIUS)
             {
-                // cout << "Too far away!" << endl;
                 continue;
             }
 
             if (find(newClusterArray->at(i)->supporter->begin(), newClusterArray->at(i)->supporter->end(),
                      *reinterpret_cast<const int *>(currentRobot->senderID.id.data())) != newClusterArray->at(i)->supporter->end())
             {
-                // cout << "I am supporter!" << endl;
                 continue;
             }
 
@@ -495,11 +490,6 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
             // normalize angles
             left = geometry::normalizeAngle(curAngle + dangle);
             right = geometry::normalizeAngle(curAngle - dangle);
-            //
-            //									cout << "Cluster Angels: \n\tleft: " << (left * 180) / M_PI
-            //									                  << "\n\tmiddle: " << (curAngle * 180) / M_PI
-            //									                  << "\n\tright: " << (right * 180) / M_PI
-            //									                  << "\n\tdangle: " << (dangle * 180) / M_PI << endl;
 
             sightIsBlocked = false;
 
@@ -522,54 +512,19 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
                         // normalize angles
                         left2 = geometry::normalizeAngle(curAngle2 + dangle2);
                         right2 = geometry::normalizeAngle(curAngle2 - dangle2);
-                        //
-                        //														cout << "Own Obstacle
-                        // Angels:
-                        //\n\tleft:
-                        //"
-                        //<<
-                        //(left2 * 180) / M_PI
-                        //														                  <<
-                        //"\n\tmiddle:
-                        //"
-                        //<<
-                        //(curAngle2
-                        //* 180) / M_PI
-                        //														                  <<
-                        //"\n\tright:
-                        //"
-                        //<<
-                        //(right2
-                        //*
-                        // 180) / M_PI
-                        //														                  <<
-                        //"\n\tdangle:
-                        //"
-                        //<<
-                        //(dangle2
-                        //*
-                        // 180) / M_PI << endl;
 
                         if (leftOf(left, right2) && !leftOf(left, left2))
                         {
-                            //								cout << "Left of Cluster is behind Obstacle" << endl;
                             sightIsBlocked = true;
                             break;
                         }
 
                         if (leftOf(right, right2) && !leftOf(right, left2))
                         {
-                            //								cout << "Right of Cluster is behind Obstacle" << endl;
                             sightIsBlocked = true;
                             break;
                         }
-
-                        //							cout << "Obstacle does not block the sight!" << endl;
                     }
-                    //						else
-                    //						{
-                    //							cout << "Own obstacle is too far away!" << endl;
-                    //						}
                 }
             }
             else
@@ -580,7 +535,9 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
             // Wenn die Sicht nicht blockiert ist bin ich gegen das Obstacle
             if (!sightIsBlocked)
             {
-                newClusterArray->at(i)->opposer->push_back(*reinterpret_cast<const int *>(currentRobot->senderID.id.data()));
+            	auto id = this->wm->getEngine()->getIDFromBytes(currentRobot->senderID.id);
+            	newClusterArray->at(i)->opposer->push_back(dynamic_cast<const msl::robot::IntRobotID*>(id)->getId());
+                //newClusterArray->at(i)->opposer->push_back(*reinterpret_cast<const int *>(currentRobot->senderID.id.data()));
             }
         }
     }
