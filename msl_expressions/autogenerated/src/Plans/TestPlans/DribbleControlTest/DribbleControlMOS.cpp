@@ -242,22 +242,22 @@ namespace alica
 
         // for higher grip when starting motion, we multiply the velocity with powerFactor for the first iterations
         // only for negative x, so we don't push the ball out
-//        if (velXTemp < 0)
-//        {
-//            // detect jump in odometry values
-//            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
-//                    || angleTolerance <= fabs(angle - angleOld))
-//            {
-//                // powerFactor decays over the iterations
-//                cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
-//                decayedPowerFactor = powerFactor;
-//             }
-//
-//            velY = velY * (1 + decayedPowerFactor);
-//            velX = velX * (1 + decayedPowerFactor);
-//            decayedPowerFactor *= decayFactor;
-//
-//        }
+        if (velXTemp < 0)
+        {
+            // detect jump in odometry values
+            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
+                    || angleTolerance <= fabs(angle - angleOld))
+            {
+                // powerFactor decays over the iterations
+                cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
+                decayedPowerFactor = powerFactor;
+             }
+
+            velY = velY * (1 + decayedPowerFactor);
+            velX = velX * (1 + decayedPowerFactor);
+            decayedPowerFactor *= decayFactor;
+
+        }
 
         translationOld = translation;
         rotationOld = rotation;
