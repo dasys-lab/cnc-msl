@@ -6,6 +6,7 @@
 #include "Robots.h"
 #include "Rules.h"
 #include "obstaclehandler/Obstacles.h"
+#include <ConstraintBuilder.h>
 
 namespace msl
 {
@@ -396,7 +397,8 @@ shared_ptr<Term> MSLConstraintBuilder::insideTriangle(shared_ptr<TVec> a, shared
 
     return outsideConstraints;
 }
-shared_ptr<Term> MSLConstraintBuilder::insideKonvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points)
+
+shared_ptr<Term> MSLConstraintBuilder::outsideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points)
 {
     vector<shared_ptr<TVec>> shellVec;
 
@@ -407,7 +409,43 @@ shared_ptr<Term> MSLConstraintBuilder::insideKonvex(vector<shared_ptr<TVec>> &sh
     shellVec.push_back(*shell.begin() - *shell.end());
 
     shared_ptr<Term> outsideConstraints = autodiff::LTConstraint::TRUE;
-    shared_ptr<Term> pConsts;
+    for (int i = 0; i < points.size(); i++)
+    {
+
+    	for(int j = 0; j < shellVec.size(); j++)
+		{
+
+    		outsideConstraints = outsideConstraints | alica::ConstraintBuilder::rightOf(shellVec.at(j), points.at(i));
+		}
+
+    }
+
+    return outsideConstraints;
+}
+
+shared_ptr<Term> MSLConstraintBuilder::insideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points)
+{
+    vector<shared_ptr<TVec>> shellVec;
+
+    for (vector<shared_ptr<TVec>>::iterator ity = shell.begin(); ity != shell.end() - 1; ity++)
+    {
+        shellVec.push_back(*(ity + 1) - *ity);
+    }
+    shellVec.push_back(*shell.begin() - *shell.end());
+
+    shared_ptr<Term> insideConstraints = autodiff::LTConstraint::TRUE;
+    for (int i = 0; i < points.size(); i++)
+    {
+
+    	for(int j = 0; j < shellVec.size(); j++)
+		{
+
+    		insideConstraints = insideConstraints & alica::ConstraintBuilder::leftOf(shellVec.at(j), points.at(i));
+		}
+
+    }
+
+    return insideConstraints;
 }
 
 shared_ptr<Term> MSLConstraintBuilder::outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance,

@@ -84,7 +84,8 @@ class MSLConstraintBuilder
     static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
 
-    static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> insideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>> &points);
 
     static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point, double tolerance = AREA_TOL);

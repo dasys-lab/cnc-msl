@@ -12,6 +12,7 @@ using namespace alica;
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
+#include <Rules.h>
 #include <engine/constraintmodul/ProblemDescriptor.h>
 #include <engine/constraintmodul/SolverTerm.h>
 /*PROTECTED REGION END*/
@@ -99,22 +100,32 @@ void Constraint1508951693560::getConstraint(shared_ptr<ProblemDescriptor> c, sha
     // free pass corridor
     if (ballPose)
     {
-        shared_ptr<geometry::CNPoint2D> lrPos = make_shared<geometry::CNPoint2D>(0.0, 2 * wm->getRobotRadius());
+        vector<shared_ptr<TVec>> trapezium;
+        // ball + extra + robotradius == 2* robotradius
+        // Lower right corner
+        shared_ptr<geometry::CNPoint2D> lrPos = make_shared<geometry::CNPoint2D>(0.0, 2 * msl::Rules::getInstance()->getRobotRadius());
         lrPos = lrPos->egoToAllo(*ownPos);
         shared_ptr<TVec> tvecLRPos = make_shared<TVec>(initializer_list<double>{lrPos->x, lrPos->y});
-        shared_ptr<TVec> tvecOwnPos = make_shared<TVec>(initializer_list<double>{ownPos->x, ownPos->y});
+        trapezium.push_back(tvecLRPos);
 
+        // helping vectors
+        shared_ptr<TVec> tvecOwnPos = make_shared<TVec>(initializer_list<double>{ownPos->x, ownPos->y});
         shared_ptr<TVec> passPointVec = (passPoint - tvecOwnPos);
         shared_ptr<TVec> robotSizeVec = (tvecLRPos - tvecOwnPos);
 
-        shared_ptr<TVec> tvecULPos = tvecOwnPos - robotSizeVec + passPointVec;
-        constraint = constraint + msl::MSLConstraintBuilder::outsideRectangle(tvecLRPos, tvecULPos, oppsT);
+        //upper right corner
+        shared_ptr<TVec> urPos = (passPointVec + robotSizeVec) * 1.5;
+        trapezium.push_back(urPos);
+        //upper left corner
+        shared_ptr<TVec> ulPos = (passPointVec - robotSizeVec) * 1.5;
+        trapezium.push_back(ulPos);
 
-        shared_ptr<TVec> distVecLeft = (passPointVec + robotSizeVec) * 1.5;
-        shared_ptr<TVec> distVecRight = (passPointVec - robotSizeVec) * 1.5;
-
-        constraint = constraint & msl::MSLConstraintBuilder::outsideTriangle(tvecOwnPos, distVecLeft, distVecRight, 0.0 ,oppsT);
-        // use konvex (yes with k) hull to cover corridor to pass point
+        // Lower left corner
+        shared_ptr<geometry::CNPoint2D> llPos = make_shared<geometry::CNPoint2D>(0.0, 2 * -msl::Rules::getInstance()->getRobotRadius());
+        llPos = llPos->egoToAllo(*ownPos);
+        shared_ptr<TVec> tvecLLPos = make_shared<TVec>(initializer_list<double>{llPos->x, llPos->y});
+        trapezium.push_back(tvecLLPos);
+        constraint = constraint & msl::MSLConstraintBuilder::outsideConvex(trapezium, 0.0, oppsT);
     }
 
     c->setConstraint(dynamic_pointer_cast<alica::SolverTerm>(constraint));
