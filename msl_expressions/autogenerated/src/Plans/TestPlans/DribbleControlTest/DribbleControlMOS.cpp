@@ -79,7 +79,7 @@ namespace alica
 
         if (odom == nullptr)
         {
-            //cerr << "DribbleControlMOS: no odometry!" << endl;
+            cerr << "DribbleControlMOS: no odometry!" << endl;
             return;
         }
 
@@ -179,22 +179,22 @@ namespace alica
     /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
     void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback)
     {
-        double maxDelta = 100;
+        double maxDelta = 100.0;
 
-        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
-                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
-                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
-                && fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
-        {
-            //cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
-            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
-            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
-        }
+//        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
+//                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
+//                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
+//                && fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
+//        {
+//            //cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
+//            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
+//            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
+//        }
         this->wheelSpeedLeftOld = msgback.leftMotor;
         this->wheelSpeedRightOld = msgback.rightMotor;
 
-        msgback.rightMotor = abs(msgback.rightMotor) < 100 ? 0 : msgback.rightMotor;
-        msgback.leftMotor = abs(msgback.leftMotor) < 100 ? 0 : msgback.leftMotor;
+        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
+        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
 
         send(msgback);
     }
@@ -242,22 +242,22 @@ namespace alica
 
         // for higher grip when starting motion, we multiply the velocity with powerFactor for the first iterations
         // only for negative x, so we don't push the ball out
-        if (velXTemp < 0)
-        {
-            // detect jump in odometry values
-            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
-                    || angleTolerance <= fabs(angle - angleOld))
-            {
-                // powerFactor decays over the iterations
-                cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
-                decayedPowerFactor = powerFactor;
-             }
-
-            velY = velY * (1 + decayedPowerFactor);
-            velX = velX * (1 + decayedPowerFactor);
-            decayedPowerFactor *= decayFactor;
-
-        }
+//        if (velXTemp < 0)
+//        {
+//            // detect jump in odometry values
+//            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
+//                    || angleTolerance <= fabs(angle - angleOld))
+//            {
+//                // powerFactor decays over the iterations
+//                cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
+//                decayedPowerFactor = powerFactor;
+//             }
+//
+//            velY = velY * (1 + decayedPowerFactor);
+//            velX = velX * (1 + decayedPowerFactor);
+//            decayedPowerFactor *= decayFactor;
+//
+//        }
 
         translationOld = translation;
         rotationOld = rotation;

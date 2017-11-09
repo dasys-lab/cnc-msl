@@ -183,7 +183,7 @@ namespace msl
 	 */
 	bool Ball::haveBall()
 	{
-		return hasBallIteration > 1;
+		return hasBallIteration > 3;
 	}
 
 	bool Ball::ballMovedSiginficantly()
