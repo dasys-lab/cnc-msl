@@ -22,7 +22,9 @@
 
 #include "FieldWidget3D.h"
 #include "MainWindow.h"
+#include <supplementary/AgentIDManager.h>
 #include <msl/robot/IntRobotID.h>
+#include <msl/robot/IntRobotIDFactory.h>
 
 //#include "ConfigXML.h"
 
@@ -300,6 +302,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent)
     // showSitePoints = false;
     // showPathPlannerAll = false;
     showDebugPoints = false;
+    this->agentIDManager = new supplementary::AgentIDManager(new msl::robot::IntRobotIDFactory());
 
     this->parent = parent;
     rosNode = new ros::NodeHandle();
@@ -397,7 +400,7 @@ void FieldWidget3D::update_robot_info(void)
 
     for (auto robot : robots)
     {
-    	int myId = robot->getId();
+    	int myId = dynamic_cast<const msl::robot::IntRobotID*>(robot->getId())->getId();
         int selectedIndex = mainWindow->robotSelector->currentIndex();
 
         // detect change on robot selector
@@ -1192,11 +1195,11 @@ void FieldWidget3D::lock(bool lock)
     this->lockCam = lock;
 }
 
-std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
+std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(const supplementary::IAgentID* id)
 {
     for (auto element : robots)
     {
-        if (element->getId() == id)
+        if (*element->getId() == *id)
         {
             return element;
         }
@@ -1206,7 +1209,8 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
     robot->setId(id);
     robots.push_back(robot);
 
-    robot->getVisualization()->init(this->renderer, id);
+    int idInt = dynamic_cast<const msl::robot::IntRobotID*>(id)->getId();
+    robot->getVisualization()->init(this->renderer, idInt);
 
     int robotCount = mainWindow->robotSelector->count();
     if (robotCount == 0)
@@ -1227,10 +1231,13 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         robotCount++;
     }
 
-    robotIndex[id] = robotCount;
-    string robotName = robotNames[id];
-    QString robotStr = QString::fromStdString(robotName + " (" + boost::lexical_cast<std::string>(id) + ")");
-    mainWindow->robotSelector->addItem(robotStr, id);
+    robotIndex[idInt] = robotCount;
+    string robotName = robotNames[idInt];
+
+    stringstream ss;
+    ss << *id;
+    QString robotStr = QString::fromStdString(robotName + " (" + ss.str().c_str() + ")");
+    mainWindow->robotSelector->addItem(robotStr, idInt);
     robot->setVisStatus(true);
     robotVisActive[robotCount] = true;
 
@@ -1245,7 +1252,7 @@ void FieldWidget3D::onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> in
 {
     lock_guard<mutex> lock(pathMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderId.id);
     auto robot = this->getRobotById(id);
     robot->setPathPlannerInfo(info);
     //        robot->updateTimeStamp();
@@ -1255,7 +1262,7 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
 {
     lock_guard<mutex> lock(swmMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderID.id);
     auto robot = this->getRobotById(id);
 
     robot->setSharedWorldInfo(info);
@@ -1266,7 +1273,7 @@ void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> 
 {
     lock_guard<mutex> lock(voronoiMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderId.id);
     auto robot = this->getRobotById(id);
     robot->setVoronoiNetInfo(info);
     //        robot->updateTimeStamp();
@@ -1276,7 +1283,7 @@ void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck
 {
     lock_guard<mutex> lock(corridorMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderId.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderId.id);
     auto robot = this->getRobotById(id);
     robot->setCorridorCheckInfo(info);
     //        robot->updateTimeStamp();
@@ -1286,7 +1293,7 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
 {
     lock_guard<mutex> lock(debugMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderID.id);
     auto robot = this->getRobotById(id);
     robot->addDebugMsg(info);
     //        robot->updateTimeStamp();
@@ -1296,7 +1303,7 @@ void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
 {
     lock_guard<mutex> lock(debugMutex);
 
-    int id = *reinterpret_cast<const int*>(info->senderID.id.data());
+    auto id = this->agentIDManager->getIDFromBytes(info->senderID.id);
     auto robot = this->getRobotById(id);
     robot->setPassMsg(info);
     //        robot->updateTimeStamp();

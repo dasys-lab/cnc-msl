@@ -74,7 +74,7 @@ Game::~Game()
 
 void Game::onRobotCommand(robot_control::RobotCommandPtr msg)
 {
-    if (*reinterpret_cast<const int *>(msg->receiverId.id.data()) != 0 &&
+    if (msg->receiverId.type != agent_id::AgentID::BROADCAST &&
         !equal(msg->receiverId.id.begin(), msg->receiverId.id.end(), wm->getOwnId()->toByteVector().begin()))
     {
         return;

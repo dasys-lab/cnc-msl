@@ -19,9 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this package.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef FIELDWIDGET3D_H
-#define FIELDWIDGET3D_H
+#pragma once
 
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
@@ -103,6 +101,11 @@
 #define OBSTACLE_HEIGHT 0.2
 
 class MWind;
+
+namespace supplementary {
+	class AgentIDManager;
+	class IAgentID;
+}
 
 struct Line
 {
@@ -187,12 +190,11 @@ class FieldWidget3D : public QVTKWidget3
     void initGridView();
     void updateGridView();
     void deleteGridView();
-    std::shared_ptr<RobotInfo> getRobotById(int id);
+    std::shared_ptr<RobotInfo> getRobotById(const supplementary::IAgentID* id);
 
     vtkSmartPointer<vtkActor> createObstacle();
     vtkSmartPointer<vtkActor> createDebugPt();
 
-  private:
     // ros stuff
     ros::NodeHandle *rosNode;
     ros::AsyncSpinner *spinner;
@@ -215,6 +217,8 @@ class FieldWidget3D : public QVTKWidget3
     // bool showCorridorCheck;
     // bool showSitePoints;
     // bool showPathPlannerAll;
+
+    supplementary::AgentIDManager* agentIDManager;
 
     // ui stuff
     QWidget *parent;
@@ -298,4 +302,3 @@ class FieldWidget3D : public QVTKWidget3
     }
 };
 
-#endif // FIELDWIDGET3D_H

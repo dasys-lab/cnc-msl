@@ -1,11 +1,9 @@
-/*
- * RobotVisualization.cpp
- *
- *  Created on: Feb 11, 2015
- *      Author: Stefan Jakob
- */
-
 #include <tools/basestation/RobotVisualization/RobotVisualization.h>
+
+#include <msl/robot/IntRobotID.h>
+
+#include "FieldWidget3D.h"
+#include "RobotInfo.h"
 
 #include <vtkActor.h>
 #include <vtkArcSource.h>
@@ -58,8 +56,6 @@
 #include <vtkVectorText.h>
 #include <vtkViewport.h>
 
-#include "FieldWidget3D.h"
-#include "RobotInfo.h"
 
 struct Color
 {
@@ -286,7 +282,7 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 
 void RobotVisualization::init(vtkRenderer *renderer, int id)
 {
-    auto color = Color::getColor(this->robot->getId());
+    auto color = Color::getColor(id);
 
     this->setId(id);
     this->setName(std::to_string(id));
@@ -352,7 +348,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
     vtkSmartPointer<vtkActor> teamTop = vtkSmartPointer<vtkActor>::New();
     teamTop->SetMapper(teamTopMapper);
     teamTop->SetPosition(0, 0, 0.4);
-    auto c = Color::getColor(this->robot->getId());
+    auto c = Color::getColor(dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId());
     teamTop->GetProperty()->SetColor(c[0], c[1], c[2]);
     teamTop->GetProperty()->SetDiffuse(0.4);
     teamTop->GetProperty()->SetAmbient(0.8);
@@ -642,7 +638,7 @@ void RobotVisualization::drawObjectTop(vtkRenderer *renderer, double x, double y
     vtkSmartPointer<vtkActor> objectTop = vtkSmartPointer<vtkActor>::New();
     objectTop->SetMapper(objectTopMapper);
     objectTop->SetPosition(x, y, z);
-    auto c = Color::getColor(this->robot->getId());
+    auto c = Color::getColor(dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId());
     objectTop->GetProperty()->SetColor(c[0], c[1], c[2]);
     objectTop->GetProperty()->SetDiffuse(0.4);
     objectTop->GetProperty()->SetAmbient(0.8);
@@ -684,7 +680,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
         pair<double, double> point2 = this->field->transformToGuiCoords(ppi->pathPoints.at(i).x, ppi->pathPoints.at(i).y);
 
         vtkSmartPointer<vtkActor> actor =
-            FieldWidget3D::createLine(point1.first, point1.second, 0.01, point2.first, point2.second, 0.01, 3, Color::getColor(this->robot->getId()));
+            FieldWidget3D::createLine(point1.first, point1.second, 0.01, point2.first, point2.second, 0.01, 3, Color::getColor(dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId()));
         pathLines.push_back(actor);
         renderer->AddActor(actor);
     }
@@ -774,7 +770,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
     int used = 0;
     vtkSmartPointer<vtkActor> actor;
-    auto color = Color::getColor(this->robot->getId());
+    auto color = Color::getColor(dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId());
 
     // Draw voronoi net
     if (showVoronoi)
@@ -827,7 +823,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         {
             pair<double, double> point = this->field->transformToGuiCoords(vni->sites.at(i).x, vni->sites.at(i).y);
 
-            vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, 0.3, Color::getColor(this->robot->getId()));
+            vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, 0.3, Color::getColor(dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId()));
             sidePoints.push_back(actor);
             renderer->AddActor(actor);
         }
@@ -912,5 +908,5 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
 
 int RobotVisualization::getDashedPattern()
 {
-    return 0x66 << this->robot->getId();
+    return 0x66 << dynamic_cast<const msl::robot::IntRobotID*>(this->robot->getId())->getId();
 }

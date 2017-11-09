@@ -469,8 +469,9 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
                 continue;
             }
 
+            auto id = this->wm->getEngine()->getIDFromBytes(currentRobot->senderID.id);
             if (find(newClusterArray->at(i)->supporter->begin(), newClusterArray->at(i)->supporter->end(),
-                     *reinterpret_cast<const int *>(currentRobot->senderID.id.data())) != newClusterArray->at(i)->supporter->end())
+            		dynamic_cast<const msl::robot::IntRobotID*>(id)->getId()) != newClusterArray->at(i)->supporter->end())
             {
                 continue;
             }
@@ -530,7 +531,6 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
             {
             	auto id = this->wm->getEngine()->getIDFromBytes(currentRobot->senderID.id);
             	newClusterArray->at(i)->opposer->push_back(dynamic_cast<const msl::robot::IntRobotID*>(id)->getId());
-                //newClusterArray->at(i)->opposer->push_back(*reinterpret_cast<const int *>(currentRobot->senderID.id.data()));
             }
         }
     }

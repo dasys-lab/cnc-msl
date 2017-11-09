@@ -31,12 +31,12 @@ void RobotInfo::setVisStatus(bool vis)
     this->myVis = vis;
 }
 
-int RobotInfo::getId() const
+const supplementary::IAgentID* RobotInfo::getId() const
 {
     return id;
 }
 
-void RobotInfo::setId(int id)
+void RobotInfo::setId(const supplementary::IAgentID* id)
 {
     this->id = id;
 }

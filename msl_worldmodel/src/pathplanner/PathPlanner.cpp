@@ -546,7 +546,7 @@ bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<
     {
         // if the goal vertices are reached
         shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
-        if (voronoi->getTypeOfSite(*obstacle) == *reinterpret_cast<const int*>(this->wm->getOwnId()->toByteVector().data()))
+        if (voronoi->getTypeOfSite(*obstacle) == dynamic_cast<const msl::robot::IntRobotID*>(this->wm->getOwnId())->getId())
             return true;
         shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(obstacle->x(), obstacle->y());
         // check if there is an obstacle on the way to the goal

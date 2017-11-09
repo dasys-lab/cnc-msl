@@ -1,12 +1,4 @@
-/*
- * RobotInfo.h
- *
- *  Created on: Feb 12, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_
-#define CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 #include <map>
@@ -26,9 +18,13 @@
 
 class FieldWidget3D;
 
+namespace supplementary {
+	class IAgentID;
+}
+
 struct DebugMsg
 {
-    DebugMsg()
+    DebugMsg() : timeStamp(0)
     {
     }
     DebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> msg, unsigned long timeStamp)
@@ -46,8 +42,8 @@ class RobotInfo
     RobotInfo(FieldWidget3D *field);
     virtual ~RobotInfo();
 
-    int getId() const;
-    void setId(int id);
+    const supplementary::IAgentID* getId() const;
+    void setId(const supplementary::IAgentID* id);
     std::string getName() const;
     void setName(std::string name);
     bool getBallOnly() const;
@@ -86,7 +82,7 @@ class RobotInfo
 
   private:
     bool myVis;
-    int id;
+    const supplementary::IAgentID* id;
     std::string name;
     bool ballOnly;
     unsigned long timeStamp;
@@ -104,5 +100,3 @@ class RobotInfo
     std::map<std::string, DebugMsg> debugMsg;
     boost::shared_ptr<msl_helper_msgs::PassMsg> passMsg;
 };
-
-#endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_ */

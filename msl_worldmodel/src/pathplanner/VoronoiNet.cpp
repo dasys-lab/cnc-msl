@@ -289,7 +289,7 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getOpponentPosit
     auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
     for (auto cluster : *alloClusteredObsWithMe)
     {
-        if (*reinterpret_cast<const int*>(cluster->id->toByteVector().data()) == EntityType::Opponent)
+        if (dynamic_cast<const msl::robot::IntRobotID*>(cluster->id)->getId() == EntityType::Opponent)
         {
             ret->push_back(cluster->getPoint());
         }
