@@ -1,10 +1,3 @@
-/*
- * Obstacles.cpp
- *
- *  Created on: Feb 11, 2016
- *      Author: Stefan Jakob
- */
-
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
@@ -171,7 +164,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
         clusterInfo->supporter = current->supporter;
         clusterInfo->certainty = current->certainty;
         clusterInfo->rotation = current->rotation;
-        if (newClusterArray->at(i)->ident != *reinterpret_cast<const int *>(this->wm->getOwnId()->toByteVector().data()))
+        if (newClusterArray->at(i)->ident != dynamic_cast<const msl::robot::IntRobotID *>(this->wm->getOwnId())->getId())
         {
             newObsClustersAllo->push_back(clusterInfo);
         }
@@ -192,7 +185,7 @@ void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D
                 newOppEgo->push_back(curEgoPoint);
             }
         }
-        else if (newClusterArray->at(i)->ident != *reinterpret_cast<const int *>(this->wm->getOwnId()->toByteVector().data()))
+        else if (newClusterArray->at(i)->ident != dynamic_cast<const msl::robot::IntRobotID *>(this->wm->getOwnId())->getId())
         {
             newTeammatesEgo->push_back(curEgoPoint);
             newTeammatesAllo->push_back(curAlloPoint);
@@ -701,13 +694,6 @@ shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> Obstacles::getEgoVisionObstacl
 void Obstacles::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 {
     unsigned long time = wm->getTime();
-    //		if ((time - data->odometry.timestamp) > 1000)
-    //		{
-    //			return;
-    //		}
-
-    //		if (data->obstacles.size() > 0)
-    //		{
     shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = make_shared<vector<msl_sensor_msgs::ObstacleInfo>>(data->obstacles);
     shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs, time);
     obstacles.add(o);
@@ -715,7 +701,6 @@ void Obstacles::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
     {
         handleObstacles(this->getEgoVisionObstaclePoints());
     }
-    //		}
 }
 
 } /* namespace msl */
