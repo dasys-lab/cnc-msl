@@ -68,6 +68,7 @@ namespace alica
         double diagConst;
         double phi;
         double velYFactor;
+        double velXFactor;
         double powerOfRotation;
 
         supplementary::SystemConfig* sc;
