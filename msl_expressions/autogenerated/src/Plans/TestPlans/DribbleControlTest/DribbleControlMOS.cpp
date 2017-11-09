@@ -50,6 +50,7 @@ namespace alica
         diagConst = 0;
         phi = 0;
         velYFactor = 0;
+        velXFactor = 0;
         powerOfRotation = 0;
         /*PROTECTED REGION END*/
     }
@@ -148,6 +149,7 @@ namespace alica
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
         epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
         velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
+        velXFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velXFactor", NULL);
         powerFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerFactor", NULL);
         decayFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.decayFactor", NULL);
         transTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.transTolerance", NULL);
@@ -234,6 +236,7 @@ namespace alica
         //cout << "velY 1 = " << velY << endl;
         // factor so robot can hold the ball if driving sideways
         velY = velY * velYFactor;
+        velX = velX * velXFactor;
 
         //	double powerFactor = 2;
         //	double transTolerance = 200;
