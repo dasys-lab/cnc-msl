@@ -48,13 +48,13 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_helper_msgs::DebugMsg& dbm);
 		msl::MSLRobot* robot;
 		msl::MSLWorldModel* wm;
+		virtual void init();
 
 	protected:
 		supplementary::SystemConfig* sc;
-		msl::robot::IntRobotIDFactory factory;
 
 	private:
-
+		ros::NodeHandle n;
 		double __maxTranslation;
 		const msl::robot::IntRobotID* ownID;
 		ros::Publisher simlatorPub;

@@ -13,40 +13,19 @@
 #include <RawSensorData.h>
 #include <SystemConfig.h>
 #include <msl_robot/kicker/Kicker.h>
+#include <msl/robot/IntRobotID.h>
+#include <engine/AlicaEngine.h>
 
 using std::string;
 namespace alica
 {
 DomainBehaviour::DomainBehaviour(string name)
     : BasicBehaviour(name)
+	, robot(nullptr)
+	, ownID(nullptr)
 {
-    this->sc = supplementary::SystemConfig::getInstance();
-    int tmpID = sc->getOwnRobotID();
-    std::vector<uint8_t> robotId;
-
-    for (int i = 0; i < sizeof(int); i++)
-    {
-        robotId.push_back(*(((uint8_t *)&tmpID) + i));
-    }
-    this->ownID = factory.create(robotId);
-    ros::NodeHandle n;
     this->wm = msl::MSLWorldModel::get();
-    this->robot = msl::MSLRobot::get();
-
-    if (wm->timeLastSimMsgReceived > 0)
-    {
-        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
-        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
-        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
-        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
-    }
-    else
-    {
-        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
-        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
-        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
-        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
-    }
+    this->sc = supplementary::SystemConfig::getInstance();
     passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
     watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
     debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
@@ -126,4 +105,27 @@ void alica::DomainBehaviour::send(msl_helper_msgs::DebugMsg &dbm)
     dbm.senderID.id = ownID->toByteVector();
     debugMsgPublisher.publish(dbm);
 }
+
+void DomainBehaviour::init()
+{
+	auto tmp = sc->getOwnRobotID();
+	    this->ownID = dynamic_cast<const msl::robot::IntRobotID*>(this->getOwnId());
+	    this->robot = msl::MSLRobot::get();
+
+	    if (wm->timeLastSimMsgReceived > 0)
+	    {
+	        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
+	        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
+	        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
+	        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
+	    }
+	    else
+	    {
+	        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
+	        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
+	        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
+	        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
+	    }
+}
+
 } /* namespace alica */

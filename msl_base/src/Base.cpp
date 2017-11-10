@@ -23,13 +23,13 @@ namespace msl
 
 Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool sim)
 {
-    ae = new alica::AlicaEngine();
+    auto factory = new msl::robot::IntRobotIDFactory();
+    idManager = new supplementary::AgentIDManager(factory);
+    ae = new alica::AlicaEngine(idManager, roleSetName, masterPlanName, roleSetDir, false);
     bc = new alica::BehaviourCreator();
     cc = new alica::ConditionCreator();
     uc = new alica::UtilityFunctionCreator();
     crc = new alica::ConstraintCreator();
-    auto factory = new msl::robot::IntRobotIDFactory();
-    idManager = new supplementary::AgentIDManager(factory);
     ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
     ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
     if (sim)
@@ -39,15 +39,17 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
         cout << "Base Nachher: " << ae->getIAlicaClock()->now() << endl;
     }
 
-    ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
-    ae->init(bc, cc, uc, crc, idManager, roleSetName, masterPlanName, roleSetDir, false);
-
     wm = MSLWorldModel::get();
     if (sim)
     {
         wm->timeLastSimMsgReceived = 1;
     }
     wm->setEngine(ae);
+
+    ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
+    ae->init(bc, cc, uc, crc);
+
+
 }
 
 void Base::start()

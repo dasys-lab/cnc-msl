@@ -72,7 +72,6 @@ void Intercept::run(void *msg)
     {
         return;
     }
-
     auto egoBallVel = this->wm->ball->getVisionBallVelocity();
     if (!egoBallVel)
     {
