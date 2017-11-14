@@ -9,6 +9,10 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
+
+INCLUDE_DIRECTORIES("/usr/include/flycapture") ## TODO: write find module
+
+find_package(OpenCV REQUIRED)
 find_package(catkin REQUIRED COMPONENTS system_config)
 
 ## The catkin_package macro generates cmake config files for your package
@@ -20,17 +24,22 @@ find_package(catkin REQUIRED COMPONENTS system_config)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_ptgrey_camera
-  CATKIN_DEPENDS system_config
+  CATKIN_DEPENDS system_config flycapture
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(msl_ptgrey_camera
+set(sources
   src/MSLPtGreyCamera.cpp
+  src/CamPropertySetter.cpp
+  src/CNImage.cpp
+
 )
 
-add_executable(msl_ptgrey_camera_test src/CameraTest.cpp)
+#add_executable(msl_ptgrey_camera ${sources})
 
-target_link_libraries(msl_ptgrey_camera
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(msl_ptgrey_camera
+#  ${catkin_LIBRARIES}
+#  ${OpenCV_LIBS}
+#  flycapture
+#)

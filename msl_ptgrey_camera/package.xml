@@ -5,16 +5,18 @@
   <description>The msl_ptgrey_camera package is the interface between the vision module
   and the Point Grey FlyCap SDK.</description>
 
-  <maintainer email="info@philipp-mandler.com">Philipp Mandler</maintainer>
+  <maintainer email="l.martmann@gmx.de">Lisa Martmann</maintainer>
 
   <license>MIT</license>
 
-  <author email="info@philipp-mandler.com">Philipp Mandler</author>
+  <author email="l.martmann@gmx.de">Lisa Martmann</author>
 
   <build_depend>system_config</build_depend>
+  <build_depend>flycapture</build_depend>
 
 
   <run_depend>system_config</run_depend>
+  <run_depend>flycapture</run_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 
