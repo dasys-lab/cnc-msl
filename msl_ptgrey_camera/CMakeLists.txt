@@ -15,6 +15,10 @@ INCLUDE_DIRECTORIES("/usr/include/flycapture") ## TODO: write find module
 find_package(OpenCV REQUIRED)
 find_package(catkin REQUIRED COMPONENTS system_config)
 
+#set(flycapture_DIR
+	#/usr/include/flycapture
+#)
+
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
 ## INCLUDE_DIRS: uncomment this if you package contains header files
@@ -27,19 +31,41 @@ catkin_package(
   CATKIN_DEPENDS system_config flycapture
 )
 
+
 include_directories(include ${catkin_INCLUDE_DIRS})
+
+
+#add_library(msl_ptgrey_camera
+#  src/MSLPtGreyCamera.cpp
+#  src/CamPropertySetter.cpp
+#  src/CNImage.cpp
+#  include/msl_ptgrey_camera/MSLPtGreyCamera.h
+#)
+
+
+
+#add_library(system_config
+#  src/MSLPtGreyCamera.cpp
+#  src/CamPropertySetter.cpp
+#  src/CNImage.cpp
+#  include/msl_ptgrey_camera/MSLPtGreyCamera.h
+#)
 
 set(sources
   src/MSLPtGreyCamera.cpp
-  src/CamPropertySetter.cpp
-  src/CNImage.cpp
+ src/CamPropertySetter.cpp
+ src/CNImage.cpp
+src/Recorder.cpp
 
 )
 
-#add_executable(msl_ptgrey_camera ${sources})
 
-#target_link_libraries(msl_ptgrey_camera
-#  ${catkin_LIBRARIES}
-#  ${OpenCV_LIBS}
-#  flycapture
-#)
+add_executable(msl_ptgrey_camera ${sources})
+
+target_link_libraries(msl_ptgrey_camera
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+  flycapture
+)
+
+

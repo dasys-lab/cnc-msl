@@ -10,6 +10,7 @@ namespace msl_ptgrey_camera
         this->cam = nullptr;
         this->camImg = nullptr;
         this->cps = nullptr;
+	this->initialiseParameters();
     }
 
     MSLPtGreyCamera::~MSLPtGreyCamera()
@@ -79,28 +80,36 @@ namespace msl_ptgrey_camera
 
         // Set Config
         FlyCapture2::FC2Config config;
-        config.grabMode = FlyCapture2::GrabMode::DROP_FRAMES;
+config.grabTimeout = 1500;
+config.highPerformanceRetrieveBuffer = true;
+        //config.grabMode = FlyCapture2::GrabMode::DROP_FRAMES;
+	config.grabMode = FlyCapture2::GrabMode::BUFFER_FRAMES;
         cam->SetConfiguration(&config);
 
         // Set Imaging Mode
         cam->SetGigEImagingMode(FlyCapture2::MODE_0);
 
         FlyCapture2::GigEImageSettings imageSettings;
-        imageSettings.pixelFormat = FlyCapture2::PixelFormat::PIXEL_FORMAT_RAW8;
+        imageSettings.pixelFormat = FlyCapture2::PixelFormat::PIXEL_FORMAT_RGB8;
         imageSettings.height = this->imgHeight;
         imageSettings.width = this->imgWidth;
+cout << imgHeight << ", " << imgWidth << endl;
         cam->SetGigEImageSettings(&imageSettings);
+
 
 
         // Start Capture
         error = cam->StartCapture();
+	cout << "started capturing" << endl;
+
+cout << cam->IsConnected() << endl;
         if (error != FlyCapture2::PGRERROR_OK)
         {
             PrintError(error);
             return -1;
         }
-		cps->setCamera(this->cam);
-		cps->setDefaults();
+	//cps->setCamera(this->cam);
+	//cps->setDefaults();
 
         return 0;
 
@@ -149,14 +158,17 @@ namespace msl_ptgrey_camera
 
     void MSLPtGreyCamera::saveCurrentImageToFile(string fpath)
     {
+cout << "retrieving buffer" << endl;
         this->cam->RetrieveBuffer(camImg);
+cout << "saving" << endl;
         this->camImg->Save(fpath.c_str(), FlyCapture2::ImageFileFormat::RAW);
+cout << "done" << endl;
     }
 
     void MSLPtGreyCamera::initialiseParameters()
     {
-        this->imgHeight = (*this->sc)["Vision2.conf"]->get<int>("Vision2.ScanLines.imgHeight", NULL);
-        this->imgWidth = (*this->sc)["Vision2.conf"]->get<int>("Vision2.ScanLines.imgWidth", NULL);
+        this->imgHeight = (*this->sc)["Vision2"]->get<int>("Vision2.Image.imgHeight", NULL);
+        this->imgWidth = (*this->sc)["Vision2"]->get<int>("Vision2.Image.imgWidth", NULL);
     }
 
 
