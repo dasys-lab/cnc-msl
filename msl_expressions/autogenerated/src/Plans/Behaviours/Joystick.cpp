@@ -39,14 +39,12 @@ namespace alica
         }
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
-
-            // smooth driving stuff
-            pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
-                                      * joy->motion.translation, joy->motion.rotation}));
-
+  
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
-
+		            // smooth driving stuff
+            	pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
+                                      * joy->motion.translation, joy->motion.rotation}));
                 std::valarray<double> translation = ptController();
                 mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
                 mc.motion.angle = atan2(translation[1], translation[0]);
@@ -54,10 +52,6 @@ namespace alica
             }
             else
             {
-                pastControlInput.pop();
-                pastTranslations.back() =
-                {   mc.motion.translation, 0.0, 0.0};
-
                 mc.motion = joy->motion;
             }
 
