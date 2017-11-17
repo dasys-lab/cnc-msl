@@ -34,6 +34,7 @@ namespace alica
 
         if (!joy)
         {
+        	// send empty mc for stop
             send(mc);
             return;
         }
@@ -42,6 +43,7 @@ namespace alica
   
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
+            	std::cout << "Joystick: PT-Controller is on" << std::endl;
 		            // smooth driving stuff
             	pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
                                       * joy->motion.translation, joy->motion.rotation}));
@@ -52,21 +54,20 @@ namespace alica
             }
             else
             {
+            	std::cout << "Joystick: PT-Controller is off" << std::endl;
                 mc.motion = joy->motion;
             }
 
             cout << "Joystick: x = " << mc.motion.translation << endl;
-            // acceleration memory
-            // saving translation of the last 3 iteration
 
             mc.motion.angle = joy->motion.angle;
             send(mc);
         }
         else
         {
+            //cout << "Joystick: Some Motion Value is NaN! Sending Stop instead." << endl;
             msl_actuator_msgs::MotionControl mc;
             send(mc);
-            //cout << "Joystick: Some Motion Value is NaN!" << endl;
         }
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
