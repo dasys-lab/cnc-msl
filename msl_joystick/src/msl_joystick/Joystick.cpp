@@ -101,6 +101,7 @@ namespace msl_joystick
         connect(this->lowShovelButton, SIGNAL(toggled(bool)), this, SLOT(onLowShovelSelected(bool)));
         connect(this->highShovelButton, SIGNAL(toggled(bool)), this, SLOT(onHighShovelSelected(bool)));
         connect(this->ballHandleStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onBallHandleCheckBoxToggled(int)));
+        connect(this->ptControllerStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onPTControllerCheckBoxToggled(int)));
 
         this->sendMsgTimer = new QTimer(this);
         connect(this->sendMsgTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
@@ -177,6 +178,14 @@ namespace msl_joystick
         else
         {
             msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+        }
+        if (this->usePTController)
+        {
+            msg.ballHandleState = msl_msgs::JoystickCommand::PT_CONTROLLER_ON;
+        }
+        else
+        {
+            msg.ballHandleState = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
         }
 
         // kicker stuff
