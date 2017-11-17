@@ -42,7 +42,7 @@ namespace alica
 		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
 		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
-		__maxTranslation = (*sc)["Globals"]->get<double>("Globals", "Team", sc->getHostname().c_str(), "AverageTranslation", NULL);
+		__maxTranslation = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 	}
 
 	DomainBehaviour::~DomainBehaviour()
