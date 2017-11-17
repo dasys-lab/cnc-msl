@@ -58,7 +58,7 @@ namespace alica
                 mc.motion = joy->motion;
             }
 
-            cout << "Joystick: x = " << mc.motion.translation << endl;
+            cout << "Joystick: Translation " << mc.motion.translation << endl;
 
             mc.motion.angle = joy->motion.angle;
             send(mc);
