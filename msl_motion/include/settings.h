@@ -37,7 +37,7 @@ typedef struct {
     double definingAngle;
     //int gear_denum;
     //int gear_num;
-    int wheelRadius;
+    double wheelRadius;
     double robotRadius;
 
 	int odometrySamplingTime;
