@@ -47,6 +47,8 @@ namespace msl
 		KICKER_DISTANCE_SIMULATOR = 432;
 		lastUpdateReceived = 0;
 		sharedBallSupporters = 0;
+		MIN_HAVE_BALL_CYCLE = (*this->sc)["Dribble"]->get<int>("Dribble", "minHaveBallCycles", NULL);
+		AMOUNT_OF_HISTORIZED_CYCLE = (*this->sc)["Dribble"]->get<int>("Dribble", "amountOfHistorizedCycles", NULL);
 	}
 
 	Ball::~Ball()
@@ -183,7 +185,7 @@ namespace msl
 	 */
 	bool Ball::haveBall()
 	{
-		return hasBallIteration > 3;
+		return hasBallIteration > MIN_HAVE_BALL_CYCLE;
 	}
 
 	bool Ball::ballMovedSiginficantly()
@@ -518,7 +520,7 @@ namespace msl
 			if (!wm->rawSensorData->getLightBarrier())
 			{
 				// if you lost the ball, further pretend that you have it for at most 2 iterations
-				hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+				hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 				this->ballPossessionStatus =
 						(this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
 				// cout << "Ball: Angle Tolerance check failed!" << endl;
@@ -527,7 +529,7 @@ namespace msl
 			else
 			{
 				this->ballPossessionStatus = BallPossessionStatus::HaveBall;
-				hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
+				hasBallIteration = max(min(hasBallIteration + 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 				return;
 			}
 		}
@@ -536,7 +538,7 @@ namespace msl
 		if (ballPos == nullptr)
 		{
 			// if you don't see the ball, further pretend that you have it for at most 2 iterations
-			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			hasBallIteration = max(min(--hasBallIteration, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 			this->ballPossessionStatus = (
 					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
 
@@ -551,7 +553,7 @@ namespace msl
 				|| (wm->timeLastSimMsgReceived > 0 && KICKER_DISTANCE_SIMULATOR < ballPos->length()))
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
-			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+			hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 			this->ballPossessionStatus = (
 					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
 			//			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
@@ -562,7 +564,7 @@ namespace msl
 		if (fabs(ballPos->y) > 100)
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
-			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+			hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 			this->ballPossessionStatus = (
 					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
 			// cout << "Ball: Angle Tolerance check failed!" << endl;
@@ -589,7 +591,7 @@ namespace msl
 		//		}
 
 		this->ballPossessionStatus = BallPossessionStatus::HaveBall;
-		hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
+		hasBallIteration = max(min(hasBallIteration + 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 	}
 
 	bool Ball::robotHasBall(int robotId)
