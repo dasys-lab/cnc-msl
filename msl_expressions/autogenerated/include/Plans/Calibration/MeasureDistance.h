@@ -24,7 +24,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1508940928986) ENABLED START*/ //Add additional private methods here
         static shared_ptr<geometry::CNPoint2D> startPositionLaser;
-		static shared_ptr<geometry::CNPoint2D> startPositionOdometry;
+        static shared_ptr<geometry::CNPoint2D> startPositionOdometry;
         static double distanceLaser;
         static double distanceOdometry;
         /*PROTECTED REGION END*/};

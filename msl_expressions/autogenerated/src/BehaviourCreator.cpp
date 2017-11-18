@@ -31,6 +31,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
+
 #include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
@@ -127,12 +129,6 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
-#include  "Plans/Behaviours/SpinSlowly.h"
-
-#include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
-
-#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
-
 #include  "Plans/Calibration/CountDown.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
@@ -173,11 +169,7 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalieExtension.h"
 
-#include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
-
 #include  "Plans/Attack/PassIntoFreeZone.h"
-
-#include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
 
@@ -327,6 +319,11 @@ namespace alica
             case 1435159282996:
 
                 return make_shared<SpinSlowly>();
+                break;
+
+            case 1498664342592:
+
+                return make_shared<DribbleToAttackPointTest>();
                 break;
 
             case 1459355025721:
@@ -587,21 +584,8 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
-            case 1435159282996:
-
-                return make_shared<SpinSlowly>();
-                break;
-
-            case 1498664342592:
-
-                return make_shared<DribbleToAttackPointTest>();
-                break;
-
-            case 1459355025721:
-
-            case 1459356753335:
-
             case 1508941007133:
+
                 return make_shared<CountDown>();
                 break;
 
@@ -714,19 +698,9 @@ namespace alica
                 return make_shared<GoalieExtension>();
                 break;
 
-            case 1482163995843:
-
-                return make_shared<TestMotorControl>();
-                break;
-
             case 1508951680585:
 
                 return make_shared<PassIntoFreeZone>();
-                break;
-
-            case 1434650910857:
-
-                return make_shared<OneEighty>();
                 break;
 
             case 1462363309950:

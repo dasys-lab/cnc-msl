@@ -34,14 +34,14 @@ namespace alica
         double odometryDistance = MeasureDistance::getOdometryDistance(this);
         if (max(odometryDistance / laserDistance, laserDistance / odometryDistance) > 1.01)
         {
-        	// increase wheel radius
-        	wm->setWheelRadius(wm->getWheelRadius() * (odometryDistance / laserDistance));
-        	this->setSuccess(false);
+            // increase wheel radius
+            wm->setWheelRadius(wm->getWheelRadius() * (odometryDistance / laserDistance));
+            this->setSuccess(false);
         }
         else
         {
-        	// done
-			this->setSuccess(true);
+            // done
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

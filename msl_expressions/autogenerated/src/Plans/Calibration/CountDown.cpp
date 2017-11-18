@@ -32,14 +32,14 @@ namespace alica
     void CountDown::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1508940993195) ENABLED START*/ //Add additional options here
-    	begin_time = std::chrono::system_clock::now();
-    	string time;
-    	getParameter("countDownMs", time);
-    	int timeAsNumber;
-    	stringstream test;
-    	test << time;
-    	test >> timeAsNumber;
-    	countDownTime = make_shared<std::chrono::milliseconds>(timeAsNumber);
+        begin_time = std::chrono::system_clock::now();
+        string time;
+        getParameter("countDownMs", time);
+        int timeAsNumber;
+        stringstream test;
+        test << time;
+        test >> timeAsNumber;
+        countDownTime = make_shared < std::chrono::milliseconds > (timeAsNumber);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1508940993195) ENABLED START*/ //Add additional methods here
