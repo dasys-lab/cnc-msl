@@ -464,12 +464,7 @@ void Ball::updateHaveBall() {
 							BallPossessionStatus::HaveBall :
 							BallPossessionStatus::LightBarrierUnblocked);
 			// cout << "Ball: Angle Tolerance check failed!" << endl;
-//               return;
-		} else {
-			this->ballPossessionStatus = BallPossessionStatus::HaveBall;
-			hasBallIteration = max(
-					min(hasBallIteration + 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
-			return;
+               return;
 		}
 	}
 
@@ -537,7 +532,9 @@ void Ball::updateHaveBall() {
 	//			return;
 	//		}
 
-	this->ballPossessionStatus = BallPossessionStatus::HaveBall;
+	// TODO Add new Status for not enough ball iterations sofar
+	this->ballPossessionStatus = (this->haveBall() ?
+			BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
 	hasBallIteration = max(
 			min(hasBallIteration + 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
 }
