@@ -3,7 +3,7 @@
   <plans id="1508951008323" name="MISSING_NAME" comment="" activated="false">
     <plan>FreeZonePassing.pml#1508950989519</plan>
   </plans>
-  <plans id="1508950470963" name="MISSING_NAME" comment="" activated="true">
-    <plan>TestPlans/PassPlan.pml#1441106995954</plan>
+  <plans id="1511078483246" name="MISSING_NAME" comment="" activated="true">
+    <plan>PassPlay.pml#1436268896671</plan>
   </plans>
 </alica:PlanType>
