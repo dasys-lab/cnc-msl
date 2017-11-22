@@ -47,8 +47,8 @@ namespace msl_joystick
         this->shovelIdx = 0;
         this->ballHandleLeftMotor = 0;
         this->ballHandleRightMotor = 0;
-        this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
-        this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
+        this->useBallHandle = false;
+        this->usePTController = false;
 
         this->useGamePad = false;
         this->joyNodePID = -1;
@@ -101,6 +101,7 @@ namespace msl_joystick
         connect(this->lowShovelButton, SIGNAL(toggled(bool)), this, SLOT(onLowShovelSelected(bool)));
         connect(this->highShovelButton, SIGNAL(toggled(bool)), this, SLOT(onHighShovelSelected(bool)));
         connect(this->ballHandleStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onBallHandleCheckBoxToggled(int)));
+        connect(this->ptControllerStateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onPTControllerCheckBoxToggled(int)));
 
         this->sendMsgTimer = new QTimer(this);
         connect(this->sendMsgTimer, SIGNAL(timeout()), this, SLOT(sendJoystickMessage()));
@@ -177,6 +178,14 @@ namespace msl_joystick
         else
         {
             msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+        }
+        if (this->usePTController)
+        {
+            msg.ptControllerState = msl_msgs::JoystickCommand::PT_CONTROLLER_ON;
+        }
+        else
+        {
+            msg.ptControllerState = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
         }
 
         // kicker stuff
@@ -510,7 +519,7 @@ namespace msl_joystick
         {
             case Qt::CheckState::Checked:
                 std::cout << "BHC: set to true" << endl;
-                this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+                this->useBallHandle = true;
                 if (!this->dribbleManually)
                 {
                     this->manual_label->setText("automatic");
@@ -520,7 +529,7 @@ namespace msl_joystick
             case Qt::CheckState::PartiallyChecked:
             default:
                 std::cout << "BHC: set to false" << endl;
-                this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+                this->useBallHandle = false;
                 this->manual_label->setText("");
                 break;
         }
@@ -533,13 +542,13 @@ namespace msl_joystick
         {
             case Qt::CheckState::Checked:
                 std::cout << "PTC: set to true" << endl;
-                this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_ON;
+                this->usePTController = true;
                 break;
             case Qt::CheckState::Unchecked:
             case Qt::CheckState::PartiallyChecked:
             default:
                 std::cout << "PTC: set to false" << endl;
-                this->usePTController = msl_msgs::JoystickCommand::PT_CONTROLLER_OFF;
+                this->usePTController = false;
                 break;
         }
         this->uiWidget->setFocus();
