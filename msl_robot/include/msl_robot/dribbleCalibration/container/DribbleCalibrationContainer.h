@@ -1,5 +1,5 @@
 /*
- * DribbleCalibrationContainer.h
+* DribbleCalibrationContainer.h
  *
  *  Created on: Jul 22, 2016
  *      Author: Carpe Noctem
@@ -42,7 +42,7 @@ class DribbleCalibrationContainer
 
     enum MethodParam
     {
-        Move,
+Move,
         AdaptParams,
         WriteConfigParam,
         ResetParams,

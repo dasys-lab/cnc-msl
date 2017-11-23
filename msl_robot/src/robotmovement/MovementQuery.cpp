@@ -13,13 +13,16 @@
 #include <pathplanner/evaluator/IPathEvaluator.h>
 #include "RawSensorData.h"
 
+using nonstd::make_optional;
+using nonstd::nullopt;
+
 namespace msl
 {
 	MovementQuery::MovementQuery()
 	{
-		this->egoAlignPoint = nullptr;
-		this->egoDestinationPoint = nullptr;
-		this->additionalPoints = nullptr;
+		this->egoAlignPoint = nullopt;
+		this->egoDestinationPoint = nullopt;
+		this->additionalPoints = nullopt;
 		this->blockOppPenaltyArea = false;
 		this->blockOppGoalArea = false;
 		this->blockOwnPenaltyArea = false;
@@ -27,14 +30,14 @@ namespace msl
 		this->block3MetersAroundBall = false;
 		this->snapDistance = 0;
 		this->angleTolerance = 0;
-		this->alloTeamMatePosition = nullptr;
+		this->alloTeamMatePosition = nullopt;
 		this->wm = MSLWorldModel::get();
 
 		this->rotateAroundTheBall = false;
 		this->circleRadius = -1;
-		this->circleCenterPoint = nullptr;
-		this->rectangleUpperLeftCorner = nullptr;
-		this->rectangleLowerRightCorner = nullptr;
+		this->circleCenterPoint = nullopt;
+		this->rectangleUpperLeftCorner = nullopt;
+		this->rectangleLowerRightCorner = nullopt;
 		this->pathEval = nullptr;
 
 		this->velocityMode = Velocity::DEFAULT;
@@ -46,7 +49,7 @@ namespace msl
 	{
 	}
 
-	shared_ptr<PathPlannerQuery> MovementQuery::getPathPlannerQuery()
+	shared_ptr<PathPlannerQuery> MovementQuery::getPathPlannerQuery() const
 	{
 		shared_ptr<PathPlannerQuery> ret = make_shared<PathPlannerQuery>();
 		ret->additionalPoints = this->additionalPoints;
@@ -115,9 +118,9 @@ namespace msl
 
 	void MovementQuery::reset()
 	{
-		this->egoAlignPoint = nullptr;
-		this->egoDestinationPoint = nullptr;
-		this->additionalPoints = nullptr;
+		this->egoAlignPoint = nullopt;
+		this->egoDestinationPoint = nullopt;
+		this->additionalPoints = nullopt;
 		this->blockOppPenaltyArea = false;
 		this->blockOppGoalArea = false;
 		this->blockOwnPenaltyArea = false;
@@ -125,23 +128,22 @@ namespace msl
 		this->block3MetersAroundBall = false;
 		this->snapDistance = 0;
 		this->angleTolerance = 0;
-		this->alloTeamMatePosition = nullptr;
+		this->alloTeamMatePosition = nullopt;
 		this->wm = MSLWorldModel::get();
 
 		readConfigParameters();
 	}
 
-	void MovementQuery::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius)
+	void MovementQuery::blockCircle(geometry::CNPointAllo centerPoint, double radius)
 	{
-		this->circleCenterPoint = centerPoint;
+		this->circleCenterPoint = make_optional<geometry::CNPointAllo>(centerPoint);
 		this->circleRadius = radius;
 	}
 
-	void MovementQuery::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner,
-										shared_ptr<geometry::CNPoint2D> lowRightCorner)
+	void MovementQuery::blockRectangle(geometry::CNPointAllo upLeftCorner, geometry::CNPointAllo lowRightCorner)
 	{
-		this->rectangleUpperLeftCorner = upLeftCorner;
-		this->rectangleLowerRightCorner = lowRightCorner;
+		this->rectangleUpperLeftCorner = make_optional<geometry::CNPointAllo>(upLeftCorner);
+		this->rectangleLowerRightCorner = make_optional<geometry::CNPointAllo>(lowRightCorner);
 	}
 
 	/**
@@ -151,13 +153,13 @@ namespace msl
 	{
 		// initial pt-controller stuff
 		std::queue<std::valarray<double>> controlInput;
-		auto odom = wm->rawSensorData->getOwnVelocityMotion();
+		auto odom = wm->rawSensorData->getOwnVelocityMotionBuffer().getLastValidContent();
 
 		double translation;
 		double angle;
 		double rotation;
 
-		if (odom == nullptr)
+		if (!odom)
 		{
 			cerr << "MovementQuery: no odometry! Initialize translation, angle and rotation with 0" << endl;
 			translation = 0;

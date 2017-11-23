@@ -178,5 +178,6 @@ namespace msl
 
         void readConfigParameters();
 
-    }
+    };
+}
 /* namespace msl */

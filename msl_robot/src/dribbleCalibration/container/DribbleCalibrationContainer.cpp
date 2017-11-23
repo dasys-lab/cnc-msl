@@ -21,180 +21,184 @@
 namespace msl
 {
 
-	DribbleCalibrationContainer::DribbleCalibrationContainer()
-	{
-		queueFilled = false;
-		this->wm = msl::MSLWorldModel::get();
-	}
+    DribbleCalibrationContainer::DribbleCalibrationContainer()
+    {
+        queueFilled = false;
+        this->wm = msl::MSLWorldModel::get();
+    }
 
-	DribbleCalibrationContainer::~DribbleCalibrationContainer()
-	{
+    DribbleCalibrationContainer::~DribbleCalibrationContainer()
+    {
 
-	}
+    }
 
-	/**
-	 * @mParm Parameter to choose the method that should be used
-	 * @parm Parameter to call the behavior (something like DribbleForwardParm)
-	 * @trans translation
-	 */
-	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
-	{
-		switch (parm)
-		{
-			case DribbleForwardParm:
-			{
-				cout << "Dribble forward..." << endl;
-				return callMethod(&df, mParm, trans);
-				break;
-			}
-			case DribbleBackwardParm:
-			{
-				return callMethod(&db, mParm, trans);
-				break;
-			}
-			case RotateLeftParm:
-			{
-				return callMethod(&drl, mParm, trans);
-				break;
-			}
-			case RotateRightPram:
-			{
-				return callMethod(&drr, mParm, trans);
-				break;
-			}
-		}
-		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
-		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
-		mc = setNaN(mc);
+    /**
+     * @mParm Parameter to choose the method that should be used
+     * @parm Parameter to call the behavior (something like DribbleForwardParm)
+     * @trans translation
+     */
+    shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm,
+                                                                                   int trans)
+    {
+        switch (parm)
+        {
+            case DribbleForwardParm:
+            {
+                cout << "Dribble forward..." << endl;
+                return callMethod(&df, mParm, trans);
+                break;
+            }
+            case DribbleBackwardParm:
+            {
+                return callMethod(&db, mParm, trans);
+                break;
+            }
+            case RotateLeftParm:
+            {
+                return callMethod(&drl, mParm, trans);
+                break;
+            }
+            case RotateRightPram:
+            {
+                return callMethod(&drr, mParm, trans);
+                break;
+            }
+        }
+        shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
+        shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
+        mc = setNaN(mc);
 
-		query->setMc(mc);
-		return query;
-	}
+        query->setMc(mc);
+        return query;
+    }
 
-	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
-	{
-		switch (parm)
-		{
-			case Move:
-				return behavior->move(trans);
-				break;
-			case AdaptParams:
-				behavior->adaptParams();
-				break;
-			case WriteConfigParam:
-				behavior->writeConfigParameters();
-				break;
-			case ResetParams:
-				behavior->resetParams();
-				break;
-			case SaveParams:
-				behavior->saveParams();
-				break;
-			default:
-				break;
-		}
+    shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callMethod(ICalibration* behavior,
+                                                                                MethodParam parm, int trans)
+    {
+        switch (parm)
+        {
+            case Move:
+                return behavior->move(trans);
+                break;
+            case AdaptParams:
+                behavior->adaptParams();
+                break;
+            case WriteConfigParam:
+                behavior->writeConfigParameters();
+                break;
+            case ResetParams:
+                behavior->resetParams();
+                break;
+            case SaveParams:
+                behavior->saveParams();
+                break;
+            default:
+                break;
+        }
 
-		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
-		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
-		query->setMc(setNaN(mc));
-		return query;
-	}
+        shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
+        shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
+        query->setMc(setNaN(mc));
+        return query;
+    }
 
-	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::paramToMove(Param param, int trans)
-	{
-		return callBehaviour(MethodParam::Move, param, trans);
-	}
+    shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::paramToMove(Param param, int trans)
+    {
+        return callBehaviour(MethodParam::Move, param, trans);
+    }
 
-	void DribbleCalibrationContainer::adaptParam(Param param)
-	{
-		callBehaviour(MethodParam::AdaptParams, param);
-	}
+    void DribbleCalibrationContainer::adaptParam(Param param)
+    {
+        callBehaviour(MethodParam::AdaptParams, param);
+    }
 
-	void DribbleCalibrationContainer::writeConfigParameres(Param parm)
-	{
-		callBehaviour(MethodParam::WriteConfigParam, parm);
-	}
+    void DribbleCalibrationContainer::writeConfigParameres(Param parm)
+    {
+        callBehaviour(MethodParam::WriteConfigParam, parm);
+    }
 
-	void DribbleCalibrationContainer::resetParameters(Param parm)
-	{
-		callBehaviour(MethodParam::ResetParams, parm);
-	}
-	void DribbleCalibrationContainer::saveParameters(Param parm)
-	{
-		callBehaviour(MethodParam::SaveParams, parm);
-	}
+    void DribbleCalibrationContainer::resetParameters(Param parm)
+    {
+        callBehaviour(MethodParam::ResetParams, parm);
+    }
+    void DribbleCalibrationContainer::saveParameters(Param parm)
+    {
+        callBehaviour(MethodParam::SaveParams, parm);
+    }
 
-	/**
-	 * @return true if opQueue is filled
-	 */
-	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, vector<geometry::CNVecEgo> &opQueue)
-	{
-		auto opticalFlow = wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent();
-		if (opticalFlow)
-		{
-			cerr << "no OpticalFLow signal!" << endl;
-			return false;
-		}
-		if (opQueue.size() >= queueSize)
-		{
-			cout << "1.1" << endl;
-			return true;
-		}
-		if (!queueFilled)
-		{
-			cout << "filling optical flow queue!" << endl;
-			queueFilled = true;
-		}
-		opQueue.push_back(*opticalFlow);
-		return false;
-	}
+    /**
+     * @return true if opQueue is filled
+     */
+    bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, vector<geometry::CNVecEgo> &opQueue)
+    {
+        auto opticalFlow = wm->rawSensorData->getOpticalFlowBuffer().getLastValidContent();
+        if (opticalFlow)
+        {
+            cerr << "no OpticalFLow signal!" << endl;
+            return false;
+        }
+        if (opQueue.size() >= queueSize)
+        {
+            cout << "1.1" << endl;
+            return true;
+        }
+        if (!queueFilled)
+        {
+            cout << "filling optical flow queue!" << endl;
+            queueFilled = true;
+        }
+        opQueue.push_back(*opticalFlow);
+        return false;
+    }
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(const vector<geometry::CNVecEgo> &queue)
-	{
-		return getAverageOpticalFlowValue(XValue, queue);
-	}
+    double DribbleCalibrationContainer::getAverageOpticalFlowXValue(const vector<geometry::CNVecEgo> &queue)
+    {
+        return getAverageOpticalFlowValue(XValue, queue);
+    }
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(const vector<geometry::CNVecEgo> &queue)
-	{
-		return getAverageOpticalFlowValue(YValue, queue);
-	}
+    double DribbleCalibrationContainer::getAverageOpticalFlowYValue(const vector<geometry::CNVecEgo> &queue)
+    {
+        return getAverageOpticalFlowValue(YValue, queue);
+    }
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value, const std::vector<geometry::CNVecEgo> &queue)
-	{
-		if (value != XValue && value != YValue /*&& value != QOSValue*/)
-		{
-			cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
-			return -1;
-		}
+    double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value,
+                                                                   const std::vector<geometry::CNVecEgo> &queue)
+    {
+        if (value != XValue && value != YValue /*&& value != QOSValue*/)
+        {
+            cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
+            return -1;
+        }
 
-		int sum = 0;
+        int sum = 0;
 
 #ifdef DEBUG_DC
-		cout << "in getAverageOpticalFlowValue() " << endl;
+        cout << "in getAverageOpticalFlowValue() " << endl;
 #endif
 
-		for (auto &val : queue)
-		{
-			if (value == XValue)
-			{
-				sum += val.x;
-			}
-			else
-			{
-				sum += val.y;
-			}
-		}
-		double ret = fabs(sum) / queue.size();
-		return sum < 0 ? -ret : ret;
+        for (auto &val : queue)
+        {
+            if (value == XValue)
+            {
+                sum += val.x;
+            }
+            else
+            {
+                sum += val.y;
+            }
+        }
+        double ret = fabs(sum) / queue.size();
+        return sum < 0 ? -ret : ret;
 
-	}
+    }
 
-	shared_ptr<msl_actuator_msgs::MotionControl> DribbleCalibrationContainer::setNaN(shared_ptr<msl_actuator_msgs::MotionControl> mc)
-	{
-		mc->senderID = -1;
-		mc->motion.translation = NAN;
-		mc->motion.rotation = NAN;
-		mc->motion.angle = NAN;
-		return mc;
-	}
+    shared_ptr<msl_actuator_msgs::MotionControl> DribbleCalibrationContainer::setNaN(
+            shared_ptr<msl_actuator_msgs::MotionControl> mc)
+    {
+        mc->senderID = -1;
+        mc->motion.translation = NAN;
+        mc->motion.rotation = NAN;
+        mc->motion.angle = NAN;
+        return mc;
+    }
 } /* namespace alica */

@@ -7,12 +7,10 @@
 
 #include "msl_robot/robotmovement/RobotMovement.h"
 #include "Ball.h"
-#include "GeometryCalculator.h"
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
 #include "Robots.h"
-#include "container/CNPoint2D.h"
 #include "msl_robot/kicker/Kicker.h"
 #include "msl_robot/robotmovement/AlloSearchArea.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
@@ -23,6 +21,8 @@
 
 #include <SystemConfig.h>
 
+using nonstd::nullopt;
+
 // remove commentary for debug output
 //#define RM_DEBUG
 
@@ -30,7 +30,7 @@ namespace msl
 {
 	int RobotMovement::randomCounter = 0;
 	int RobotMovement::beamSize = 3;
-	shared_ptr<geometry::CNPoint2D> RobotMovement::randomTarget = nullptr;
+	nonstd::optional<geometry::CNPointAllo> RobotMovement::randomTarget = nullopt;
 	shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::fringe = make_shared<vector<shared_ptr<SearchArea>>>();
 	shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::next = make_shared<vector<shared_ptr<SearchArea>>>();
 	double RobotMovement::assume_enemy_velo = 4500;
@@ -63,29 +63,29 @@ namespace msl
 	 * @param velocityMode -> from type msl::MovementQuery::Velocity
 	 *
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> query)
+	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(MovementQuery& query)
 	{
 		msl_actuator_msgs::MotionControl mc;
 
-		if (query == nullptr || query->egoDestinationPoint == nullptr)
+		if (query.egoDestinationPoint == nullopt)
 		{
 			cerr << "RobotMovement::moveToPoint() -> egoDestinationPoint == nullptr or query = nullptr" << endl;
 			return setNAN();
 		}
-		shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
-		if (query->pathEval == nullptr)
+		nonstd::optional<geometry::CNPointEgo> egoTarget = nullopt;
+		if (query.pathEval == nullptr)
 		{
-			egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, make_shared<PathEvaluator>(),
-													query->getPathPlannerQuery());
+			egoTarget = this->pp->getEgoDirection(*(query.egoDestinationPoint), PathEvaluator(),
+													query.getPathPlannerQuery());
 		}
 		else
 		{
-			egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, query->pathEval,
-													query->getPathPlannerQuery());
+			egoTarget = this->pp->getEgoDirection(*(query->egoDestinationPoint), *(query.pathEval),
+													query.getPathPlannerQuery());
 		}
 
 		// ANGLE
-		mc.motion.angle = egoTarget->angleTo();
+		mc.motion.angle = egoTarget->angleZ();
 
 		// TRANSLATION
 		if (egoTarget->length() > query->snapDistance)
@@ -101,7 +101,7 @@ namespace msl
 		// ROTATION
 		if (query->egoAlignPoint != nullptr)
 		{
-			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo();
+			mc.motion.rotation = query->egoAlignPoint->rotateZ(M_PI)->angleZ();
 
 		}
 
@@ -137,17 +137,12 @@ namespace msl
 		return mc;
 	}
 
-	msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
+	msl_actuator_msgs::MotionControl RobotMovement::alignTo(MovementQuery m_Query)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 //	auto egoBallPos = wm->ball->getEgoBallPosition();
 
-		if (m_Query == nullptr)
-		{
-			cerr << "RobotMovement:alignTo: query is nullptr!" << endl;
-			return setNAN();
-		}
-		if (m_Query->egoAlignPoint == nullptr)
+		if (m_Query.egoAlignPoint == nullopt)
 		{
 			cerr << "RobotMovement:alignTo: egoAlignPoint is nullptr!" << endl;
 			return setNAN();
@@ -158,9 +153,9 @@ namespace msl
 //		return setNAN();
 //	}
 
-		if (m_Query->rotateAroundTheBall)
+		if (m_Query.rotateAroundTheBall)
 		{
-			if (m_Query->egoAlignPoint->y > 0)
+			if (m_Query.egoAlignPoint->y > 0)
 			{
 				// rigth = 1.57079632679
 				mc.motion.angle = (0.5 * M_PI);
@@ -175,17 +170,17 @@ namespace msl
 			cout << "angle: " << mc.motion.angle << endl;
 			// right rotation is negative
 			// left rotation is positive
-			double rotation = m_Query->egoAlignPoint->angleTo();
+			double rotation = m_Query.egoAlignPoint->angleZ();
 			mc.motion.rotation = rotation * -1;
 			cout << "rotation: " << mc.motion.rotation << endl;
-			cout << "egoAlignPoint: =" << m_Query->egoAlignPoint->x << " y=" << m_Query->egoAlignPoint->y << endl;
+			cout << "egoAlignPoint: =" << m_Query.egoAlignPoint->x << " y=" << m_Query.egoAlignPoint->y << endl;
 			// for testing ... maybe you can use the pt-controller
 			// TODO need to stop if angle is good
 			mc.motion.translation = 1000;
 		}
 		else
 		{
-			MotionControl newMC = moveToPoint(m_Query);
+			msl_actuator_msgs::MotionControl newMC = moveToPoint(m_Query);
 			newMC.motion.translation = 0;
 			mc = newMC;
 		}
@@ -203,14 +198,14 @@ namespace msl
 	{
 		// TODO introduce destination method-parameter for improving this method...
 		// TODO add config parameters for all static numbers in here!
-		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball->getEgoBallPosition();
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); // OwnPositionCorrected;
-		if (egoBallPos == nullptr || ownPos == nullptr)
+		auto egoBallPos = wm->ball->getPositionEgo();
+		auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // OwnPositionCorrected;
+		if (!egoBallPos || !ownPos)
 		{
 			return setNAN();
 		}
-		shared_ptr<geometry::CNPoint2D> alloBall = egoBallPos->egoToAllo(*ownPos);
-		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
+		auto alloBall = egoBallPos->toAllo(*ownPos);
+		auto dest = make_shared<geometry::CNPoint2D>();
 
 		// ball is out, approach it carefully ================================================================
 		if (!wm->field->isInsideField(alloBall, 500))
