@@ -2,7 +2,6 @@
 
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
-
 #include <AutoDiff.h>
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
@@ -80,22 +79,18 @@ class MSLConstraintBuilder
     static shared_ptr<Term> insideSphere(shared_ptr<TVec> centre, double distance, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> insideSphere(shared_ptr<TVec> centre, double distance, shared_ptr<TVec> point);
 
-    static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c,
-                                            double tolerance, vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance,
-                                           vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c,
-                                             double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
 
-    static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>> &shell, double tolerance,
-                                         vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius,
-                                vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> insideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>> &points);
 
-    static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
-    static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point);
-    static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point, double tolerance = AREA_TOL);
+    static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance = AREA_TOL);
+    static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point, double tolerance = AREA_TOL);
+    static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance = AREA_TOL);
 
     static shared_ptr<Term> applyRules(int specialIdx, vector<shared_ptr<TVec>> &fieldPlayers);
     static shared_ptr<Term> applyRules(Situation situation, int specialIdx, vector<shared_ptr<TVec>> &fieldPlayers);

@@ -47,6 +47,7 @@ namespace alica
 
         // to increase initial actuator speed
         double powerFactor;
+        double decayedPowerFactor;
         double transTolerance;
         double rotTolerance;
         double angleTolerance;
@@ -67,6 +68,7 @@ namespace alica
         double diagConst;
         double phi;
         double velYFactor;
+        double velXFactor;
         double powerOfRotation;
 
         supplementary::SystemConfig* sc;

@@ -32,24 +32,37 @@ namespace msl
             visionBallPositionBuffer(ringbufferLength), visionBallVelocityBuffer(ringbufferLength), ballBuf(30), oppBallPossession(
                     ringbufferLength), sharedBallPosition(ringbufferLength), ballGuessPosition(ringbufferLength)
     {
-        haveBallDistanceDynamic = 0;
-        hadBefore = false;
-        hasBallIteration = 0;
-        haveDistance = 0;
-        selfInBallPossesion = false;
-        this->wm = wm;
-        hasBall = false;
-        sc = SystemConfig::getInstance();
-        KICKER_DISTANCE = (*this->sc)["Dribble"]->get<double>("Dribble", "KickerDistance", NULL);
-        KICKER_ANGLE = M_PI; //TODO: rotate ego positions: rotate KICKER_ANGLE
-        HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
-        HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
-        BALL_DIAMETER = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
-                                                                             NULL);
-        KICKER_DISTANCE_SIMULATOR = 432;
-        lastUpdateReceived = 0;
-        sharedBallSupporters = 0;
+	haveBallDistanceDynamic = 0;
+	hadBefore = false;
+	hasBallIteration = 0;
+	haveDistance = 0;
+	selfInBallPossesion = false;
+	this->wm = wm;
+	hasBall = false;
+	sc = SystemConfig::getInstance();
+	KICKER_DISTANCE = (*this->sc)["Dribble"]->get<double>("Dribble",
+			"KickerDistance", NULL);
+	KICKER_ANGLE = M_PI;
+	HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble",
+			"HaveBallToleranceDribble", NULL);
+	HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble",
+			"HaveBallMaxAngleDelta", NULL);
+	BALL_DIAMETER = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL)
+			* 2;
+	LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>(
+			"Localization", "LocalizationSuccess",
+			NULL);
+	KICKER_DISTANCE_SIMULATOR = 432;
+	lastUpdateReceived = 0;
+	sharedBallSupporters = 0;
+	MIN_HAVE_BALL_CYCLE = (*this->sc)["Dribble"]->get<int>("Dribble",
+			"minHaveBallCycles", NULL);
+	AMOUNT_OF_HISTORIZED_CYCLE = (*this->sc)["Dribble"]->get<int>("Dribble",
+			"amountOfHistorizedCycles", NULL);
+	if (AMOUNT_OF_HISTORIZED_CYCLE < MIN_HAVE_BALL_CYCLE)
+	{
+		throw;
+	}
     }
 
 	Ball::~Ball()
@@ -65,6 +78,23 @@ namespace msl
     {
         return this->visionBallVelocityBuffer;
     }
+
+shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getVisionBallPositionAndCertaincy(
+		int index) {
+	shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<
+			pair<shared_ptr<geometry::CNPoint2D>, double>>();
+	auto x = ballPosition.getLast(index);
+	if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge) {
+		return nullptr;
+	}
+	ret->first = x->getInformation();
+
+	if (ret->first == nullptr)
+		return nullptr;
+
+	ret->second = x->certainty;
+	return ret;
+}
 
     optional<geometry::CNPointAllo> Ball::getBallPickupPosition()
     {
@@ -163,14 +193,19 @@ namespace msl
         }
     }
 
-    /**
-     * @return True, if I had the ball for at least one iteration. False otherwise.
-     */
-    bool Ball::haveBall()
-    {
-        return hasBallIteration > 0;
-    }
+	shared_ptr<geometry::CNVelocity2D> Ball::getEgoBallVelocity()
+	{
+		if (getVisionBallVelocity() != nullptr)
+			return getVisionBallVelocity();
+		return nullptr;
+	}
 
+/**
+ * @return True, if I had the ball for at least one iteration. False otherwise.
+ */
+bool Ball::haveBall() {
+	return hasBallIteration > MIN_HAVE_BALL_CYCLE;
+}
     bool Ball::ballMovedSignificantly()
     {
         static const int BALLBUFSIZE = 10;
@@ -218,735 +253,811 @@ namespace msl
         return ballMoved;
     }
 
-    optional<geometry::CNPointAllo> Ball::getAlloBallGuessPosition() const
-    {
-        return ballGuessPosition.getLastValidContent();
-    }
-
-    void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty)
-    {
-        InfoTime time = this->wm->getTime();
-        auto ball = make_shared<InformationElement<geometry::CNPointEgo>>(ballPos, time, this->maxValidity, certainty);
-        this->visionBallPositionBuffer.add(ball);
-
-        auto ballV = make_shared<InformationElement<geometry::CNVecEgo>>(ballVel, time, this->maxValidity, certainty);
-        this->visionBallVelocityBuffer.add(ballV);
-
-        updateSharedBall();
-        updateHaveBall();
-        updateBallPossession();
-        updateBallGuess();
-    }
-
-    void Ball::updateBallGuess()
-    {
-        geometry::CNPointAllo guessedPoint;
-        double confidence = 0;
-        auto sharedBallInfo = this->sharedBallPosition.getLastValid();
-        InfoTime time = wm->getTime();
-
-        // If we have a shared ball -> use sb
-        if (sharedBallInfo != nullptr && sharedBallInfo->getCertainty() > 0.0)
-        {
-            confidence = 1;
-            guessedPoint = sharedBallInfo->getInformation();
-        }
-        else
-        {
-            // Generate guess -> confidence decaying linearly with time!
-            auto x = ballGuessPosition.getLast();
-            if (x != nullptr)
-            {
-                // 1s
-                if (wm->getTime() < x->getCreationTime() + 1000000000)
-                {
-                    confidence = (double)((1000000000 + x->getCreationTime()) - wm->getTime()) / 1000000000.0;
-                    time = x->getCreationTime();
-                    guessedPoint = x->getInformation();
-                }
-                else
-                {
-                    confidence = 0;
-                }
-            }
-        }
-
-        // TODO: change validity duration
-        auto ballGuessInfo = make_shared<InformationElement<geometry::CNPointAllo>>(guessedPoint, time,
-                                                                                    this->maxValidity, confidence);
-        ballGuessPosition.add(ballGuessInfo);
-    }
-
-    void Ball::updateBallPossession()
-    {
-        if (this->haveBall())
-        {
-            if (!this->ballPickupPosition && this->getPositionAllo())
-            {
-                ballPickupPosition = this->getPositionAllo();
-            }
-        }
-        else
-        {
-            this->ballPickupPosition = nullopt;
-        }
-
-        if (!this->selfInBallPossesion)
-        {
-            if (!this->haveBall())
-                return;
-        }
-
-        auto myEgoBall = this->getPositionEgo();
-        if (!myEgoBall)
-        {
-            this->selfInBallPossesion = false;
-        }
-        else if (myEgoBall->length() < 450 /*in c# before: 400 changed for simulator*/
-        || (this->selfInBallPossesion && myEgoBall->length() < 600))
-        {
-            if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
-            {
-                auto lightBarrierInfo = wm->rawSensorData->getLightBarrierBuffer().getLastValid();
-                this->selfInBallPossesion = lightBarrierInfo && lightBarrierInfo->getInformation();
-            }
-            else
-            {
-                this->selfInBallPossesion = true;
-            }
-        }
-        else
-        {
-            this->selfInBallPossesion = false;
-        }
-    }
-
-    void Ball::updateSharedBall()
-    {
-        std::lock_guard<std::mutex> lock(sbMutex);
-
-        auto sbVotingList = vector<BallVoting>();
-
-        double unknown = 0.4;
-        double sure = 0.95;
-
-        double m = 0.5 / (sure - unknown);
-        double t = 1.0 - sure * m;
-
-        for (auto &pair : wm->robots->getSharedWmDataBuffersMap())
-        {
-            if (pair.first == 1) // No Shared ball for goalie!
-            {
-                continue;
-            }
-
-            // TODO: is lastValid() correct?
-            // used to be: use nothing older than 300ms
-            // now: get last valid shared worldmodel
-            auto shwmdataInfo = pair.second->getLastValid();
-            if (shwmdataInfo == nullptr)
-            {
-                continue;
-            }
-
-            auto shWmData = shwmdataInfo->getInformation();
-            if (shWmData.ball.confidence < 0.1 || shWmData.odom.certainty < LOCALIZATION_SUCCESS_CONFIDENCE)
-            {
-                continue;
-            }
-            auto point = geometry::CNPointAllo(shWmData.ball.point.x, shWmData.ball.point.y);
-            double thresholdSqr = 1000000.0;
-
-            bool found = false;
-            double distSqr;
-            for (auto &bv : sbVotingList)
-            {
-                distSqr = (bv.ballPos.x - point.x) * (bv.ballPos.x - point.x)
-                        + (bv.ballPos.y - point.y) * (bv.ballPos.y - point.y);
-                if (distSqr < thresholdSqr)
-                {
-                    found = true;
-                    bv.ballPos.x = (bv.ballPos.x * bv.supporters.size() + point.x) / (bv.supporters.size() + 1);
-                    bv.ballPos.y = (bv.ballPos.y * bv.supporters.size() + point.y) / (bv.supporters.size() + 1);
-
-                    double conf2 = m * bv.teamConfidence + t;
-                    double inp2 = m * shWmData.ball.confidence + t;
-
-                    conf2 = (conf2 * inp2) / (conf2 * inp2 + (1 - conf2) * (1 - inp2));
-
-                    bv.teamConfidence = (conf2 - t) / m;
-
-                    bv.supporters.push_back(shWmData);
-                }
-            }
-
-            if (!found)
-            {
-                BallVoting bv;
-                bv.ballPos = point;
-                bv.teamConfidence = shWmData.ball.confidence;
-                bv.supporters.push_back(shWmData);
-
-                sbVotingList.push_back(bv);
-            }
-        }
-
-        BallVoting *bestVoting = nullptr;
-        double maxConfidence = 0.0;
-
-        for (BallVoting &bv : sbVotingList)
-        {
-            if (bv.teamConfidence > maxConfidence)
-            {
-                maxConfidence = bv.teamConfidence;
-                bestVoting = &bv;
-            }
-        }
-
-        auto sb = geometry::CNPointAllo(0.0, 0.0);
-        if (bestVoting != nullptr)
-        {
-            sb = bestVoting->ballPos;
-            sharedBallSupporters = (int)bestVoting->supporters.size();
-        }
-        else
-        {
-            sharedBallSupporters = 0;
-        }
-        InfoTime time = wm->getTime();
-
-        double certainty = bestVoting == nullptr ? 0.0 : bestVoting->teamConfidence;
-        // TODO: replace maxValidity
-        auto sbi = make_shared<InformationElement<geometry::CNPointAllo>>(sb, time, this->maxValidity, certainty);
-        sharedBallPosition.add(sbi);
-    }
-
-    int Ball::getSharedBallSupporter()
-    {
-        return sharedBallSupporters;
-    }
-
-    void Ball::updateHaveBall()
-    {
-        // TODO: use time for haveBall
-        if (hasBallIteration > 0)
-        {
-            // increase the haveBallDistanceDynamic by 2 millimeter to at most HAVE_BALL_TOLERANCE_DRIBBLE
-            haveBallDistanceDynamic = min(haveBallDistanceDynamic + 2, HAVE_BALL_TOLERANCE_DRIBBLE);
-        }
-        else
-        {
-            // reset the haveBalldistanceDynamic to 0
-            haveBallDistanceDynamic = 0;
-        }
-
-        auto ballPosInfo = this->visionBallPositionBuffer.getLastValid();
-        if (ballPosInfo == nullptr)
-        {
-            // if you don't see the ball, further pretend that you have it for at most 2 iterations
-            hasBallIteration = max(min(--hasBallIteration, 2), 0);
-
-            // cout << "Ball: NullPointer check failed!" << endl;
-            return;
-        }
-
-        auto ballPos = ballPosInfo->getInformation();
-
-        lastKnownBallPos = ballPos;
-
-        // check distance to ball
-        if ((KICKER_DISTANCE + haveBallDistanceDynamic < ballPos.length() && wm->timeLastSimMsgReceived == 0)
-                || (wm->timeLastSimMsgReceived > 0 && KICKER_DISTANCE_SIMULATOR < ballPos.length()))
-        {
-            // if you lost the ball, further pretend that you have it for at most 2 iterations
-            hasBallIteration = max(min(--hasBallIteration, 2), 0);
-            //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() <<
-            // endl;
-            return;
-        }
-
-        // turn ball angle by 180°, in order to get a working reference value for the HAVE_BALL_MAX_ANGLE_DELTA parameter
-        if (fabs(ballPos.y) > 100)
-        {
-            // if you lost the ball, further pretend that you have it for at most 2 iterations
-            hasBallIteration = max(min(--hasBallIteration, 2), 0);
-            // cout << "Ball: Angle Tolerance check failed!" << endl;
-            return;
-        }
-
-        // is lightbarrier triggered and its no simulation
-        if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
-        {
-            auto lightBarrierInfo = wm->rawSensorData->getLightBarrierBuffer().getLastValid();
-            if (!(lightBarrierInfo && lightBarrierInfo->getInformation()))
-            {
-                // if you lost the ball, further pretend that you have it for at most 2 iterations
-                hasBallIteration = max(min(--hasBallIteration, 2), 0);
-                // cout << "Ball: Angle Tolerance check failed!" << endl;
-                return;
-            }
-        }
-        //		double ballAngle = ballPos->angleTo();
-        //		if (ballAngle < 0)
-        //		{
-        //			ballAngle += M_PI;
-        //		}
-        //		else
-        //		{
-        //			ballAngle -= M_PI;
-        //		}
-        //
-        //		// check angle to ball
-        //		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
-        //		{
-        //			// if you lost the ball, further pretend that you have it for at most 2 iterations
-        //			hasBallIteration = max(min(--hasBallIteration, 2), 0);
-        //			//cout << "Ball: Angle Tolerance check failed!" << endl;
-        //			return;
-        //		}
-
-        hasBallIteration = max(min(++hasBallIteration, 2), 0);
-    }
-
-    bool Ball::robotHasBall(int robotId)
-    {
-
-        auto shwmData = wm->robots->getSHWMDataBuffer(robotId);
-        if (shwmData == nullptr)
-        {
-            return false;
-        }
-
-        auto shwmInfo = shwmData->getLastValid();
-        if (shwmInfo)
-        {
-            return shwmInfo->getInformation().ballInPossession;
-        }
-
-        return false;
-    }
-
-    void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
-    {
-        // if buffer for robot does not exist, create one
-        if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
-        {
-            auto buffer = make_shared<InfoBuffer<geometry::CNPointAllo>>(wm->getRingBufferLength());
-            auto pair = std::make_pair(data.senderID, buffer);
-            ballPositionsByRobot.insert(pair);
-        }
-        auto ballPositionsInfo = make_shared<InformationElement<geometry::CNPointAllo>>(
-                geometry::CNPointAllo(data.ball.point.x, data.ball.point.y), wm->getTime(), this->maxValidity, 1.0); // TODO: certainty?
-        ballPositionsByRobot.at(data.senderID)->add(ballPositionsInfo);
-
-        // if buffer for robot does not exist, create one
-        if (ballVelocitiesByRobot.find(data.senderID) == ballVelocitiesByRobot.end())
-        {
-            auto buffer = make_shared<InfoBuffer<geometry::CNVecAllo>>(wm->getRingBufferLength());
-            auto pair = make_pair(data.senderID, buffer);
-            ballVelocitiesByRobot.insert(pair);
-        }
-        auto ballVelocitiesInfo = make_shared<InformationElement<geometry::CNVecAllo>>(
-                geometry::CNVecAllo(data.ball.velocity.vx, data.ball.velocity.vy), wm->getTime(), this->maxValidity,
-                1.0); // TODO: certainty?
-        ballVelocitiesByRobot.at(data.senderID)->add(ballVelocitiesInfo);
-
-        // if buffer for robot does not exist, create one
-        if (ballPossession.find(data.senderID) == ballPossession.end())
-        {
-            auto buffer = make_shared<InfoBuffer<bool>>(wm->getRingBufferLength());
-            auto pair = make_pair(data.senderID, buffer);
-            ballPossession.insert(pair);
-        }
-        auto ballPossessionInfo = make_shared<InformationElement<bool>>(data.ballInPossession, wm->getTime(),
-                                                                        this->maxValidity, 1.0); // TODO: certainty
-        ballPossession.at(data.senderID)->add(ballPossessionInfo);
-
-        auto oppBallPossessionInfo = make_shared<InformationElement<bool>>(oppHasBall(), wm->getTime(),
-                                                                           this->maxValidity, 1.0); // TODO: certainty
-        oppBallPossession.add(oppBallPossessionInfo);
-    }
-
-    optional<bool> Ball::getTeamMateBallPossession(int teamMateId)
-    {
-        if (ballPossession.find(teamMateId) == ballPossession.end())
-        {
-            return nullopt;
-        }
-        auto x = ballPossession.at(teamMateId)->getLastValid();
-        if (x == nullptr)
-        {
-            return nullopt;
-        }
-        return x->getInformation();
-    }
-
-    bool Ball::oppHasBall()
-    {
-        bool ret = false;
-        optional<geometry::CNPointEgo> ballPos = this->wm->ball->getPositionEgo();
-        if (!ballPos)
-        {
-            return false;
-        }
-
-        auto opsInfo = this->wm->robots->opponents.getOpponentsEgoClusteredBuffer().getLastValid();
-        if (opsInfo == nullptr)
-        {
-            return false;
-        }
-
-        auto ops = opsInfo->getInformation();
-
-        double minDist = 100000;
-        if (ops.size() > 0)
-        {
-            for (int i = 0; i < ops.size(); ++i)
-            {
-                geometry::CNPointEgo obstacle = ops.at(i);
-                minDist = min(obstacle.distanceTo(*ballPos), minDist);
-            }
-        }
-
-        auto before = this->oppBallPossession.getLastValid();
-
-        if (before != nullptr && before->getInformation())
-        {
-            ret = (minDist <= 900);
-        }
-        else
-        {
-            ret = (minDist <= 700);
-        }
-        return ret;
-    }
-
-    double Ball::getBallDiameter()
-    {
-        return BALL_DIAMETER;
-    }
-
-// TODO implement light barrier and use sim
-// TODO: rewrite
-    bool Ball::simpleHaveBallDribble(bool hadBefore)
-    {
-        //		bool lightBarrierRunning = wm.SimpleMonitor.ActuatorRunning;
-        //		if (lightBarrierWasRunning && !lightBarrierRunning)
-        //		{
-        //			SwitchLightBarrier(false);
-        //		}
-        //		else if (!lightBarrierWasRunning && lightBarrierRunning)
-        //		{
-        //			//SwitchLightBarrier(true);
-        //		}
-        //		if (wm.UseSimulator)
-        //		{
-        //			if (wm.EgoBallPosition != null)
-        //			{
-        //				return wm.EgoBallPosition.Distance() < 130;
-        //			}
-        //			return false;
-        //		}
-        //		if (HAVE_LIGHT_BARRIER == 1)
-        //		{
-        //			return HaveBall(wm, true);
-        //		}
-        //		else
-        //		{
-        if (!hadBefore)
-        {
-            haveDistance = 0;
-        }
-        else
-        {
-            haveDistance += 2; // TODO: this won't work, this method is called arbitrarily often in each iteration
-            haveDistance = min(haveDistance, HAVE_BALL_TOLERANCE_DRIBBLE);
-        }
-
-        bool ret = true;
-        optional<geometry::CNPointEgo> ballPos = wm->ball->getPositionEgo();
-        if (!ballPos)
-        {
-            return false;
-        }
-
-        double angle = ballPos->angleZ();
-        double ballDist = ballPos->length();
-
-        if (hadBefore)
-        {
-            if ((KICKER_DISTANCE + haveDistance < ballDist && wm->timeLastSimMsgReceived == 0)
-                    || (KICKER_DISTANCE_SIMULATOR + haveDistance < ballPos->length() && wm->timeLastSimMsgReceived > 0))
-            {
-                ret = false;
-            }
-        }
-        else if ((KICKER_DISTANCE < ballDist && wm->timeLastSimMsgReceived == 0)
-                || (KICKER_DISTANCE_SIMULATOR < ballPos->length() && wm->timeLastSimMsgReceived > 0))
-        {
-            ret = false;
-        }
-
-        // calc angle tolerance to the ball
-        double tmpTol = angle - KICKER_ANGLE;
-        // Normalize rotation
-        if (tmpTol < -M_PI)
-        {
-            tmpTol += 2.0 * M_PI;
-        }
-        else if (tmpTol > M_PI)
-        {
-            tmpTol -= 2.0 * M_PI;
-        }
-        tmpTol = abs(tmpTol);
-
-        if (tmpTol > HAVE_BALL_MAX_ANGLE_DELTA)
-            ret = false;
-
-        return ret;
-    }
-
-    Velocity Ball::allo2Ego(Velocity vel, Position pos)
-    {
-        Velocity ego;
-        double angle = atan2(vel.vy, vel.vx) - pos.heading;
-        double length = sqrt(vel.vx * vel.vx + vel.vy * vel.vy);
-        ego.vx = cos(angle) * length;
-        ego.vy = sin(angle) * length;
-        return ego;
-    }
-
-    bool Ball::haveBallDribble(bool hadBefore)
-    {
-        bool ret = (simpleHaveBallDribble(hadBefore) && (hadBefore || this->hasBallIteration > 4));
-        this->hadBefore = ret;
-        return ret;
-    }
-
-    void Ball::updateOnLocalizationData(unsigned long long imageTime)
-    {
-        if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
-        {
-            processHypothesis();
-        }
-        lastUpdateReceived = imageTime;
-    }
-
-    void Ball::updateOnBallHypothesisList(unsigned long long imageTime)
-    {
-        if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
-        {
-            processHypothesis();
-        }
-        lastUpdateReceived = imageTime;
-    }
-
-    Point Ball::allo2Ego(Point p, Position pos)
-    {
-        Point ego;
-        double x = p.x - pos.x;
-        double y = p.y - pos.y;
-        double angle = atan2(y, x) - pos.heading;
-        double dist = sqrt(x * x + y * y);
-
-        ego.x = cos(angle) * dist;
-        ego.y = sin(angle) * dist;
-
-        return ego;
-    }
-
-// TODO: clean
-    void Ball::processHypothesis()
-    {
-        auto infoBallList = wm->rawSensorData->getBallHypothesisBuffer().getLastValid();
-        if (infoBallList == nullptr)
-        {
-            return;
-        }
-        static int noBallCycles = 0;
-        bool ballIntegrated = false;
-
-        ObservedPoint ballPos;
-        ROIData ballROI;
-
-        // Integrate balls from directed camera
-        ObservedPoint *opDirected = SharedMemoryHelper::getInstance()->readDirectedBallPosition();
-
-        for (int i = 0; i < 10; i++)
-        {
-            if (opDirected[i].valid)
-            {
-                BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
-            }
-        }
-
-        // Integrate balls from Kinect
-        opDirected = SharedMemoryHelper::getInstance()->readKinectBallPosition();
-
-        for (int i = 0; i < 10; i++)
-        {
-            if (opDirected[i].valid)
-            {
-                BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
-            }
-        }
-
-        ballPos.x = 0.0;
-        ballPos.y = 0.0;
-        ballPos.z = 0.0;
-        ballPos.confidence = 0.0;
-        ballPos.valid = false;
-        Point3D p;
-        // Its clearly wrong that both have the same time but we don't know anything better here! :(
-        auto ballList = infoBallList->getInformation();
-        TimeHelper::getInstance()->setVisionTimeDirected(ballList.imageTime);
-        TimeHelper::getInstance()->setVisionTimeOmniCam(ballList.imageTime);
-        if (ballList.hypothesis.size() == 0)
-        {
-            BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
-        }
-
-        auto ownPositionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
-        // TODO was not in itialized before ?
-        bool inField = false;
-        // TODO why do we think the ball is in the field when we don't know its position
-        if (ownPositionInfo == nullptr)
-        {
-            inField = true;
-        }
-
-        auto ownPosition = ownPositionInfo->getInformation();
-
-        for (int i = 0; i < ballList.hypothesis.size(); i++)
-        {
-            double relFactor = 200;
-            ballPos.x = ballList.hypothesis[i].egoPosition.x;
-            ballPos.y = ballList.hypothesis[i].egoPosition.y;
-            ballPos.z = ballList.hypothesis[i].egoPosition.z;
-
-            double alloBallPosX = ownPosition.x;
-            double alloBallPosY = ownPosition.y;
-
-            alloBallPosX += cos(ownPosition.theta) * p.x - sin(ownPosition.theta) * p.y;
-            alloBallPosY += sin(ownPosition.theta) * p.x + cos(ownPosition.theta) * p.y;
-
-            if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor
-                    && fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
-            {
-                inField = true;
-            }
-
-            if (!inField)
-            {
-                continue;
-            }
-            if (p.z < -300)
-            {
-                continue;
-            }
-
-            if (p.z > 350)
-            {
-                continue;
-            }
-            if (p.x * p.x + p.y * p.y > 8000 * 8000)
-            {
-                continue;
-            }
-            // if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
-
-            ballPos.confidence = 0.3 + (ballList.hypothesis[i].errors * 0.1);
-            if (ballList.hypothesis[i].radius > 5)
-            {
-                ballPos.confidence += 0.2;
-            }
-            if (p.x * p.x + p.y * p.y < 1000 * 1000)
-            {
-                ballPos.confidence = 0.8;
-            }
-            if (p.z > 350)
-            {
-                ballPos.confidence *= 0.9;
-            }
-            if (ballPos.confidence > 0.9)
-            {
-                ballPos.confidence = 0.9;
-            }
-            ballPos.valid = true;
-            ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-            BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
-            ballIntegrated = true;
-            noBallCycles = 0;
-        }
-        if (!ballIntegrated)
-            noBallCycles++;
-
-        BallIntegrator::getInstance()->decreaseDirtyPointCertainty();
-        ObservedPoint op = BallIntegrator::getInstance()->getPoint();
-        op.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-
-        ObjectContainer *currBallBuf = BallIntegrator::getInstance()->getContainer();
-
-        if (currBallBuf == NULL)
-        {
-            currBallBuf = &ballBuf;
-        }
-        currBallBuf->invalidate(400);
-
-        double dist = sqrt((op.x - mv.point.x) * (op.x - mv.point.x) + (op.y - mv.point.y) * (op.y - mv.point.y));
-        mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
-                                                       currBallBuf->getStartIndex(), currBallBuf->getLastIndex(),
-                                                       0.3E07);
-        bool noValidPoint = false;
-
-        if (fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
-        {
-            noValidPoint = true;
-        }
-        ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
-                                                                currBallBuf->getStartIndex(),
-                                                                currBallBuf->getLastIndex());
-        MovingObject mv2 = mv;
-        mv2.point = allo2Ego(mv.point, BallIntegrator::getInstance()->getRefPosition());
-        mv2.velocity = allo2Ego(mv.velocity, BallIntegrator::getInstance()->getRefPosition());
-
-        if (op.valid && !noValidPoint)
-        {
-            this->updateBallPos(geometry::CNPointEgo(mv2.point.x, mv2.point.y, ze.z),
-                                geometry::CNVecEgo(mv2.velocity.vx, mv2.velocity.vy, ze.vz), op.confidence);
-            // Here you can do something for the z-coordinate, e.g. create a point3d
-        }
-    }
-
-    std::shared_ptr<geometry::CNPointAllo> Ball::getAlloSharedBallPosition(int index)
-    {
-        //required for Game
-        return nullptr;
-    }
-
-    std::shared_ptr<std::pair<geometry::CNPointAllo, double> > Ball::getAlloSharedBallPositionAndCertainty(int index)
-    {
-
-        //TODO required for MSLWorldModel
-        return nullptr;
-    }
-
-    bool Ball::getOppBallPossession(int index)
-    {
-        //required for Game and OppFreeKickInOwnHalf
-        return false;
-    }
-
-    nonstd::optional<geometry::CNVecAllo> Ball::getVelocityAllo() const
-    {
-        //required for WatchBall
-        return nonstd::nullopt;
-    }
-
-    nonstd::optional<geometry::CNVecEgo> Ball::getVelocityEgo() const
-    {
-        //required for Goalie and some other Behaviours
-        return nonstd::nullopt;
-    }
-
-} /* namespace alica */
+
+	void Ball::updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel,
+								double certainty)
+	{
+		InfoTime time = wm->getTime();
+		shared_ptr<geometry::CNPoint2D> ball2d;
+		if (ballPos != nullptr)
+		{
+			ball2d = make_shared<geometry::CNPoint2D>(ballPos->x, ballPos->y);
+		}
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<InformationElement<geometry::CNPoint2D>>(
+				ball2d, time);
+		ball->certainty = certainty;
+		ballPosition.add(ball);
+
+		shared_ptr<InformationElement<geometry::CNPoint3D>> ball3D =
+				make_shared<InformationElement<geometry::CNPoint3D>>(ballPos, time);
+		ball->certainty = certainty;
+		ballPoint3D.add(ball3D);
+
+		shared_ptr<geometry::CNVelocity2D> vel2d;
+		if (ballVel != nullptr)
+		{
+			vel2d = make_shared<geometry::CNVelocity2D>(ballVel->x, ballVel->y);
+		}
+		shared_ptr<InformationElement<geometry::CNVelocity2D>> ballV = make_shared<
+				InformationElement<geometry::CNVelocity2D>>(vel2d, time);
+
+		shared_ptr<InformationElement<geometry::CNPoint3D>> ballVelInfo3D = make_shared<
+				InformationElement<geometry::CNPoint3D>>(ballVel, time);
+		ball->certainty = certainty;
+		ballVel3D.add(ballVelInfo3D);
+
+		ballV->certainty = certainty;
+		ballVelocity.add(ballV);
+		updateSharedBall();
+		updateHaveBall();
+		updateBallPossession();
+		updateBallGuess();
+	}
+	shared_ptr<geometry::CNPoint3D> Ball::getBallPoint3D(int index)
+	{
+		auto x = ballPoint3D.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+	shared_ptr<geometry::CNPoint3D> Ball::getBallVel3D(int index)
+	{
+		auto x = ballVel3D.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+	void Ball::updateBallGuess()
+	{
+		shared_ptr<geometry::CNPoint2D> nguess;
+		double guessConf = 0;
+		auto sb = getAlloSharedBallPositionAndCertaincy();
+		InfoTime time = wm->getTime();
+
+		// If we have a shared ball -> use sb
+		if (sb != nullptr && sb->first != nullptr && sb->second > 0.0)
+		{
+			guessConf = 1;
+			nguess = sb->first->clone();
+		}
+		else
+		{
+			// Generate guess -> confidence decaying linearly with time!
+			auto x = ballGuessPosition.getLast();
+			if (x != nullptr)
+			{
+				// 1s
+				if (x->getInformation() != nullptr && wm->getTime() < x->timeStamp + 1000000000)
+				{
+					guessConf = (double)((1000000000 + x->timeStamp) - wm->getTime()) / 1000000000.0;
+					time = x->timeStamp;
+					nguess = x->getInformation()->clone();
+				}
+				else
+				{
+					guessConf = 0;
+				}
+			}
+		}
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> bgi = make_shared<InformationElement<geometry::CNPoint2D>>(
+				nguess, time);
+		bgi->certainty = guessConf;
+		ballGuessPosition.add(bgi);
+	}
+
+	void Ball::updateBallPossession()
+	{
+		if (this->haveBall())
+		{
+			if (ballPickupPosition == nullptr && getAlloBallPosition() != nullptr)
+			{
+				ballPickupPosition = getAlloBallPosition();
+			}
+		}
+		else
+		{
+			ballPickupPosition.reset();
+		}
+
+		if (!this->selfInBallPossesion)
+		{
+			if (!this->haveBall())
+				return;
+		}
+
+		auto myEgoBall = this->getEgoBallPosition();
+		if (myEgoBall == nullptr)
+		{
+			this->selfInBallPossesion = false;
+		}
+		else if (myEgoBall->length() < 450 || (this->selfInBallPossesion && myEgoBall->length() < 600))
+		{
+			if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
+			{
+				if (wm->rawSensorData->getLightBarrier())
+				{
+
+					this->selfInBallPossesion = true;
+				}
+				else
+				{
+					this->selfInBallPossesion = false;
+				}
+			}
+			else
+			{
+				this->selfInBallPossesion = true;
+			}
+		}
+		else
+		{
+			this->selfInBallPossesion = false;
+		}
+	}
+
+	void Ball::updateSharedBall()
+	{
+		std::lock_guard<std::mutex> lock(sbMutex);
+		sbvotingList.clear();
+
+		double unknown = 0.4;
+		double sure = 0.95;
+
+		double m = 0.5 / (sure - unknown);
+		double t = 1.0 - sure * m;
+
+		for (auto &pair : wm->robots->sharedWolrdModelData)
+		{
+			if (pair.first == 1) // No Shared ball for goalie!
+			{
+				continue;
+			}
+
+			// no shared world model from this robot
+			if (pair.second->getLast() == nullptr)
+			{
+				continue;
+			}
+
+			// Use nothing older than 300ms
+			if (wm->getTime() - pair.second->getLast()->timeStamp > 300000000)
+			{
+				continue;
+			}
+
+			auto shwmdata = pair.second->getLast()->getInformation();
+			if (shwmdata == nullptr || shwmdata->ball.confidence < 0.1
+					|| shwmdata->odom.certainty < LOCALIZATION_SUCCESS_CONFIDENCE)
+			{
+				continue;
+			}
+			shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(shwmdata->ball.point.x,
+																						shwmdata->ball.point.y);
+			double thresholdSqr = 1000000.0;
+
+			bool found = false;
+			double distSqr;
+			for (auto &bv : sbvotingList)
+			{
+				distSqr = (bv.ballPos->x - point->x) * (bv.ballPos->x - point->x)
+						+ (bv.ballPos->y - point->y) * (bv.ballPos->y - point->y);
+				if (distSqr < thresholdSqr)
+				{
+					found = true;
+					bv.ballPos->x = (bv.ballPos->x * bv.supporters.size() + point->x) / (bv.supporters.size() + 1);
+					bv.ballPos->y = (bv.ballPos->y * bv.supporters.size() + point->y) / (bv.supporters.size() + 1);
+
+					double conf2 = m * bv.teamConfidence + t;
+					double inp2 = m * shwmdata->ball.confidence + t;
+
+					conf2 = (conf2 * inp2) / (conf2 * inp2 + (1 - conf2) * (1 - inp2));
+
+					bv.teamConfidence = (conf2 - t) / m;
+
+					bv.supporters.push_back(shwmdata);
+				}
+			}
+
+			if (!found)
+			{
+				BallVoting bv;
+				bv.ballPos = point;
+				bv.teamConfidence = shwmdata->ball.confidence;
+				bv.supporters.push_back(shwmdata);
+
+				sbvotingList.push_back(bv);
+			}
+		}
+
+		BallVoting *bestVoting = nullptr;
+		double maxConfidence = 0.0;
+
+		for (BallVoting &bv : sbvotingList)
+		{
+			if (bv.teamConfidence > maxConfidence)
+			{
+				maxConfidence = bv.teamConfidence;
+				bestVoting = &bv;
+			}
+		}
+
+		auto sb = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+		if (bestVoting != nullptr)
+		{
+			sb = bestVoting->ballPos;
+			sharedBallSupporters = bestVoting->supporters.size();
+		}
+		else
+		{
+			sb.reset();
+			sharedBallSupporters = 0;
+		}
+		InfoTime time = wm->getTime();
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> sbi = make_shared<InformationElement<geometry::CNPoint2D>>(
+				sb, time);
+		sbi->certainty = bestVoting == nullptr ? 0.0 : bestVoting->teamConfidence;
+		sharedBallPosition.add(sbi);
+	}
+
+	int Ball::getSharedBallSupporter()
+	{
+		return sharedBallSupporters;
+	}
+
+	BallPossessionStatus Ball::getBallPossessionStatus()
+	{
+		return this->ballPossessionStatus;
+	}
+
+	void Ball::updateHaveBall()
+	{
+		if (hasBallIteration > 0)
+		{
+			// increase the haveBallDistanceDynamic by 2 millimeter to at most HAVE_BALL_TOLERANCE_DRIBBLE
+			haveBallDistanceDynamic = min(haveBallDistanceDynamic + 2, HAVE_BALL_TOLERANCE_DRIBBLE);
+		}
+		else
+		{
+			// reset the haveBalldistanceDynamic to 0
+			haveBallDistanceDynamic = 0;
+		}
+
+		// is lightbarrier triggered and its no simulation
+		if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
+		{
+			if (!wm->rawSensorData->getLightBarrier())
+			{
+				// if you lost the ball, further pretend that you have it for at most 2 iterations
+				hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+				this->ballPossessionStatus =
+						(this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
+				// cout << "Ball: Angle Tolerance check failed!" << endl;
+//               return;
+			}
+			else
+			{
+				this->ballPossessionStatus = BallPossessionStatus::HaveBall;
+				hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
+				return;
+			}
+		}
+
+		shared_ptr<geometry::CNPoint2D> ballPos = getVisionBallPosition();
+		if (ballPos == nullptr)
+		{
+			// if you don't see the ball, further pretend that you have it for at most 2 iterations
+			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			this->ballPossessionStatus = (
+					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
+
+			// cout << "Ball: NullPointer check failed!" << endl;
+			return;
+		}
+
+		lastKnownBallPos = ballPos;
+
+		// check distance to ball
+		if ((KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length() && wm->timeLastSimMsgReceived == 0)
+				|| (wm->timeLastSimMsgReceived > 0 && KICKER_DISTANCE_SIMULATOR < ballPos->length()))
+		{
+			// if you lost the ball, further pretend that you have it for at most 2 iterations
+			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+			this->ballPossessionStatus = (
+					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
+			//			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
+			return;
+		}
+
+		// turn ball angle by 180°, in order to get a working reference value for the HAVE_BALL_MAX_ANGLE_DELTA parameter
+		if (fabs(ballPos->y) > 100)
+		{
+			// if you lost the ball, further pretend that you have it for at most 2 iterations
+			hasBallIteration = max(min(hasBallIteration - 1, 2), 0);
+			this->ballPossessionStatus = (
+					this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
+			// cout << "Ball: Angle Tolerance check failed!" << endl;
+			return;
+		}
+
+		//		double ballAngle = ballPos->angleTo();
+		//		if (ballAngle < 0)
+		//		{
+		//			ballAngle += M_PI;
+		//		}
+		//		else
+		//		{
+		//			ballAngle -= M_PI;
+		//		}
+		//
+		//		// check angle to ball
+		//		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+		//		{
+		//			// if you lost the ball, further pretend that you have it for at most 2 iterations
+		//			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+		//			//cout << "Ball: Angle Tolerance check failed!" << endl;
+		//			return;
+		//		}
+
+		this->ballPossessionStatus = BallPossessionStatus::HaveBall;
+		hasBallIteration = max(min(hasBallIteration + 1, 2), 0);
+	}
+
+	bool Ball::robotHasBall(int robotId)
+	{
+
+		auto shwmData = wm->robots->getSHWMData(robotId);
+		if (shwmData == nullptr)
+		{
+			return false;
+		}
+		return shwmData->ballInPossession;
+	}
+
+	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
+	{
+		if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
+		{
+			shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>> buffer =
+			make_shared<RingBuffer<InformationElement<geometry::CNPoint2D>>>(wm->getRingBufferLength());
+			pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(data.senderID, buffer);
+			ballPositionsByRobot.insert(pair);
+		}
+		shared_ptr<InformationElement<geometry::CNPoint2D>> info =
+		make_shared<InformationElement<geometry::CNPoint2D>>(make_shared<geometry::CNPoint2D>(data.ball.point.x, data.ball.point.y), wm->getTime());
+		ballPositionsByRobot.at(data.senderID)->add(info);
+		if (ballVelocitiesByRobot.find(data.senderID) == ballVelocitiesByRobot.end())
+		{
+			shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>> buffer =
+			make_shared<RingBuffer<InformationElement<geometry::CNVelocity2D>>>(wm->getRingBufferLength());
+			pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(data.senderID, buffer);
+			ballVelocitiesByRobot.insert(pair);
+		}
+		shared_ptr<InformationElement<geometry::CNVelocity2D>> i = make_shared<InformationElement<geometry::CNVelocity2D>>(
+				make_shared<geometry::CNVelocity2D>(data.ball.velocity.vx, data.ball.velocity.vy), wm->getTime());
+		ballVelocitiesByRobot.at(data.senderID)->add(i);
+		if (ballPossession.find(data.senderID) == ballPossession.end())
+		{
+			shared_ptr<RingBuffer<InformationElement<bool>>> buffer = make_shared<RingBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
+			pair<int, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
+			ballPossession.insert(pair);
+		}
+		shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(make_shared<bool>(data.ballInPossession), wm->getTime());
+		ballPossession.at(data.senderID)->add(in);
+		bool r = oppHasBall();
+		shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(make_shared<bool>(r), wm->getTime());
+		oppBallPossession.add(inf);
+	}
+
+	shared_ptr<bool> Ball::getTeamMateBallPossession(int teamMateId, int index)
+	{
+		if (ballPossession.find(teamMateId) == ballPossession.end())
+		{
+			return nullptr;
+		}
+		auto x = ballPossession.at(teamMateId)->getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<bool> msl::Ball::getOppBallPossession(int index)
+	{
+		auto x = oppBallPossession.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition(int index)
+	{
+		auto x = sharedBallPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getAlloSharedBallPositionAndCertaincy(int index)
+	{
+		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<
+				pair<shared_ptr<geometry::CNPoint2D>, double>>();
+		auto x = sharedBallPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		ret->first = x->getInformation();
+		ret->second = x->certainty;
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloBallGuessPosition(int index)
+	{
+		auto x = ballGuessPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	bool Ball::oppHasBall()
+	{
+		bool ret = false;
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
+		if (ballPos == nullptr)
+		{
+			return false;
+		}
+		auto ops = wm->robots->opponents.getOpponentsEgoClustered();
+		if (ops == nullptr)
+		{
+			return false;
+		}
+		double minDist = 100000;
+		if (ops->size() > 0)
+		{
+			for (int i = 0; i < ops->size(); ++i)
+			{
+				geometry::CNPoint2D obstacle(ops->at(i)->x, ops->at(i)->y);
+				minDist = min(obstacle.distanceTo(ballPos), minDist);
+			}
+		}
+
+		auto before = getOppBallPossession(0);
+		if (before != nullptr && *before)
+		{
+			ret = (minDist <= 900);
+		}
+		else
+		{
+			ret = (minDist <= 700);
+		}
+		return ret;
+	}
+
+	double Ball::getBallDiameter()
+	{
+		return BALL_DIAMETER;
+	}
+
+// TODO impelement light barrier and use sim
+	bool Ball::simpleHaveBallDribble(bool hadBefore)
+	{
+		//		bool lightBarrierRunning = wm.SimpleMonitor.ActuatorRunning;
+		//		if (lightBarrierWasRunning && !lightBarrierRunning)
+		//		{
+		//			SwitchLightBarrier(false);
+		//		}
+		//		else if (!lightBarrierWasRunning && lightBarrierRunning)
+		//		{
+		//			//SwitchLightBarrier(true);
+		//		}
+		//		if (wm.UseSimulator)
+		//		{
+		//			if (wm.EgoBallPosition != null)
+		//			{
+		//				return wm.EgoBallPosition.Distance() < 130;
+		//			}
+		//			return false;
+		//		}
+		//		if (HAVE_LIGHT_BARRIER == 1)
+		//		{
+		//			return HaveBall(wm, true);
+		//		}
+		//		else
+		//		{
+		if (!hadBefore)
+		{
+			haveDistance = 0;
+		}
+		else
+		{
+			haveDistance += 2; // TODO: this won't work, this method is called arbitrarily often in each iteration
+			haveDistance = min(haveDistance, HAVE_BALL_TOLERANCE_DRIBBLE);
+		}
+
+		bool ret = true;
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
+		if (ballPos == nullptr)
+		{
+			return false;
+		}
+
+		double angle = ballPos->angleTo();
+		double ballDist = ballPos->length();
+
+		double usedKicker;
+
+		if (hadBefore)
+		{
+			if ((KICKER_DISTANCE + haveDistance < ballDist && wm->timeLastSimMsgReceived == 0)
+					|| (KICKER_DISTANCE_SIMULATOR + haveDistance < ballPos->length() && wm->timeLastSimMsgReceived > 0))
+			{
+				ret = false;
+			}
+		}
+		else if ((KICKER_DISTANCE < ballDist && wm->timeLastSimMsgReceived == 0)
+				|| (KICKER_DISTANCE_SIMULATOR < ballPos->length() && wm->timeLastSimMsgReceived > 0))
+		{
+			ret = false;
+		}
+		usedKicker = KICKER_ANGLE;
+
+		// calc angle tolerance to the ball
+		double tmpTol = angle - usedKicker;
+		// Normalize rotation
+		if (tmpTol < -M_PI)
+		{
+			tmpTol += 2.0 * M_PI;
+		}
+		else if (tmpTol > M_PI)
+		{
+			tmpTol -= 2.0 * M_PI;
+		}
+		tmpTol = abs(tmpTol);
+
+		if (tmpTol > HAVE_BALL_MAX_ANGLE_DELTA)
+			ret = false;
+
+		return ret;
+	}
+
+	double Ball::getBallConfidenceVision(int index)
+	{
+		auto x = ballPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return 0;
+		}
+		return x->certainty;
+	}
+
+	Velocity Ball::allo2Ego(Velocity vel, Position pos)
+	{
+		Velocity ego;
+		double angle = atan2(vel.vy, vel.vx) - pos.heading;
+		double length = sqrt(vel.vx * vel.vx + vel.vy * vel.vy);
+		ego.vx = cos(angle) * length;
+		ego.vy = sin(angle) * length;
+		return ego;
+	}
+
+// to be removed because it is only used in Intercept for setting success and in own corner behaviour
+	bool Ball::haveBallDribble(bool hadBefore)
+	{
+		bool ret = (simpleHaveBallDribble(hadBefore) && (hadBefore || this->hasBallIteration > 4));
+		this->hadBefore = ret;
+		return ret;
+	}
+
+	void Ball::updateOnLocalizationData(unsigned long long imageTime)
+	{
+		if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
+		{
+			processHypothesis();
+		}
+		lastUpdateReceived = imageTime;
+	}
+
+	void Ball::updateOnBallHypothesisList(unsigned long long imageTime)
+	{
+		if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
+		{
+			processHypothesis();
+		}
+		lastUpdateReceived = imageTime;
+	}
+
+	Point Ball::allo2Ego(Point p, Position pos)
+	{
+		Point ego;
+		double x = p.x - pos.x;
+		double y = p.y - pos.y;
+		double angle = atan2(y, x) - pos.heading;
+		double dist = sqrt(x * x + y * y);
+
+		ego.x = cos(angle) * dist;
+		ego.y = sin(angle) * dist;
+
+		return ego;
+	}
+
+	void Ball::processHypothesis()
+	{
+		static int noBallCycles = 0;
+		bool ballIntegrated = false;
+
+		ObservedPoint ballPos;
+		ROIData ballROI;
+
+		// Integrate balls from directed camera
+		ObservedPoint *opDirected = SharedMemoryHelper::getInstance()->readDirectedBallPosition();
+
+		for (int i = 0; i < 10; i++)
+		{
+			if (opDirected[i].valid)
+			{
+				BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
+			}
+		}
+
+		// Integrate balls from Kinect
+		opDirected = SharedMemoryHelper::getInstance()->readKinectBallPosition();
+
+		for (int i = 0; i < 10; i++)
+		{
+			if (opDirected[i].valid)
+			{
+				BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
+			}
+		}
+
+		ballPos.x = 0.0;
+		ballPos.y = 0.0;
+		ballPos.z = 0.0;
+		ballPos.confidence = 0.0;
+		ballPos.valid = false;
+		Point3D p;
+		auto ballList = wm->rawSensorData->getBallHypothesisList();
+
+		// Its clearly wring that both have the same time but we don't know anything better here! :(
+		TimeHelper::getInstance()->setVisionTimeDirected(ballList->imageTime);
+		TimeHelper::getInstance()->setVisionTimeOmniCam(ballList->imageTime);
+		if (ballList->hypothesis.size() == 0)
+			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
+		auto ownPosition = wm->rawSensorData->getOwnPositionVision();
+		bool inField;
+
+		for (int i = 0; i < ballList->hypothesis.size(); i++)
+		{
+			double relFactor = 200;
+			ballPos.x = ballList->hypothesis[i].egoPosition.x;
+			ballPos.y = ballList->hypothesis[i].egoPosition.y;
+			ballPos.z = ballList->hypothesis[i].egoPosition.z;
+
+			if (ownPosition == nullptr)
+			{
+				inField = true;
+			}
+			else
+			{
+				double alloBallPosX = ownPosition->x;
+				double alloBallPosY = ownPosition->y;
+
+				alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
+				alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
+
+				if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor
+						&& fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
+				{
+					inField = true;
+				}
+			}
+
+			if (!inField)
+			{
+				continue;
+			}
+			if (p.z < -300)
+			{
+				continue;
+			}
+
+			if (p.z > 350)
+			{
+				continue;
+			}
+			if (p.x * p.x + p.y * p.y > 8000 * 8000)
+			{
+				continue;
+			}
+			// if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
+
+			ballPos.confidence = 0.3 + (ballList->hypothesis[i].errors * 0.1);
+			if (ballList->hypothesis[i].radius > 5)
+			{
+				ballPos.confidence += 0.2;
+			}
+			if (p.x * p.x + p.y * p.y < 1000 * 1000)
+			{
+				ballPos.confidence = 0.8;
+			}
+			if (p.z > 350)
+			{
+				ballPos.confidence *= 0.9;
+			}
+			if (ballPos.confidence > 0.9)
+			{
+				ballPos.confidence = 0.9;
+			}
+			ballPos.valid = true;
+			ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
+			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
+			ballIntegrated = true;
+			noBallCycles = 0;
+		}
+		if (!ballIntegrated)
+			noBallCycles++;
+
+		BallIntegrator::getInstance()->decreaseDirtyPointCertainty();
+		ObservedPoint op = BallIntegrator::getInstance()->getPoint();
+		op.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
+
+		ObjectContainer *currBallBuf = BallIntegrator::getInstance()->getContainer();
+
+		if (currBallBuf == NULL)
+		{
+			currBallBuf = &ballBuf;
+		}
+		currBallBuf->invalidate(400);
+
+		double dist = sqrt((op.x - mv.point.x) * (op.x - mv.point.x) + (op.y - mv.point.y) * (op.y - mv.point.y));
+		mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+														currBallBuf->getStartIndex(), currBallBuf->getLastIndex(),
+														0.3E07);
+		bool noValidPoint = false;
+
+		if (fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
+		{
+			noValidPoint = true;
+		}
+		ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+																currBallBuf->getStartIndex(),
+																currBallBuf->getLastIndex());
+		geometry::CNPoint3D ballPoint;
+		geometry::CNPoint3D ballVelocity;
+		MovingObject mv2 = mv;
+		mv2.point = allo2Ego(mv.point, BallIntegrator::getInstance()->getRefPosition());
+		mv2.velocity = allo2Ego(mv.velocity, BallIntegrator::getInstance()->getRefPosition());
+
+		if (op.valid && !noValidPoint)
+		{
+			ballPoint.x = (mv2.point.x);
+			ballPoint.y = (mv2.point.y);
+			ballPoint.z = (ze.z);
+			ballVelocity.x = (mv2.velocity.vx);
+			ballVelocity.y = (mv2.velocity.vy);
+			ballVelocity.z = (ze.vz);
+
+			auto pos = make_shared<geometry::CNPoint3D>(ballPoint.x, ballPoint.y, ballPoint.z);
+			auto vel = make_shared<geometry::CNPoint3D>(ballVelocity.x, ballVelocity.y, ballVelocity.z);
+			this->updateBallPos(pos, vel, op.confidence);
+			// Here you can do something for the z-coordinate, e.g. create a point3d
+		}
+	}
+}
+
+/* namespace alica */

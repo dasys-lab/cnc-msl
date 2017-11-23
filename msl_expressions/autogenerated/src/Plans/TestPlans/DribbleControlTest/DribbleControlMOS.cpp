@@ -18,7 +18,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1479905178049) ENABLED START*/ // Add additional options here
         this->sc = supplementary::SystemConfig::getInstance();
-        decayFactor = 1;
+        decayFactor = 0.5;
         testingMode = false;
         this->wheelSpeedLeftOld = 0;
         this->wheelSpeedRightOld = 0;
@@ -31,6 +31,7 @@ namespace alica
 
         // to increase initial actuator speed
         powerFactor = 0;
+        decayedPowerFactor = 0;
         transTolerance = 0;
         rotTolerance = 0;
         angleTolerance = 0;
@@ -49,6 +50,7 @@ namespace alica
         diagConst = 0;
         phi = 0;
         velYFactor = 0;
+        velXFactor = 0;
         powerOfRotation = 0;
         /*PROTECTED REGION END*/
     }
@@ -64,11 +66,16 @@ namespace alica
 
         if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
-            cout << "DribbleControlMOS: overridden by joystick!" << endl;
             return;
         }
-
-        auto odom = wm->rawSensorData->getOwnVelocityMotion();
+	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
+        if (wm->isUsingSimulator())
+        {
+        	odom = wm->rawSensorData->getOwnVelocityVision();
+        }
+        else {
+        	odom = wm->rawSensorData->getOwnVelocityMotion();
+        }
 
         if (odom == nullptr)
         {
@@ -80,14 +87,6 @@ namespace alica
         auto robotVel = odom->translation;
         auto robotRot = (double)odom->rotation;
         msl_actuator_msgs::BallHandleCmd msgback;
-
-        //		auto robotAngle = 0;
-        //		auto robotVel = 1000;
-        //		auto robotRot = 0;
-
-        //		cout << "DribbleControlMOS: angle odometry = " << robotAngle << endl;
-        //		cout << "DribbleControlMOS: translation odometry = " << robotVel << endl;
-        //		cout << "DribbleControlMOS: rotation odometry = " << robotRot << endl;
 
         bool haveBall = wm->ball->haveBall();
 
@@ -109,8 +108,6 @@ namespace alica
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
 
-        cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
-        cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
 
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
@@ -119,11 +116,7 @@ namespace alica
         // depends on hardware connection, left and right in this method are as seen from the robots point of view
         msgback.leftMotor = right;
         msgback.rightMotor = left;
-        cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
         sendWheelSpeed(msgback);
-
-        //        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
-        //                << ballAngle << "  " << left << " " << right << endl;
 
         /*PROTECTED REGION END*/
     }
@@ -140,7 +133,9 @@ namespace alica
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
         epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
         velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
+        velXFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velXFactor", NULL);
         powerFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerFactor", NULL);
+        decayFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.decayFactor", NULL);
         transTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.transTolerance", NULL);
         rotTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rotTolerance", NULL);
         angleTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.angleTolerance", NULL);
@@ -170,22 +165,21 @@ namespace alica
     /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
     void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback)
     {
-        double maxDelta = 100;
+        double maxDelta = 100.0;
 
-        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
-                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
-                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
-                && fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
-        {
-            cout << "DribbleControlMOS: Triggered lower deacceleration for receiving the ball!" << endl;
-            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
-            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
-        }
+//        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
+//                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
+//                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
+//                && fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
+//        {
+//            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
+//            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
+//        }
         this->wheelSpeedLeftOld = msgback.leftMotor;
         this->wheelSpeedRightOld = msgback.rightMotor;
 
-        msgback.rightMotor = abs(msgback.rightMotor) < 100 ? 0 : msgback.rightMotor;
-        msgback.leftMotor = abs(msgback.leftMotor) < 100 ? 0 : msgback.leftMotor;
+        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
+        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
 
         send(msgback);
     }
@@ -209,7 +203,6 @@ namespace alica
         // correction of velocity in x depending on rotation (epsilonRot)
         if (fabs(velYTemp) > 200)
         {
-            // special case where y velocity and rotation result in positive x velocity (sign(velY)!=sign(rot))
             velX = velX - epsilonRot * sign(velYTemp) * rBallRobot * rotation;
         }
         else
@@ -218,11 +211,14 @@ namespace alica
             velX = velX - epsilonRot * pow(rotation * sign(rotation), powerOfRotation) * rBallRobot;
         }
 
+        // special case where y velocity and rotation result in positive x velocity (sign(velY)!=sign(rot))
+        //TODO
+
         // rotation results in y velocity of the ball
         velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
-        cout << "velY 1 = " << velY << endl;
         // factor so robot can hold the ball if driving sideways
         velY = velY * velYFactor;
+        velX = velX * velXFactor;
 
         //	double powerFactor = 2;
         //	double transTolerance = 200;
@@ -233,38 +229,33 @@ namespace alica
         // only for negative x, so we don't push the ball out
         if (velXTemp < 0)
         {
-            // detect jumo in odometry values
-            if (transTolerance <= fabs(translation - translationOld) && rotTolerance <= fabs(rotation - rotationOld)
-                    && angleTolerance <= fabs(angle - angleOld))
+            // detect jump in odometry values
+            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
+                    || angleTolerance <= fabs(angle - angleOld))
             {
                 // powerFactor decays over the iterations
-                cout << "decayFactor" << endl;
-                double newPowerFactor = powerFactor * decayFactor;
-                velY = velY * newPowerFactor;
-                velX = velX * newPowerFactor;
-                decayFactor = decayFactor <= 1 ? 1 : decayFactor - 0.05;
-            }
-            else
-            {
-                decayFactor = 1;
-            }
+                decayedPowerFactor = powerFactor;
+             }
+
+            //velY = velY * (1 + decayedPowerFactor);
+            velX = velX * (1 + decayedPowerFactor);
+            decayedPowerFactor *= decayFactor;
+
         }
 
         translationOld = translation;
         rotationOld = rotation;
         angleOld = angle;
 
-        cout << "velX = " << velX << endl;
-        cout << "velY = " << velY << endl;
 
         // if we start moving forward, we don't want to push directly
         if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
-                && velYTemp >= staticMiddleBound && rotation <= 0.1 && rotation >= -0.1)
+                && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
         {
             // results in 0 arm wheel movement
             velX = 0;
         }
-        else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound && velYTemp <= staticMiddleBound
+        else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound && velYTemp <= staticUpperBound
                 && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
         {
             // results in minimum negative arm wheel movement
@@ -311,53 +302,44 @@ namespace alica
         if (ballAngle <= sec1)
         {
             // pull
-            cout << "sec0" << endl;
             angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
         }
         // wheel stops
         else if (ballAngle <= sec2)
         {
             // push
-            cout << "sec1" << endl;
             angleConst = (ballAngle - sec1) * sidewConst / (sec2 - sec1);
         }
         else if (ballAngle <= sec3)
         {
 
-            cout << "sec2" << endl;
             angleConst = sidewConst + (ballAngle - sec2) * (diagConst - sidewConst) / (sec3 - sec2);
         }
         else if (ballAngle <= sec4)
         {
-            cout << "sec3" << endl;
             angleConst = diagConst + (ballAngle - sec3) * (forwConst - diagConst) / (sec4 - sec3);
         }
         else if (ballAngle <= sec5)
         {
             // push
-            cout << "sec4" << endl;
             angleConst = forwConst + (ballAngle - sec4) * (-forwConst) / (sec5 - sec4);
         }
         // wheel stops
         else if (ballAngle <= sec6)
         {
             // pull
-            cout << "sec5" << endl;
             angleConst = (ballAngle - sec5) * (-sidewConst) / (sec6 - sec5);
         }
         else if (ballAngle <= sec7)
         {
-            cout << "sec6" << endl;
             angleConst = -sidewConst + (ballAngle - sec6) * (sidewConst - diagConst) / (sec7 - sec6);
         }
         else if (ballAngle >= sec7)
         {
             // rotate left
-            cout << "sec7" << endl;
             angleConst = -diagConst + (ballAngle - sec7) * (-forwConst + diagConst) / (sec8 - sec7);
         }
 
-        cout << "angleConst left = " << angleConst << endl;
         return ballVelocity * angleConst * velToInput;
     }
 
@@ -412,7 +394,6 @@ namespace alica
             angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
         }
 
-        cout << "angleConst right = " << angleConst << endl;
         return ballVelocity * angleConst * velToInput;
     }
 
