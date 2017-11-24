@@ -3,8 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467397900274) ENABLED START*/ //Add additional includes here
-#include "RingBuffer.h"
-#include <container/CNPoint2D.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -18,12 +18,12 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1489068164649) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1489068164649) ENABLED START*/ //Add additional private methods here
         bool toOwnPentalty;
-        shared_ptr<geometry::CNPoint2D> egoTarget;
+        geometry::CNPointEgo egoTarget;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -2,12 +2,14 @@ using namespace std;
 #include "Plans/Behaviours/AlignToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1415205272843) ENABLED START*/ //Add additional includes here
-#include "GeometryCalculator.h"
 #include <Ball.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
+using nonstd::optional;
+using nonstd::make_optional;
+using nonstd::nullopt;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -36,57 +38,43 @@ namespace alica
     void AlignToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball->getEgoBallVelocity();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < vector<double> > dstscan = wm->rawSensorData->getDistanceScan();
+        auto ballPos = wm->ball->getPositionEgo();
+        auto ballVel = wm->ball->getVelocityEgo();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
         msl_actuator_msgs::MotionControl mc;
-        if (ballPos == nullptr || ownPos == nullptr)
+        if (ballPos || ownPos)
         {
             return;
         }
-        if (ballVel == nullptr)
+        if (!ballVel)
         {
-            ballVel = make_shared < geometry::CNVelocity2D > (0, 0);
+            ballVel = geometry::CNVecEgo(0, 0);
         }
         else if (ballVel->length() > 5000)
         {
             ballVel = ballVel->normalize() * 5000;
         }
-        else
-        {
-            ballVel = ballVel->clone();
-        }
 
-        shared_ptr < geometry::CNPoint2D > aimPoint;
-        if (alloAimPoint != nullptr)
+        if (!aimEgo)
         {
-            aimPoint = alloAimPoint->alloToEgo(*ownPos);
-        }
-        else
-        {
-            aimPoint = getFreeGoalVector();
-            if (aimPoint != nullptr)
+            aimEgo = getFreeGoalVector();
+            if (!aimEgo)
             {
-                alloAimPoint = aimPoint->egoToAllo(*ownPos);
+                this->setFailure(true);
+                cout << "AlignToGoal: no aimPoint" << endl;
+                return;
             }
         }
 
-        if (aimPoint == nullptr)
-        {
-            this->setFailure(true);
-            cout << "AlignToGoal: no aimPoint" << endl;
-            return;
-        }
-
-        double aimAngle = aimPoint->angleTo();
+        double aimAngle = aimEgo->angleZ();
         double ballAngle = this->robot->kicker->kickerAngle;
 
         double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
-        if (dstscan != nullptr)
+        auto dstscan = this->wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+        if (dstscan)
         {
-            double distBeforeBall = minFree(ballAngle, 200, dstscan);
+            double distBeforeBall = this->robot->kicker->minFree(ballAngle, 200, *(*dstscan));
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
                 cout << "AlignToGoal: failure!" << endl;
@@ -105,21 +93,20 @@ namespace alica
             transBallTo = max(500.0, transBallTo);
         }
 
-        shared_ptr < geometry::CNPoint2D > driveTo = ballPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo->normalize() * transBallOrth;
-        driveTo->x += ballPos->normalize()->x * transBallTo;
-        driveTo->y += ballPos->normalize()->y * transBallTo;
+        auto driveTo = ballPos->rotateZ(-M_PI / 2.0);
+        driveTo = driveTo.normalize() * transBallOrth;
+        driveTo.x += ballPos->normalize().x * transBallTo;
+        driveTo.y += ballPos->normalize().y * transBallTo;
 
-        if (driveTo->length() > maxVel)
+        if (driveTo.length() > maxVel)
         {
-            driveTo = driveTo->normalize() * maxVel;
+            driveTo = driveTo.normalize() * maxVel;
         }
 
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = driveTo->length();
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = driveTo.length();
 
         send(mc);
-
         /*PROTECTED REGION END*/
     }
     void AlignToGoal::initialiseParameters()
@@ -135,34 +122,26 @@ namespace alica
         iter = 0;
         kicked = false;
         lastRotError = 0;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        if (ownPos)
         {
-            alloAimPoint = nullptr;
-        }
-        else
-        {
-            shared_ptr < geometry::CNPoint2D > aimPoint = getFreeGoalVector();
-            if (aimPoint != nullptr)
-            {
-                alloAimPoint = aimPoint->egoToAllo(*ownPos);
-            }
+            this->aimEgo = getFreeGoalVector();
         }
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1415205272843) ENABLED START*/ //Add additional methods here
-    double AlignToGoal::goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle)
+    double AlignToGoal::goalLineHitPoint(geometry::CNPositionAllo ownPos, double egoAngle)
     {
 
-        geometry::CNPoint2D hitVector = geometry::CNPoint2D();
-        hitVector.x = cos(egoAngle + ownPos->theta);
-        hitVector.y = sin(egoAngle + ownPos->theta);
-        double t = (wm->field->getFieldLength() / 2 - ownPos->x) / hitVector.x;
+        geometry::CNVecAllo hitVector;
+        hitVector.x = cos(egoAngle + ownPos.theta);
+        hitVector.y = sin(egoAngle + ownPos.theta);
+        double t = (wm->field->getFieldLength() / 2 - ownPos.x) / hitVector.x;
         if (t < 0)
         {
             return numeric_limits<double>::max();
         }
-        return ownPos->y + t * hitVector.y;
+        return ownPos.y + t * hitVector.y;
     }
 
     double AlignToGoal::minFree(double angle, double width, shared_ptr<vector<double> > dstscan)
@@ -199,38 +178,38 @@ namespace alica
             return z;
     }
 
-    shared_ptr<geometry::CNPoint2D> AlignToGoal::getFreeGoalVector()
+    nonstd::optional<geometry::CNPointEgo> AlignToGoal::getFreeGoalVector()
     {
 
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
-        if (ownPos == nullptr || dstscan == nullptr)
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();
+        if (!ownPos || !dstscan)
         {
-            return nullptr;
+            return nonstd::nullopt;
         }
-        vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
+        vector<nonstd::optional<geometry::CNPointEgo>> validGoalPoints;
         double x = wm->field->getFieldLength() / 2;
         //TODO add config param
         double y = -1000 + 150;
-        shared_ptr < geometry::CNPoint2D > aim = make_shared < geometry::CNPoint2D > (x, y);
+        geometry::CNPointAllo aim(x, y);
         double samplePoints = 4;
 
         for (double i = 0.0; i < samplePoints; i += 1.0)
         {
-            shared_ptr < geometry::CNPoint2D > egoAim = aim->alloToEgo(*ownPos);
-            double dist = egoAim->length();
-            double opDist = minFree(egoAim->angleTo(), 200, dstscan);
+            auto egoAim = aim.toEgo(*ownPos);
+            double dist = egoAim.length();
+            double opDist = this->robot->kicker->minFree(egoAim.angleZ(), 200, *(*dstscan));
             if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
             {
-                validGoalPoints.push_back(egoAim);
+                validGoalPoints.push_back(nonstd::make_optional<geometry::CNPointEgo>(egoAim));
                 //std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
             }
-            aim->y += 2 * abs(y) / samplePoints;
+            aim.y += 2 * abs(y) / samplePoints;
         }
 
         if (validGoalPoints.size() > 0)
         {
-            shared_ptr < geometry::CNPoint2D > ret = nullptr;
+            nonstd::optional<geometry::CNPointEgo> ret = nonstd::nullopt;
             double max = numeric_limits<double>::min();
             for (int i = 0; i < validGoalPoints.size(); i++)
             {
@@ -244,7 +223,7 @@ namespace alica
         }
         else
         {
-            return nullptr;
+            return nonstd::nullopt;
         }
     }
 /*PROTECTED REGION END*/

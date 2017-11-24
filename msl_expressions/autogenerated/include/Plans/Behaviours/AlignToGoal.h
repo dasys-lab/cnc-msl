@@ -35,6 +35,7 @@ namespace alica
         double minFree(double angle, double width, std::shared_ptr<std::vector<double> > dstscan);
         int mod(int x, int y);
         nonstd::optional<geometry::CNPointEgo> getFreeGoalVector();
+        double goalLineHitPoint(geometry::CNPositionAllo ownPos, double egoAngle);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1415205272843) ENABLED START*/ //Add additional private methods here

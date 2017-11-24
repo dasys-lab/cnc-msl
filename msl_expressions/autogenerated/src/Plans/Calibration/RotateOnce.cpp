@@ -210,14 +210,17 @@ namespace alica
         return rotations + currentNormedBearing;
     }
 
+    //FIXME BUG talk to M&K
     double RotateOnce::getMotionBearing()
     {
-        return wm->rawOdometry->position.angle;
+//        return wm->rawOdometry.position.angle;
+        return 0.0;
     }
 
     double RotateOnce::getIMUBearing()
     {
-        return wm->rawSensorData->getAverageBearing();
+//        return wm->rawSensorData->getAverageBearing();
+        return 0.0;
     }
 
     double RotateOnce::circularDiff(double a, double b)

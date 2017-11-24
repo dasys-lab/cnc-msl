@@ -11,6 +11,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <msl_helper_msgs/DebugMsg.h>
+using nonstd::make_optional;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -142,7 +143,7 @@ void OneGernericInGameBlocker::run(void *msg)
         // replaced with new moveToPoint method
         //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
 
-        movQuery.egoDestinationPoint = driveTo.toEgo(*ownPos);
+        movQuery.egoDestinationPoint = make_optional<geometry::CNPointEgo>(driveTo.toEgo(*ownPos));
         movQuery.egoAlignPoint = ballPos;
         mc = rm.moveToPoint(movQuery);
         if (driveTo.length() < 100)
@@ -154,9 +155,9 @@ void OneGernericInGameBlocker::run(void *msg)
     {
             // replaced method with new moveToPoint method
 //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
-            movQuery->egoDestinationPoint = driveTo;
-            movQuery->egoAlignPoint = ballPos;
-            movQuery->velocityMode = msl::MovementQuery::Velocity::FAST;
+            movQuery.egoDestinationPoint = make_optional<geometry::CNPointEgo>(driveTo.toEgo(*ownPos));
+            movQuery.egoAlignPoint = ballPos;
+            movQuery.velocityMode = msl::MovementQuery::Velocity::FAST;
             mc = rm.moveToPoint(movQuery);
     }
 

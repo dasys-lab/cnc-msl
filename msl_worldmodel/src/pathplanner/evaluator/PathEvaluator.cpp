@@ -93,7 +93,7 @@ pair<double, double> PathEvaluator::eval(geometry::CNPointAllo goal, shared_ptr<
     }
 
     // calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-    double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(),
+    double distobs = geometry::distancePointToLineSegmentCalc(nextNode->getEdge()->up()->point().x(),
                                                           nextNode->getEdge()->up()->point().y(), curPoint.x,
                                                           curPoint.y, nextPoint.x, nextPoint.y);
     // calculate weighted dist to both objects

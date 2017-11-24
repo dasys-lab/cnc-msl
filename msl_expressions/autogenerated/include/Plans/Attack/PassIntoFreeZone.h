@@ -21,7 +21,7 @@ class PassIntoFreeZone : public DomainBehaviour
     /*PROTECTED REGION ID(pro1508951632953) ENABLED START*/ // Add additional protected methods here
     vector<double> result;
     shared_ptr<alica::Query> query;
-    shared_ptr<msl::MovementQuery> mQuery;
+    msl::MovementQuery mQuery;
     /*PROTECTED REGION END*/
   private:
     /*PROTECTED REGION ID(prv1508951632953) ENABLED START*/ // Add additional private methods here

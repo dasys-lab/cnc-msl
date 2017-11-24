@@ -58,7 +58,7 @@ namespace alica
                                                                "distance", NULL);
             double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "power",
                                                             NULL);
-            auto p = make_shared < geometry::CNPoint2D > (distance, power);
+            geometry::CNPointAllo p(distance, power);
             this->lowKickList.push_back(p);
         }
 
@@ -68,7 +68,7 @@ namespace alica
                                                                "distance", NULL);
             double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "power",
                                                             NULL);
-            auto p = make_shared < geometry::CNPoint2D > (distance, power);
+            geometry::CNPointAllo p(distance, power);
             this->highKickList.push_back(p);
         }
         this->iterationsAfterKick = 0;
@@ -83,10 +83,10 @@ namespace alica
     void AlignAndShootTwoHoledWall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = this->wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
+        auto ownPos = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // actually ownPosition corrected
+        auto egoBallPos = this->wm->ball->getPositionEgo();
 
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
@@ -95,13 +95,13 @@ namespace alica
         if (this->kicked)
         {
             this->iterationsAfterKick++;
-            if (this->iterationsAfterKick > 30 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+            if (this->iterationsAfterKick > 30 && egoBallPos && egoBallPos->length() <= 400)
             {
                 this->kicked = false;
                 this->iterationsAfterKick = 0;
             }
 
-            if (egoBallPos == nullptr || egoBallPos->length() > 400)
+            if (! egoBallPos|| egoBallPos->length() > 400)
             {
                 if (this->holeMode == toggle)
                 {
@@ -123,17 +123,17 @@ namespace alica
 //        send(bhc);
 
         // Create ego-centric 2D target...
-        shared_ptr < geometry::CNPoint2D > egoHole;
-        geometry::CNPoint2D alloHole(this->higherHole.x, this->higherHole.y);
+        geometry::CNPointEgo egoHole;
+        geometry::CNPointAllo alloHole(this->higherHole.x, this->higherHole.y);
         if (useLowerHole)
         {
             alloHole.x = this->lowerHole.x;
             alloHole.y = this->lowerHole.y;
         }
-        egoHole = alloHole.alloToEgo(*ownPos);
+        egoHole = alloHole.toEgo(*ownPos);
 
-        double egoHoleAngle = egoHole->angleTo();
-        double egoBallAngle = egoBallPos->angleTo();
+        double egoHoleAngle = egoHole.angleZ();
+        double egoBallAngle = egoBallPos->angleZ();
         double deltaHoleAngle = geometry::deltaAngle(egoHoleAngle, M_PI);
         double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
 
@@ -155,11 +155,11 @@ namespace alica
         // Kick if aiming was correct long enough
         if (this->timesOnTargetCounter > this->timesOnTargetThreshold)
         {
-            KickControl kc;
+            msl_actuator_msgs::KickControl kc;
             kc.enabled = true;
 //            kc.kicker = egoBallPos->angleTo();
-            cout << "AlignAndShootTwoHoledWall: dist to hole: " << egoHole->length() << endl;
-            kc.power = setKickPower(egoHole->length());
+            cout << "AlignAndShootTwoHoledWall: dist to hole: " << egoHole.length() << endl;
+            kc.power = setKickPower(egoHole.length());
             float voltage;
             if (!this->disableKicking)
             {
@@ -172,7 +172,7 @@ namespace alica
             else
             {
                 // Send stop message to motion, in order to signal that the robot would shoot now
-                MotionControl empty;
+                msl_actuator_msgs::MotionControl empty;
                 empty.motion.angle = 0;
                 empty.motion.rotation = 0;
                 empty.motion.translation = 0;
@@ -190,7 +190,7 @@ namespace alica
         }
 
         // Create Motion Command for aiming
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         // PD Rotation Controller
         mc.motion.rotation = -(deltaHoleAngle * this->pRot + (deltaHoleAngle - lastRotError) * this->dRot);
@@ -200,18 +200,18 @@ namespace alica
         this->lastRotError = deltaHoleAngle;
 
         // crate the motion orthogonal to the ball
-        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+        auto driveTo = egoBallPos->rotateZ(-M_PI / 2.0);
         driveTo = driveTo * mc.motion.rotation;
 
         // add the motion towards the ball
         driveTo = driveTo + egoBallPos->normalize() * 10;
 
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = min(this->maxVel, driveTo->length());
+        mc.motion.angle = driveTo.angleZ();
+        mc.motion.translation = min(this->maxVel, driveTo.length());
 
         cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: "
-                << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", "
-                << driveTo->y << ")" << endl;
+                << egoBallPos->y << "\tRotation: " << mc.motion.rotation << "\tDriveTo: (" << driveTo.x << ", "
+                << driveTo.y << ")" << endl;
 
         send(mc);
         /*PROTECTED REGION END*/
@@ -240,7 +240,7 @@ namespace alica
     /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
     unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance)
     {
-        vector < shared_ptr < geometry::CNPoint2D >> *kickList;
+        vector <geometry::CNPointAllo > *kickList;
         if (this->useLowerHole)
         {
             kickList = &this->lowKickList;
@@ -251,7 +251,7 @@ namespace alica
         }
 
         int i = 0;
-        while (i < kickList->size() && distance > kickList->at(i)->x)
+        while (i < kickList->size() && distance > kickList->at(i).x)
         {
             i++;
         }
@@ -259,19 +259,19 @@ namespace alica
         // Don't interpolate for the first entry in the kick list ...
         if (i == 0)
         {
-            return kickList->at(0)->y;
+            return kickList->at(0).y;
         }
 
         // Don't interpolate for the last entry in the kick list ...
         if (i == kickList->size())
         {
-            return kickList->at(kickList->size() - 1)->y;
+            return kickList->at(kickList->size() - 1).y;
         }
 
         // Interpolate linear
-        return kickList->at(i - 1)->y
-                + (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x)
-                        * (kickList->at(i)->y - kickList->at(i - 1)->y);
+        return kickList->at(i - 1).y
+                + (distance - kickList->at(i - 1).x) / (kickList->at(i).x - kickList->at(i - 1).x)
+                        * (kickList->at(i).y - kickList->at(i - 1).y);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

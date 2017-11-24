@@ -332,7 +332,7 @@ bool PathPlanner::isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circul
         return !wm->field->isInsideField(startPos);
     }
 
-    double distToEdge = geometry::distancePointToLineSegment(
+    double distToEdge = geometry::distancePointToLineSegmentCalc(
             incidentHalfEdge->up()->point().x(), incidentHalfEdge->up()->point().y(),
             incidentHalfEdge->source()->point().x(), incidentHalfEdge->source()->point().y(),
             incidentHalfEdge->target()->point().x(), incidentHalfEdge->target()->point().y());

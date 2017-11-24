@@ -62,22 +62,22 @@ namespace alica
     void DribbleControlMOS::run(void* msg)
     {
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ // Add additional options here
-        auto joyCmd = wm->rawSensorData->getJoystickCommand();
+        auto joyCmd = wm->rawSensorData->getJoystickCommandsBuffer().getLastValidContent();
 
-        if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
+        if (joyCmd && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
             return;
         }
-	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
+	nonstd::optional<msl_msgs::MotionInfo> odom = nonstd::nullopt;
         if (wm->isUsingSimulator())
         {
-        	odom = wm->rawSensorData->getOwnVelocityVision();
+        	odom = wm->rawSensorData->getOwnVelocityVisionBuffer().getLastValidContent();
         }
         else {
-        	odom = wm->rawSensorData->getOwnVelocityMotion();
+        	odom = wm->rawSensorData->getOwnVelocityMotionBuffer().getLastValidContent();
         }
 
-        if (odom == nullptr)
+        if (!odom)
         {
             cerr << "DribbleControlMOS: no odometry!" << endl;
             return;

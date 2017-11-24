@@ -8,6 +8,7 @@ using namespace std;
 #include <Ball.h>
 #include <MSLFootballField.h>
 using geometry::CNPointAllo;
+using nonstd::make_optional;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,8 +32,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1462969724089) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        msl_actuator_msgs::MotionControl bm;
-
 
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         auto ballPos = wm->ball->getPositionEgo();
@@ -40,9 +39,9 @@ namespace alica
 
         // move to ball
         msl_actuator_msgs::MotionControl bm;
-        query->egoDestinationPoint = ballPos;
-        query->egoAlignPoint = query->egoDestinationPoint;
-        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+        query.egoDestinationPoint = ballPos;
+        query.egoAlignPoint = query.egoDestinationPoint;
+        query.velocityMode = msl::MovementQuery::Velocity::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->toAllo(*ownPos).x << " y: " << ballPos->toAllo(*ownPos).y
                 << endl;
@@ -50,7 +49,7 @@ namespace alica
 
         if (wm->ball->haveBall())
         {
-            query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
+            query.egoDestinationPoint = make_optional<geometry::CNPointEgo>(geometry::CNPointAllo(1, 1).toEgo(*ownPos));
         }
         bm = rm.moveToPoint(query);
 

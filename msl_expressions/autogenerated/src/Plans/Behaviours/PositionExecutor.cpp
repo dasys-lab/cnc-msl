@@ -16,6 +16,10 @@ using namespace std;
 #include <Robots.h>
 #include <Game.h>
 
+using nonstd::optional;
+using nonstd::make_optional;
+using nonstd::nullopt;
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -25,7 +29,6 @@ namespace alica
             DomainBehaviour("PositionExecutor")
     {
         /*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -39,21 +42,20 @@ namespace alica
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent(); // actually ownPosition corrected
+        auto egoBallPos = wm->ball->getPositionEgo();
 
         // return if necessary information is missing
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
 
         // Create allo ball
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+        auto alloBall = egoBallPos->toAllo(*ownPos);
 
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = make_optional<vector<geometry::CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
@@ -70,27 +72,26 @@ namespace alica
             }
             // get robot ids of robots in found entry point
             shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(receiverEp);
-            shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
+            optional<geometry::CNPositionAllo> receiverPos = nullopt;
             // exactly one robot is receiver
             int id = ids->at(0);
             if (id != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(id);
-                receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                receiverPos = wm->robots->teammates.getTeammatePositionBuffer(id).getLastValidContent();;
             }
             msl_actuator_msgs::MotionControl mc;
-            shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
+            geometry::CNPointEgo egoTarget;
 
-            if (receiverPos != nullptr)
+            if (receiverPos)
             {
                 // calculate target 60cm away from the ball and on a line with the receiver
-                egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * ballDistanceEx))->alloToEgo(*ownPos);
+                egoTarget = (alloBall + ((alloBall - receiverPos->getPoint()).normalize() * ballDistanceEx)).toEgo(*ownPos);
             }
             else
             {
                 // if there is no receiver, align to middle
-                egoTarget = (alloBall + alloTarget)->alloToEgo(*ownPos);
+                egoTarget = (alloBall + alloTargetVec).toEgo(*ownPos);
             }
 
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
@@ -98,27 +99,26 @@ namespace alica
             { // they already pressed start and we are still positioning, so speed up!
               // removed with new moveToPoint method
 //                mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
-                query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
-                query->snapDistance = fastCatchRadius;
-                query->additionalPoints = additionalPoints;
-                query->velocityMode = msl::MovementQuery::Velocity::FAST;
+                query.egoDestinationPoint = egoTarget;
+                query.egoAlignPoint = egoBallPos;
+                query.snapDistance = fastCatchRadius;
+                query.additionalPoints = additionalPoints;
+                query.velocityMode = msl::MovementQuery::Velocity::FAST;
                 mc = rm.moveToPoint(query);
             }
             else
             { // still enough time to position ...
 //                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
-                query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
-                query->snapDistance = slowCatchRadius;
-                query->additionalPoints = additionalPoints;
-                query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+                query.egoDestinationPoint = egoTarget;
+                query.egoAlignPoint = egoBallPos;
+                query.snapDistance = slowCatchRadius;
+                query.additionalPoints = additionalPoints;
+                query.velocityMode = msl::MovementQuery::Velocity::DEFAULT;
                 mc = rm.moveToPoint(query);
             }
 
             // if we reached the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 120
-                    && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+            if (egoTarget.length() < 120 && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);
             }
@@ -172,7 +172,7 @@ namespace alica
         }
 
         // set some static member variables
-        alloTarget = make_shared < geometry::CNPoint2D > (-500, 0);
+        alloTargetVec = geometry::CNVecAllo(-500, 0);
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here

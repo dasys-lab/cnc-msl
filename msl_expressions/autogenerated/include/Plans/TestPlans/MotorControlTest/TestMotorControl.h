@@ -6,7 +6,6 @@
 #include <SystemConfig.h>
 #include <Configuration.h>
 #include <limits>
-#include "container/CNPosition.h"
 #include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica

@@ -3,7 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1498664309837) ENABLED START*/ //Add additional includes here
-#include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -20,17 +19,17 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1498664309837) ENABLED START*/ //Add additional protected methods here
         void readConfigParameters();
-        shared_ptr<geometry::CNPoint2D> getClosestOpp();
+        nonstd::optional<geometry::CNPointAllo> getClosestOpp();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1498664309837) ENABLED START*/ //Add additional private methods here
-        std::shared_ptr<geometry::CNPoint2D> alloTargetPoint;
-        std::shared_ptr<geometry::CNPoint2D> egoTargetPoint;
+        geometry::CNPointAllo alloTargetPoint;
+        geometry::CNPointEgo egoTargetPoint;
         supplementary::SystemConfig* sc;
 
         // old variables -> some of them need to be removed when finished
         int wheelSpeed;
-        std::shared_ptr<geometry::CNPoint2D> lastClosesOpp;
+        geometry::CNPointAllo lastClosesOpp;
         double lastRotError;
         bool ownPenalty;
         std::vector<double> pastRotation;
@@ -45,8 +44,8 @@ namespace alica
         double orthoDriveWeight;
         double targetDriveWeight;
 
-        std::shared_ptr<msl::MovementQuery> query;
-        std::shared_ptr<geometry::CNPoint2D> destinationPoint;
+        msl::MovementQuery query;
+        geometry::CNPointAllo destinationPoint;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

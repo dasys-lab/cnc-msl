@@ -7,7 +7,6 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <SystemConfig.h>
 #include <FileSystem.h>
-#include <container/CNPoint2D.h>
 #include "ConsoleCommandHelper.h"
 //#include "Plans/Calibration/RotateOnce.h"
 /*PROTECTED REGION END*/

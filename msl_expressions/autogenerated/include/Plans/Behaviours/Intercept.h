@@ -2,16 +2,11 @@
 #define Intercept_H_
 
 #include "DomainBehaviour.h"
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <cnc_geometry/CNPositionEgo.h>
 /*PROTECTED REGION ID(inc1458757170147) ENABLED START*/ //Add additional includes here
-namespace geometry
-{
-    class CNVelocity2D;
-    class CNPoint2D;
-    class CNPosition;
-}
 namespace msl
 {
-    class MovementQuery;
     class PathProxy;
 }
 /*PROTECTED REGION END*/
@@ -52,14 +47,15 @@ namespace alica
         double maxBallVelocity;
         double catchRadius;
 
-        bool interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel,
-                            double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo);
-        void predictBallRobotSystem(msl_actuator_msgs::MotionControl mc, shared_ptr<geometry::CNPoint2D> ballPose,
-                                    shared_ptr<geometry::CNPoint2D> ballVel, shared_ptr<geometry::CNPosition> ownPos,
-                                    int ms, shared_ptr<geometry::CNPoint2D>& predBall,
-                                    shared_ptr<geometry::CNPoint2D>& predPos);
+        //unused, apparently..
+//        bool interceptPoint(geometry::CNPointEgo egoBall, shared_ptr<geometry::CNPoint2D> ballVel,
+//                            double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo);
+//        void predictBallRobotSystem(msl_actuator_msgs::MotionControl mc, shared_ptr<geometry::CNPoint2D> ballPose,
+//                                    shared_ptr<geometry::CNPoint2D> ballVel, geometry::CNPositionAllo ownPos,
+//                                    int ms, shared_ptr<geometry::CNPoint2D>& predBall,
+//                                    shared_ptr<geometry::CNPoint2D>& predPos);
 
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458757170147) ENABLED START*/ //Add additional private methods here

@@ -59,8 +59,8 @@ namespace alica
 
 //        cout << "try to drive to " << toX << "|" << toY << endl;
             hadBall = true;
-            query->egoDestinationPoint = egoGoal;
-            query->egoAlignPoint = egoGoal;
+            query.egoDestinationPoint = nonstd::make_optional<geometry::CNPointEgo>(egoGoal);
+            query.egoAlignPoint = nonstd::make_optional<geometry::CNPointEgo>(egoGoal);
 
             auto motionCommand = rm.moveToPoint(query);
             this->send(motionCommand);

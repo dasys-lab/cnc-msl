@@ -526,7 +526,7 @@ namespace alica
         for (int i = 0; i < points->size(); i++)
         {
             auto point = points->at(i);
-            if (geometry::distancePointToLineSegment2(point.x, point.y, ball, passPoint) < passCorridorWidth)
+            if (geometry::distancePointToLineSegment(point.x, point.y, ball, passPoint) < passCorridorWidth)
             {
                 return false;
             }
@@ -540,7 +540,7 @@ namespace alica
         for (int i = 0; i < points.size(); i++)
         {
             auto point = points.at(i);
-            if (geometry::distancePointToLineSegment2(point.x, point.y, ball, passPoint) < passCorridorWidth
+            if (geometry::distancePointToLineSegment(point.x, point.y, ball, passPoint) < passCorridorWidth
                     && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;

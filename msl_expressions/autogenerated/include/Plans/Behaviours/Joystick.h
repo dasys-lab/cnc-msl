@@ -6,6 +6,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <queue>
 #include <valarray>
+#include <nonstd/optional.hpp>
 
 namespace msl_msgs
 {
@@ -25,7 +26,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1421854975890) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<msl_msgs::JoystickCommand> lastProcessedCmd;
+        nonstd::optional<msl_msgs::JoystickCommand> lastProcessedCmd;
         std::queue<std::valarray<double>> pastTranslations;
         std::queue<std::valarray<double>> pastControlInput;
         double init[3] = {0.0, 0.0, 0.0};

@@ -30,7 +30,7 @@ namespace alica
         msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         auto ballPos = wm->ball->getPositionEgo();
-        if (!me.operator bool())
+        if (!me)
         {
             return;
         }

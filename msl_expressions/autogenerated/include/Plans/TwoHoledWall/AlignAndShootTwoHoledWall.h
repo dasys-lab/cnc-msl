@@ -28,29 +28,29 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1417620683982) ENABLED START*/ //Add additional protected methods here
-//        int timesOnTargetCounter = 0;
-//        HoleMode holeMode;
-//        bool useLowerHole;
-//        double maxVel;
-//        double pRot;
-//        double dRot;
-//        double lastRotError;
-//        double minRot;
-//        double maxRot;
-//        double angleTolerance, ballAngleTolerance;
-//        bool disableKicking;
-//        bool kicked;
-//        int iterationsAfterKick;
-//
-//        geometry::CNPointAllo higherHole;
-//        geometry::CNPointAllo lowerHole;
-//
-//        int timesOnTargetThreshold;
-//        int wheelSpeed;
-//        double voltage4shoot;
-//
-//        vector<geometry::CNPointAllo> highKickList;
-//        vector<geometry::CNPointAllo> lowKickList;
+        int timesOnTargetCounter = 0;
+        HoleMode holeMode;
+        bool useLowerHole;
+        double maxVel;
+        double pRot;
+        double dRot;
+        double lastRotError;
+        double minRot;
+        double maxRot;
+        double angleTolerance, ballAngleTolerance;
+        bool disableKicking;
+        bool kicked;
+        int iterationsAfterKick;
+
+        geometry::CNPointAllo higherHole;
+        geometry::CNPointAllo lowerHole;
+
+        int timesOnTargetThreshold;
+        int wheelSpeed;
+        double voltage4shoot;
+
+        vector<geometry::CNPointAllo> highKickList;
+        vector<geometry::CNPointAllo> lowKickList;
 
         unsigned short setKickPower(double distance);
 

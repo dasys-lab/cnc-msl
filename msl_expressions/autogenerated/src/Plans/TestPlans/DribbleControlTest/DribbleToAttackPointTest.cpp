@@ -8,10 +8,16 @@ using namespace std;
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 //#include "msl_msgs/PathPlanner.h"
+#include <pathplanner/VoronoiNet.h>
 //#include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
 #include <pathplanner/PathPlanner.h>
+
+using nonstd::optional;
+using nonstd::nullopt;
+using nonstd::make_optional;
+
 
 /*PROTECTED REGION END*/
 namespace alica
@@ -22,11 +28,8 @@ namespace alica
             DomainBehaviour("DribbleToAttackPointTest")
     {
         /*PROTECTED REGION ID(con1498664309837) ENABLED START*/ //Add additional options here
-        alloTargetPoint = make_shared<geometry::CNPoint2D>();
-        egoTargetPoint = make_shared<geometry::CNPoint2D>();
         sc = nullptr;
         wheelSpeed = 0;
-        lastClosesOpp = make_shared<geometry::CNPoint2D>();
         lastRotError = 0;
         ownPenalty = false;
         pastRotation =
@@ -42,8 +45,6 @@ namespace alica
         orthoDriveWeight = 0;
         targetDriveWeight = 0;
 
-        destinationPoint = make_shared<geometry::CNPoint2D>();
-        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointTest::~DribbleToAttackPointTest()
@@ -54,22 +55,22 @@ namespace alica
     void DribbleToAttackPointTest::run(void* msg)
     {
         /*PROTECTED REGION ID(run1498664309837) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        auto egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
         msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < msl::VoronoiNet > vNet = wm->pathPlanner->getCurrentVoronoiNet();
+        auto vNet = wm->pathPlanner->getCurrentVoronoiNet();
 
-        if (ownPos == nullptr)
+        if (!ownPos)
         {
             cerr << "DribbleToAttackPointTest::run(): own position is nullptr!" << endl;
             return;
         }
-        if (egoBallPos == nullptr)
+        if (!egoBallPos)
         {
             cerr << "DribbleToAttackPointTest::run(): egoBallPos is nullptr!" << endl;
         }
-        if (vNet == nullptr)
+        if (!vNet)
         {
             cerr << "DribbleToAttackPointTest::run(): voronoi net is nullptr!" << endl;
         }
@@ -77,18 +78,18 @@ namespace alica
         // drive to destination point
 
         //fill query
-        auto egoDestinationPoint = destinationPoint->alloToEgo(*ownPos);
-        query->egoDestinationPoint = egoDestinationPoint;
+        auto egoDestinationPoint = destinationPoint.toEgo(*ownPos);
+        query.egoDestinationPoint = nonstd::make_optional<geometry::CNPointEgo>(egoDestinationPoint);
 
         // get movement command
         mc = rm.moveToPoint(query);
 
         // turn the robot to the nearest opponent while he is rotating around the ball
         auto closestOpponent = getClosestOpp();
-        shared_ptr < geometry::CNPoint2D > alloAlignPoint = nullptr;
+        optional < geometry::CNPointAllo > alloAlignPoint = nullopt;
 
         //if there is no oppen closer than maxOppDist
-        if (closestOpponent == nullptr)
+        if (!closestOpponent)
         {
 //			query->egoAlignPoint = egoBallPos;
             cout << "no opponent nearby!" << endl;
@@ -98,10 +99,10 @@ namespace alica
         {
             // OwnPos = P1, closestOpp = P2
             // oppVec = P1 - P2 -> vector is pointing at ownPos
-            shared_ptr < geometry::CNPoint2D > oppVec = ownPos - closestOpponent;
+            auto oppVec = *ownPos - *closestOpponent;
             oppVec = oppVec * 1.2;
             // getting point out of vector
-            alloAlignPoint = closestOpponent + oppVec;
+            alloAlignPoint = *closestOpponent + oppVec;
             cout << "============================" << endl;
 //			cout << "ownPos:        x=" << ownPos->x << " y=" << ownPos->y << endl;
 //			cout << "closesOpp:     x=" << closestOpponent->x << " y=" << closestOpponent->y << endl;
@@ -110,10 +111,11 @@ namespace alica
 
             // for testing
 //			alloAlignPoint = closestOpponent;
-            query->egoAlignPoint = alloAlignPoint->alloToEgo(*(wm->rawSensorData->getOwnPositionVision()));
+            auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+            query.egoAlignPoint = alloAlignPoint->toEgo(*ownPos);
         }
 
-        query->rotateAroundTheBall = true;
+        query.rotateAroundTheBall = true;
         mc = rm.alignTo(query);
         // use rm.alignTo() method
         // try to combine moveToPoint and alignTo
@@ -139,26 +141,26 @@ namespace alica
 //		}
 //		counter = -1;
         readConfigParameters();
-        destinationPoint = make_shared < geometry::CNPoint2D > (0, 0);
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1498664309837) ENABLED START*/ //Add additional methods here
-    shared_ptr<geometry::CNPoint2D> DribbleToAttackPointTest::getClosestOpp()
+    optional<geometry::CNPointAllo> DribbleToAttackPointTest::getClosestOpp()
     {
         //get opponents
-        shared_ptr < msl::VoronoiNet > vNet = wm->pathPlanner->getCurrentVoronoiNet();
+        auto vNet = wm->pathPlanner->getCurrentVoronoiNet();
         auto opponents = vNet->getOpponentPositions();
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
 
         // find nearest opponent
-        shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
+        nonstd::optional<geometry::CNPointAllo > closestOpponent = nullopt;
         double lowestDist = numeric_limits<double>::max();
         double dist = 0;
 
         for (int i = 0; i < opponents->size(); i++)
         {
             auto opp = opponents->at(i);
-            dist = opp->distanceTo(ownPos);
+            auto ownPoint = ownPos->getPoint();
+            dist = opp.distanceTo(ownPoint);
             if (dist < maxOppDist)
             {
                 if (dist < lowestDist)
