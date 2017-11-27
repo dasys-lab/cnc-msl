@@ -82,7 +82,7 @@ namespace alica
         auto opps = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
         for (auto opp : *opps)
         {
-            double distToLine = geometry::distancePointToLineSegment(opp.x, opp.y, 2000, yCordOfReceiver,
+            double distToLine = geometry::distancePointToLineSegmentCalc(opp.x, opp.y, 2000, yCordOfReceiver,
                                                                      wm->field->getFieldLength() / 2 - 2000,
                                                                      yCordOfReceiver);
             if (distToLine > 3000)

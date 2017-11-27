@@ -12,6 +12,8 @@ using namespace std;
 #include <engine/Assignment.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+using nonstd::nullopt;
+using nonstd::make_optional;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -52,32 +54,33 @@ namespace alica
     void StandardAlignToPoint2Receivers::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467228931063) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+        auto egoBallPos = wm->ball->getPositionEgo();
 
         // return if necessary information is missing
-        if (ownPos == nullptr || egoBallPos == nullptr)
+        if (!ownPos || !egoBallPos)
         {
             return;
         }
-        this->canPass = true;
-        // Create allo ball
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
+        this->canPass = true;
+
+        // Create allo ball
+        auto alloBall = egoBallPos->toAllo(*ownPos);
         // Create additional points for path planning
-        auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = make_optional<vector<geometry::CNPointAllo>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        shared_ptr < geometry::CNPoint2D > egoTarget;
-        MotionControl mc;
-        RobotMovement rm;
+
+        msl_actuator_msgs::MotionControl mc;
+        msl::RobotMovement rm;
 
         EntryPoint* ep = getParentEntryPoint(teamMateTaskName1);
-        if (ep != nullptr)
+        if (ep)
         {
             // get the plan in which the behavior is running
             auto parent = this->runningPlan->getParent().lock();
-            if (parent == nullptr)
+            if (parent)
             {
                 cout << "parent null" << endl;
                 return;
@@ -88,68 +91,68 @@ namespace alica
             if (ids->size() > 0 && ids->at(0) != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-                if (pos != nullptr)
+                auto pos = wm->robots->teammates.getTeammatePositionBuffer(ids->at(0)).getLastValidContent();
+                if (pos)
                 {
-                    recPos1 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    recPos1 = make_optional<geometry::CNPointAllo>(pos->x, pos->y);
                 }
                 else
                 {
-                    recPos1 = nullptr;
+                    recPos1 = nullopt;
                 }
             }
         }
 
         EntryPoint* ep2 = getParentEntryPoint(teamMateTaskName2);
-        if (ep2 != nullptr)
+        if (ep2)
         {
             // get the plan in which the behavior is running
             auto parent = this->runningPlan->getParent().lock();
-            if (parent == nullptr)
+            if (parent)
             {
                 cout << "parent null" << endl;
                 return;
             }
             // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep2);
+            auto ids = parent->getAssignment()->getRobotsWorking(ep2);
             // exactly one robot is receiver
             if (ids->size() > 0 && ids->at(0) != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-                if (pos != nullptr)
+                auto pos = wm->robots->teammates.getTeammatePositionBuffer(ids->at(0)).getLastValidContent();
+                if (pos)
                 {
-                    recPos2 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    recPos2 = make_optional<geometry::CNPointAllo>(pos->x, pos->y);
                 }
                 else
                 {
-                    recPos2 = nullptr;
+                    recPos2 = nullopt;
                 }
             }
         }
-        if (recPos1 == nullptr && recPos2 == nullptr)
+        if (!recPos1 && !recPos2)
         {
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > passPoint = nullptr;
+        geometry::CNPointAllo passPoint;
         if (recPos1->y < 0.0)
         {
-            passPoint = make_shared < geometry::CNPoint2D > (recPos1->x, -wm->field->getFieldWidth() / 2 + 1000.0);
+            passPoint = geometry::CNPointAllo(recPos1->x, -wm->field->getFieldWidth() / 2 + 1000.0);
         }
         else
         {
-            passPoint = make_shared < geometry::CNPoint2D > (recPos1->x, wm->field->getFieldWidth() / 2 - 1000.0);
+            passPoint = geometry::CNPointAllo(recPos1->x, wm->field->getFieldWidth() / 2 - 1000.0);
         }
         if (!wm->field->isInsidePenalty(passPoint, 0.0))
         {
 
             // min dist to opponent
-            auto obs = wm->robots->opponents.getOpponentsAlloClustered();
+            auto obs = wm->robots->opponents.getOpponentsAlloClusteredBuffer().getLastValidContent();
             bool opponentTooClose = false;
             for (int i = 0; i < obs->size(); i++)
             {
-                if (obs->at(i)->distanceTo(passPoint) < minOppDist)
+                if (obs->at(i).distanceTo(passPoint) < minOppDist)
                 {
                     opponentTooClose = true;
                     break;
@@ -167,14 +170,14 @@ namespace alica
 //            }
 
             // some calculation to check whether any obstacle is inside the pass vector triangle
-            shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
-            double passLength = ball2PassPoint->length();
-            shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                    > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
-            shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
-            shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, obs)
-                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
+            auto ball2PassPoint = passPoint - alloBall;
+            double passLength = ball2PassPoint.length();
+            auto ball2PassPointOrth = geometry::CNVecAllo(-ball2PassPoint.y, ball2PassPoint.x).normalize() * ratio
+                    * passLength;
+            auto left = passPoint + ball2PassPointOrth;
+            auto right = passPoint - ball2PassPointOrth;
+            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, *obs)
+                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, *obs))
             {
                 canPass = false;
             }
@@ -190,7 +193,7 @@ namespace alica
         {
             this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
         }
-        shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
+        nonstd::optional<geometry::CNPointAllo> receiverPos = nullopt;
         if (this->canPassCounter > this->canPassThreshold)
         {
             this->canPassThreshold = -2;
@@ -205,18 +208,18 @@ namespace alica
         }
 
         // calculate target executerDistanceToBall away from the ball and on a line with the receiver
-        egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
+        auto egoTarget = (alloBall + ((alloBall - *receiverPos).normalize() * this->executerDistanceToBall)).toEgo(
                 *ownPos);
 
         // ask the path planner how to get there
-        this->m_Query->egoDestinationPoint = egoTarget;
-        this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
-        this->m_Query->additionalPoints = additionalPoints;
+        this->m_Query.egoDestinationPoint = egoTarget;
+        this->m_Query.egoAlignPoint = receiverPos->toEgo(*ownPos);
+        this->m_Query.additionalPoints = additionalPoints;
         mc = rm.moveToPoint(m_Query);
 
         // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < this->positionDistanceTolerance
-                && fabs(egoBallPos->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
+        if (egoTarget.length() < this->positionDistanceTolerance
+                && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < this->alignAngleTolerance)
         {
             this->setSuccess(true);
         }
@@ -232,9 +235,6 @@ namespace alica
         this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
         this->maxTurnAngle = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "maxTurnAngle", NULL);
         this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
-        this->m_Query = make_shared<MovementQuery>();
-        this->alloReceiverTarget.reset();
-        this->oldBallPos.reset();
         this->canPassCounter = 1;
         this->canPassThreshold = 0;
         string tmp;
@@ -265,15 +265,14 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467228931063) ENABLED START*/ //Add additional methods here
-    bool StandardAlignToPoint2Receivers::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
-                                                          shared_ptr<geometry::CNPoint2D> passPoint,
+    bool StandardAlignToPoint2Receivers::outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
                                                           double passCorridorWidth,
-                                                          shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+                                                          vector<geometry::CNPointAllo>& points)
     {
-        for (int i = 0; i < points->size(); i++)
+        for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth)
+            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
+                    < passCorridorWidth)
             {
                 return false;
             }
@@ -281,15 +280,15 @@ namespace alica
         return true;
     }
 
-    bool StandardAlignToPoint2Receivers::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                                                                   shared_ptr<geometry::CNPoint2D> passPoint,
+    bool StandardAlignToPoint2Receivers::outsideCorridoreTeammates(geometry::CNPointAllo ball,
+                                                                   geometry::CNPointAllo passPoint,
                                                                    double passCorridorWidth,
-                                                                   shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+                                                                   vector<geometry::CNPointAllo>& points)
     {
-        for (int i = 0; i < points->size(); i++)
+        for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
+            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
+                    < passCorridorWidth && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;
             }
@@ -297,34 +296,29 @@ namespace alica
         return true;
     }
 
-    bool StandardAlignToPoint2Receivers::outsideTriangle(shared_ptr<geometry::CNPoint2D> a,
-                                                         shared_ptr<geometry::CNPoint2D> b,
-                                                         shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                                         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-                                                     {
-                                                         shared_ptr<geometry::CNPoint2D> a2b = b - a;
-                                                         shared_ptr<geometry::CNPoint2D> b2c = c - b;
-                                                         shared_ptr<geometry::CNPoint2D> c2a = a - c;
-                                                         shared_ptr<geometry::CNPoint2D> a2p;
-                                                         shared_ptr<geometry::CNPoint2D> b2p;
-                                                         shared_ptr<geometry::CNPoint2D> c2p;
-                                                         shared_ptr<geometry::CNPoint2D> p;
-                                                         for (int i = 0; i < points->size(); i++)
-                                                         {
-                                                             p = points->at(i);
-                                                             a2p = p - a;
-                                                             b2p = p - b;
-                                                             c2p = p - c;
+    bool StandardAlignToPoint2Receivers::outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b,
+                                                         geometry::CNPointAllo c, double tolerance,
+                                                         vector<geometry::CNPointAllo>& points)
+    {
+        auto a2b = b - a;
+        auto b2c = c - b;
+        auto c2a = a - c;
+        for (int i = 0; i < points.size(); i++)
+        {
+            auto p = points.at(i);
+            auto a2p = p - a;
+            auto b2p = p - b;
+            auto c2p = p - c;
 
-                                                             if ((a2p->x * a2b->y - a2p->y * a2b->x) / a2p->normalize()->length()< tolerance
-						&& (b2p->x * b2c->y - b2p->y * b2c->x) / b2p->normalize()->length() < tolerance
-						&& (c2p->x * c2a->y - c2p->y * c2a->x) / c2p->normalize()->length() < tolerance)
-				{
-					return false;
-				}
+            if ((a2p.x * a2b.y - a2p.y * a2b.x) / a2p.normalize().length() < tolerance
+                    && (b2p.x * b2c.y - b2p.y * b2c.x) / b2p.normalize().length() < tolerance
+                    && (c2p.x * c2a.y - c2p.y * c2a.x) / c2p.normalize().length() < tolerance)
+            {
+                return false;
+            }
 
-			}
-			return true;
-		}
-/*PROTECTED REGION END*/			
-		} /* namespace alica */
+        }
+        return true;
+    }
+/*PROTECTED REGION END*/
+} /* namespace alica */

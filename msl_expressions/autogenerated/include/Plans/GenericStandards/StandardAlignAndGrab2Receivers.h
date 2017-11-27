@@ -5,10 +5,7 @@
 /*PROTECTED REGION ID(inc1462368682104) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <MSLWorldModel.h>
-namespace geometry
-{
-    class CNPoint2D;
-}
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,11 +23,11 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462368682104) ENABLED START*/ //Add additional private methods here
-        shared_ptr<msl::MovementQuery> query;
+        msl::MovementQuery query;
         string teamMateTaskName1;
         string teamMateTaskName2;
-        shared_ptr<geometry::CNPoint2D> recPos1;
-        shared_ptr<geometry::CNPoint2D> recPos2;
+        nonstd::optional<geometry::CNPointAllo> recPos1;
+        nonstd::optional<geometry::CNPointAllo> recPos2;
         double ratio;
         double ballRadius;
         double passCorridorWidth;
@@ -47,16 +44,13 @@ namespace alica
         msl::InfoTime startTime;
         int canPassCounter;
         int canPassThreshold;
-        bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                         shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D>passPoint,
-							  double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-
-        /*PROTECTED REGION END*/			};
-		} /* namespace alica */
+        bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
+                             double tolerance, vector<geometry::CNPointAllo>& points);
+        bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                       double passCorridorWidth, vector<geometry::CNPointAllo>& points);
+        bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint, double passCorridorWidth,
+                              vector<geometry::CNPointAllo>& points);
+        /*PROTECTED REGION END*/};
+} /* namespace alica */
 
 #endif /* StandardAlignAndGrab2Receivers_H_ */

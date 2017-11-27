@@ -352,7 +352,7 @@ namespace alica
     {
         for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment2(points.at(i).x, points.at(i).y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
                     < passCorridorWidth)
             {
                 return false;
@@ -366,7 +366,7 @@ namespace alica
     {
         for (int i = 0; i < points.size(); i++)
         {
-            if (geometry::distancePointToLineSegment2(points.at(i).x, points.at(i).y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points.at(i).x, points.at(i).y, ball, passPoint)
                     < passCorridorWidth && ball.distanceTo(points.at(i)) < ball.distanceTo(passPoint) - 100)
             {
                 return false;

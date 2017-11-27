@@ -2,16 +2,8 @@
 #define StandardAlignToPoint2Receivers_H_
 
 #include "DomainBehaviour.h"
+#include <msl_robot/robotmovement/MovementQuery.h>
 /*PROTECTED REGION ID(inc1467228931063) ENABLED START*/ //Add additional includes here
-using namespace msl;
-namespace geometry
-{
-    class CNPoint2D;
-}
-namespace msl
-{
-    class MovementQuery;
-}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,8 +23,8 @@ namespace alica
         /*PROTECTED REGION ID(prv1467228931063) ENABLED START*/ //Add additional private methods here
         string teamMateTaskName1;
         string teamMateTaskName2;
-        shared_ptr<geometry::CNPoint2D> recPos1;
-        shared_ptr<geometry::CNPoint2D> recPos2;
+        nonstd::optional<geometry::CNPointAllo> recPos1;
+        nonstd::optional<geometry::CNPointAllo> recPos2;
         bool canPass;
         double alignAngleTolerance;
         double positionDistanceTolerance;
@@ -44,21 +36,17 @@ namespace alica
         double ballRadius;
         double maxTurnAngle;
         double ratio;
-        shared_ptr<MovementQuery> m_Query;
-        shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
-        shared_ptr<geometry::CNPoint2D> oldBallPos;
+        msl::MovementQuery m_Query;
         int canPassCounter;
         int canPassThreshold;
 
-        bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                         shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-                         bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D>passPoint,
-							  double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-        /*PROTECTED REGION END*/			};
-		} /* namespace alica */
+        bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,
+                             double tolerance, vector<geometry::CNPointAllo>& points);
+        bool outsideCorridoreTeammates(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint,
+                                       double passCorridorWidth, vector<geometry::CNPointAllo>& points);
+        bool outsideCorridore(geometry::CNPointAllo ball, geometry::CNPointAllo passPoint, double passCorridorWidth,
+                              vector<geometry::CNPointAllo>& points);
+        /*PROTECTED REGION END*/};
+} /* namespace alica */
 
 #endif /* StandardAlignToPoint2Receivers_H_ */
