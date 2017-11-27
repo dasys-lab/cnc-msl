@@ -32,6 +32,7 @@
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
+#include <process_manager/ProcessCommand.h>
 #include <std_msgs/Bool.h>
 #include <tf/tf.h>
 
@@ -498,8 +499,75 @@ namespace msl
         return ownID;
     }
 
-    void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
-    {
+    void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)    {
         rawSensorData->processLightBarrier(msg);
     }
+
+    double msl::MSLWorldModel::getRobotRadius()
+       {
+           // TODO test if this breaks anything, remove line otherwise
+   //              supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+           supplementary::Configuration *motion = (*sc)["Motion"];
+
+           return motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
+       }
+
+       void msl::MSLWorldModel::setRobotRadius(double newRadius)
+       {
+           // TODO test if this breaks anything, remove line otherwise
+   //              supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+           supplementary::Configuration *motion = (*sc)["Motion"];
+           motion->set(boost::lexical_cast<string>(newRadius), "Motion.MotionControl.RobotRadius", NULL);
+           motion->store();
+       }
+
+       double msl::MSLWorldModel::adjustRobotRadius(double difference)
+       {
+           double newRadius = getRobotRadius() + difference;
+           setRobotRadius(newRadius);
+           return newRadius;
+       }
+
+       void msl::MSLWorldModel::sendKillMotionCommand()
+       {
+           // cout << "killing motion" << endl;
+           supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+           int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
+           std::vector<int> ownRobotId;
+           ownRobotId.push_back(this->getOwnId());
+           std::vector<int> pKeys;
+           pKeys.push_back(processId);
+           process_manager::ProcessCommand command;
+           command.cmd = 1;
+           command.receiverId = this->getOwnId();
+           command.robotIds = ownRobotId;
+           command.processKeys = pKeys;
+           std::vector<int> paramsets;
+           paramsets.push_back(0);
+           command.paramSets = paramsets;
+           processCommandPub.publish(command);
+       }
+
+       void msl::MSLWorldModel::sendStartMotionCommand()
+       {
+           // cout << "starting motion" << endl;
+           supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+           int processId = processManaging->get<int>("Processes", "ProcessDescriptions", "Motion", "id", NULL);
+           std::vector<int> ownRobotId;
+           ownRobotId.push_back(this->getOwnId());
+           std::vector<int> pKeys;
+           pKeys.push_back(processId);
+           process_manager::ProcessCommand command;
+           command.cmd = 0;
+           command.receiverId = this->getOwnId();
+           command.robotIds = ownRobotId;
+           command.processKeys = pKeys;
+           std::vector<int> paramsets;
+           paramsets.push_back(0);
+           command.paramSets = paramsets;
+           processCommandPub.publish(command);
+   }
+
 } /* namespace msl */

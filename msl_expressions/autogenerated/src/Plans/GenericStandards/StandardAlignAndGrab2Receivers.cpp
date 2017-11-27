@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
 
 /*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ //Add additional includes here

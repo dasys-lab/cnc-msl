@@ -17,6 +17,7 @@ find_package(catkin REQUIRED
   msl_helper_msgs
   nonstd)
 
+find_package(catkin REQUIRED nonstd cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine process_manager robot_control constraintsolver tf msl_helper_msgs)
 find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
