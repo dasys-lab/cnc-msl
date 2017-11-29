@@ -290,15 +290,10 @@ namespace msl
             }
         }
         lock_guard<mutex> lock(wmMutex);
-        cout << "2" << endl;
         rawSensorData->processWorldModelData(msg);
-        cout << "3" << endl;
         obstacles->processWorldModelData(*msg);
-        cout << "4" << endl;
         pathPlanner->prepareVoronoiDiagram();
-        cout << "5" << endl;
         visionTrigger.run();
-        cout << "6" << endl;
     }
 
     void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
@@ -393,12 +388,14 @@ namespace msl
         }
 
         // add shared ball
-        auto sb = this->ball->getAlloSharedBallPositionAndCertainty();
+        auto sb = this->ball->getAlloSharedBallPositionBuffer().getLastValid();
         if (sb != nullptr && this->ball->getSharedBallSupporter() > 1)
         {
-            msg.sharedBall.point.x = sb->first.x;
-            msg.sharedBall.point.y = sb->first.y;
-            msg.sharedBall.confidence = sb->second;
+            auto pos = sb->getInformation();
+            auto certainty = sb->getCertainty();
+            msg.sharedBall.point.x = pos.x;
+            msg.sharedBall.point.y = pos.y;
+            msg.sharedBall.confidence = certainty;
             msg.sharedBall.evidence = this->ball->getSharedBallSupporter();
         }
         else if (sb == nullptr)
@@ -418,7 +415,7 @@ namespace msl
         auto ballVelInfo = this->ball->getVisionBallVelocityBuffer().getLastValid();
         if (ballVelInfo != nullptr)
         {
-            auto ballVel = ballVelInfo->getInformation();
+            auto ballVel = ballVelInfo->getInformation().toAllo(ownPos);
             msg.ball.velocity.vx = ballVel.x;
             msg.ball.velocity.vy = ballVel.y;
         }

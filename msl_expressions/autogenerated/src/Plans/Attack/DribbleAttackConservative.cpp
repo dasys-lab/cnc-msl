@@ -29,52 +29,51 @@ namespace alica
     void DribbleAttackConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-        ;
-        auto ballPos = wm->ball->getPositionEgo();
-
-        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
-
-        if (!ownPos)
-        {
-            return;
-        }
-
-        auto goalMid = alloGoalMid.toEgo(*ownPos);
-        auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
-        msl_actuator_msgs::MotionControl bm;
-        query.egoDestinationPoint = make_optional<geometry::CNPointEgo>(goalMid);
-
-        auto tmpMC = rm.moveToPoint(query);
-
-        if (!corner && tmpMC.motion.translation != NAN)
-        {
-            bm = tmpMC;
-        }
-        else
-        {
-            query.egoDestinationPoint = corner;
-
-            auto tmpMC = rm.moveToPoint(query);
-
-            if (tmpMC.motion.translation != NAN)
-            {
-                //this makes no sense
-                corner = nonstd::make_optional<geometry::CNPointEgo>((corner->toAllo(*ownPos) + geometry::CNVecAllo(-800, 0)).toEgo(*ownPos));
-                bm = tmpMC;
-            }
-        }
-
-        //if I drive into the enemy goal area
-        msl_actuator_msgs::MotionControl mc = rm.ruleActionForBallGetter();
-        if (!std::isnan(mc.motion.translation))
-        {
-            send(mc);
-        }
-        else
-        {
-            send(bm);
-        }
+//        msl::RobotMovement rm;
+//        auto ballPos = wm->ball->getPositionEgo();
+//
+//        auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
+//
+//        if (!ownPos)
+//        {
+//            return;
+//        }
+//
+//        auto goalMid = alloGoalMid.toEgo(*ownPos);
+//        auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
+//        msl_actuator_msgs::MotionControl bm;
+//        query.egoDestinationPoint = make_optional<geometry::CNPointEgo>(goalMid);
+//
+//        auto tmpMC = rm.moveToPoint(query);
+//
+//        if (!corner && tmpMC.motion.translation != NAN)
+//        {
+//            bm = tmpMC;
+//        }
+//        else
+//        {
+//            query.egoDestinationPoint = corner;
+//
+//            auto tmpMC = rm.moveToPoint(query);
+//
+//            if (tmpMC.motion.translation != NAN)
+//            {
+//                //this makes no sense
+//                corner = nonstd::make_optional<geometry::CNPointEgo>((corner->toAllo(*ownPos) + geometry::CNVecAllo(-800, 0)).toEgo(*ownPos));
+//                bm = tmpMC;
+//            }
+//        }
+//
+//        //if I drive into the enemy goal area
+//        msl_actuator_msgs::MotionControl mc = rm.ruleActionForBallGetter();
+//        if (!std::isnan(mc.motion.translation))
+//        {
+//            send(mc);
+//        }
+//        else
+//        {
+//            send(bm);
+//        }
 
         /*PROTECTED REGION END*/
     }

@@ -30,7 +30,8 @@ namespace msl
 {
     Ball::Ball(MSLWorldModel *wm, int ringbufferLength) :
             visionBallPositionBuffer(ringbufferLength), visionBallVelocityBuffer(ringbufferLength), ballBuf(30), oppBallPossession(
-                    ringbufferLength), sharedBallPosition(ringbufferLength), ballGuessPosition(ringbufferLength)
+                    ringbufferLength), alloSharedBallPositionBuffer(ringbufferLength), ballGuessPosition(
+                    ringbufferLength)
     {
         haveBallDistanceDynamic = 0;
         hadBefore = false;
@@ -67,6 +68,11 @@ namespace msl
         return this->visionBallPositionBuffer;
     }
 
+    const InfoBuffer<geometry::CNPointAllo> &Ball::getAlloSharedBallPositionBuffer() const
+    {
+        return this->alloSharedBallPositionBuffer;
+    }
+
     const InfoBuffer<geometry::CNVecEgo> &Ball::getVisionBallVelocityBuffer() const
     {
         return this->visionBallVelocityBuffer;
@@ -98,7 +104,7 @@ namespace msl
     optional<geometry::CNPointEgo> Ball::getPositionEgo() const
     {
         auto rawBallInfo = this->visionBallPositionBuffer.getLastValid();
-        auto sharedBallInfo = this->sharedBallPosition.getLast();
+        auto sharedBallInfo = this->alloSharedBallPositionBuffer.getLast();
 
         if (rawBallInfo == nullptr)
         {
@@ -248,7 +254,7 @@ namespace msl
     {
         geometry::CNPointAllo guessedPoint;
         double confidence = 0;
-        auto sharedBallInfo = this->sharedBallPosition.getLastValid();
+        auto sharedBallInfo = this->alloSharedBallPositionBuffer.getLastValid();
         InfoTime time = wm->getTime();
 
         // If we have a shared ball -> use sb
@@ -424,7 +430,7 @@ namespace msl
         double certainty = bestVoting == nullptr ? 0.0 : bestVoting->teamConfidence;
         // TODO: replace maxValidity
         auto sbi = make_shared<InformationElement<geometry::CNPointAllo>>(sb, time, this->maxValidity, certainty);
-        sharedBallPosition.add(sbi);
+        alloSharedBallPositionBuffer.add(sbi);
     }
 
     int Ball::getSharedBallSupporter()
@@ -479,6 +485,7 @@ namespace msl
         {
             // if you lost the ball, further pretend that you have it for at most 2 iterations
             hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
+            cout << "hasBallIterarion: " << hasBallIteration << endl;
             this->ballPossessionStatus = (
                     this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
             //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
@@ -931,17 +938,14 @@ namespace msl
         }
     }
 
-    std::shared_ptr<geometry::CNPointAllo> Ball::getAlloSharedBallPosition(int index)
+    nonstd::optional<geometry::CNPointAllo> Ball::getAlloSharedBallPosition()
     {
-        //required for Game
-        return nullptr;
-    }
-
-    std::shared_ptr<std::pair<geometry::CNPointAllo, double> > Ball::getAlloSharedBallPositionAndCertainty(int index)
-    {
-
-        //TODO required for MSLWorldModel
-        return nullptr;
+        auto sharedBallInfo = this->alloSharedBallPositionBuffer.getLastValid();
+        if (!sharedBallInfo)
+        {
+            return nonstd::nullopt;
+        }
+        return sharedBallInfo->getInformation();
     }
 
     bool Ball::getOppBallPossession(int index)

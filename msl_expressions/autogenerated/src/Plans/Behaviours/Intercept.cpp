@@ -1,4 +1,3 @@
-using namespace std;
 #include "Plans/Behaviours/Intercept.h"
 
 /*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
@@ -55,7 +54,7 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-        this->setSuccess(true);
+//        this->setSuccess(true);
 
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
@@ -137,6 +136,7 @@ namespace alica
         //TODO dirty fix to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos.getPoint().toAllo(*ownPos)))
         {
+            cout << "not in field interccept" << endl;
             msl_actuator_msgs::MotionControl mc;
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
@@ -180,8 +180,9 @@ namespace alica
 
         query.blockOppGoalArea = true;
         query.blockOwnGoalArea = true;
+        cout << "in intercept" << endl;
 
-
+        //SEGFAULT
         auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, msl::PathEvaluator(),msl::PathPlannerQuery());
         if (!pathPlanningResult)
         {
@@ -237,6 +238,7 @@ namespace alica
 //        }
         if (this->wm->ball->haveBall())
         {
+            cout << "success itnercept" << endl;
             this->setSuccess(true);
         }
         /*PROTECTED REGION END*/

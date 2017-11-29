@@ -85,9 +85,8 @@ namespace msl
          */
         void clear(bool cleanBuffer)
         {
-            std::cout << "clr1" << std::endl;
             std::lock_guard<std::mutex> guard(mtx_);
-            std::cout << "clr2" << std::endl;
+
             this->index = -1;
             this->infoElementCounter = 0;
 
@@ -116,16 +115,8 @@ namespace msl
          */
         const std::shared_ptr<const InformationElement<T>> getLast(const int n = 0) const
         {
-            std::cout << "bla1" << std::endl;
-//            std::lock_guard<std::mutex> guard(mtx_);
-            std::cout << "bla2" << std::endl;
-            if (this->index < 0 || this->bufferSize <= n || this->infoElementCounter <= n)
-            {
-                std::cout << "bla3" << std::endl;
-                return nullptr;
-            }
-            std::cout << "bla4" << std::endl;
-            return this->ringBuffer[(this->index - n) % this->bufferSize];
+            std::lock_guard<std::mutex> guard(mtx_);
+            return this->getLastInternal(n);
         }
 
         /**
@@ -137,6 +128,7 @@ namespace msl
         const std::shared_ptr<const InformationElement<T>> getLastValid() const
         {
             std::lock_guard<std::mutex> guard(mtx_);
+
             if (this->index < 0 || this->bufferSize <= 0 || this->infoElementCounter <= 0)
             {
                 return nullptr;
@@ -161,6 +153,7 @@ namespace msl
          */
         const nonstd::optional<T> getLastValidContent() const
         {
+            std::cout << "get LVC 1 " << std::endl;
             auto lastValid = this->getLastValid();
 
             if (lastValid == nullptr)
@@ -206,7 +199,6 @@ namespace msl
                     break;
                 }
             }
-
             return closest;
         }
 
@@ -239,7 +231,8 @@ namespace msl
         bool add(const std::shared_ptr<const InformationElement<T>> element)
         {
             std::lock_guard<std::mutex> guard(mtx_);
-            auto last = this->getLast();
+
+            auto last = this->getLastInternal();
             // only allow newer information
             if (last && element->getCreationTime() < last->getCreationTime())
             {
@@ -248,33 +241,26 @@ namespace msl
             this->infoElementCounter++;
             this->index = (++this->index) % this->bufferSize;
             this->ringBuffer[index] = element;
-
             return true;
         }
 
-        /** FIXME
-         * DELEEEETE ME
+
+    protected:
+
+        /**
+         * Sets the out parameter to the n-th last element, if it exists without locking the mutex
+         * @param n States that the n-th last element should be set to the out parameter.
+         * @return The n-th last element if it exists, nullptr otherwise.
          */
-        /*
-         bool add(const std::shared_ptr< InformationElement<T>> element)
-         {
-         std::lock_guard<std::mutex> guard(mtx_);
+        const std::shared_ptr<const InformationElement<T>> getLastInternal(const int n = 0) const
+        {
+            if (this->index < 0 || this->bufferSize <= n || this->infoElementCounter <= n)
+            {
+                return nullptr;
+            }
+            return this->ringBuffer[(this->index - n) % this->bufferSize];
+        }
 
-         auto last = this->getLast();
-
-         // only allow newer information
-         if (last && element->getCreationTime() < last->getCreationTime())
-         {
-         return false;
-         }
-
-         this->infoElementCounter++;
-         this->index = (++this->index) % this->bufferSize;
-         this->ringBuffer[index] = element;
-
-         return true;
-         }
-         */
 
     private:
         mutable std::mutex mtx_;

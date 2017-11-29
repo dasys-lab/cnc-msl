@@ -185,9 +185,7 @@ namespace msl
             // full odometry
             auto odo = make_shared<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(
                     data->odometry, time, this->maxValidity, data->odometry.certainty);
-            cout << "test1" << endl;
             correctedOdometry.add(odo);
-            cout << "test5" << endl;
             // Vision
             auto posData = geometry::CNPositionAllo(data->odometry.position.x, data->odometry.position.y,
                                                     data->odometry.position.angle);

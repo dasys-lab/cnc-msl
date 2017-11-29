@@ -241,9 +241,9 @@ namespace alica
          */
 
         //TODO this method doesn't exist anymore :<
-        /*if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.4)
-         ballPos = nullopt;
-         */
+        if (wm->ball->getVisionBallPositionBuffer().getLast()->getCertainty() < 0.4)
+            ballPos = nullopt;
+
         if (ballPos && ballPos->length() > (msl::Rules::getInstance()->getStayAwayRadius() + 750))
             ballPos = nullopt;
 

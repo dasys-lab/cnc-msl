@@ -72,7 +72,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
             // safety measure in case one agent crashes
             continue;
         }
-        robotPositions.push_back(robotPos.value());
+        robotPositions.push_back(*robotPos);
         auto vec = make_shared<TVec>(initializer_list<shared_ptr<Term>>{
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(0)->at(i)->at(0)),
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(0)->at(i)->at(1))});
@@ -91,7 +91,7 @@ void Constraint1457173948942::getConstraint(shared_ptr<ProblemDescriptor> c, sha
             // safety measure in case one agent crashes
             continue;
         }
-        robotPositions.push_back(robotPos.value());
+        robotPositions.push_back(*robotPos);
         auto vec = make_shared<TVec>(initializer_list<shared_ptr<Term>>{
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(1)->at(i)->at(0)),
             dynamic_pointer_cast<autodiff::Variable>(domainVariables->at(1)->at(i)->at(1))});

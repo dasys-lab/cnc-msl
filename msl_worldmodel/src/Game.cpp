@@ -354,8 +354,8 @@ void Game::updateGameState()
     auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
     shared_ptr<pair<int, geometry::CNPositionAllo>> closestRobot;
     double minDist = numeric_limits<double>::max();
-    auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
-    if (sharedBallPosition == nullptr)
+    auto sharedBallPosition = wm->ball->getAlloSharedBallPositionBuffer().getLastValidContent();
+    if (!sharedBallPosition)
     {
         return;
     }
