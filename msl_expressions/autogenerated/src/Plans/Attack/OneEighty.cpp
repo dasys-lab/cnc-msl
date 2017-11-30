@@ -37,7 +37,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1434650892176) ENABLED START*/ //Add additional options here
         auto ballPos = wm->ball->getPositionEgo();
-        auto ballVel = wm->ball->getVelocityEgo();
+        auto ballVel = wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
         geometry::CNVecEgo ballVel2;
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();

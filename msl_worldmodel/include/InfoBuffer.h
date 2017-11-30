@@ -153,7 +153,6 @@ namespace msl
          */
         const nonstd::optional<T> getLastValidContent() const
         {
-            std::cout << "get LVC 1 " << std::endl;
             auto lastValid = this->getLastValid();
 
             if (lastValid == nullptr)

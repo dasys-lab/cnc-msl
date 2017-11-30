@@ -46,7 +46,7 @@ namespace alica
         msl::RobotMovement rm;
 
         auto ballPos = wm->ball->getPositionEgo();
-        auto ballVel = wm->ball->getVelocityEgo();
+        auto ballVel = wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
         geometry::CNVecEgo ballVel2;
         auto ownPos = wm->rawSensorData->getOwnPositionVisionBuffer().getLastValidContent();
         auto dstscan = wm->rawSensorData->getDistanceScanBuffer().getLastValidContent();

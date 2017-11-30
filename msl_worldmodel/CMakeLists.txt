@@ -93,6 +93,8 @@ catkin_package(
    src/obstaclehandler/Obstacles.cpp
    src/obstaclehandler/SimpleCluster.cpp
    src/obstaclehandler/AnnotatedObstacleClusterPool.cpp
+   src/obstaclehandler/CNRobotAllo.cpp
+   src/obstaclehandler/CNRobotEgo.cpp
  )
 
 ## Add cmake target dependencies of the executable/library

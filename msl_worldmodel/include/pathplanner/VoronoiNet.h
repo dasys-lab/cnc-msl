@@ -6,7 +6,7 @@
 #include "pathplanner/evaluator/IPathEvaluator.h"
 
 #include <cnc_geometry/CNPointAllo.h>
-#include <cnc_geometry/CNRobotAllo.h>
+#include <obstaclehandler/CNRobotAllo.h>
 #include <nonstd/optional.hpp>
 
 
@@ -173,7 +173,7 @@ class VoronoiNet
     /**
      * Allo Obstacles for constructing this Voronoi Diagram
      */
-    std::shared_ptr<const std::vector<geometry::CNRobotAllo>> getAlloClusteredObsWithMe() const;
+    std::shared_ptr<const std::vector<CNRobotAllo>> getAlloClusteredObsWithMe() const;
 
     /**
      * Artificial Obstacles for construction this Voronoi Diagram
@@ -280,7 +280,7 @@ class VoronoiNet
     std::map<Site_2, int> pointRobotKindMapping;
 
     // DATA for constructing this voronoi net
-    std::shared_ptr<std::vector<geometry::CNRobotAllo>> alloClusteredObsWithMe;
+    std::shared_ptr<std::vector<CNRobotAllo>> alloClusteredObsWithMe;
     std::shared_ptr<std::vector<geometry::CNPointAllo>> artificialObstacles;
     std::shared_ptr<std::vector<geometry::CNPointAllo>> additionalObstacles;
 };

@@ -30,7 +30,7 @@ namespace msl
 {
     Ball::Ball(MSLWorldModel *wm, int ringbufferLength) :
             visionBallPositionBuffer(ringbufferLength), visionBallVelocityBuffer(ringbufferLength), ballBuf(30), oppBallPossession(
-                    ringbufferLength), alloSharedBallPositionBuffer(ringbufferLength), ballGuessPosition(
+                    ringbufferLength), alloSharedBallPositionBuffer(ringbufferLength), ballGuessPositionBuffer(
                     ringbufferLength)
     {
         haveBallDistanceDynamic = 0;
@@ -57,6 +57,7 @@ namespace msl
         {
             throw;
         }
+        this->ballPossessionStatus = BallPossessionStatus::NotInKickerDistance;
     }
 
     Ball::~Ball()
@@ -128,7 +129,7 @@ namespace msl
             }
 
             // Here we could use ball guess
-            auto guess = getAlloBallGuessPosition();
+            auto guess = ballGuessPositionBuffer.getLastValidContent();
             if (guess)
             {
                 return guess->toEgo(ownPos);
@@ -230,11 +231,6 @@ namespace msl
         return ballMoved;
     }
 
-    optional<geometry::CNPointAllo> Ball::getAlloBallGuessPosition() const
-    {
-        return ballGuessPosition.getLastValidContent();
-    }
-
     void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty)
     {
         InfoTime time = this->wm->getTime();
@@ -266,7 +262,7 @@ namespace msl
         else
         {
             // Generate guess -> confidence decaying linearly with time!
-            auto x = ballGuessPosition.getLast();
+            auto x = ballGuessPositionBuffer.getLast();
             if (x != nullptr)
             {
                 // 1s
@@ -286,7 +282,7 @@ namespace msl
         // TODO: change validity duration
         auto ballGuessInfo = make_shared<InformationElement<geometry::CNPointAllo>>(guessedPoint, time,
                                                                                     this->maxValidity, confidence);
-        ballGuessPosition.add(ballGuessInfo);
+        ballGuessPositionBuffer.add(ballGuessInfo);
     }
 
     void Ball::updateBallPossession()
@@ -526,6 +522,11 @@ namespace msl
         this->ballPossessionStatus = (
                 this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::AsideOfKicker);
         hasBallIteration = max(min(hasBallIteration + 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
+    }
+
+    const InfoBuffer<geometry::CNPointAllo> &Ball::getBallGuessPositionBuffer() const
+    {
+        return ballGuessPositionBuffer;
     }
 
     bool Ball::robotHasBall(int robotId)
@@ -827,7 +828,6 @@ namespace msl
         }
 
         auto ownPositionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
-        // TODO was not in itialized before ?
         bool inField = false;
         // TODO why do we think the ball is in the field when we don't know its position
         if (ownPositionInfo == nullptr)
@@ -938,33 +938,16 @@ namespace msl
         }
     }
 
-    nonstd::optional<geometry::CNPointAllo> Ball::getAlloSharedBallPosition()
+    optional<bool> Ball::getOppBallPossession(int index)
     {
-        auto sharedBallInfo = this->alloSharedBallPositionBuffer.getLastValid();
-        if (!sharedBallInfo)
+        auto x = oppBallPossession.getLast(index);
+        if (x == nullptr)
         {
-            return nonstd::nullopt;
+            return nullopt;
         }
-        return sharedBallInfo->getInformation();
+        return x->getInformation();
     }
 
-    bool Ball::getOppBallPossession(int index)
-    {
-        //required for Game and OppFreeKickInOwnHalf
-        return false;
-    }
-
-    nonstd::optional<geometry::CNVecAllo> Ball::getVelocityAllo() const
-    {
-        //required for WatchBall
-        return nonstd::nullopt;
-    }
-
-    nonstd::optional<geometry::CNVecEgo> Ball::getVelocityEgo() const
-    {
-        //required for Goalie and some other Behaviours
-        return nonstd::nullopt;
-    }
 
 } /* namespace alica */
 

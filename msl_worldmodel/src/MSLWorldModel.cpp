@@ -401,7 +401,7 @@ namespace msl
         else if (sb == nullptr)
         {
             // if sb == nullptr send ballguess
-            auto guess = this->ball->getAlloBallGuessPosition();
+            auto guess = this->ball->getBallGuessPositionBuffer().getLastValidContent();
             if (guess)
             {
                 msg.sharedBall.point.x = guess->x;

@@ -6,8 +6,8 @@
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPointEgo.h>
-#include <cnc_geometry/CNRobotAllo.h>
-#include <cnc_geometry/CNRobotEgo.h>
+#include <obstaclehandler/CNRobotAllo.h>
+#include <obstaclehandler/CNRobotEgo.h>
 #include <nonstd/optional.hpp>
 
 #include <memory>
@@ -42,11 +42,11 @@ class Obstacles
     const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> &getRawObstaclesEgoBuffer() const;
 
     // Clustered
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &
+    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
     getClusteredObstaclesAlloBuffer() const;
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> &
+    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
     getClusteredObstaclesAlloWithMeBuffer() const;
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> &getClusteredObstaclesEgoBuffer() const;
+    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> &getClusteredObstaclesEgoBuffer() const;
 
     /* ===== Other functions ===== */
 
@@ -94,9 +94,9 @@ class Obstacles
     InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> rawObstaclesEgoBuffer;
 
     // Clustered Obstacles
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> clusteredObstaclesAlloBuffer;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotAllo>>> clusteredObstaclesAlloWithMeBuffer;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobotEgo>>> clusteredObstaclesEgoBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloWithMeBuffer;
+    InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> clusteredObstaclesEgoBuffer;
 
     /* ===== Validity Durations ===== */
 

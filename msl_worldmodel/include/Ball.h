@@ -41,9 +41,7 @@ class Ball
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    nonstd::optional<geometry::CNPointAllo> getAlloSharedBallPosition();
-    std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertainty(int index = 0);
-    nonstd::optional<geometry::CNPointAllo> getAlloBallGuessPosition() const;
+//    std::shared_ptr<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertainty(int index = 0);
     int getSharedBallSupporter();
     bool ballMovedSignificantly();
 
@@ -55,17 +53,17 @@ class Ball
                        double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
     nonstd::optional<bool> getTeamMateBallPossession(int teamMateId);
-    bool getOppBallPossession(int index = 0);
+    nonstd::optional<bool> getOppBallPossession(int index = 0);
     double getBallDiameter();
 
     nonstd::optional<geometry::CNPointAllo> getBallPickupPosition();
 
     void updateSharedBall();
     void updateBallGuess();
-    double calculateSharedBallMassVector(bool withGoalie);
+//    double calculateSharedBallMassVector(bool withGoalie);
     bool simpleHaveBallDribble(bool hadBefore);
     bool hadBefore;
-    BallPossessionStatus getBallPossessionStatus();
+//    BallPossessionStatus getBallPossessionStatus();
     bool closeToTheBall()
     {
         return selfInBallPossesion;
@@ -78,9 +76,8 @@ class Ball
 
     nonstd::optional<geometry::CNPointAllo> getPositionAllo() const;
     nonstd::optional<geometry::CNPointEgo> getPositionEgo() const;
+    const InfoBuffer<geometry::CNPointAllo> &getBallGuessPositionBuffer() const;
 
-    nonstd::optional<geometry::CNVecAllo> getVelocityAllo() const;
-    nonstd::optional<geometry::CNVecEgo> getVelocityEgo() const;
 
   private:
     //TODO change ball tracking
@@ -128,7 +125,7 @@ class Ball
     std::map<int, std::shared_ptr<InfoBuffer<geometry::CNPointAllo>>> ballPositionsByRobot;
     std::map<int, std::shared_ptr<InfoBuffer<geometry::CNVecAllo>>> ballVelocitiesByRobot;
     InfoBuffer<geometry::CNPointAllo> alloSharedBallPositionBuffer;
-    InfoBuffer<geometry::CNPointAllo> ballGuessPosition;
+    InfoBuffer<geometry::CNPointAllo> ballGuessPositionBuffer;
     InfoBuffer<geometry::CNVecEgo> visionBallVelocityBuffer;
     InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
 

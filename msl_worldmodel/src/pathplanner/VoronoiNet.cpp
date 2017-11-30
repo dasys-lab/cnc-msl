@@ -28,7 +28,7 @@ VoronoiNet::VoronoiNet(MSLWorldModel *wm)
     this->sc = supplementary::SystemConfig::getInstance();
     this->voronoi = make_shared<VoronoiDiagram>();
     this->ownPosAvail = false;
-    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
+    this->alloClusteredObsWithMe = make_shared<vector<CNRobotAllo>>();
     this->artificialObstacles = make_shared<vector<geometry::CNPointAllo>>();
     this->additionalObstacles = make_shared<vector<geometry::CNPointAllo>>();
 }
@@ -40,7 +40,7 @@ VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
     this->voronoi = make_shared<VoronoiDiagram>();
     this->ownPosAvail = net->ownPosAvail;
 
-    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
+    this->alloClusteredObsWithMe = make_shared<vector<CNRobotAllo>>();
     for (auto cluster : *net->getAlloClusteredObsWithMe())
     {
         this->alloClusteredObsWithMe->push_back(cluster);
@@ -130,7 +130,7 @@ void VoronoiNet::generateVoronoiDiagram(bool ownPosAvail)
 
     // insert allo obstacles (including me) into voronoi diagram
     vector<Site_2> sites;
-    this->alloClusteredObsWithMe = make_shared<vector<geometry::CNRobotAllo>>();
+    this->alloClusteredObsWithMe = make_shared<vector<CNRobotAllo>>();
 
     auto alloObs = wm->obstacles->getClusteredObstaclesAlloWithMeBuffer().getLastValidContent();
 
@@ -480,7 +480,7 @@ shared_ptr<const vector<geometry::CNPointAllo>> VoronoiNet::getArtificialObstacl
     return this->artificialObstacles;
 }
 
-shared_ptr<const vector<geometry::CNRobotAllo>> VoronoiNet::getAlloClusteredObsWithMe() const
+shared_ptr<const vector<CNRobotAllo>> VoronoiNet::getAlloClusteredObsWithMe() const
 {
     return this->alloClusteredObsWithMe;
 }

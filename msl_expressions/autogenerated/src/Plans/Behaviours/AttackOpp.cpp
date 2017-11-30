@@ -66,7 +66,7 @@ namespace alica
         }
         if (!blocked)
         {
-            auto egoBallVelocity = wm->ball->getVelocityEgo();
+            auto egoBallVelocity = wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
 
             if (egoBallVelocity)
             {

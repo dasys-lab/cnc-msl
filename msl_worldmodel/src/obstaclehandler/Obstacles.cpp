@@ -167,10 +167,10 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
     auto clusteredObstacles = clusterAnnotatedObstacles(annotatedObstacles);
     // CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
 
-    auto newObsClustersAllo = make_shared<vector<geometry::CNRobotAllo>>();
-    auto newObsClustersAlloWithMe = make_shared<vector<geometry::CNRobotAllo>>();
+    auto newObsClustersAllo = make_shared<vector<CNRobotAllo>>();
+    auto newObsClustersAlloWithMe = make_shared<vector<CNRobotAllo>>();
 
-    auto newObsClusteredEgo = make_shared<vector<geometry::CNRobotEgo>>();
+    auto newObsClusteredEgo = make_shared<vector<CNRobotEgo>>();
 
     auto newOppEgo = make_shared<vector<geometry::CNPointEgo>>();
     auto newOppAllo = make_shared<vector<geometry::CNPointAllo>>();
@@ -179,7 +179,7 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
 
     for (unsigned long i = 0; i < clusteredObstacles->size(); ++i)
     {
-        auto clusterInfo = geometry::CNRobotAllo();
+        auto clusterInfo = CNRobotAllo();
         auto current = clusteredObstacles->at(i);
 
         clusterInfo.id = current->ident;
@@ -224,13 +224,13 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
     // create info elements for buffers
 
     // allo
-    auto obstaclesWithMeInfo = make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobotAllo>>>>(
+    auto obstaclesWithMeInfo = make_shared<InformationElement<shared_ptr<const vector<CNRobotAllo>>>>(
         newObsClustersAlloWithMe, wm->getTime(), this->maxInfoValidity, 1.0);
-    auto obstaclesInfo = make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobotAllo>>>>(
+    auto obstaclesInfo = make_shared<InformationElement<shared_ptr<const vector<CNRobotAllo>>>>(
         newObsClustersAllo, wm->getTime(), this->maxInfoValidity, 1.0);
 
     // ego
-    auto obstaclesEgoInfo = make_shared<InformationElement<shared_ptr<const vector<geometry::CNRobotEgo>>>>(
+    auto obstaclesEgoInfo = make_shared<InformationElement<shared_ptr<const vector<CNRobotEgo>>>>(
         newObsClusteredEgo, wm->getTime(), this->maxInfoValidity, 1.0);
 
     // Store Data
@@ -724,18 +724,18 @@ const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> &Obst
 
 // Clustered Obstacles
 
-const InfoBuffer<shared_ptr<const vector<geometry::CNRobotAllo>>> &Obstacles::getClusteredObstaclesAlloBuffer() const
+const InfoBuffer<shared_ptr<const vector<CNRobotAllo>>> &Obstacles::getClusteredObstaclesAlloBuffer() const
 {
     return this->clusteredObstaclesAlloBuffer;
 }
 
-const InfoBuffer<shared_ptr<const vector<geometry::CNRobotAllo>>> &
+const InfoBuffer<shared_ptr<const vector<CNRobotAllo>>> &
 Obstacles::getClusteredObstaclesAlloWithMeBuffer() const
 {
     return this->clusteredObstaclesAlloWithMeBuffer;
 }
 
-const InfoBuffer<shared_ptr<const vector<geometry::CNRobotEgo>>> &Obstacles::getClusteredObstaclesEgoBuffer() const
+const InfoBuffer<shared_ptr<const vector<CNRobotEgo>>> &Obstacles::getClusteredObstaclesEgoBuffer() const
 {
     return this->clusteredObstaclesEgoBuffer;
 }

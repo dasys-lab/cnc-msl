@@ -181,7 +181,7 @@ namespace alica
             }
         }
 
-        auto ballV3D = wm->ball->getVelocityAllo();
+        auto ballV3D = wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
         if (ballV3D && ballPos)
         {
             double velo = sqrt(ballV3D->x * ballV3D->x + ballV3D->y * ballV3D->y + ballV3D->z * ballV3D->z);

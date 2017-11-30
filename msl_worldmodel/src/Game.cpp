@@ -76,7 +76,6 @@ Game::Game(MSLWorldModel *wm, int ringBufferLength)
 
 Game::~Game()
 {
-    // TODO Auto-generated destructor stub
 }
 
 void Game::onRobotCommand(robot_control::RobotCommandPtr msg)
@@ -384,7 +383,12 @@ void Game::updateGameState()
         return;
     }
 
-    bool oppBallPossession = wm->ball->getOppBallPossession();
+    auto oppposs = wm->ball->getOppBallPossession();
+    bool oppBallPossession = false;
+    if (oppposs != nullopt)
+    {
+        oppBallPossession = oppposs.value();
+    }
 
     GameState gs = getGameState();
 
