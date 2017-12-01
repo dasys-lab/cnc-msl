@@ -159,7 +159,18 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
         return;
     }
 
+    auto rawEgoObs = make_shared<InformationElement<shared_ptr<const vector<geometry::CNPointEgo>>>>(myObstacles, wm->getTime(), this->maxInfoValidity, 1.0);
+    this->rawObstaclesEgoBuffer.add(rawEgoObs);
     auto odo = odoInfo->getInformation();
+    auto ownPosOdo = geometry::CNPositionAllo(odo.position.x, odo.position.y, odo.position.angle);
+    auto alloObs = make_shared<vector<geometry::CNPointAllo>>();
+    for(auto obs : *myObstacles)
+    {
+    	alloObs->push_back(obs.toAllo(ownPosOdo));
+    }
+    auto rawAlloObs =
+                make_shared<InformationElement<shared_ptr<const vector<geometry::CNPointAllo>>>>(alloObs, wm->getTime(), this->maxInfoValidity, 1.0);
+    this->rawObstaclesAlloBuffer.add(rawAlloObs);
 
     // SETUP
     auto annotatedObstacles = setupAnnotatedObstacles(myObstacles, odo);
@@ -190,8 +201,6 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
         clusterInfo.supporter = current->supporter;
         clusterInfo.certainty = current->certainty;
         clusterInfo.rotationVel = current->rotationVel;
-
-        auto ownPosOdo = geometry::CNPositionAllo(odo.position.x, odo.position.y, odo.position.angle);
 
         // Store for buffers
         if (current->ident != wm->getOwnId())

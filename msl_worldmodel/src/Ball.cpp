@@ -481,7 +481,7 @@ namespace msl
         {
             // if you lost the ball, further pretend that you have it for at most 2 iterations
             hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
-            cout << "hasBallIterarion: " << hasBallIteration << endl;
+//            cout << "hasBallIterarion: " << hasBallIteration << endl;
             this->ballPossessionStatus = (
                     this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NotInKickerDistance);
             //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;

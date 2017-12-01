@@ -439,8 +439,10 @@ namespace msl
 
         // add obstacles
         auto obs = this->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
+        cout << "MSLWorldModel: adding obstacles" << endl;
         if (obs)
         {
+        	cout << "MSLWorldModel: last valid obs content" << endl;
             msg.obstacles.reserve((*obs)->size());
             for (auto &ob : **obs)
             {
@@ -451,6 +453,10 @@ namespace msl
                 info.y = alloPoint.y;
                 msg.obstacles.push_back(info);
             }
+        }
+        else
+        {
+        	cout << "MSLWorldModel: no last valid obs content" << endl;
         }
 
         // send message
