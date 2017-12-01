@@ -21,13 +21,14 @@ PathPlanner::PathPlanner(MSLWorldModel *wm, int count)
     this->lastClosestNode = nullopt;
     this->lastClosestPointToBlock = nullopt;
     this->lastTarget == nullopt;
-    sc = supplementary::SystemConfig::getInstance();
+    this->sc = supplementary::SystemConfig::getInstance();
+    this->voronoiDiagrams.reserve(count);
     for (int i = 0; i < count; i++)
-        this->voronoiDiagrams.reserve(10);
     {
         auto voi = make_shared<VoronoiNet>(wm);
         // TODO maybe VoronoiNet::generateVoronoiDiagram can spare inserting these art. obstacles again, if we maintain
         // them properly
+        // TODO save delaunay for initialization
         voi->setVoronoi(
             make_shared<VoronoiDiagram>((DelaunayTriangulation) this->artificialObjectNet->getVoronoi()->dual()));
 
@@ -47,8 +48,8 @@ PathPlanner::PathPlanner(MSLWorldModel *wm, int count)
         (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "additionalBallCorridorWidth", NULL);
     this->snapDistance = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "snapDistance", NULL);
     this->marginToBlockedArea = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "marginToBlockedArea", NULL);
-    lastPath = nullptr;
-    corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
+    this->lastPath = nullptr;
+    this->corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
     initializeArtificialObstacles();
 }
 

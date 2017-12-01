@@ -331,9 +331,7 @@ shared_ptr<vector<geometry::CNPointAllo>> PathProxy::calculateCroppedVoronoi(con
     // create cropped voronoi
     Cropped_voronoi_from_delaunay vor(bbox);
     // get delaunay
-    cout << "PathProxy: Get Delaunay before" << endl;
     DelaunayTriangulation dt = voronoi.getVoronoi()->dual();
-    cout << "PathProcxy: Get Delaunay after" << endl;
     dt.draw_dual(vor);
     // get sites
     for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
