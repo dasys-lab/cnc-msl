@@ -115,8 +115,8 @@ class MSLConstraintBuilder
     static Rules *rules;
     static shared_ptr<TVec> centreMarkT;
 
-    static void resolveArea(Areas area, shared_ptr<geometry::CNPointAllo> lowerRightCorner,
-                            shared_ptr<geometry::CNPointAllo> upperLeftCorner);
+    static void resolveArea(Areas area, geometry::CNPointAllo& lowerRightCorner,
+                            geometry::CNPointAllo& upperLeftCorner);
 };
 
 } /* namespace msl */

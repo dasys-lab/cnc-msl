@@ -63,7 +63,7 @@ class Ball
 //    double calculateSharedBallMassVector(bool withGoalie);
     bool simpleHaveBallDribble(bool hadBefore);
     bool hadBefore;
-//    BallPossessionStatus getBallPossessionStatus();
+    BallPossessionStatus getBallPossessionStatus();
     bool closeToTheBall()
     {
         return selfInBallPossesion;

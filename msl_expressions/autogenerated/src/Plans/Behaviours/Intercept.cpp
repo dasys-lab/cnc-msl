@@ -76,10 +76,12 @@ namespace alica
         auto egoBallVel = this->wm->ball->getVisionBallVelocityBuffer().getLastValidContent();
         if (!egoBallVel)
         {
+            cout << "Intercept: No ego ball vel" << endl;
             egoBallVel = make_optional<geometry::CNVecEgo>(0, 0);
         }
         else if (egoBallVel->length() > this->maxBallVelocity)
         {
+            cout << "ballVel available Intercept" << endl;
             egoBallVel = egoBallVel->normalize() * this->maxBallVelocity;
         }
 

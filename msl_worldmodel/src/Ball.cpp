@@ -434,6 +434,11 @@ namespace msl
         return sharedBallSupporters;
     }
 
+    BallPossessionStatus Ball::getBallPossessionStatus()
+    {
+        return this->ballPossessionStatus;
+    }
+
     void Ball::updateHaveBall()
     {
         if (hasBallIteration > 0)
@@ -465,7 +470,7 @@ namespace msl
         if (!ballPos)
         {
             // if you don't see the ball, further pretend that you have it for at most 2 iterations
-            hasBallIteration = max(min(--hasBallIteration, AMOUNT_OF_HISTORIZED_CYCLE), 0);
+            hasBallIteration = max(min(hasBallIteration - 1, AMOUNT_OF_HISTORIZED_CYCLE), 0);
             this->ballPossessionStatus = (
                     this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
 
@@ -947,7 +952,6 @@ namespace msl
         }
         return x->getInformation();
     }
-
 
 } /* namespace alica */
 

@@ -362,6 +362,9 @@ namespace msl
         // construct message
         msl_sensor_msgs::SharedWorldInfo msg;
         msg.senderID = this->ownID;
+        msg.ownGoalIsYellow = this->game->ownGoalColor == Color::Yellow;
+        msg.ownTeamIsMagenta = this->game->ownTeamColor == Color::Magenta;
+        msg.ballPossessionStatus = this->ball->getBallPossessionStatus();
 
         // get own position
         auto ownPosInfo = this->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
@@ -439,24 +442,16 @@ namespace msl
 
         // add obstacles
         auto obs = this->obstacles->getRawObstaclesAlloBuffer().getLastValidContent();
-        cout << "MSLWorldModel: adding obstacles" << endl;
         if (obs)
         {
-        	cout << "MSLWorldModel: last valid obs content" << endl;
             msg.obstacles.reserve((*obs)->size());
             for (auto &ob : **obs)
             {
-                auto egoPoint = geometry::CNPointEgo(ob.x, ob.y);
-                auto alloPoint = egoPoint.toAllo(ownPos);
                 msl_msgs::Point2dInfo info;
-                info.x = alloPoint.x;
-                info.y = alloPoint.y;
+                info.x = ob.x;
+                info.y = ob.y;
                 msg.obstacles.push_back(info);
             }
-        }
-        else
-        {
-        	cout << "MSLWorldModel: no last valid obs content" << endl;
         }
 
         // send message

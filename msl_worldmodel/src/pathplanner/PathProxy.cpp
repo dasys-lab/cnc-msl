@@ -102,12 +102,12 @@ PathProxy::getEgoDirection(geometry::CNPointEgo egoTarget, const IPathEvaluator 
         // get first point of returned path
         if (path->size() < 3)
         {
-            alloRetPoint = path->at(0);
+            alloRetPoint = nonstd::make_optional<geometry::CNPointAllo>(path->at(0));
         }
         else
         {
-            path = applyShortcut(*path, ownPos, net);
-            alloRetPoint = path->at(0);
+            path = applyShortcut(*path, ownPos, *net);
+            alloRetPoint = nonstd::make_optional<geometry::CNPointAllo>(path->at(0));
         }
         // send debug msgs
         if (pathPlannerDebug)
@@ -195,12 +195,12 @@ nonstd::optional<geometry::CNPointEgo> PathProxy::getEgoDirection(geometry::CNPo
         // get first point of returned path
         if (path->size() < 3)
         {
-            alloRetPoint = path->at(0);
+            alloRetPoint = nonstd::make_optional<geometry::CNPointAllo>(path->at(0));
         }
         else
         {
-            path = applyShortcut(*path, ownPos, net);
-            alloRetPoint = path->at(0);
+            path = applyShortcut(*path, ownPos, *net);
+            alloRetPoint = nonstd::make_optional<geometry::CNPointAllo>(path->at(0));
         }
         // send debug msgs
         if (pathPlannerDebug)
@@ -331,7 +331,9 @@ shared_ptr<vector<geometry::CNPointAllo>> PathProxy::calculateCroppedVoronoi(con
     // create cropped voronoi
     Cropped_voronoi_from_delaunay vor(bbox);
     // get delaunay
+    cout << "PathProxy: Get Delaunay before" << endl;
     DelaunayTriangulation dt = voronoi.getVoronoi()->dual();
+    cout << "PathProcxy: Get Delaunay after" << endl;
     dt.draw_dual(vor);
     // get sites
     for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
