@@ -73,6 +73,7 @@ class LightBarrier;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
+class Calibration;
 
 class MSLWorldModel : public supplementary::WorldModel
 {
@@ -100,11 +101,6 @@ class MSLWorldModel : public supplementary::WorldModel
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
-	void sendKillMotionCommand();
-	void sendStartMotionCommand();
-	double getRobotRadius();
-	void setRobotRadius(double newRadius);
-	double adjustRobotRadius(double difference);
 
     // Raw Sensor Data
     RawSensorData *rawSensorData;
@@ -121,6 +117,8 @@ class MSLWorldModel : public supplementary::WorldModel
     PathPlanner *pathPlanner;
     MSLFootballField *field;
     WhiteBoard *whiteBoard;
+
+    Calibration* calibration;
 
     supplementary::EventTrigger visionTrigger;
     supplementary::InfoTime timeLastSimMsgReceived;
@@ -150,7 +148,6 @@ class MSLWorldModel : public supplementary::WorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
-    ros::Publisher processCommandPub;
 
     mutex wmMutex;
     mutex joystickMutex;
