@@ -8,6 +8,10 @@
 #include <SystemConfig.h>
 #include <math.h>
 
+using supplementary::InfoBuffer;
+using supplementary::InformationElement;
+using supplementary::InfoTime;
+
 namespace msl
 {
 

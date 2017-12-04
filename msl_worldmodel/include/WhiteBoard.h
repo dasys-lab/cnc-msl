@@ -1,9 +1,9 @@
 #pragma once
 
-#include "InformationElement.h"
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNVecAllo.h>
-#include <InfoBuffer.h>
+#include <supplementary/InformationElement.h>
+#include <supplementary/InfoBuffer.h>
 
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
@@ -22,13 +22,13 @@ class WhiteBoard
     void processPassMsg(msl_helper_msgs::PassMsgPtr msg);
     void processWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
 
-    InfoBuffer<msl_helper_msgs::PassMsg>& getPassMsgBuffer();
-    InfoBuffer<msl_helper_msgs::WatchBallMsg>& getWatchBallMsgBuffer();
+    supplementary::InfoBuffer<msl_helper_msgs::PassMsg>& getPassMsgBuffer();
+    supplementary::InfoBuffer<msl_helper_msgs::WatchBallMsg>& getWatchBallMsgBuffer();
 
   private:
     MSLWorldModel *wm;
-    InfoBuffer<msl_helper_msgs::PassMsg> passMsgBuffer;
-    InfoBuffer<msl_helper_msgs::WatchBallMsg> watchBallMsgBuffer;
+    supplementary::InfoBuffer<msl_helper_msgs::PassMsg> passMsgBuffer;
+    supplementary::InfoBuffer<msl_helper_msgs::WatchBallMsg> watchBallMsgBuffer;
 };
 
 } /* namespace msl */

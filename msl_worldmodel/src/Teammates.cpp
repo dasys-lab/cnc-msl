@@ -7,6 +7,10 @@
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <nonstd/optional.hpp>
 
+using supplementary::InfoBuffer;
+using supplementary::InformationElement;
+using supplementary::InfoTime;
+
 namespace msl
 {
 using nonstd::optional;

@@ -1,10 +1,3 @@
-/*
- * Ball.cpp
- *  Test
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Ball.h"
 #include "MSLWorldModel.h"
 
@@ -25,6 +18,9 @@ using std::make_shared;
 using nonstd::nullopt;
 using nonstd::optional;
 using supplementary::SystemConfig;
+using supplementary::InfoBuffer;
+using supplementary::InfoTime;
+using supplementary::InformationElement;
 
 namespace msl
 {

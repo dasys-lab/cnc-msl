@@ -1,13 +1,13 @@
 #pragma once
 
-#include "InfoBuffer.h"
 #include "GameState.h"
-#include "InformationElement.h"
 #include "MSLEnums.h"
 
 #include <nonstd/optional.hpp>
 #include <msl_msgs/RefBoxCommand.h>
 #include <robot_control/RobotCommand.h>
+#include <supplementary/InformationElement.h>
+#include <supplementary/InfoBuffer.h>
 #include <ros/ros.h>
 
 #include <mutex>
@@ -29,7 +29,7 @@ class Game
     virtual ~Game();
     void onRobotCommand(robot_control::RobotCommandPtr msg);
     void onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg);
-    const InfoBuffer<msl_msgs::RefBoxCommand> &getRefBoxCommandBuffer() const;
+    const supplementary::InfoBuffer<msl_msgs::RefBoxCommand> &getRefBoxCommandBuffer() const;
     bool checkSituation(Situation situation);
     int getOppGoal();
     int getOwnGoal();
@@ -52,7 +52,7 @@ class Game
     ros::AsyncSpinner *spinner;
     ros::Subscriber refBoxCommandSub;
     ros::Subscriber robotCommandSub;
-    InfoBuffer<msl_msgs::RefBoxCommand> refBoxCommandBuffer;
+    supplementary::InfoBuffer<msl_msgs::RefBoxCommand> refBoxCommandBuffer;
     std::mutex refereeMutex;
     std::mutex situationChecker;
     std::mutex goalMutex;
@@ -64,7 +64,7 @@ class Game
     int teamMateWithBall;
     bool passReceived;
     bool mayScore;
-    const InfoTime maxValidity = 1000000000;
+    const supplementary::InfoTime maxValidity = 1000000000;
 };
 
 } /* namespace msl */

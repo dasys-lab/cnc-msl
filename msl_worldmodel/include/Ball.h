@@ -1,9 +1,8 @@
 #pragma once
 
-#include "InfoBuffer.h"
-#include "InformationElement.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
+#include "MSLEnums.h"
 
 #include <nonstd/optional.hpp>
 #include <cnc_geometry/CNPointAllo.h>
@@ -11,7 +10,8 @@
 #include <cnc_geometry/CNVecAllo.h>
 #include <cnc_geometry/CNVecEgo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
-#include "MSLEnums.h"
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/InformationElement.h>
 #include <map>
 #include <memory>
 
@@ -69,14 +69,14 @@ class Ball
         return selfInBallPossesion;
     };
 
-    const InfoBuffer<geometry::CNVecEgo> &getVisionBallVelocityBuffer() const;
-    const InfoBuffer<geometry::CNPointEgo> &getVisionBallPositionBuffer() const;
+    const supplementary::InfoBuffer<geometry::CNVecEgo> &getVisionBallVelocityBuffer() const;
+    const supplementary::InfoBuffer<geometry::CNPointEgo> &getVisionBallPositionBuffer() const;
 
-    const InfoBuffer<geometry::CNPointAllo> &getAlloSharedBallPositionBuffer() const;
+    const supplementary::InfoBuffer<geometry::CNPointAllo> &getAlloSharedBallPositionBuffer() const;
 
     nonstd::optional<geometry::CNPointAllo> getPositionAllo() const;
     nonstd::optional<geometry::CNPointEgo> getPositionEgo() const;
-    const InfoBuffer<geometry::CNPointAllo> &getBallGuessPositionBuffer() const;
+    const supplementary::InfoBuffer<geometry::CNPointAllo> &getBallGuessPositionBuffer() const;
 
 
   private:
@@ -120,17 +120,17 @@ class Ball
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
 
-    InfoBuffer<bool> oppBallPossession;
-    std::map<int, std::shared_ptr<InfoBuffer<bool>>> ballPossession;
-    std::map<int, std::shared_ptr<InfoBuffer<geometry::CNPointAllo>>> ballPositionsByRobot;
-    std::map<int, std::shared_ptr<InfoBuffer<geometry::CNVecAllo>>> ballVelocitiesByRobot;
-    InfoBuffer<geometry::CNPointAllo> alloSharedBallPositionBuffer;
-    InfoBuffer<geometry::CNPointAllo> ballGuessPositionBuffer;
-    InfoBuffer<geometry::CNVecEgo> visionBallVelocityBuffer;
-    InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
+    supplementary::InfoBuffer<bool> oppBallPossession;
+    std::map<int, std::shared_ptr<supplementary::InfoBuffer<bool>>> ballPossession;
+    std::map<int, std::shared_ptr<supplementary::InfoBuffer<geometry::CNPointAllo>>> ballPositionsByRobot;
+    std::map<int, std::shared_ptr<supplementary::InfoBuffer<geometry::CNVecAllo>>> ballVelocitiesByRobot;
+    supplementary::InfoBuffer<geometry::CNPointAllo> alloSharedBallPositionBuffer;
+    supplementary::InfoBuffer<geometry::CNPointAllo> ballGuessPositionBuffer;
+    supplementary::InfoBuffer<geometry::CNVecEgo> visionBallVelocityBuffer;
+    supplementary::InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
 
     // TODO: add validityDurations for each buffer
-    const InfoTime maxValidity = 1000000000;
+    const supplementary::InfoTime maxValidity = 1000000000;
 
     double haveDistance;
 

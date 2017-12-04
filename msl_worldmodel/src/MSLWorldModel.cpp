@@ -2,7 +2,6 @@
 #include "Ball.h"
 #include "EventTrigger.h"
 #include "Game.h"
-#include "InformationElement.h"
 #include "LightBarrier.h"
 #include "MSLFootballField.h"
 #include "Monitoring.h"
@@ -33,8 +32,14 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <process_manager/ProcessCommand.h>
+#include <supplementary/InformationElement.h>
+#include <supplementary/InfoBuffer.h>
 #include <std_msgs/Bool.h>
 #include <tf/tf.h>
+
+using supplementary::InformationElement;
+using supplementary::InfoBuffer;
+using supplementary::InfoTime;
 
 namespace msl
 {
@@ -49,29 +54,10 @@ namespace msl
         return &instance;
     }
 
-    bool MSLWorldModel::setEngine(alica::AlicaEngine *ae)
-    {
-        if (this->alicaEngine == nullptr)
-        {
-            this->alicaEngine = ae;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    alica::AlicaEngine *MSLWorldModel::getEngine()
-    {
-        return this->alicaEngine;
-    }
     MSLWorldModel::MSLWorldModel()
     {
-        ownID = supplementary::SystemConfig::getOwnRobotID();
         spinner = new ros::AsyncSpinner(4);
         spinner->start();
-        sc = supplementary::SystemConfig::getInstance();
 
         visionDataEventTrigger = new supplementary::EventTrigger();
         rawOdomSub = n.subscribe("/RawOdometry", 10, &MSLWorldModel::onRawOdometryInfo, (MSLWorldModel *)this);
@@ -111,7 +97,6 @@ namespace msl
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->timeLastSimMsgReceived = 0;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
-        this->maySendMessages = (*this->sc)["WorldModel"]->get<bool>("WorldModel", "MaySendMessages", NULL);
         // initialize ringbuffers
         this->field = new MSLFootballField(this);
         this->ball = new Ball(this, ringBufferLength);
@@ -120,8 +105,6 @@ namespace msl
         this->robots = new Robots(this, ringBufferLength);
         this->game = new Game(this, ringBufferLength);
         this->pathPlanner = new PathPlanner(this, ringBufferLength);
-        // this->kicker = new Kicker(this); // TODO: delete this line
-        this->alicaEngine = nullptr;
         this->whiteBoard = new WhiteBoard(this);
         this->obstacles = new Obstacles(this, ringBufferLength);
         this->prediction = new Prediction();
@@ -156,7 +139,7 @@ namespace msl
         if (this->timeLastSimMsgReceived == 0)
             cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
 
-        alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
+        alica::AlicaTime now = this->getTime();
 
         this->timeLastSimMsgReceived = now;
 
@@ -330,28 +313,6 @@ namespace msl
         return this->sharedWorldModel;
     }
 
-    InfoTime MSLWorldModel::getTime()
-    {
-        if (this->alicaEngine != nullptr)
-        {
-            return this->alicaEngine->getIAlicaClock()->now();
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    bool MSLWorldModel::isMaySendMessages() const
-    {
-        return this->maySendMessages;
-    }
-
-    void MSLWorldModel::setMaySendMessages(bool maySendMessages)
-    {
-        this->maySendMessages = maySendMessages;
-    }
-
     void MSLWorldModel::sendSharedWorldModelData()
     {
         if (!this->maySendMessages)
@@ -490,11 +451,6 @@ namespace msl
     void MSLWorldModel::onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg)
     {
         rawSensorData->processBallHypothesisList(msg);
-    }
-
-    int MSLWorldModel::getOwnId()
-    {
-        return ownID;
     }
 
     void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)    {

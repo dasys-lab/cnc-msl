@@ -1,12 +1,9 @@
-/*
- * WhiteBoard.cpp
- *
- *  Created on: Aug 28, 2015
- *      Author: Stefan Jakob
- */
-
 #include "MSLWorldModel.h"
 #include <WhiteBoard.h>
+
+using supplementary::InformationElement;
+using supplementary::InfoBuffer;
+using supplementary::InfoTime;
 
 namespace msl
 {
@@ -26,7 +23,8 @@ void WhiteBoard::processPassMsg(msl_helper_msgs::PassMsgPtr msg)
 {
     InfoTime time = wm->getTime();
 
-    auto passMsg = make_shared<InformationElement<msl_helper_msgs::PassMsg>>(*msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
+    auto passMsg = make_shared<InformationElement<msl_helper_msgs::PassMsg>>(
+        *msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
     passMsgBuffer.add(passMsg);
 }
 
@@ -39,7 +37,8 @@ void WhiteBoard::processWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg)
 {
     InfoTime time = wm->getTime();
 
-    auto watchMsg = make_shared<InformationElement<msl_helper_msgs::WatchBallMsg>>(*msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
+    auto watchMsg = make_shared<InformationElement<msl_helper_msgs::WatchBallMsg>>(
+        *msg, time, msg->validFor, 1.0); // TODO: correct validity time? certainty?
     watchBallMsgBuffer.add(watchMsg);
 }
 

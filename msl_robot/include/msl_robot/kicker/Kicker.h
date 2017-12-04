@@ -1,22 +1,14 @@
-/*
- * Kicker.h
- *
- *  Created on: Jul 13, 2015
- *      Author: Stefan Jakob
- */
-
 #pragma once
 
-#include <InfoBuffer.h>
 #include "KickCurve.h"
 
-#include <memory>
-
-#include <InformationElement.h>
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/InformationElement.h>
 #include <SystemConfig.h>
 #include <msl_actuator_msgs/KickControl.h>
 #include <nonstd/optional.hpp>
 
+#include <memory>
 namespace geometry
 {
 class CNPointEgo;
@@ -55,7 +47,7 @@ class Kicker
   private:
     MSLWorldModel *wm;
     float kickerVoltage;
-    const InfoTime maxValidity = 1000000000;
+    const supplementary::InfoTime maxValidity = 1000000000;
 
   protected:
     supplementary::SystemConfig *sc;
@@ -78,7 +70,7 @@ class Kicker
     KickCurve *kickLowPass;
     std::vector<geometry::CNPointEgo> validGoalPoints;
 
-    InfoBuffer<msl_actuator_msgs::KickControl> kickControlMsgs;
+    supplementary::InfoBuffer<msl_actuator_msgs::KickControl> kickControlMsgs;
     int mod(int x, int y) const;
 };
 

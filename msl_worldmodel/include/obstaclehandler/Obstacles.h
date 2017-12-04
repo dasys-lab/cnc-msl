@@ -2,21 +2,23 @@
 
 #include "MSLEnums.h"
 #include "MSLFootballField.h"
-#include <InfoBuffer.h>
+#include "obstaclehandler/AnnotatedObstacleCluster.h"
+#include "obstaclehandler/CNRobotAllo.h"
+#include "obstaclehandler/CNRobotEgo.h"
+
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPointEgo.h>
-#include <obstaclehandler/CNRobotAllo.h>
-#include <obstaclehandler/CNRobotEgo.h>
 #include <nonstd/optional.hpp>
+#include <supplementary/InfoBuffer.h>
 
-#include <memory>
 #include <msl_msgs/Point2dInfo.h>
 #include <msl_msgs/PositionInfo.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <msl_sensor_msgs/WorldModelData.h>
-#include <obstaclehandler/AnnotatedObstacleCluster.h>
+
+#include <memory>
 #include <vector>
 
 namespace msl
@@ -35,18 +37,18 @@ class Obstacles
     /* ===== Buffer access ===== */
 
     // Raw Info
-    const InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> &getObstaclesInfoBuffer() const;
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> &getObstaclesInfoBuffer() const;
 
     // Raw Obstacles
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> &getRawObstaclesAlloBuffer() const;
-    const InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> &getRawObstaclesEgoBuffer() const;
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> &getRawObstaclesAlloBuffer() const;
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> &getRawObstaclesEgoBuffer() const;
 
     // Clustered
-    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
     getClusteredObstaclesAlloBuffer() const;
-    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> &
     getClusteredObstaclesAlloWithMeBuffer() const;
-    const InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> &getClusteredObstaclesEgoBuffer() const;
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> &getClusteredObstaclesEgoBuffer() const;
 
     /* ===== Other functions ===== */
 
@@ -87,21 +89,21 @@ class Obstacles
     /* ===== Buffers ===== */
 
     // Raw Info
-    InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> obstaclesInfoBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<msl_sensor_msgs::ObstacleInfo>>> obstaclesInfoBuffer;
 
     // Raw Obstacles
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> rawObstaclesAlloBuffer;
-    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> rawObstaclesEgoBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointAllo>>> rawObstaclesAlloBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<geometry::CNPointEgo>>> rawObstaclesEgoBuffer;
 
     // Clustered Obstacles
-    InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloBuffer;
-    InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloWithMeBuffer;
-    InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> clusteredObstaclesEgoBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotAllo>>> clusteredObstaclesAlloWithMeBuffer;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<CNRobotEgo>>> clusteredObstaclesEgoBuffer;
 
     /* ===== Validity Durations ===== */
 
     // TODO: add constant for each InfoBuffer (and add to Config?)
-    InfoTime maxInfoValidity = 1000000000;
+    supplementary::InfoTime maxInfoValidity = 1000000000;
 };
 
 } /* namespace msl */

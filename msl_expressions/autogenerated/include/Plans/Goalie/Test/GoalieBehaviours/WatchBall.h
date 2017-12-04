@@ -12,8 +12,8 @@
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <nonstd/optional.hpp>
-#include <InfoBuffer.h>
-
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/InformationElement.h>
 
 using namespace msl;
 /*PROTECTED REGION END*/
@@ -48,7 +48,7 @@ namespace alica
         double pTrans, dTrans, pRot, dRot;
         double prevTargetDist, lastRotErr;
         double rotationLimit;
-//        msl::InfoBuffer<nonstd::optional<geometry::CNPointAllo>>* ballPositions;
+        supplementary::InfoBuffer<geometry::CNPointAllo>* ballPositions;
         double calcGoalImpactY();
         void rotate(geometry::CNPointAllo alloTarget);
         /*PROTECTED REGION END*/

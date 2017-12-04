@@ -41,7 +41,7 @@ namespace alica
         double oldAngleErr;
         double minTol;
         double tol;
-        msl::InfoTime startTime;
+        supplementary::InfoTime startTime;
         int canPassCounter;
         int canPassThreshold;
         bool outsideTriangle(geometry::CNPointAllo a, geometry::CNPointAllo b, geometry::CNPointAllo c,

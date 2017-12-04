@@ -2,6 +2,10 @@
 
 #include "MSLWorldModel.h"
 
+using supplementary::InfoTime;
+using supplementary::InfoBuffer;
+using supplementary::InformationElement;
+
 namespace msl
 {
 

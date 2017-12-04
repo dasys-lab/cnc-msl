@@ -7,12 +7,13 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
-#include <InformationElement.h>
+
 using geometry::CNPointAllo;
 using geometry::CNVecAllo;
 using geometry::CNPointEgo;
 using std::make_shared;
 using nonstd::optional;
+
 /*PROTECTED REGION END*/
 namespace alica
 {

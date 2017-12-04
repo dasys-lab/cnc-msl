@@ -6,7 +6,7 @@
 #include <SystemConfig.h>
 #include <Configuration.h>
 #include <limits>
-#include <InformationElement.h>
+#include <supplementary/InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,7 +27,7 @@ namespace alica
         int count;
         int testSpeed;
         int angle;
-        msl::InfoTime startTime;
+        supplementary::InfoTime startTime;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

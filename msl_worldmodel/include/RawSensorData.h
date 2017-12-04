@@ -1,8 +1,5 @@
 #pragma once
 
-#include "InfoBuffer.h"
-#include "InformationElement.h"
-
 #include <msl_actuator_msgs/HaveBallInfo.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -18,6 +15,8 @@
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPositionAllo.h>
 #include <cnc_geometry/CNVecAllo.h>
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/InformationElement.h>
 
 #include <memory>
 #include <vector>
@@ -46,41 +45,41 @@ class RawSensorData
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
     // Data Access Methods
-    const InfoBuffer<std::shared_ptr<const std::vector<double>>> &getDistanceScanBuffer();
-    const InfoBuffer<bool> &getLightBarrierBuffer();
-    const InfoBuffer<geometry::CNVecEgo> &getOpticalFlowBuffer();
-    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionMotionBuffer();
-    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionVisionBuffer();
-    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityMotionBuffer();
-    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityVisionBuffer();
-    const InfoBuffer<msl_actuator_msgs::MotionControl> &getLastMotionCommandBuffer();
-    const InfoBuffer<int> &getCompassBuffer();
-    const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &getCorrectedOdometryBuffer();
-    const InfoBuffer<msl_actuator_msgs::IMUData> &getImuDataBuffer();
-    const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &getBallHypothesisBuffer();
-    const InfoBuffer<msl_msgs::JoystickCommand> &getJoystickCommandsBuffer();
+    const supplementary::InfoBuffer<std::shared_ptr<const std::vector<double>>> &getDistanceScanBuffer();
+    const supplementary::InfoBuffer<bool> &getLightBarrierBuffer();
+    const supplementary::InfoBuffer<geometry::CNVecEgo> &getOpticalFlowBuffer();
+    const supplementary::InfoBuffer<geometry::CNPositionAllo> &getOwnPositionMotionBuffer();
+    const supplementary::InfoBuffer<geometry::CNPositionAllo> &getOwnPositionVisionBuffer();
+    const supplementary::InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityMotionBuffer();
+    const supplementary::InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityVisionBuffer();
+    const supplementary::InfoBuffer<msl_actuator_msgs::MotionControl> &getLastMotionCommandBuffer();
+    const supplementary::InfoBuffer<int> &getCompassBuffer();
+    const supplementary::InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &getCorrectedOdometryBuffer();
+    const supplementary::InfoBuffer<msl_actuator_msgs::IMUData> &getImuDataBuffer();
+    const supplementary::InfoBuffer<msl_sensor_msgs::BallHypothesisList> &getBallHypothesisBuffer();
+    const supplementary::InfoBuffer<msl_msgs::JoystickCommand> &getJoystickCommandsBuffer();
 
   private:
     // buffers
-    InfoBuffer<std::shared_ptr<const std::vector<double>>> distanceScan;
-    InfoBuffer<bool> lightBarrier;
-    InfoBuffer<geometry::CNVecEgo> opticalFlow;
-    InfoBuffer<geometry::CNPositionAllo> ownPositionMotion;
-    InfoBuffer<geometry::CNPositionAllo> ownPositionVision;
-    InfoBuffer<msl_msgs::MotionInfo> ownVelocityMotion;
-    InfoBuffer<msl_msgs::MotionInfo> ownVelocityVision;
-    InfoBuffer<msl_actuator_msgs::MotionControl> lastMotionCommand;
-    InfoBuffer<int> compass;
-    InfoBuffer<msl_actuator_msgs::IMUData> imuData;
-    InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> correctedOdometry;
-    InfoBuffer<msl_msgs::JoystickCommand> joystickCommands;
-    InfoBuffer<msl_sensor_msgs::BallHypothesisList> ballHypothesis;
+    supplementary::InfoBuffer<std::shared_ptr<const std::vector<double>>> distanceScan;
+    supplementary::InfoBuffer<bool> lightBarrier;
+    supplementary::InfoBuffer<geometry::CNVecEgo> opticalFlow;
+    supplementary::InfoBuffer<geometry::CNPositionAllo> ownPositionMotion;
+    supplementary::InfoBuffer<geometry::CNPositionAllo> ownPositionVision;
+    supplementary::InfoBuffer<msl_msgs::MotionInfo> ownVelocityMotion;
+    supplementary::InfoBuffer<msl_msgs::MotionInfo> ownVelocityVision;
+    supplementary::InfoBuffer<msl_actuator_msgs::MotionControl> lastMotionCommand;
+    supplementary::InfoBuffer<int> compass;
+    supplementary::InfoBuffer<msl_actuator_msgs::IMUData> imuData;
+    supplementary::InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> correctedOdometry;
+    supplementary::InfoBuffer<msl_msgs::JoystickCommand> joystickCommands;
+    supplementary::InfoBuffer<msl_sensor_msgs::BallHypothesisList> ballHypothesis;
 
     MSLWorldModel *wm;
 
     // 1000000000[nsec] -> 1 [sec]
     // TODO: replace with ?DEFINES? or whatever for each info type
-    const InfoTime maxValidity = 1000000000;
+    const supplementary::InfoTime maxValidity = 1000000000;
     int ownID;
 };
 

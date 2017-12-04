@@ -19,6 +19,9 @@ using std::shared_ptr;
 using std::make_shared;
 using nonstd::nullopt;
 using nonstd::optional;
+using supplementary::InfoTime;
+using supplementary::InfoBuffer;
+using supplementary::InformationElement;
 
 namespace msl
 {

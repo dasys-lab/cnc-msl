@@ -1,11 +1,10 @@
 #pragma once
 
-#include "InfoBuffer.h"
-#include "InformationElement.h"
-
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <nonstd/optional.hpp>
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/InformationElement.h>
 
 #include <memory>
 #include <vector>
@@ -28,8 +27,8 @@ class Opponents
     nonstd::optional<geometry::CNPointEgo> getClosestToBall(double &distToOpp);
     nonstd::optional<geometry::CNPointEgo> getInCorridor(double angle, double width);
 
-    const InfoBuffer<std::vector<geometry::CNPointAllo>> &getOpponentsAlloClusteredBuffer() const;
-    const InfoBuffer<std::vector<geometry::CNPointEgo>> &getOpponentsEgoClusteredBuffer() const;
+    const supplementary::InfoBuffer<std::vector<geometry::CNPointAllo>> &getOpponentsAlloClusteredBuffer() const;
+    const supplementary::InfoBuffer<std::vector<geometry::CNPointEgo>> &getOpponentsEgoClusteredBuffer() const;
 
   private:
     MSLWorldModel *wm;
@@ -37,10 +36,10 @@ class Opponents
     double opponentProtectDistance;
     double opponentProtectAngle;
 
-    const InfoTime maxValidity = 1000000000;
+    const supplementary::InfoTime maxValidity = 1000000000;
     
-    InfoBuffer<std::vector<geometry::CNPointEgo>> opponentsEgoClustered;
-    InfoBuffer<std::vector<geometry::CNPointAllo>> opponentsAlloClustered;
+    supplementary::InfoBuffer<std::vector<geometry::CNPointEgo>> opponentsEgoClustered;
+    supplementary::InfoBuffer<std::vector<geometry::CNPointAllo>> opponentsAlloClustered;
 };
 
 } /* namespace msl */

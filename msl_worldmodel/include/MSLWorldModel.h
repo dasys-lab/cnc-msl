@@ -1,10 +1,3 @@
-/*
- * MSLWorldModel.h
- *
- *  Created on: 27.10.2014
- *      Author: Andreas Witsch
- */
-
 #pragma once
 
 #include <iostream>
@@ -16,9 +9,9 @@
 
 #include <EventTrigger.h>
 #include <ITrigger.h>
-#include <InformationElement.h>
 #include <MSLEnums.h>
-
+#include <supplementary/InfoBuffer.h>
+#include <supplementary/WorldModel.h>
 
 namespace std_msgs
 {
@@ -81,12 +74,10 @@ class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
 
-class MSLWorldModel
+class MSLWorldModel : public supplementary::WorldModel
 {
   public:
     static MSLWorldModel *get();
-    bool setEngine(alica::AlicaEngine *ae);
-    alica::AlicaEngine *getEngine();
 
     void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
     void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
@@ -102,23 +93,18 @@ class MSLWorldModel
     void onLightBarrierInfo(std_msgs::BoolPtr msg);
     void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
-    bool isMaySendMessages() const;
-    void setMaySendMessages(bool maySendMessages);
-
     MSLSharedWorldModel *getSharedWorldModel();
-    InfoTime getTime();
     void sendSharedWorldModelData();
 
     int getRingBufferLength();
-    int getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
-		bool isUsingSimulator();
-		void sendKillMotionCommand();
-		void sendStartMotionCommand();
-		double getRobotRadius();
-		void setRobotRadius(double newRadius);
-		double adjustRobotRadius(double difference);
+    bool isUsingSimulator();
+	void sendKillMotionCommand();
+	void sendStartMotionCommand();
+	double getRobotRadius();
+	void setRobotRadius(double newRadius);
+	double adjustRobotRadius(double difference);
 
     // Raw Sensor Data
     RawSensorData *rawSensorData;
@@ -137,24 +123,19 @@ class MSLWorldModel
     WhiteBoard *whiteBoard;
 
     supplementary::EventTrigger visionTrigger;
-    InfoTime timeLastSimMsgReceived;
+    supplementary::InfoTime timeLastSimMsgReceived;
 
   private:
     MSLWorldModel();
     virtual ~MSLWorldModel();
 
     supplementary::ITrigger *visionDataEventTrigger;
-    supplementary::SystemConfig *sc;
 
-    int ownID;
     int ringBufferLength;
-    bool maySendMessages;
 
     MSLSharedWorldModel *sharedWorldModel;
-    alica::AlicaEngine *alicaEngine;
 
     ros::NodeHandle n;
-    ros::Subscriber sub;
     ros::Subscriber rawOdomSub;
     ros::Subscriber wmDataSub;
     ros::Subscriber wmBallListSub;
@@ -171,15 +152,11 @@ class MSLWorldModel
     ros::Subscriber imuDataSub;
     ros::Publisher processCommandPub;
 
-    list<msl_msgs::JoystickCommandPtr> joystickCommandData;
-
     mutex wmMutex;
     mutex joystickMutex;
     mutex motionBurstMutex;
     mutex correctedOdemetryMutex;
     ros::AsyncSpinner *spinner;
-
-	protected:
 
 	};
 

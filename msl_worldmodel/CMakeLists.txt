@@ -15,9 +15,11 @@ find_package(catkin REQUIRED
   constraintsolver
   tf
   msl_helper_msgs
-  nonstd)
+  world_model
+  nonstd
+)
 
-find_package(catkin REQUIRED nonstd cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine process_manager robot_control constraintsolver tf msl_helper_msgs)
+find_package(catkin REQUIRED nonstd cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine process_manager robot_control constraintsolver tf msl_helper_msgs world_model)
 find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
@@ -46,6 +48,7 @@ catkin_package(
     msl_helper_msgs
     robot_control
     nonstd
+    world_model
     process_manager
   DEPENDS cgal
   CFG_EXTRAS ${PROJECT_NAME}-extras.cmake
@@ -106,7 +109,6 @@ add_dependencies(msl_worldmodel
 )
 
 ## Specify libraries to link a library or executable target against
-message(">>>>>> catkin_INCLUDE_DIRS: ${catkin_INCLUDE_DIRS}")
 target_link_libraries(msl_worldmodel ${catkin_LIBRARIES})
 
 #############

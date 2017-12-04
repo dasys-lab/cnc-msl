@@ -7,6 +7,9 @@
 #include <cnc_geometry/Calculator.h>
 #include <math.h>
 
+using supplementary::InformationElement;
+using supplementary::InfoBuffer;
+
 namespace msl
 {
 

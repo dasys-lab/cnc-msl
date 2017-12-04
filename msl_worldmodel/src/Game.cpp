@@ -1,10 +1,3 @@
-/*
- * Game.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Game.h"
 #include "Ball.h"
 #include "MSLWorldModel.h"
@@ -13,6 +6,9 @@
 
 using nonstd::optional;
 using nonstd::nullopt;
+using supplementary::InformationElement;
+using supplementary::InfoBuffer;
+
 
 namespace msl
 {
@@ -101,7 +97,7 @@ void Game::onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg)
 {
     // Put the referee box command into the ringbuffer
 
-    auto refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(*msg, wm->getTime(), this->maxValidity, 1);
+    auto refBoxCmd = std::make_shared<InformationElement<msl_msgs::RefBoxCommand>>(*msg, wm->getTime(), this->maxValidity, 1);
     refBoxCommandBuffer.add(refBoxCmd);
     // Set the current refbox situation
     lock_guard<mutex> lock(refereeMutex);

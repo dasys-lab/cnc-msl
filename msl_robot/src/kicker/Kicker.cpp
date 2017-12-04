@@ -1,21 +1,19 @@
-/*
- * Kicker.cpp
- *
- *  Created on: Jul 13, 2015
- *      Author: Stefan Jakob
- */
+#include "msl_robot/kicker/Kicker.h"
 
 #include <Ball.h>
 #include <Game.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <cnc_geometry/Calculator.h>
-#include <msl_robot/kicker/Kicker.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <obstaclehandler/Obstacles.h>
 
 using nonstd::optional;
 using nonstd::nullopt;
+using supplementary::InformationElement;
+using supplementary::InfoBuffer;
+using supplementary::InfoTime;
+
 
 namespace msl
 {
