@@ -154,6 +154,8 @@ namespace msl
 
         void clearPTControllerQueues();
 
+        void stopTranslation();
+
     protected:
         double circleRadius;
         nonstd::optional<geometry::CNPointAllo> circleCenterPoint;
@@ -177,7 +179,6 @@ namespace msl
         MSLRobot *robot;
 
         void readConfigParameters();
-
     };
 }
 /* namespace msl */

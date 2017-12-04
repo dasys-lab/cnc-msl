@@ -90,6 +90,12 @@ namespace msl
         // ANGLE
         mc.motion.angle = egoTarget->angleZ();
 
+        // ROTATION
+        if (query.egoAlignPoint != nullopt)
+        {
+            mc.motion.rotation = query.egoAlignPoint->rotateZ(M_PI).angleZ();
+        }
+
         // TRANSLATION
         if (egoTarget->length() > query.snapDistance)
         {
@@ -98,14 +104,9 @@ namespace msl
         }
         else
         {
+        	cout << "RobotMovement::stopTranslation called" << endl;
             mc.motion.translation = 0;
-        }
-
-        // ROTATION
-        if (query.egoAlignPoint != nullopt)
-        {
-            mc.motion.rotation = query.egoAlignPoint->rotateZ(M_PI).angleZ();
-
+            query.stopTranslation();
         }
 
         // pt controller stuff

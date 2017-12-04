@@ -26,7 +26,6 @@ Prediction::Prediction()
 
 Prediction::~Prediction()
 {
-    // nothing to do here
 }
 
 void Prediction::monitoring()

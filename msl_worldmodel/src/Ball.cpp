@@ -830,7 +830,6 @@ namespace msl
 
         auto ownPositionInfo = this->wm->rawSensorData->getOwnPositionVisionBuffer().getLastValid();
         bool inField = false;
-        // TODO why do we think the ball is in the field when we don't know its position
         if (ownPositionInfo == nullptr)
         {
             inField = true;

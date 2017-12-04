@@ -73,6 +73,7 @@ namespace alica
         // if we reach the point and are aligned, the behavior is successful
         if (mc.motion.translation == 0 && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < (M_PI / 180) * alignTolerance)
         {
+        	cout << "Position Rceiver: success" << endl;
             this->setSuccess(true);
         }
         if (!std::isnan(mc.motion.translation))

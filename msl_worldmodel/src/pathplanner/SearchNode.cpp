@@ -85,8 +85,6 @@ VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getEdge() const
 
 bool SearchNode::matches(const Vertex &vertex)
 {
-    // can't be const because CGAL sucks!
-
     if (initialEdge)
     {
         return (*this->vertex) == vertex;
@@ -104,8 +102,6 @@ void SearchNode::setEdge(VoronoiDiagram::Halfedge_around_vertex_circulator edge)
 
 VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getIncidentEdges()
 {
-    // can't be const because CGAL sucks!
-
     if (this->initialEdge)
     {
         return this->vertex->incident_halfedges();
@@ -118,8 +114,6 @@ VoronoiDiagram::Halfedge_around_vertex_circulator SearchNode::getIncidentEdges()
 
 geometry::CNPointAllo SearchNode::getPoint()
 {
-    // can't be const because CGAL sucks!
-
     if (this->initialEdge)
     {
         return geometry::CNPointAllo(this->vertex->point().x(), this->vertex->point().y());

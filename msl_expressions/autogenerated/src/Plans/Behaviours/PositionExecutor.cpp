@@ -120,6 +120,7 @@ namespace alica
             // if we reached the point and are aligned, the behavior is successful
             if (egoTarget.length() < 120 && fabs(egoBallPos->rotateZ(M_PI).angleZ()) < (M_PI / 180) * alignTolerance)
             {
+            	cout << "Position Executor: success" << endl;
                 this->setSuccess(true);
             }
             if (!std::isnan(mc.motion.translation))
