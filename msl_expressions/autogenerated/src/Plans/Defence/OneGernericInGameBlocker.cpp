@@ -6,6 +6,7 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include "msl_robot/robotmovement/RobotMovement.h"
+#include <MSLEnums.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
@@ -157,7 +158,7 @@ void OneGernericInGameBlocker::run(void *msg)
 //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
             movQuery.egoDestinationPoint = make_optional<geometry::CNPointEgo>(driveTo.toEgo(*ownPos));
             movQuery.egoAlignPoint = ballPos;
-            movQuery.velocityMode = msl::MovementQuery::Velocity::FAST;
+            movQuery.velocityMode = msl::VelocityMode::FAST;
             mc = rm.moveToPoint(movQuery);
     }
 

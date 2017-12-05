@@ -1,10 +1,3 @@
-/*
- * RobotMovement.h
- *
- *  Created on: 17.12.2014
- *      Author: tobi
- */
-
 #pragma once
 
 #include "DateTime.h"
@@ -15,6 +8,8 @@
 #include <cnc_geometry/CNPointEgo.h>
 #include <nonstd/optional.hpp>
 
+#include <queue>
+#include <valarray>
 #include <memory>
 
 namespace msl
@@ -114,6 +109,49 @@ class RobotMovement
     static double assume_ball_velo;
     static double interceptQuotient;
     static double robotRadius;
+    static double asymptoticGain;
+
+    //PT STUFF
+
+    /**
+     * PT-Controller for smooth translation acceleration
+     */
+    std::valarray<double> ptController(MovementQuery &query, double translation, double rotation);
+    /**
+     * Initialize all needed parameters and queues for the PT-Controller
+     */
+    void initializePTControllerParameters();
+
+    void clearPTControllerQueues();
+
+    void stopTranslation();
+
+    /**
+     * Past sent translation for PT-Controller
+     */
+    std::queue<std::valarray<double>> pastControlledValues;
+
+    /**
+     * Past translation input for PT-Controller
+     */
+    std::queue<std::valarray<double>> pastControlInput;
+
+    /**
+     * Carefully value for PT-Controller (Drive.conf)
+     */
+    double carefullyControllerVelocity;
+    /**
+     * Default value for PT-Controller (Drive.conf)
+     */
+    double defaultControllerVelocity;
+    /**
+     * fast value for PT-Controller (Drive.conf)
+     */
+    double fastControllerVelocity;
+    /**
+     * Behaviour frequency
+     */
+    double sampleTime = 1.0 / 30.0;
 };
 
 } /* namespace msl */

@@ -1,10 +1,3 @@
-/*
- * MSLEnums.h
- *
- *  Created on: Jan 28, 2015
- *      Author: Stefan Jakob
- */
-
 #pragma once
 
 namespace msl
@@ -92,5 +85,13 @@ enum BallPossessionStatus
 	NotInKickerDistance = 2,
 	AsideOfKicker = 3,
 	NoBallSeen = 4
+};
+
+/**
+ * Velocity enum to decide how fast we want do go
+ */
+enum VelocityMode
+{
+    CAREFULLY, DEFAULT, FAST
 };
 } /* namespace msl */

@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ //Add additional includes here
 using geometry::CNPointEgo;
 using geometry::CNPointAllo;
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -56,7 +57,7 @@ namespace alica
             query.egoAlignPoint = egoBallPos;
             query.snapDistance = fastCatchRadius;
             query.additionalPoints = additionalPoints;
-            query.velocityMode = msl::MovementQuery::Velocity::FAST;
+            query.velocityMode = msl::VelocityMode::FAST;
             mc = rm.moveToPoint(query);
         }
         else
@@ -66,7 +67,7 @@ namespace alica
             query.egoAlignPoint = egoBallPos;
             query.snapDistance = slowCatchRadius;
             query.additionalPoints = additionalPoints;
-            query.velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+            query.velocityMode = msl::VelocityMode::DEFAULT;
             mc = rm.moveToPoint(query);
         }
 

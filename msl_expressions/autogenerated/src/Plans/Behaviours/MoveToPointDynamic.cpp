@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1456997073100) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
 #include "SolverType.h"
+#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -67,7 +68,7 @@ namespace alica
 //                mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
                 movQuery.egoDestinationPoint = driveTo;
                 movQuery.egoAlignPoint = ballPos;
-                movQuery.velocityMode = msl::MovementQuery::Velocity::FAST;
+                movQuery.velocityMode = msl::VelocityMode::FAST;
                 mc = rm.moveToPoint(movQuery);
             }
             if (driveTo.length() < 150)

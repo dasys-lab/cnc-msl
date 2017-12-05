@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1462969724089) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
+#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
@@ -41,7 +42,7 @@ namespace alica
         msl_actuator_msgs::MotionControl bm;
         query.egoDestinationPoint = ballPos;
         query.egoAlignPoint = query.egoDestinationPoint;
-        query.velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+        query.velocityMode = msl::VelocityMode::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->toAllo(*ownPos).x << " y: " << ballPos->toAllo(*ownPos).y
                 << endl;

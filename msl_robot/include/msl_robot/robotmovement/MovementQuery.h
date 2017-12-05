@@ -1,24 +1,18 @@
-/*
- * MovementQuery.h
- *
- *  Created on: Apr 27, 2016
- *      Author: Michael Gottesleben
- */
-
 #pragma once
 
 #include "RobotMovement.h"
-#include "SystemConfig.h"
-#include "msl_actuator_msgs/MotionControl.h"
-#include "valarray"
-#include "queue"
+#include <SystemConfig.h>
+#include <MSLEnums.h>
 
 #include <Ball.h>
-#include <SystemConfig.h>
+#include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPointEgo.h>
 #include <nonstd/optional.hpp>
+#include <SystemConfig.h>
+#include <valarray>
+#include <queue>
 
 namespace msl
 {
@@ -50,27 +44,7 @@ namespace msl
         /**
          * Velocity enum to decide how fast we want do go
          */
-        enum Velocity
-        {
-            CAREFULLY, DEFAULT, FAST
-        };
-
-        /**
-         * Velocity enum to decide how fast we want do go
-         */
-        Velocity velocityMode;
-        /**
-         * Carefully value for PT-Controller (Drive.conf)
-         */
-        double carefullyControllerVelocity;
-        /**
-         * Default value for PT-Controller (Drive.conf)
-         */
-        double defaultControllerVelocity;
-        /**
-         * fast value for PT-Controller (Drive.conf)
-         */
-        double fastControllerVelocity;
+        VelocityMode velocityMode;
         /**
          * Distance when the goal is reached
          */
@@ -138,47 +112,14 @@ namespace msl
          */
         std::shared_ptr<PathPlannerQuery> getPathPlannerQuery() const;
 
-        /**
-         * Initial, empty Array for PT-Controller
-         */
-        double init[2] = {0.0, 0.0};
-
-        /**
-         * PT-Controller for smooth translation acceleration
-         */
-        std::valarray<double> ptController(double rotation, double translation);
-        /**
-         * Initialize all needed parameters and queues for the PT-Controller
-         */
-        void initializePTControllerParameters();
-
-        void clearPTControllerQueues();
-
-        void stopTranslation();
-
     protected:
         double circleRadius;
         nonstd::optional<geometry::CNPointAllo> circleCenterPoint;
         nonstd::optional<geometry::CNPointAllo> rectangleUpperLeftCorner;
         nonstd::optional<geometry::CNPointAllo> rectangleLowerRightCorner;
 
-        double controllerVelocity;
-
-        /**
-         * Past sent translation for PT-Controller
-         */
-        std::queue<std::valarray<double>> pastTranslations;
-
-        /**
-         * Past translation input for PT-Controller
-         */
-        std::queue<std::valarray<double>> pastControlInput;
-
     private:
         MSLWorldModel *wm;
-        MSLRobot *robot;
-
-        void readConfigParameters();
     };
 }
 /* namespace msl */
