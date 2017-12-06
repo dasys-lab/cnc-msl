@@ -9,7 +9,6 @@ using nonstd::nullopt;
 using supplementary::InformationElement;
 using supplementary::InfoBuffer;
 
-
 namespace msl
 {
 

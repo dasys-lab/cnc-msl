@@ -153,8 +153,8 @@ void Teammates::integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr m
     if (robotPositionBufferIter == this->robotPositions.end())
     {
         auto buffer = make_shared<InfoBuffer<geometry::CNPositionAllo>>(wm->getRingBufferLength());
-        this->robotPositions.emplace(msg->senderID, buffer);
         buffer->add(infoElement);
+        this->robotPositions.emplace(msg->senderID, buffer);
     }
     else
     {

@@ -37,8 +37,8 @@ void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr msg
     if (shwmDataBufferIter == this->shwmDataBuffers.end())
     {
         auto buffer = std::make_shared<InfoBuffer<msl_sensor_msgs::SharedWorldInfo>>(wm->getRingBufferLength());
-        this->shwmDataBuffers.emplace(msg->senderID, buffer);
         buffer->add(infoElement);
+        this->shwmDataBuffers.emplace(msg->senderID, buffer);
     }
     else
     {

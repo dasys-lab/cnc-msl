@@ -78,6 +78,7 @@ class Calibration;
 class MSLWorldModel : public supplementary::WorldModel
 {
   public:
+
     static MSLWorldModel *get();
 
     void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
