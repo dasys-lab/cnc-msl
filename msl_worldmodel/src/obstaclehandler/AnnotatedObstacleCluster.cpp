@@ -243,7 +243,7 @@ bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster *first, Annota
     }
 }
 
-/*bool AnnotatedObstacleCluster::equals(shared_ptr<AnnotatedObstacleCluster> cl)
+bool AnnotatedObstacleCluster::equals(shared_ptr<AnnotatedObstacleCluster> cl)
 {
     if (cl->x == this->x && cl->y == this->y)
     {
@@ -254,7 +254,7 @@ bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster *first, Annota
         return true;
     }
     return false;
-}*/
+}
 
 string AnnotatedObstacleCluster::toString()
 {

@@ -218,7 +218,7 @@ void Obstacles::handleObstacles(shared_ptr<const vector<geometry::CNPointEgo>> m
 
         if (current->ident == EntityType::Opponent)
         {
-            // it is not a teammate
+             // it is not a teammate
             if (wm->field->isInsideField(curAlloPoint, FIELD_TOL))
             {
                 newOppAllo->push_back(curAlloPoint);

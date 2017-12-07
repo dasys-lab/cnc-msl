@@ -619,7 +619,7 @@ namespace msl
         }
 
         auto ops = opsInfo->getInformation();
-
+        std::cout << "Ball: oppHasBall: opsSize" << ops.size() << std::endl;
         double minDist = 100000;
         if (ops.size() > 0)
         {
@@ -628,6 +628,7 @@ namespace msl
                 geometry::CNPointEgo obstacle = ops.at(i);
                 minDist = min(obstacle.distanceTo(*ballPos), minDist);
             }
+            std::cout << "Ball: oppHasBall: minDist" << minDist << std::endl;
         }
 
         auto before = this->oppBallPossession.getLastValid();

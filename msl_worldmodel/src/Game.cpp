@@ -378,11 +378,11 @@ void Game::updateGameState()
         return;
     }
 
-    auto oppposs = wm->ball->getOppBallPossession();
+    auto oppPoss = wm->ball->getOppBallPossession();
     bool oppBallPossession = false;
-    if (oppposs != nullopt)
+    if (oppPoss != nullopt)
     {
-        oppBallPossession = oppposs.value();
+        oppBallPossession = oppPoss.value();
     }
 
     GameState gs = getGameState();

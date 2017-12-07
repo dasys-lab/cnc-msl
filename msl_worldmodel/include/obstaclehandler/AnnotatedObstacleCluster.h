@@ -62,7 +62,7 @@ class AnnotatedObstacleCluster
     double distanceTo(std::shared_ptr<geometry::CNPositionAllo> pos);
     double distanceTo(std::shared_ptr<geometry::CNPointAllo> p);
     static bool compareTo(AnnotatedObstacleCluster *first, AnnotatedObstacleCluster *second);
-    //bool equals(std::shared_ptr<AnnotatedObstacleCluster> cl);
+    bool equals(std::shared_ptr<AnnotatedObstacleCluster> cl);
     static AnnotatedObstacleCluster *getNew(AnnotatedObstacleClusterPool *aocp);
     std::string toString();
 
