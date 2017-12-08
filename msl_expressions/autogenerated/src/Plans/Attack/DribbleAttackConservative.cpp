@@ -30,12 +30,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-        ;
-        auto ballPos = wm->ball->getEgoBallPosition();
 
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (ownPos == nullptr)
+        if (ownPos == nullptr )
         {
             return;
         }
@@ -43,7 +41,6 @@ namespace alica
         auto goalMid = alloGoalMid->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
         query->egoDestinationPoint = goalMid;
 
         auto tmpMC = rm.moveToPoint(query);

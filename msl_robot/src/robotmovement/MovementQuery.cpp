@@ -151,7 +151,16 @@ namespace msl
 	{
 		// initial pt-controller stuff
 		std::queue<std::valarray<double>> controlInput;
-		auto odom = wm->rawSensorData->getOwnVelocityMotion();
+		std::shared_ptr<msl_msgs::MotionInfo> odom;
+
+		if(this->wm->isUsingSimulator())
+		{
+			odom = wm->rawSensorData->getOwnVelocityVision();
+		}
+		else
+		{
+			odom = wm->rawSensorData->getOwnVelocityMotion();
+		}
 
 		double translation;
 		double angle;

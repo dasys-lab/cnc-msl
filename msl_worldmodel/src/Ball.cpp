@@ -48,7 +48,7 @@ Ball::Ball(MSLWorldModel *wm, int ringbufferLength) :
 	LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>(
 			"Localization", "LocalizationSuccess",
 			NULL);
-	KICKER_DISTANCE_SIMULATOR = 432;
+	KICKER_DISTANCE_SIMULATOR = 500;
 	lastUpdateReceived = 0;
 	sharedBallSupporters = 0;
 	MIN_HAVE_BALL_CYCLE = (*this->sc)["Dribble"]->get<int>("Dribble",

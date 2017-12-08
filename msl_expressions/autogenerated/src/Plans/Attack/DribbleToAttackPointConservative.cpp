@@ -37,18 +37,23 @@ namespace alica
         auto dstscan = wm->rawSensorData->getDistanceScan();
 
         if (ownPos == nullptr)
+        {
             return;
+        }
         if (currentTarget == nullptr)
+        {
             trueInitialize();
+        }
         if (currentTarget == nullptr)
+        {
             return;
+        }
         auto egoTarget = currentTarget->alloToEgo(*ownPos);
         if (egoTarget->length() < 1200)
         {
             this->setSuccess(true);
         }
 
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
 
         auto bm = rm.moveToPoint(query);
@@ -58,9 +63,11 @@ namespace alica
         {
             send(tmpMC);
         }
-        else if (std::isnan(bm.motion.translation))
+        else if (!std::isnan(bm.motion.translation))
         {
             send(bm);
+        } else {
+
         }
         /*PROTECTED REGION END*/
     }
@@ -77,7 +84,9 @@ namespace alica
     {
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
+        {
             return;
+        }
 //		Random rand = new Random();
 //		int index = (int)Math.Round(rand.NextDouble()*2.0);
 
