@@ -1,10 +1,3 @@
-/*
- * MSLConstraintBuilder.h
- *
- *  Created on: Sep 2, 2014
- *      Author: psp
- */
-
 #ifndef MSLCONSTRAINTBUILDER_H_
 #define MSLCONSTRAINTBUILDER_H_
 
@@ -24,7 +17,7 @@ using namespace autodiff;
 
 namespace msl
 {
-// should be in /home/psp/impera/MSLCN/MSLWorldModel/src/Areas.cs
+
 enum Areas
 {
     Surrounding,
@@ -91,13 +84,14 @@ class MSLConstraintBuilder
     static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> &points);
 
-    static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> insideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideConvex(vector<shared_ptr<TVec>> &shell, double tolerance, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>> &points);
 
-    static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
-    static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point);
-    static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point, double tolerance = AREA_TOL);
+    static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance = AREA_TOL);
+    static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point, double tolerance = AREA_TOL);
+    static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> &points, double tolerance = AREA_TOL);
 
     static shared_ptr<Term> applyRules(int specialIdx, vector<shared_ptr<TVec>> &fieldPlayers);
     static shared_ptr<Term> applyRules(Situation situation, int specialIdx, vector<shared_ptr<TVec>> &fieldPlayers);

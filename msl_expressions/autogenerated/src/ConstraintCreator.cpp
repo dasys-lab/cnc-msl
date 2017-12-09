@@ -61,6 +61,8 @@
 
 #include  "Plans/Standards/Own/GoalKick/constraints/GoalKick1469521732930Constraints.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleAroundTheBall1498663554104Constraints.h"
+
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
@@ -76,6 +78,10 @@
 #include  "Plans/TestPlans/constraints/TestCalculationPlan1478709817405Constraints.h"
 
 #include  "Plans/TestPlans/MotorControlTest/constraints/PointToPoint1489068076224Constraints.h"
+
+#include  "Plans/TwoHoledWall/constraints/TwoHoledWallAlign1496753106611Constraints.h"
+
+#include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribble1498664114905Constraints.h"
 
 #include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
 
@@ -114,6 +120,8 @@
 #include  "Plans/Standards/Own/PassIntoPath/constraints/PassIntoPath1457530916296Constraints.h"
 
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
+
+#include  "Plans/Attack/constraints/FreeZonePassing1508950989519Constraints.h"
 
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 
@@ -202,6 +210,10 @@ namespace alica
 
             case 1458033723845:
                 return make_shared<Constraint1458033723845>();
+                break;
+
+            case 1508951693560:
+                return make_shared<Constraint1508951693560>();
                 break;
 
             case 1467206311808:

@@ -39,7 +39,8 @@ namespace alica
         this->angleIntErr = 0;
         this->trans = 0;
         this->haveBallCounter = 0;
-
+        this->canPassCounter = 1;
+        this->canPassThreshold = 1;
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -59,6 +60,7 @@ namespace alica
         {
             return;
         }
+
         canPass = true;
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
@@ -170,13 +172,24 @@ namespace alica
                 canPass = false;
             }
         }
+        // Hack coimbra 17
         if (canPass)
         {
+            this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
+        }
+        else
+        {
+            this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
+        }
+        if (this->canPassCounter > this->canPassThreshold)
+        {
+            this->canPassThreshold = -2;
             cout << "SAAG2R: aiming to receiver" << endl;
             alloTarget = recPos1;
         }
         else
         {
+            this->canPassThreshold = 2;
             cout << "SAAG2R: aiming to alternative receiver" << endl;
             alloTarget = recPos2;
         }
@@ -341,6 +354,9 @@ namespace alica
         this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         string tmp;
         bool success = true;
+        this->canPass = true;
+        this->canPassCounter = 1;
+        this->canPassThreshold = 1;
         try
         {
             success &= getParameter("TeamMateTaskName1", tmp);

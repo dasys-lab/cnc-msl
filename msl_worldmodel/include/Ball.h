@@ -16,6 +16,7 @@
 #include "container/CNPoint3D.h"
 #include "container/CNVelocity2D.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "MSLEnums.h"
 #include <map>
 #include <memory>
 
@@ -79,6 +80,7 @@ class Ball
     double calculateSharedBallMassVector(bool withGoalie);
     bool simpleHaveBallDribble(bool hadBefore);
     bool hadBefore;
+    BallPossessionStatus getBallPossessionStatus();
     bool closeToTheBall()
     {
         return selfInBallPossesion;
@@ -100,8 +102,20 @@ class Ball
     double HAVE_BALL_MAX_ANGLE_DELTA;
     double BALL_DIAMETER;
     double LOCALIZATION_SUCCESS_CONFIDENCE;
+
+    /**
+     * The minimum amount of ALICA cycles (the 30 Hz frequency) the ball has to be seen.
+     * After passing this value the Ball class will return true for haveBall().
+     */
+    int MIN_HAVE_BALL_CYCLE;
+
+    /**
+     * The amount of ALICA cycles (the 30 Hz frequency) that is historized for the haveBall() detection.
+     */
+    int AMOUNT_OF_HISTORIZED_CYCLE;
     int hasBallIteration;
     bool hasBall; /**< True if the local robot has the ball */
+    BallPossessionStatus ballPossessionStatus;
     double haveBallDistanceDynamic;
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;

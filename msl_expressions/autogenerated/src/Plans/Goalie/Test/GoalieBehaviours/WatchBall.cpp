@@ -48,8 +48,10 @@ namespace alica
         ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
         auto tempMid = wm->field->posOwnGoalMid();
         alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
+//        alloGoalLeft = make_shared < geometry::CNPoint2D
+//                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
         alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
+                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
         /*PROTECTED REGION END*/
@@ -64,6 +66,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
         ownPos = wm->rawSensorData->getOwnPositionVision();
+
         if (ownPos == nullptr)
         {
             mc.motion.translation = 0;

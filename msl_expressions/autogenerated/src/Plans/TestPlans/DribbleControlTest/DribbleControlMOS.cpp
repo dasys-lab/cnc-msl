@@ -1,209 +1,286 @@
 using namespace std;
 #include "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
 
-/*PROTECTED REGION ID(inccpp1479905178049) ENABLED START*/ //Add additional includes here
-#include "msl_actuator_msgs/BallHandleCmd.h"
-#include "RawSensorData.h"
+/*PROTECTED REGION ID(inccpp1479905178049) ENABLED START*/ // Add additional includes here
+#include "Ball.h"
 #include "MSLWorldModel.h"
-#include "math.h"
+#include "RawSensorData.h"
 #include "SystemConfig.h"
+#include "math.h"
+#include "msl_actuator_msgs/BallHandleCmd.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1479905178049) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION ID(staticVars1479905178049) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
     DribbleControlMOS::DribbleControlMOS() :
             DomainBehaviour("DribbleControlMOS")
     {
-        /*PROTECTED REGION ID(con1479905178049) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(con1479905178049) ENABLED START*/ // Add additional options here
         this->sc = supplementary::SystemConfig::getInstance();
+        decayFactor = 0.5;
+        testingMode = false;
+        this->wheelSpeedLeftOld = 0;
+        this->wheelSpeedRightOld = 0;
+
+        speedNoBall = 0;
+
+        translationOld = 0;
+        rotationOld = 0;
+        angleOld = 0;
+
+        // to increase initial actuator speed
+        powerFactor = 0;
+        decayedPowerFactor = 0;
+        transTolerance = 0;
+        rotTolerance = 0;
+        angleTolerance = 0;
+
+        velToInput = 0;
+        staticUpperBound = 0;
+        staticMiddleBound = 0;
+        staticLowerBound = 0;
+        staticNegVelX = 0;
+        epsilonT = 0;
+        epsilonY = 0;
+        epsilonRot = 0;
+        rBallRobot = 0;
+        forwConst = 0;
+        sidewConst = 0;
+        diagConst = 0;
+        phi = 0;
+        velYFactor = 0;
+        velXFactor = 0;
+        powerOfRotation = 0;
         /*PROTECTED REGION END*/
     }
     DribbleControlMOS::~DribbleControlMOS()
     {
-        /*PROTECTED REGION ID(dcon1479905178049) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(dcon1479905178049) ENABLED START*/ // Add additional options here
         /*PROTECTED REGION END*/
     }
     void DribbleControlMOS::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
-        //---
-        // 1 only rotation, increases by pi/3 every time
-        // 2 rotation with increasing translation speed, rotation increases every ten times
-        // 3 rotation with changing translation angle
-        // 4 changing translation angle
-        // 5 increasing speed
-        // default forth and back
-        /*        switch (testBehaviour)
-         {
-         case 1:
+        /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ // Add additional options here
+        auto joyCmd = wm->rawSensorData->getJoystickCommand();
 
-         testSpeed = 0;
-         if (testCount >= 60)
-         {
-         testRot += M_PI / 3;
-         }
-         break;
+        if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
+        {
+            return;
+        }
+	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
+        if (wm->isUsingSimulator())
+        {
+        	odom = wm->rawSensorData->getOwnVelocityVision();
+        }
+        else {
+        	odom = wm->rawSensorData->getOwnVelocityMotion();
+        }
 
-         case 2:
-         if (testCount2 >= 10)
-         {
-         testCount2 = 0;
-         testSpeed -= 1000;
-         testRot += M_PI / 3;
-         }
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testCount2++;
-         testSpeed += 100;
-         }
-         break;
-
-         case 3:
-
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testAngle += M_PI / 8;
-         }
-         break;
-
-         case 4:
-
-         if (testCount2 >= 2)
-         {
-         testCount2 = 0;
-         testRot += M_PI / 12;
-         }
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testCount2++;
-         testAngle += M_PI;
-         }
-         break;
-
-         case 5:
-
-         if (testCount >= 60)
-         {
-         testCount = 0;
-         testSpeed += 100;
-         testAngle += M_PI;
-         }
-         break;
-
-         default:
-
-         if (testCount >= 200)
-         {
-         testCount = 0;
-         testAngle += M_PI;
-         }
-         break;
-         }
-
-         //fill message for MotionControl as defined in switch
-         //drive only in time step 6-49
-         //pause in 1-5 and 50-60, repeat
-         msl_actuator_msgs::MotionControl motorMsg;
-         if (testCount < 50 && testCount > 5)
-         {
-         motorMsg.motion.angle = testAngle;
-         motorMsg.motion.rotation = testRot;
-         motorMsg.motion.translation = testSpeed;
-         }
-         else
-         {
-         motorMsg.motion.angle = 0;
-         motorMsg.motion.rotation = 0;
-         motorMsg.motion.translation = 0;
-         }
-         send(motorMsg);
-         testCount++;
-         */
-        auto odom = wm->rawSensorData->getOwnVelocityMotion();
+        if (odom == nullptr)
+        {
+            cerr << "DribbleControlMOS: no odometry!" << endl;
+            return;
+        }
 
         auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
-        //auto robotRot = (double)odom->rotation / 1024.0;
         auto robotRot = (double)odom->rotation;
+        msl_actuator_msgs::BallHandleCmd msgback;
 
-        auto ballVel = getBallVelocity(robotAngle, robotVel, robotRot);
-        auto ballAngle = getBallAngle(robotAngle, robotVel, robotRot);
+        bool haveBall = wm->ball->haveBall();
 
-        cout << "DribbleControlMOS::run: ballVel = " << ballVel << endl;
-        cout << "DribbleControlMOS::run: ballAngle = " << ballAngle << endl;
+        if (!testingMode && !haveBall)
+        {
+            msgback.rightMotor = -speedNoBall;
+            msgback.leftMotor = -speedNoBall;
+            sendWheelSpeed(msgback);
+            return;
+        }
 
+        double velX;
+        double velY;
+
+        // calculates desired ball path depending on robot movement, corrected to guarantee grip
+        getBallPath(robotVel, robotAngle, robotRot, velX, velY);
+
+        //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
+        auto ballVel = getBallVelocity(velX, velY);
+        auto ballAngle = getBallAngle(velX, velY);
+
+
+        // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
 
-        msl_actuator_msgs::BallHandleCmd msgback;
-        msgback.leftMotor = left;
-        msgback.rightMotor = right;
-        cout << "DribbleControlMOS: BHC: left: " << msgback.leftMotor << " right: " << msgback.rightMotor << endl;
-        send(msgback);
-
-//        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
-//                << ballAngle << "  " << left << " " << right << endl;
+        // depends on hardware connection, left and right in this method are as seen from the robots point of view
+        msgback.leftMotor = right;
+        msgback.rightMotor = left;
+        sendWheelSpeed(msgback);
 
         /*PROTECTED REGION END*/
     }
     void DribbleControlMOS::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
-        testBehaviour = (*sc)["DribbleAlround"]->get<int>("DribbleAlround.testBehaviour", NULL);
-        testSpeed = (*sc)["DribbleAlround"]->get<int>("DribbleAlround.testSpeed", NULL);
-        testAngle = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.testAngle", NULL) * M_PI;
-        testRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.testRot", NULL) * M_PI;
-        testCount = 0;
-        testCount = 0;
-
+        /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ // Add additional options her
         velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
         staticUpperBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound", NULL);
+        staticMiddleBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticMiddleBound", NULL);
         staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
         staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX", NULL);
         rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot", NULL);
         epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT", NULL);
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
-        phi = M_PI / 6; //horizontal angle between y and arm
+        epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
+        velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
+        velXFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velXFactor", NULL);
+        powerFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerFactor", NULL);
+        decayFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.decayFactor", NULL);
+        transTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.transTolerance", NULL);
+        rotTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rotTolerance", NULL);
+        angleTolerance = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.angleTolerance", NULL);
+        testingMode = (*sc)["DribbleAlround"]->get<bool>("DribbleAlround.testingMode", NULL);
+        powerOfRotation = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.powerOfRotation", NULL);
 
-        //very static
+        speedNoBall = (*sc)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+
+        phi = M_PI / 6; // horizontal angle between y and arm
+
+        // very static
+        // forwConst => ~0.89907059794455198110
         forwConst = sqrt(
                 (sin(M_PI / 2 - 0.82)) * sin(M_PI / 2 - 0.82)
-                        + (sin(0.75) * cos(M_PI / 2 - 0.82)) * (sin(0.75) * cos(M_PI / 2 - 0.82))) / cos(0.349); //ballVel -> ArmVel for forward
-        sidewConst = sin(0.559) / sin(0.438); //ballVel -> ArmVel for sideways
-        diagConst = sin(1.18) / (cos(0.349) * sin(0.82)); //ballVel -> ArmVel for diagonal
+                        + (sin(0.75) * cos(M_PI / 2 - 0.82)) * (sin(0.75) * cos(M_PI / 2 - 0.82))) / cos(0.349); // ballVel -> ArmVel for forward
 
+        // sidewConst => ~1.25041800602532376327
+        sidewConst = sin(0.559) / sin(0.438); // ballVel -> ArmVel for sideways
+
+        // diagConst => ~1.34572549908225510608
+        diagConst = sin(1.18) / (cos(0.349) * sin(0.82)); // ballVel -> ArmVel for diagonal
+
+        this->wheelSpeedLeftOld = 0;
+        this->wheelSpeedRightOld = 0;
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ //Add additional methods here
-    double DribbleControlMOS::getBallVelocity(double angle, double translation, double rotation)
+    /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
+    void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback)
     {
-        double velX = -cos(angle) * translation;
-        double velY = -sin(angle) * translation + rotation * rBallRobot;
-        //correcting desired ball velocity towards robot to guarantee grib
-        if (velX <= staticUpperBound && velX >= staticLowerBound)
-            velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        double maxDelta = 100.0;
 
+//        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
+//                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
+//                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
+//                && fabs(msgback.rightMotor - this->wheelSpeedRightOld) > maxDelta)
+//        {
+//            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
+//            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
+//        }
+        this->wheelSpeedLeftOld = msgback.leftMotor;
+        this->wheelSpeedRightOld = msgback.rightMotor;
+
+        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
+        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
+
+        send(msgback);
+    }
+    /**
+     * calculates desired ball path depending on the robot movement and corrected to ensure grib
+     */
+    void DribbleControlMOS::getBallPath(double translation, double angle, double rotation, double &velX, double &velY)
+    {
+        // ball velocity form only the robots translation
+        double velXTemp = -cos(angle) * translation;
+        double velYTemp = -sin(angle) * translation;
+
+        // correcting desired ball velocity towards robot to guarantee grib
+        //			velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        velX = velXTemp;
+
+        // correction of velocity in x , depending on x (epsilonT), depending on y (epsilonY)
+        // epsilonT<1 ; epsilonY<0.45*velYFactor
+        velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+
+        // correction of velocity in x depending on rotation (epsilonRot)
+        if (fabs(velYTemp) > 200)
+        {
+            velX = velX - epsilonRot * sign(velYTemp) * rBallRobot * rotation;
+        }
+        else
+        {
+            // rotation goes in nonlinear to fit for high as well as low
+            velX = velX - epsilonRot * pow(rotation * sign(rotation), powerOfRotation) * rBallRobot;
+        }
+
+        // special case where y velocity and rotation result in positive x velocity (sign(velY)!=sign(rot))
+        //TODO
+
+        // rotation results in y velocity of the ball
+        velY = velYTemp + 3.0 / 4.0 * rBallRobot * rotation;
+        // factor so robot can hold the ball if driving sideways
+        velY = velY * velYFactor;
+        velX = velX * velXFactor;
+
+        //	double powerFactor = 2;
+        //	double transTolerance = 200;
+        //	double rotTolerance = 0.4;
+        //	double angleTolerance = 0.4;
+
+        // for higher grip when starting motion, we multiply the velocity with powerFactor for the first iterations
+        // only for negative x, so we don't push the ball out
+        if (velXTemp < 0)
+        {
+            // detect jump in odometry values
+            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
+                    || angleTolerance <= fabs(angle - angleOld))
+            {
+                // powerFactor decays over the iterations
+                decayedPowerFactor = powerFactor;
+             }
+
+            //velY = velY * (1 + decayedPowerFactor);
+            velX = velX * (1 + decayedPowerFactor);
+            decayedPowerFactor *= decayFactor;
+
+        }
+
+        translationOld = translation;
+        rotationOld = rotation;
+        angleOld = angle;
+
+
+        // if we start moving forward, we don't want to push directly
+        if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
+                && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
+        {
+            // results in 0 arm wheel movement
+            velX = 0;
+        }
+        else if (velXTemp <= staticMiddleBound && velXTemp >= staticLowerBound && velYTemp <= staticUpperBound
+                && velYTemp >= staticLowerBound && rotation <= 0.1 && rotation >= -0.1)
+        {
+            // results in minimum negative arm wheel movement
+            velX = -100;
+        }
+    }
+
+    double DribbleControlMOS::getBallVelocity(double velX, double velY)
+    {
         return sqrt(velX * velX + velY * velY);
     }
 
-    //returns values [pi,-pi[
-    double DribbleControlMOS::getBallAngle(double angle, double translation, double rotation)
+    /**
+     * returns values [pi,-pi[
+     */
+    double DribbleControlMOS::getBallAngle(double velX, double velY)
     {
-        double velX = -cos(angle) * translation;
-        double velY = -sin(angle) * translation + rotation * rBallRobot;
-        if (velX <= staticUpperBound && velX >= staticLowerBound)
-            velX -= staticNegVelX;
-        velX -= epsilonT * abs(translation) + epsilonRot * abs(rotation);
+        return atan2(velY, velX);
+    }
 
-        double ballAngle = 0;
-        ballAngle = atan2(velY, velX);
-
-        return ballAngle;
+    int DribbleControlMOS::sign(double x)
+    {
+        if (x == 0)
+            return x;
+        return x > 0 ? 1 : -1;
     }
 
     double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAngle)
@@ -220,18 +297,22 @@ namespace alica
 
         double angleConst = 0;
 
-        //linear interpolation of the constants in the 8 sectors
+        // linear interpolation of the constants in the 8 sectors
 
         if (ballAngle <= sec1)
         {
+            // pull
             angleConst = (ballAngle - sec1) * forwConst / (sec1 - sec0);
         }
+        // wheel stops
         else if (ballAngle <= sec2)
         {
+            // push
             angleConst = (ballAngle - sec1) * sidewConst / (sec2 - sec1);
         }
         else if (ballAngle <= sec3)
         {
+
             angleConst = sidewConst + (ballAngle - sec2) * (diagConst - sidewConst) / (sec3 - sec2);
         }
         else if (ballAngle <= sec4)
@@ -240,10 +321,13 @@ namespace alica
         }
         else if (ballAngle <= sec5)
         {
+            // push
             angleConst = forwConst + (ballAngle - sec4) * (-forwConst) / (sec5 - sec4);
         }
+        // wheel stops
         else if (ballAngle <= sec6)
         {
+            // pull
             angleConst = (ballAngle - sec5) * (-sidewConst) / (sec6 - sec5);
         }
         else if (ballAngle <= sec7)
@@ -252,6 +336,7 @@ namespace alica
         }
         else if (ballAngle >= sec7)
         {
+            // rotate left
             angleConst = -diagConst + (ballAngle - sec7) * (-forwConst + diagConst) / (sec8 - sec7);
         }
 
@@ -272,10 +357,11 @@ namespace alica
 
         double angleConst = 0;
 
-        //linear interpolation of the constants in the 8 sectors
+        // linear interpolation of the constants in the 8 sectors
 
         if (ballAngle <= sec1)
         {
+            // rotate right
             angleConst = -forwConst + (ballAngle - sec0) * (-diagConst + forwConst) / (sec1 - sec0);
         }
         else if (ballAngle <= sec2)
@@ -304,6 +390,7 @@ namespace alica
         }
         else if (ballAngle >= sec7)
         {
+            // rotate left
             angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
         }
 

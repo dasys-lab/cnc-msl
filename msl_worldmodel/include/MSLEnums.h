@@ -84,6 +84,15 @@ enum EntityType
     Obstacle = -3,
     UndefinedEntity = -4
 };
+
+enum BallPossessionStatus
+{
+	HaveBall = 0,
+	LightBarrierUnblocked = 1,
+	NotInKickerDistance = 2,
+	AsideOfKicker = 3,
+	NoBallSeen = 4
+};
 }
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_ */

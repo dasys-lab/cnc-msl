@@ -63,7 +63,7 @@ namespace alica
             query->egoAlignPoint = egoBallPos;
             query->snapDistance = fastCatchRadius;
             query->additionalPoints = additionalPoints;
-            query->fast = true;
+            query->velocityMode = msl::MovementQuery::Velocity::FAST;
             mc = rm.moveToPoint(query);
         }
         else
@@ -73,7 +73,7 @@ namespace alica
             query->egoAlignPoint = egoBallPos;
             query->snapDistance = slowCatchRadius;
             query->additionalPoints = additionalPoints;
-            query->fast = false;
+            query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
             mc = rm.moveToPoint(query);
         }
 

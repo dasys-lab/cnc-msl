@@ -102,7 +102,7 @@ namespace alica
                 query->egoAlignPoint = egoBallPos;
                 query->snapDistance = fastCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->fast = true;
+                query->velocityMode = msl::MovementQuery::Velocity::FAST;
                 mc = rm.moveToPoint(query);
             }
             else
@@ -112,12 +112,12 @@ namespace alica
                 query->egoAlignPoint = egoBallPos;
                 query->snapDistance = slowCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->fast = false;
+                query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
                 mc = rm.moveToPoint(query);
             }
 
             // if we reached the point and are aligned, the behavior is successful
-            if (mc.motion.translation == 0.0
+            if (egoTarget->length() < 120
                     && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);

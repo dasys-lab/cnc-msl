@@ -41,9 +41,8 @@ namespace alica
         // move to ball
         msl_actuator_msgs::MotionControl bm;
         query->egoDestinationPoint = ballPos;
-        query->dribble = false;
         query->egoAlignPoint = query->egoDestinationPoint;
-        query->fast = true;
+        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
                 << endl;
@@ -51,7 +50,6 @@ namespace alica
 
         if (wm->ball->haveBall())
         {
-            query->dribble = true;
             query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
         }
         bm = rm.moveToPoint(query);

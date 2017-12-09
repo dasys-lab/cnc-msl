@@ -59,6 +59,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
+
 #include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
@@ -117,6 +119,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionExecutor.h"
 
+#include  "Plans/TwoHoledWall/DribbleConstTwoHoledWall.h"
+
 #include  "Plans/Dribble/DribbleControl.h"
 
 #include  "Plans/Attack/Wander.h"
@@ -136,6 +140,8 @@ using namespace std;
 #include  "Plans/Behaviours/GoalieExtension.h"
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
+
+#include  "Plans/Attack/PassIntoFreeZone.h"
 
 #include  "Plans/Attack/OneEighty.h"
 
@@ -385,6 +391,11 @@ namespace alica
                 return make_shared<SpinSlowly>();
                 break;
 
+            case 1498664342592:
+
+                return make_shared<DribbleToAttackPointTest>();
+                break;
+
             case 1459355025721:
 
             case 1459356753335:
@@ -470,6 +481,8 @@ namespace alica
 
             case 1435156811453:
 
+            case 1493396908662:
+
                 return make_shared<ShovelSelect>();
                 break;
 
@@ -540,6 +553,11 @@ namespace alica
                 return make_shared<PositionExecutor>();
                 break;
 
+            case 1496840164871:
+
+                return make_shared<DribbleConstTwoHoledWall>();
+                break;
+
             case 1449742099555:
 
             case 1450175539163:
@@ -594,6 +612,11 @@ namespace alica
             case 1482163995843:
 
                 return make_shared<TestMotorControl>();
+                break;
+
+            case 1508951680585:
+
+                return make_shared<PassIntoFreeZone>();
                 break;
 
             case 1434650910857:

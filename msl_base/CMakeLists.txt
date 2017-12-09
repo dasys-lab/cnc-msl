@@ -10,6 +10,8 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
 ## Enable exception handling for segfaults
 set(CMAKE_CXX_FLAGS "-rdynamic -g -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
 
