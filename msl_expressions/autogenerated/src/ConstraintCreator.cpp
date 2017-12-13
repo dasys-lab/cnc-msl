@@ -55,6 +55,8 @@
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
+#include  "Plans/Standards/Own/Test/constraints/TestLongPassMaster1513175912125Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerBounceShot1459361887233Constraints.h"
 
 #include  "Plans/Defence/constraints/ReleaseOwnHalf1458033644590Constraints.h"
@@ -136,6 +138,8 @@
 #include  "Plans/TestPlans/RobotMovement/constraints/RobotMovementTest1473862711641Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestPassPointMaster1441106724156Constraints.h"
+
+#include  "Plans/Standards/Own/Test/constraints/LongPassBasement1513176006534Constraints.h"
 
 #include  "Plans/Standards/Own/FreeKick/constraints/FreekickOwnHalf1464779892293Constraints.h"
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175912126"/>
+    <value xPos="134" yPos="151" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175912125"/>
+    <value width="834" height="489"/>
+  </extensions>
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175912127"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175928013"/>
+    <value xPos="457" yPos="163" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175931943"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestLongPassMaster.pml#1513175932789"/>
+    <value>
+      <bendpoints xPos="465" yPos="298"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="LongPassBasement.pml#1513176006534"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

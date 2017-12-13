@@ -54,6 +54,8 @@
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
+#include  "Plans/Standards/Own/Test/TestLongPassMaster1513175912125.h"
+
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
 
 #include  "Plans/Defence/ReleaseOwnHalf1458033644590.h"
@@ -135,6 +137,8 @@
 #include  "Plans/TestPlans/RobotMovement/RobotMovementTest1473862711641.h"
 
 #include  "Plans/Attack/TestPlans/TestPassPointMaster1441106724156.h"
+
+#include  "Plans/Standards/Own/Test/LongPassBasement1513176006534.h"
 
 #include  "Plans/Standards/Own/FreeKick/FreekickOwnHalf1464779892293.h"
 
@@ -843,6 +847,18 @@ namespace alica
             case 1458562147436:
 
                 return make_shared<TransitionCondition1458562147436>();
+
+                break;
+
+            case 1513175932613:
+
+                return make_shared<TransitionCondition1513175932613>();
+
+                break;
+
+            case 1513175933840:
+
+                return make_shared<TransitionCondition1513175933840>();
 
                 break;
 
@@ -1917,6 +1933,42 @@ namespace alica
             case 1441106956349:
 
                 return make_shared<TransitionCondition1441106956349>();
+
+                break;
+
+            case 1513176125409:
+
+                return make_shared<TransitionCondition1513176125409>();
+
+                break;
+
+            case 1513176126275:
+
+                return make_shared<TransitionCondition1513176126275>();
+
+                break;
+
+            case 1513176126957:
+
+                return make_shared<TransitionCondition1513176126957>();
+
+                break;
+
+            case 1513176155095:
+
+                return make_shared<TransitionCondition1513176155095>();
+
+                break;
+
+            case 1513176175329:
+
+                return make_shared<TransitionCondition1513176175329>();
+
+                break;
+
+            case 1513176176397:
+
+                return make_shared<TransitionCondition1513176176397>();
 
                 break;
 
