@@ -41,7 +41,11 @@ QSize Robot::sizeHint()
 
 void Robot::updateGUI(std::chrono::system_clock::time_point now)
 {
-	// not necessary :D
+	if ((now - this->timeLastMsgReceived) > std::chrono::milliseconds(1000))
+	{
+		this->uiMSLRobot->KickVolValue->setText("");
+		this->uiMSLRobot->BallPossValue->setText("");
+	}
 }
 
 void Robot::toggle()
