@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182639098"/>
+    <value xPos="53" yPos="119" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182639097"/>
+    <value width="572" height="440"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182639099"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182703528"/>
+    <value xPos="260" yPos="133"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182711121"/>
+    <value>
+      <bendpoints xPos="327" yPos="134"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1513182712911"/>
+    <value>
+      <bendpoints xPos="324" yPos="284"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182751590"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

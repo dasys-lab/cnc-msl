@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="WayPointPlan.pml#1513182781377"/>
+    <value xPos="81" yPos="46" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182751590"/>
+    <value xPos="1" yPos="-1" width="919" height="810"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182781378"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182861309"/>
+    <value xPos="379" yPos="33" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182863558"/>
+    <value xPos="452" yPos="205" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182865455"/>
+    <value xPos="142" yPos="587"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182867816"/>
+    <value xPos="356" yPos="584" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182870017"/>
+    <value xPos="454" yPos="394" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182954370"/>
+    <value>
+      <bendpoints xPos="407" yPos="140"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182956007"/>
+    <value>
+      <bendpoints xPos="436" yPos="227"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182958003"/>
+    <value>
+      <bendpoints xPos="425" yPos="329"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182960034"/>
+    <value>
+      <bendpoints xPos="359" yPos="406"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182968804"/>
+    <value>
+      <bendpoints xPos="257" yPos="399"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182971945"/>
+    <value>
+      <bendpoints xPos="312" yPos="392"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182975102"/>
+    <value>
+      <bendpoints xPos="425" yPos="379"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182977357"/>
+    <value>
+      <bendpoints xPos="467" yPos="282"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182979433"/>
+    <value>
+      <bendpoints xPos="455" yPos="175"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="WayPointPlan.pml#1513182981534"/>
+    <value>
+      <bendpoints xPos="399" yPos="80"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="SoftSquarePlan.pml#1513183613607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="SoftSquarePlan.pml#1513183613607"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

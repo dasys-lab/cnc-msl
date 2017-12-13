@@ -69,13 +69,14 @@ namespace alica
             //cout << "DribbleControlMOS: overridden by joystick!" << endl;
             return;
         }
-	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
+        shared_ptr < msl_msgs::MotionInfo > odom = nullptr;
         if (wm->isUsingSimulator())
         {
-        	odom = wm->rawSensorData->getOwnVelocityVision();
+            odom = wm->rawSensorData->getOwnVelocityVision();
         }
-        else {
-        	odom = wm->rawSensorData->getOwnVelocityMotion();
+        else
+        {
+            odom = wm->rawSensorData->getOwnVelocityMotion();
         }
 
         if (odom == nullptr)
@@ -254,7 +255,7 @@ namespace alica
                 // powerFactor decays over the iterations
                 cout << "DribbleControlMOS::getBallPath: jump detected" << endl;
                 decayedPowerFactor = powerFactor;
-             }
+            }
 
             //velY = velY * (1 + decayedPowerFactor);
             velX = velX * (1 + decayedPowerFactor);

@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
 
+#include  "Plans/TestPlans/constraints/WayPointPlan1513182751590Constraints.h"
+
 #include  "Plans/Calibration/constraints/TestRotation1492620432380Constraints.h"
 
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
@@ -15,7 +17,11 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/constraints/PenaltyMaster1466973051873Constraints.h"
 
+#include  "Plans/TestPlans/constraints/DribbleTestMaster1513182639097Constraints.h"
+
 #include  "Plans/GameStrategy/Other/constraints/Parking1426695119330Constraints.h"
+
+#include  "Plans/TestPlans/constraints/SoftSquarePlan1513183613607Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 

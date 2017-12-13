@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/TestPlans/WayPointPlan1513182751590.h"
+
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
@@ -15,7 +17,11 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
+#include  "Plans/TestPlans/DribbleTestMaster1513182639097.h"
+
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
+
+#include  "Plans/TestPlans/SoftSquarePlan1513183613607.h"
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
@@ -167,6 +173,10 @@ namespace alica
                 return make_shared<UtilityFunction1467383326416>();
                 break;
 
+            case 1513182751590:
+                return make_shared<UtilityFunction1513182751590>();
+                break;
+
             case 1492620432380:
                 return make_shared<UtilityFunction1492620432380>();
                 break;
@@ -187,8 +197,16 @@ namespace alica
                 return make_shared<UtilityFunction1466973051873>();
                 break;
 
+            case 1513182639097:
+                return make_shared<UtilityFunction1513182639097>();
+                break;
+
             case 1426695119330:
                 return make_shared<UtilityFunction1426695119330>();
+                break;
+
+            case 1513183613607:
+                return make_shared<UtilityFunction1513183613607>();
                 break;
 
             case 1432132075122:
