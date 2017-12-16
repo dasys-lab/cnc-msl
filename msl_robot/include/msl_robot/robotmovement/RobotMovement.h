@@ -30,6 +30,12 @@ class RobotMovement
   public:
     RobotMovement();
     virtual ~RobotMovement();
+    /**
+     * TODO think about making this class a singleton
+     * pt controller does not work in here as a single instance
+     * should not be part of the worldmodel
+     * possible behaviour interaction if signleton ?
+     */
 
     // TODO query was const before check
     /**

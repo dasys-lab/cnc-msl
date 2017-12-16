@@ -18,7 +18,7 @@ namespace msl
 		this->blockOwnPenaltyArea = false;
 		this->blockOwnGoalArea = false;
 		this->block3MetersAroundBall = false;
-		this->snapDistance = 0;
+		this->snapDistance = 200;
 		this->angleTolerance = 0;
 		this->alloTeamMatePosition = nullptr;
 		this->wm = MSLWorldModel::get();

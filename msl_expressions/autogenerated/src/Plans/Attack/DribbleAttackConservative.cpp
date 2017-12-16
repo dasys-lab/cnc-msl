@@ -15,9 +15,8 @@ namespace alica
             DomainBehaviour("DribbleAttackConservative")
     {
         /*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
-        alloGoalMid = wm->field->posOppGoalMid();
         before = false;
-        this->setTrigger(wm->getVisionDataEventTrigger());
+//        this->setTrigger(wm->getVisionDataEventTrigger());
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -30,18 +29,18 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (ownPos == nullptr )
         {
             return;
         }
-
-        auto goalMid = alloGoalMid->alloToEgo(*ownPos);
+        auto tmp = make_shared<geometry::CNPoint2D>(wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
+        auto tragetPoint = tmp->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
-        query->egoDestinationPoint = goalMid;
+        query->egoDestinationPoint = tragetPoint;
+        query->egoAlignPoint = tragetPoint;
 
         auto tmpMC = rm.moveToPoint(query);
 

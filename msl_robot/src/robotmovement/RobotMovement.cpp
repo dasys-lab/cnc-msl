@@ -95,6 +95,7 @@ namespace msl
 		// TRANSLATION
 		if (egoTarget->length() > query->snapDistance)
 		{
+
 			mc.motion.translation = egoTarget->length();
 
 		}
@@ -105,13 +106,21 @@ namespace msl
 		        stopTranslation();
 		}
 
+		if(this->pastControlInput.empty())
+		{
+		    cout << "RobotMovement::pastControlInput.empty()" << endl;
+		}
+		if(this->pastControlledValues.empty())
+		{
+		    cout << "RobotMovement::pastControlledValues.empty()" << endl;
+		}
+
 		if (this->pastControlInput.empty() || this->pastControlledValues.empty())
 		{
 		        initializePTControllerParameters();
 		}
 
 		std::valarray<double> controlledValues = ptController(query, mc.motion.translation, mc.motion.rotation);
-
 		double maxTranslation = this->defaultTranslation;
 
 		if (query->velocityMode == VelocityMode::FAST)
@@ -131,9 +140,9 @@ namespace msl
 		//angle correction to respect anlge change through rotation
 		mc.motion.angle = egoTarget->angleTo() - mc.motion.rotation * this->sampleTime; //1/30 s= time step , time step * omega = phi
 
-//#ifdef RM_DEBUG
+#ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
-//#endif
+#endif
 		return mc;
 	}
 
@@ -602,11 +611,12 @@ void RobotMovement::readConfigParameters()
 
 void RobotMovement::initializePTControllerParameters()
 {
+    std::cout << "initializePTControllerParameters called" << std::endl;
     clearPTControllerQueues();
-    pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
-    pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
-    pastControlInput.push(std::valarray<double>({0.0, 0.0}));
-    pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlInput.push(std::valarray<double>({0.0, 0.0}));
 }
 
 
@@ -620,6 +630,7 @@ void RobotMovement::stopTranslation()
 
 void RobotMovement::clearPTControllerQueues()
 {
+    std::cout << "clear called" << std::endl;
     while (!pastControlInput.empty())
     {
         pastControlInput.pop();
@@ -636,7 +647,7 @@ void RobotMovement::clearPTControllerQueues()
 std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> query, double translation, double rotation)
 {
     this->pastControlInput.push(std::valarray<double>({translation, rotation}));
-
+    cout << this->pastControlInput.back()[0] << " " << this->pastControlInput.back()[1] << " " << pastControlInput.size() << endl;
     // slope variable
     double controllerVelocity = this->defaultControllerVelocity;
     if (query->velocityMode == VelocityMode::FAST)
@@ -663,9 +674,11 @@ std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> quer
     this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
     this->pastControlledValues.back() += numerator2 * this->pastControlInput.front() - denominator2 * this->pastControlledValues.front();
     this->pastControlInput.pop();
+    cout << this->pastControlInput.front()[0] << " " << this->pastControlInput.front()[1] << " " << pastControlInput.size() << endl;
+    cout << this->pastControlInput.back()[0] << " " << this->pastControlInput.back()[1] << " " << pastControlInput.size() << endl;
     this->pastControlledValues.pop();
     this->pastControlledValues.back() += numerator1 * this->pastControlInput.front() - denominator1 * this->pastControlledValues.front();
-
+    std::cout << this->pastControlledValues.back()[0] << " " << this->pastControlledValues.back()[1] << std::endl;
     return this->pastControlledValues.back();
     }
 }
