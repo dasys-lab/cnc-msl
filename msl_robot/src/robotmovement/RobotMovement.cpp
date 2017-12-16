@@ -80,8 +80,17 @@ namespace msl
 													query->getPathPlannerQuery());
 		}
 
-		// ANGLE
-		mc.motion.angle = egoTarget->angleTo();
+
+		// ROTATION
+		if (query->egoAlignPoint != nullptr)
+		{
+			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo();
+
+		}
+		else
+		{
+		        mc.motion.rotation = 0;
+		}
 
 		// TRANSLATION
 		if (egoTarget->length() > query->snapDistance)
@@ -91,20 +100,17 @@ namespace msl
 		}
 		else
 		{
-			mc.motion.translation = 0;
+		        cout << "RobotMovement::stopTranslation called" << endl;
+		        mc.motion.translation = 0;
+		        stopTranslation();
 		}
 
-		// ROTATION
-		if (query->egoAlignPoint != nullptr)
+		if (this->pastControlInput.empty() || this->pastControlledValues.empty())
 		{
-			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo();
-
+		        initializePTControllerParameters();
 		}
 
-		// pt controller stuff
-		initializePTControllerParameters();
-
-		std::valarray<double> translation = ptController(query, mc.motion.translation, mc.motion.rotation);
+		std::valarray<double> controlledValues = ptController(query, mc.motion.translation, mc.motion.rotation);
 
 		double maxTranslation = this->defaultTranslation;
 
@@ -118,18 +124,16 @@ namespace msl
 			maxTranslation = this->carefullyTranslation;
 		}
 
-		mc.motion.translation = min(translation[0], maxTranslation);
+		mc.motion.translation = min(controlledValues[0], maxTranslation);
 
-		mc.motion.rotation = translation[1]; //for PT
-
-		mc.motion.angle = egoTarget->angleTo();
+		mc.motion.rotation = controlledValues[1]; //for PT
 
 		//angle correction to respect anlge change through rotation
-		mc.motion.angle -= mc.motion.rotation / 30.0; //1/30 s= time step , time step * omega = phi
+		mc.motion.angle = egoTarget->angleTo() - mc.motion.rotation * this->sampleTime; //1/30 s= time step , time step * omega = phi
 
-#ifdef RM_DEBUG
+//#ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
-#endif
+//#endif
 		return mc;
 	}
 
