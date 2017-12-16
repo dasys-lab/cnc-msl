@@ -1,25 +1,19 @@
-/*
- * RobotMovement.cpp *
- *
- *  Created on: 17.12.2014
- *      Author: tobi
- */
-
 #include "msl_robot/robotmovement/RobotMovement.h"
-#include "Ball.h"
+#include <Ball.h>
+#include <MSLEnums.h>
 #include "GeometryCalculator.h"
 #include "MSLFootballField.h"
-#include "MSLWorldModel.h"
-#include "RawSensorData.h"
-#include "Robots.h"
+#include <MSLWorldModel.h>
+#include <RawSensorData.h>
+#include <Robots.h>
 #include "container/CNPoint2D.h"
 #include "msl_robot/kicker/Kicker.h"
 #include "msl_robot/robotmovement/AlloSearchArea.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
 #include "msl_robot/robotmovement/SearchArea.h"
 #include "obstaclehandler/Obstacles.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 
 #include <SystemConfig.h>
 
@@ -37,6 +31,8 @@ namespace msl
 	double RobotMovement::assume_ball_velo = 5000;
 	double RobotMovement::interceptQuotient = RobotMovement::assume_ball_velo / RobotMovement::assume_enemy_velo;
 	double RobotMovement::robotRadius = 300;
+	// 0.15 is fix and may not be changed -> fastest acceleration without overshoot
+	double RobotMovement::asymptoticGain = 0.15;
 
 	RobotMovement::RobotMovement()
 	{
@@ -106,18 +102,18 @@ namespace msl
 		}
 
 		// pt controller stuff
-		query->initializePTControllerParameters();
+		initializePTControllerParameters();
 
-		std::valarray<double> translation = query->ptController(mc.motion.rotation, mc.motion.translation);
+		std::valarray<double> translation = ptController(query, mc.motion.translation, mc.motion.rotation);
 
 		double maxTranslation = this->defaultTranslation;
 
-		if (query->velocityMode == MovementQuery::Velocity::FAST)
+		if (query->velocityMode == VelocityMode::FAST)
 		{
 			maxTranslation = this->fastTranslation;
 
 		}
-		else if (query->velocityMode == MovementQuery::Velocity::CAREFULLY)
+		else if (query->velocityMode == VelocityMode::CAREFULLY)
 		{
 			maxTranslation = this->carefullyTranslation;
 		}
@@ -586,14 +582,86 @@ namespace msl
 		return mc;
 	}
 
-	void RobotMovement::readConfigParameters()
-	{
-		supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
-		carefullyTranslation = (*sc)["Drive"]->get<double>("Drive.Carefully.Velocity", NULL);
-		defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
-		fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
-		carefullyRotation = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
-		defaultRotation = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
-		fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
-	}
+void RobotMovement::readConfigParameters()
+{
+   supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
+   this->carefullyTranslation = (*sc)["Drive"]->get<double>("Drive.Carefully.Velocity", NULL);
+   this->defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
+   this->fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
+   this->carefullyRotation = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
+   this->defaultRotation = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+   this->fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
+   this->carefullyControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.CarefullyControllerVelocity", NULL);
+   this->defaultControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.DefaultControllerVelocity", NULL);
+   this->fastControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.FastControllerVelocity", NULL);
+}
+
+void RobotMovement::initializePTControllerParameters()
+{
+    clearPTControllerQueues();
+    pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+    pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+}
+
+
+void RobotMovement::stopTranslation()
+{
+    this->pastControlledValues.front()[0] = 0.0;
+    this->pastControlledValues.back()[0] = 0.0;
+    this->pastControlInput.front()[0] = 0.0;
+    this->pastControlInput.back()[0] = 0.0;
+}
+
+void RobotMovement::clearPTControllerQueues()
+{
+    while (!pastControlInput.empty())
+    {
+        pastControlInput.pop();
+    }
+    while (!pastControlledValues.empty())
+    {
+        pastControlledValues.pop();
+    }
+}
+
+/**
+ * PT-Controller for smooth translation acceleration
+ */
+std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> query, double translation, double rotation)
+{
+    this->pastControlInput.push(std::valarray<double>({translation, rotation}));
+
+    // slope variable
+    double controllerVelocity = this->defaultControllerVelocity;
+    if (query->velocityMode == VelocityMode::FAST)
+    {
+        controllerVelocity = this->fastControllerVelocity;
+    }
+    else if (query->velocityMode == VelocityMode::CAREFULLY)
+    {
+        controllerVelocity = this->carefullyControllerVelocity;
+    }
+
+    translation = translation * this->asymptoticGain * controllerVelocity;
+    rotation = rotation * this->asymptoticGain * controllerVelocity;
+
+    // sending frequency
+
+    double numerator1 = 1.0 - exp(-controllerVelocity * this->sampleTime) - exp(-controllerVelocity * this->sampleTime) * controllerVelocity * this->sampleTime;
+    double numerator2 = exp(-2 * controllerVelocity * this->sampleTime) - exp(-controllerVelocity * this->sampleTime) +
+                    exp(-controllerVelocity * this->sampleTime) * this->sampleTime * controllerVelocity;
+
+    double denominator1 = -2 * exp(-controllerVelocity * this->sampleTime);
+    double denominator2 = exp(-2 * controllerVelocity * this->sampleTime);
+
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlledValues.back() += numerator2 * this->pastControlInput.front() - denominator2 * this->pastControlledValues.front();
+    this->pastControlInput.pop();
+    this->pastControlledValues.pop();
+    this->pastControlledValues.back() += numerator1 * this->pastControlInput.front() - denominator1 * this->pastControlledValues.front();
+
+    return this->pastControlledValues.back();
+    }
 }

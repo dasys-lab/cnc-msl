@@ -9,6 +9,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Game.h>
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -63,7 +64,7 @@ namespace alica
             query->egoAlignPoint = egoBallPos;
             query->snapDistance = fastCatchRadius;
             query->additionalPoints = additionalPoints;
-            query->velocityMode = msl::MovementQuery::Velocity::FAST;
+            query->velocityMode = msl::VelocityMode::FAST;
             mc = rm.moveToPoint(query);
         }
         else
@@ -73,7 +74,7 @@ namespace alica
             query->egoAlignPoint = egoBallPos;
             query->snapDistance = slowCatchRadius;
             query->additionalPoints = additionalPoints;
-            query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+            query->velocityMode = msl::VelocityMode::DEFAULT;
             mc = rm.moveToPoint(query);
         }
 

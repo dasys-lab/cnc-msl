@@ -8,6 +8,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <Ball.h>
 #include <MSLFootballField.h>
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,7 +43,7 @@ namespace alica
         msl_actuator_msgs::MotionControl bm;
         query->egoDestinationPoint = ballPos;
         query->egoAlignPoint = query->egoDestinationPoint;
-        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+        query->velocityMode = msl::VelocityMode::DEFAULT;
 
         cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
                 << endl;

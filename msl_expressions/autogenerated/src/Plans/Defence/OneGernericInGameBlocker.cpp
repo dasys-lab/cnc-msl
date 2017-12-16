@@ -11,6 +11,7 @@ using namespace std;
 #include <Robots.h>
 #include <msl_helper_msgs/DebugMsg.h>
 #include <MSLWorldModel.h>
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -159,7 +160,7 @@ namespace alica
 //            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
-            movQuery->velocityMode = msl::MovementQuery::Velocity::FAST;
+            movQuery->velocityMode = msl::VelocityMode::FAST;
             mc = rm.moveToPoint(movQuery);
         }
 

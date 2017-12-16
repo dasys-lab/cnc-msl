@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
+#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLFootballField.h>
@@ -46,7 +47,7 @@ namespace alica
         query->egoDestinationPoint = defenderPos->alloToEgo(*ownPos);
         query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
         query->snapDistance = 1000;
-        query->velocityMode = msl::MovementQuery::Velocity::FAST;
+        query->velocityMode = msl::VelocityMode::FAST;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);
