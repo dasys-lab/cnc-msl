@@ -36,7 +36,6 @@ namespace alica
         supplementary::SystemConfig* sc;
         shared_ptr<geometry::CNPoint2D> parkingPosition;
         shared_ptr<msl::MovementQuery> movementQuery;
-        msl::RobotMovement* rm;
         double offset;
         int parkingSlotIdx;
         double distanceToParkingPositionTolerance;

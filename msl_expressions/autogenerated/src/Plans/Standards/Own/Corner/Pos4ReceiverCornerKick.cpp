@@ -2,15 +2,16 @@ using namespace std;
 #include "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
 
 /*PROTECTED REGION ID(inccpp1464787469281) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
-#include "engine/constraintmodul/Query.h"
-#include "GSolver.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SystemConfig.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
+#include <engine/constraintmodul/Query.h>
+#include <GSolver.h>
+#include <SolverType.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -35,7 +36,6 @@ namespace alica
     void Pos4ReceiverCornerKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464787469281) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -57,7 +57,7 @@ namespace alica
         mQuery->egoDestinationPoint = egoTarget;
         mQuery->egoAlignPoint = egoBallPos;
         mQuery->additionalPoints = additionalPoints;
-        mc = rm.moveToPoint(mQuery);
+        mc = this->robot->robotMovement->moveToPoint(mQuery);
 
         // if we reach the point and are aligned, the behavior is successful
         if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)

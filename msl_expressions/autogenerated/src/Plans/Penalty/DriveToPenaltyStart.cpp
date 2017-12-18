@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Penalty/DriveToPenaltyStart.h"
 
 /*PROTECTED REGION ID(inccpp1459609457478) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -27,7 +28,6 @@ namespace alica
     void DriveToPenaltyStart::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
         if (me == nullptr)
@@ -44,7 +44,7 @@ namespace alica
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoAlignPoint;
 
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (egoTarget->length() < 250)
         {

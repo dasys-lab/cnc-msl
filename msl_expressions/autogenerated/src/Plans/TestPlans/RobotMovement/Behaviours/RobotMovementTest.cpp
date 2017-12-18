@@ -3,7 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1473862842303) ENABLED START*/ //Add additional includes here
 #include <Game.h>
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <pathplanner/PathPlanner.h>
 #include <MSLWorldModel.h>
@@ -32,7 +33,6 @@ namespace alica
         /*PROTECTED REGION ID(run1473862842303) ENABLED START*/ //Add additional options here
         bool testFirst = false;
         bool testSecond = true;
-
         if (testFirst)
         {
             auto ownPos = wm->rawSensorData->getOwnPositionVision();
@@ -44,7 +44,6 @@ namespace alica
             auto egoBallPos = wm->ball->getEgoBallPosition();
 
             MotionControl mc;
-            msl::RobotMovement rm;
 
 //        cout << "haveBall = " << (wm->ball->haveBall() == true ? "true" : "false") << endl;
 //        cout << "hadBall = " << (hadBall == true ? "true" : "false") << endl;
@@ -53,7 +52,7 @@ namespace alica
 //        	cout << "getBall" << endl;
                 query->egoDestinationPoint = egoBallPos;
                 query->egoAlignPoint = egoBallPos;
-                mc = rm.moveToPoint(query);
+                mc = this->robot->robotMovement->moveToPoint(query);
                 send(mc);
                 return;
             }
@@ -63,7 +62,7 @@ namespace alica
             query->egoDestinationPoint = egoGoal;
             query->egoAlignPoint = egoGoal;
 
-            auto motionCommand = rm.moveToPoint(query);
+            auto motionCommand = this->robot->robotMovement->moveToPoint(query);
             this->send(motionCommand);
 
             if (egoGoal->length() < 300)
@@ -76,7 +75,6 @@ namespace alica
             auto egoBallPos = wm->ball->getEgoBallPosition();
             auto alloGoalPos = wm->field->posOwnGoalMid();
             auto egoGoalPos = alloGoalPos->alloToEgo(*wm->rawSensorData->getOwnPositionVision());
-            msl::RobotMovement rm;
             MotionControl mc;
             if (wm->ball->haveBall())
             {
@@ -88,13 +86,13 @@ namespace alica
                 query->rotateAroundTheBall = true;
                 double angleInDegree = 10;
                 query->angleTolerance = (2 * M_PI) / 360 * angleInDegree;
-                mc = rm.alignTo(query);
+                mc = this->robot->robotMovement->alignTo(query);
             }
             else
             {
                 query->egoDestinationPoint = egoBallPos;
                 query->egoAlignPoint = egoBallPos;
-                mc = rm.moveToPoint(query);
+                mc = this->robot->robotMovement->moveToPoint(query);
             }
 //            cout << "angle to goal = " << egoGoalPos->angleTo() << endl;
             cout << "Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = "

@@ -2,12 +2,13 @@ using namespace std;
 #include "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
 /*PROTECTED REGION ID(inccpp1462978634990) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SystemConfig.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
@@ -31,7 +32,6 @@ namespace alica
     void PositionAlternativeReceiver::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462978634990) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -66,7 +66,7 @@ namespace alica
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoBallPos;
         query->additionalPoints = additionalPoints;
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))
         {

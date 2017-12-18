@@ -1,17 +1,11 @@
-/*
- * RobotMovement.h
- *
- *  Created on: 17.12.2014
- *      Author: tobi
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_
+#pragma once
 
 #include "DateTime.h"
 #include "SystemConfig.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include <memory>
+#include <queue>
+#include <valarray>
 
 namespace geometry
 {
@@ -34,8 +28,14 @@ class PathProxy;
 class RobotMovement
 {
   public:
-    RobotMovement();
-    virtual ~RobotMovement();
+	static RobotMovement *get();
+
+    /**
+     * TODO think about making this class a singleton
+     * pt controller does not work in here as a single instance
+     * should not be part of the worldmodel
+     * possible behaviour interaction if signleton ?
+     */
 
     // TODO query was const before check
     /**
@@ -99,6 +99,8 @@ class RobotMovement
     double carefullyRotation;
 
   private:
+    RobotMovement();
+    virtual ~RobotMovement();
     static int randomCounter;
     static int beamSize;
     static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
@@ -117,7 +119,48 @@ class RobotMovement
     static double assume_ball_velo;
     static double interceptQuotient;
     static double robotRadius;
+    static double asymptoticGain;
+    //PT STUFF
+
+    /**
+     * PT-Controller for smooth translation acceleration
+    */
+    std::valarray<double> ptController(shared_ptr<MovementQuery> query, double targetDistance, double angleError);
+    /**
+     * Initialize all needed parameters and queues for the PT-Controller
+    */
+    void initializePTControllerParameters();
+
+    void clearPTControllerQueues();
+
+    void stopTranslation();
+
+    /**
+     * Past sent translation for PT-Controller
+    */
+    std::queue<std::valarray<double>> pastControlledValues;
+
+    /**
+     * Past translation input for PT-Controller
+    */
+    std::queue<std::valarray<double>> pastControlInput;
+
+    /**
+     * Carefully value for PT-Controller (Drive.conf)
+    */
+    double carefullyControllerVelocity;
+    /**
+     * Default value for PT-Controller (Drive.conf)
+    */
+    double defaultControllerVelocity;
+    /**
+     * fast value for PT-Controller (Drive.conf)
+    */
+    double fastControllerVelocity;
+    /**
+     * Behaviour frequency
+    */
+    double sampleTime = 1.0 / 30.0;
 };
 }
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_ROBOTMOVEMENT_H_ */

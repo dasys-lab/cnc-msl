@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/AttackOpp.h"
 
 /*PROTECTED REGION ID(inccpp1430324527403) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <cmath>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -30,8 +31,6 @@ namespace alica
     void AttackOpp::run(void* msg)
     {
         /*PROTECTED REGION ID(run1430324527403) ENABLED START*/
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
@@ -101,7 +100,7 @@ namespace alica
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
 
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
         send(mc);
 
@@ -164,11 +163,10 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
 //        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
-        msl::RobotMovement rm;
         query->egoDestinationPoint = interPoint;
         query->egoAlignPoint = egoBallPos;
 
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         return mc;
     }
