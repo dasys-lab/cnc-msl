@@ -644,8 +644,6 @@ std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> quer
     angleError = angleError * this->asymptoticGain * controllerVelocity;
     this->pastControlInput.push(std::valarray<double>({targetDistance, angleError}));
 
-    std::cout << this->pastControlInput.back()[0] << " " << this->pastControlInput.back()[1] << " " << pastControlInput.size() << std::endl;
-
     // sending frequency
 
     double numerator1 = 1.0 - exp(-controllerVelocity * this->sampleTime) - exp(-controllerVelocity * this->sampleTime) * controllerVelocity * this->sampleTime;
@@ -658,14 +656,8 @@ std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> quer
     this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
     this->pastControlledValues.back() += numerator2 * this->pastControlInput.front() - denominator2 * this->pastControlledValues.front();
     this->pastControlInput.pop();
-
-    std::cout << this->pastControlInput.front()[0] << " " << this->pastControlInput.front()[1] << " " << pastControlInput.size() << std::endl;
-    std::cout << this->pastControlInput.back()[0] << " " << this->pastControlInput.back()[1] << " " << pastControlInput.size() << std::endl;
-
     this->pastControlledValues.pop();
     this->pastControlledValues.back() += numerator1 * this->pastControlInput.front() - denominator1 * this->pastControlledValues.front();
-
-    std::cout << this->pastControlledValues.back()[0] << " " << this->pastControlledValues.back()[1] << std::endl;
 
     return this->pastControlledValues.back();
 }
