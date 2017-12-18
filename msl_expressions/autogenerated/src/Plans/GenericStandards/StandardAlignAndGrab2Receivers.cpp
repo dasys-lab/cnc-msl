@@ -2,16 +2,16 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
 
 /*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
-#include "obstaclehandler/Obstacles.h"
+#include <obstaclehandler/Obstacles.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
@@ -52,7 +52,6 @@ namespace alica
     void StandardAlignAndGrab2Receivers::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462368682104) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         // return if necessary information is missing
@@ -202,7 +201,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
 //			cout << "SAAG2R: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             if (mc.motion.angle != NAN)
@@ -229,7 +228,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);

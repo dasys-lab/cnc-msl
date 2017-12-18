@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/DribbleAttackConservative.h"
 
 /*PROTECTED REGION ID(inccpp1457967322925) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <obstaclehandler/Obstacles.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -28,7 +30,6 @@ namespace alica
     void DribbleAttackConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (ownPos == nullptr )
@@ -42,7 +43,7 @@ namespace alica
         query->egoDestinationPoint = tragetPoint;
         query->egoAlignPoint = tragetPoint;
 
-        auto tmpMC = rm.moveToPoint(query);
+        auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
         if (corner == nullptr && tmpMC.motion.translation != NAN)
         {
@@ -52,7 +53,7 @@ namespace alica
         {
             query->egoDestinationPoint = corner;
 
-            auto tmpMC = rm.moveToPoint(query);
+            auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
             if (tmpMC.motion.translation != NAN)
             {
@@ -63,7 +64,7 @@ namespace alica
         }
 
         //if I drive into the enemy goal area
-        msl_actuator_msgs::MotionControl mc = rm.ruleActionForBallGetter();
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->ruleActionForBallGetter();
         if (!std::isnan(mc.motion.translation))
         {
             send(mc);

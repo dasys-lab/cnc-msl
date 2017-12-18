@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/GetBall.h"
 
 /*PROTECTED REGION ID(inccpp1414828300860) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
@@ -30,8 +31,6 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (me == nullptr || egoBallPos == nullptr)
@@ -105,10 +104,10 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
         // replaced with new method
-        auto tmpMC = rm.ruleActionForBallGetter();
+        auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
         {
             send(tmpMC);
@@ -164,11 +163,10 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 //        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
-        msl::RobotMovement rm;
         query->egoDestinationPoint = interPoint;
         query->egoAlignPoint = egoBallPos;
         query->snapDistance = 100;
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
         return mc;
     }
 /*PROTECTED REGION END*/

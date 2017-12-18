@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Behaviours/PositionReceiver.h"
 
 /*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "MSLWorldModel.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <MSLWorldModel.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Game.h>
@@ -32,7 +33,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
         //TODO  not allowed in enemy half (rules), new conf for rules
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         auto egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -55,7 +55,6 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-        msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
         if (wm->game->getSituation() == msl::Situation::Start)
         { // they already pressed start and we are still positioning, so speed up!
           // remeoved with new moveToPoint method
@@ -65,7 +64,7 @@ namespace alica
             query->snapDistance = fastCatchRadius;
             query->additionalPoints = additionalPoints;
             query->velocityMode = msl::VelocityMode::FAST;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
         else
         { // still enough time to position ...
@@ -75,7 +74,7 @@ namespace alica
             query->snapDistance = slowCatchRadius;
             query->additionalPoints = additionalPoints;
             query->velocityMode = msl::VelocityMode::DEFAULT;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
 
         // if we reach the point and are aligned, the behavior is successful

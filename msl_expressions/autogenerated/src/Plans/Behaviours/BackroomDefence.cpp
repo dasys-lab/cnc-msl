@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/BackroomDefence.h"
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -28,7 +29,6 @@ namespace alica
     void BackroomDefence::run(void* msg)
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPos = wm->ball->getAlloBallPosition();
 
@@ -48,7 +48,7 @@ namespace alica
         query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
         query->snapDistance = 1000;
         query->velocityMode = msl::VelocityMode::FAST;
-        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(query);
 
         send(mc);
         /*PROTECTED REGION END*/

@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Defence/OneGernericInGameBlocker.h"
 
 /*PROTECTED REGION ID(inccpp1458034268108) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/RunningPlan.h"
-#include "engine/model/AbstractPlan.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <engine/RunningPlan.h>
+#include <engine/model/AbstractPlan.h>
+#include <SolverType.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -41,7 +42,6 @@ namespace alica
     void OneGernericInGameBlocker::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458034268108) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
@@ -147,7 +147,7 @@ namespace alica
 
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
-            mc = rm.moveToPoint(movQuery);
+            mc = this->robot->robotMovement->moveToPoint(movQuery);
             if (driveTo->length() < 100)
             {
                 mc.motion.translation = 0;
@@ -161,7 +161,7 @@ namespace alica
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
             movQuery->velocityMode = msl::VelocityMode::FAST;
-            mc = rm.moveToPoint(movQuery);
+            mc = this->robot->robotMovement->moveToPoint(movQuery);
         }
 
         send(mc);

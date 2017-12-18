@@ -28,8 +28,8 @@ class PathProxy;
 class RobotMovement
 {
   public:
-    RobotMovement();
-    virtual ~RobotMovement();
+	static RobotMovement *get();
+
     /**
      * TODO think about making this class a singleton
      * pt controller does not work in here as a single instance
@@ -99,6 +99,8 @@ class RobotMovement
     double carefullyRotation;
 
   private:
+    RobotMovement();
+    virtual ~RobotMovement();
     static int randomCounter;
     static int beamSize;
     static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
@@ -123,7 +125,7 @@ class RobotMovement
     /**
      * PT-Controller for smooth translation acceleration
     */
-    std::valarray<double> ptController(shared_ptr<MovementQuery> query, double translation, double rotation);
+    std::valarray<double> ptController(shared_ptr<MovementQuery> query, double targetDistance, double angleError);
     /**
      * Initialize all needed parameters and queues for the PT-Controller
     */
