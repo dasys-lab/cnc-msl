@@ -2,7 +2,7 @@
 <alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1433949970592" name="StandardAlignToPoint" comment="" destinationPath="Plans/GenericStandards">
   <configurations id="1433950043262" name="StandardAlignToPointReceiver" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1435149442262" name="MISSING_NAME" comment="" key="TaskName" value="ReceiveStandard"/>
-    <parameters id="1464434313881" name="MISSING_NAME" comment="" key="Receiver" value="True"/>
+    <parameters id="1464434313881" name="MISSING_NAME" comment="" key="Receiver" value="true"/>
   </configurations>
   <configurations id="1435155363994" name="StandardAlignToPointExecutor" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1435155427349" name="MISSING_NAME" comment="" key="TaskName" value="ReceiveStandard"/>

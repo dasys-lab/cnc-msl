@@ -90,4 +90,8 @@
     <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="Align4PassTest.beh#1513609404882"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

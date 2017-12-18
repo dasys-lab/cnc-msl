@@ -57,6 +57,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Standards/Own/Test/Align4PassTest.h"
+
 #include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/DribbleToAttackPointTest.h"
@@ -386,6 +388,11 @@ namespace alica
             case 1455537979559:
 
                 return make_shared<CoverSpace>();
+                break;
+
+            case 1513609404882:
+
+                return make_shared<Align4PassTest>();
                 break;
 
             case 1435159282996:

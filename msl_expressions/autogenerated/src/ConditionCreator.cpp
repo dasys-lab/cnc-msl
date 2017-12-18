@@ -60,6 +60,8 @@
 
 #include  "Plans/Defence/ReleaseOwnHalf1458033644590.h"
 
+#include  "Plans/Standards/Own/Test/TestGenericExecuteMaster1513602784836.h"
+
 #include  "Plans/Standards/Own/GoalKick/GoalKick1469521732930.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleAroundTheBall1498663554104.h"
@@ -883,6 +885,18 @@ namespace alica
             case 1458033759784:
 
                 return make_shared<RunTimeCondition1458033759784>();
+
+                break;
+
+            case 1513602924281:
+
+                return make_shared<TransitionCondition1513602924281>();
+
+                break;
+
+            case 1513602937857:
+
+                return make_shared<TransitionCondition1513602937857>();
 
                 break;
 

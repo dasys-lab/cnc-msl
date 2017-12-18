@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602784837"/>
+    <value xPos="209" yPos="208" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602784836"/>
+    <value yPos="21" width="929" height="656"/>
+  </extensions>
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602784838"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602904558"/>
+    <value xPos="505" yPos="219" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602923359"/>
+    <value>
+      <bendpoints xPos="515" yPos="223"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestGenericExecuteMaster.pml#1513602936810"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/GenericExecute.pml#1431522123418"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -5,7 +5,7 @@
     <outTransitions>#1513176124567</outTransitions>
   </states>
   <states id="1513176035432" name="AlignRec" comment="" entryPoint="1513176019047">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1433950043262</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Align4PassTest.beh#1513609404882</plans>
     <outTransitions>#1513176174538</outTransitions>
   </states>
   <states id="1513176098858" name="GrabBall" comment="">
