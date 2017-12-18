@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Calibration/RestartMotion.h"
 
 /*PROTECTED REGION ID(inccpp1472657511112) ENABLED START*/ //Add additional includes here
-#include<MSLWorldModel.h>
+#include <Calibration.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,7 +32,7 @@ namespace alica
 
         if (uninitializedMotionCounter == 200)
         {
-            wm->sendStartMotionCommand();
+            wm->calibration->sendStartMotionCommand();
             return;
         }
         else if (uninitializedMotionCounter < 200)
@@ -51,7 +52,7 @@ namespace alica
     void RestartMotion::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1472657511112) ENABLED START*/ //Add additional options here
-        wm->sendKillMotionCommand();
+        wm->calibration->sendKillMotionCommand();
         uninitializedMotionCounter = 0;
         /*PROTECTED REGION END*/
     }
