@@ -28,7 +28,7 @@
     <inTransitions>#1513176175579</inTransitions>
   </states>
   <states id="1513176169159" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1513176174538</inTransitions>
     <outTransitions>#1513176175579</outTransitions>
   </states>
@@ -37,7 +37,7 @@
     <inState>#1513176006535</inState>
     <outState>#1513176098858</outState>
   </transitions>
-  <transitions id="1513176125489" name="MISSING_NAME" comment="haveball" msg="">
+  <transitions id="1513176125489" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1513176126275" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513176098858</inState>
     <outState>#1513176103139</outState>
@@ -66,7 +66,7 @@
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1513176006535</state>
   </entryPoints>
-  <entryPoints id="1513176019047" name="ReceiveStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1513176019047" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1513176035432</state>
   </entryPoints>

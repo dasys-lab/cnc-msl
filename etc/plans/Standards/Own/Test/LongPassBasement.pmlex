@@ -30,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176106132"/>
-    <value xPos="631" yPos="141"/>
+    <value xPos="631" yPos="141" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176112686"/>
@@ -92,6 +92,10 @@
   </extensions>
   <extensions>
     <key href="Align4PassTest.beh#1513609404882"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

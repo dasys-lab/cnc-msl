@@ -30,4 +30,8 @@
     <key href="LongPassBasement.pml#1513176006534"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1513175912125" name="TestLongPassMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/Test" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1513175912126" name="Stop" comment="" entryPoint="1513175912127">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1513175932789</inTransitions>
     <outTransitions>#1513175931943</outTransitions>
   </states>
