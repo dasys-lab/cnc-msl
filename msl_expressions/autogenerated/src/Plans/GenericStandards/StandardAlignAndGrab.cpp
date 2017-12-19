@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 /*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -35,7 +35,6 @@ namespace alica
     void StandardAlignAndGrab::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         // return if necessary information is missing
@@ -58,7 +57,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             cout << "SAAG: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
@@ -78,7 +77,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);

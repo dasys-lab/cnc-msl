@@ -1,11 +1,5 @@
-/*
- * MovementContainer.cpp
- *
- *  Created on: Dec 14, 2016
- *      Author: cn
- */
-
 #include <msl_robot/dribbleCalibration/container/MovementContainer.h>
+#include "msl_robot/MSLRobot.h"
 #include <SystemConfig.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -37,7 +31,6 @@ namespace msl
 
 	MotionControl MovementContainer::getBall()
 	{
-		msl::RobotMovement rm;
 		query->reset();
 		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPosition> me;
@@ -62,7 +55,7 @@ namespace msl
 		query->egoDestinationPoint = egoBallPos;
 		query->egoAlignPoint = egoBallPos;
 
-		mc = rm.moveToPoint(query);
+		mc = msl::RobotMovement::get()->moveToPoint(query);
 		mc.motion.translation += 400;
 		return mc;
 	}
@@ -75,8 +68,6 @@ namespace msl
 	msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int translation)
 	{
 		msl_actuator_msgs::MotionControl mc;
-		msl::RobotMovement rm;
-
 		if (movement != Forward && movement != Backward && movement != Left && movement != Right)
 		{
 			cerr << "MovementContainer::move() -> invalid input parameter" << endl;
@@ -126,7 +117,7 @@ namespace msl
 				query->angleTolerance = angleTolerance;
 
 				cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString();
-				mc = rm.alignTo(query);
+				mc = msl::RobotMovement::get()->alignTo(query);
 
 #ifdef DEBUG_MOVE_CONT
 				cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false")
@@ -156,7 +147,7 @@ namespace msl
 #ifdef DEBUG_MOVE_CONT
 			cout << "MC::move() egoDestinationPoint = " << egoDestination->toString();
 #endif
-			mc = rm.moveToPoint(query);
+			mc = msl::RobotMovement::get()->moveToPoint(query);
 			mc.motion.translation = translation;
 #ifdef DEBUG_MOVE_CONT
 			cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;

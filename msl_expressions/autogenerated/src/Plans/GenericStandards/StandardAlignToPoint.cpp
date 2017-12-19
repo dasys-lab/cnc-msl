@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "msl_robot/robotmovement/MovementQuery.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/MSLRobot.h>
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
 #include <RawSensorData.h>
@@ -62,7 +63,6 @@ namespace alica
         additionalPoints->push_back(alloBall);
         shared_ptr < geometry::CNPoint2D > egoTarget;
         MotionControl mc;
-        RobotMovement rm;
         if (!isReceiver)
         { // robot is executor
 
@@ -102,7 +102,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(m_Query);
+            mc = this->robot->robotMovement->moveToPoint(m_Query);
         }
         else
         { // robot is receiver
@@ -130,7 +130,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(m_Query);
+            mc = this->robot->robotMovement->moveToPoint(m_Query);
         }
 
         // if we reach the point and are aligned, the behavior is successful

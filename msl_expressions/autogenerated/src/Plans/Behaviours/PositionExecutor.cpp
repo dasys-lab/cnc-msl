@@ -2,15 +2,19 @@ using namespace std;
 #include "Plans/Behaviours/PositionExecutor.h"
 
 /*PROTECTED REGION ID(inccpp1438790362133) ENABLED START*/ //Add additional includes here
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 
-#include "MSLWorldModel.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <MSLWorldModel.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+
+#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -37,8 +41,6 @@ namespace alica
     void PositionExecutor::run(void* msg)
     {
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -102,8 +104,8 @@ namespace alica
                 query->egoAlignPoint = egoBallPos;
                 query->snapDistance = fastCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->velocityMode = msl::MovementQuery::Velocity::FAST;
-                mc = rm.moveToPoint(query);
+                query->velocityMode = msl::VelocityMode::FAST;
+                mc = this->robot->robotMovement->moveToPoint(query);
             }
             else
             { // still enough time to position ...
@@ -112,8 +114,8 @@ namespace alica
                 query->egoAlignPoint = egoBallPos;
                 query->snapDistance = slowCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
-                mc = rm.moveToPoint(query);
+                query->velocityMode = msl::VelocityMode::DEFAULT;
+                mc = this->robot->robotMovement->moveToPoint(query);
             }
 
             // if we reached the point and are aligned, the behavior is successful
