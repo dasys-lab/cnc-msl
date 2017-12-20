@@ -74,6 +74,7 @@ class LightBarrier;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
+class Calibration;
 class MSLWorldModel
 {
   public:
@@ -107,11 +108,6 @@ class MSLWorldModel
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
-    void sendKillMotionCommand();
-    void sendStartMotionCommand();
-    double getRobotRadius();
-    void setRobotRadius(double newRadius);
-    double adjustRobotRadius(double difference);
 
     Monitoring *monitoring;
     RawSensorData *rawSensorData;
@@ -124,6 +120,7 @@ class MSLWorldModel
     Obstacles *obstacles;
     Prediction *prediction;
     LightBarrier *lightBarrier;
+    Calibration *calibration;
     msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
 
     supplementary::EventTrigger visionTrigger;
