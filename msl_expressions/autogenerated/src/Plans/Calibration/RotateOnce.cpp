@@ -10,6 +10,7 @@ using namespace std;
 #include <SystemConfig.h>
 #include <FileSystem.h>
 #include "ConsoleCommandHelper.h"
+#include <Calibration.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +22,7 @@ namespace alica
             DomainBehaviour("RotateOnce")
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
-        robotRadius = wm->getRobotRadius();
+        robotRadius = wm->calibration->getRobotRadius();
         lastMotionBearing = 0;
         lastIMUBearing = 0;
         imuRotations = 0;
@@ -181,7 +182,7 @@ namespace alica
         double newRadius = robotRadius * (1 - calculatedSlope);
         cout << "changed radius: " << robotRadius << " -> " << newRadius << endl;
         robotRadius = newRadius;
-        wm->setRobotRadius(newRadius);
+        wm->calibration->setRobotRadius(newRadius);
     }
 
     double RotateOnce::updateRotationCount(double currentBearing, double &lastBearing, int &rotations,

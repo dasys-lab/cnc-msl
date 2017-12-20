@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Robot-Head.png</file>
+        <file>Football.png</file>
+        <file>System-Monitor.png</file>
+        <file>System-Monitor-Off.png</file>
+    </qresource>
+</RCC>

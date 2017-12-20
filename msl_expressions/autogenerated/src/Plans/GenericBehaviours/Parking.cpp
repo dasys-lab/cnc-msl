@@ -6,6 +6,7 @@ using namespace std;
 #include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
@@ -23,7 +24,6 @@ namespace alica
         this->parkingSlotIdx = 0; // must be set in initialise parameters because of the availability of ownId;
         this->distanceToParkingPositionTolerance = (*this->sc)["Parking"]->get<double>(
                 "ParkingPositions", "distanceToParkingPositionTolerance", NULL);
-        this->rm = new msl::RobotMovement();
         this->movementQuery = make_shared<msl::MovementQuery>();
         this->parkingPosition = make_shared < geometry::CNPoint2D
                 > (this->parkingSlotIdx * -this->offset, wm->field->getFieldWidth() / 2.0);
@@ -51,7 +51,7 @@ namespace alica
         this->movementQuery->egoDestinationPoint = this->parkingPosition->alloToEgo(*ownPos);
         this->movementQuery->egoAlignPoint =
                 (this->parkingPosition + make_shared < geometry::CNPoint2D > (0, -1000.0))->alloToEgo(*ownPos);
-        msl_actuator_msgs::MotionControl mc = rm->moveToPoint(movementQuery);
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(movementQuery);
         send(mc);
         /*PROTECTED REGION END*/
     }

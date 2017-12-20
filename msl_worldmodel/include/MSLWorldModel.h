@@ -3,16 +3,16 @@
 
 using namespace std;
 
-#include <list>
 #include <iostream>
-#include <tuple>
+#include <list>
 #include <mutex>
+#include <tuple>
 
 #include <ros/ros.h>
 
-#include <InformationElement.h>
-#include <ITrigger.h>
 #include <EventTrigger.h>
+#include <ITrigger.h>
+#include <InformationElement.h>
 #include <MSLEnums.h>
 
 namespace std_msgs
@@ -74,6 +74,7 @@ class LightBarrier;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
+class Calibration;
 class MSLWorldModel
 {
   public:
@@ -106,72 +107,67 @@ class MSLWorldModel
     int getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
-		bool isUsingSimulator();
-		void sendKillMotionCommand();
-		void sendStartMotionCommand();
-		double getRobotRadius();
-		void setRobotRadius(double newRadius);
-		double adjustRobotRadius(double difference);
+    bool isUsingSimulator();
 
-		Monitoring* monitoring;
-		RawSensorData* rawSensorData;
-		Robots* robots;
-		Ball* ball;
-		Game* game;
-		MSLFootballField* field;
-		PathPlanner* pathPlanner;
-		WhiteBoard* whiteBoard;
-		Obstacles* obstacles;
-		Prediction* prediction;
-		LightBarrier* lightBarrier;
-		msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
+    Monitoring *monitoring;
+    RawSensorData *rawSensorData;
+    Robots *robots;
+    Ball *ball;
+    Game *game;
+    MSLFootballField *field;
+    PathPlanner *pathPlanner;
+    WhiteBoard *whiteBoard;
+    Obstacles *obstacles;
+    Prediction *prediction;
+    LightBarrier *lightBarrier;
+    Calibration *calibration;
+    msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
 
-		supplementary::EventTrigger visionTrigger;
-		InfoTime timeLastSimMsgReceived;
-	private:
+    supplementary::EventTrigger visionTrigger;
+    InfoTime timeLastSimMsgReceived;
 
-		MSLWorldModel();
-		virtual ~MSLWorldModel();
+  private:
+    MSLWorldModel();
+    virtual ~MSLWorldModel();
 
-		supplementary::ITrigger* visionDataEventTrigger;
-		supplementary::SystemConfig* sc;
+    supplementary::ITrigger *visionDataEventTrigger;
+    supplementary::SystemConfig *sc;
 
-		int ownID;
-		int ringBufferLength;
-		bool maySendMessages;
+    int ownID;
+    int ringBufferLength;
+    bool maySendMessages;
 
-		MSLSharedWorldModel* sharedWorldModel;
-		alica::AlicaEngine* alicaEngine;
+    MSLSharedWorldModel *sharedWorldModel;
+    alica::AlicaEngine *alicaEngine;
 
-		ros::NodeHandle n;
-		ros::Subscriber sub;
-		ros::Subscriber rawOdomSub;
-		ros::Subscriber wmDataSub;
-		ros::Subscriber wmBallListSub;
-		ros::Subscriber joystickSub;
-		ros::Subscriber motionBurstSub;
-		ros::Subscriber simWorldModelSub;
-		ros::Subscriber gazeboWorldModelSub;
-		ros::Subscriber sharedWorldSub;
-		ros::Subscriber passMsgSub;
-		ros::Subscriber watchBallMsgSub;
-		ros::Publisher sharedWorldPub;
-		ros::Subscriber correctedOdometrySub;
-		ros::Subscriber lightBarrierSub;
-		ros::Subscriber imuDataSub;
-		ros::Publisher processCommandPub;
+    ros::NodeHandle n;
+    ros::Subscriber sub;
+    ros::Subscriber rawOdomSub;
+    ros::Subscriber wmDataSub;
+    ros::Subscriber wmBallListSub;
+    ros::Subscriber joystickSub;
+    ros::Subscriber motionBurstSub;
+    ros::Subscriber simWorldModelSub;
+    ros::Subscriber gazeboWorldModelSub;
+    ros::Subscriber sharedWorldSub;
+    ros::Subscriber passMsgSub;
+    ros::Subscriber watchBallMsgSub;
+    ros::Publisher sharedWorldPub;
+    ros::Subscriber correctedOdometrySub;
+    ros::Subscriber lightBarrierSub;
+    ros::Subscriber imuDataSub;
+    ros::Publisher processCommandPub;
 
-		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
+    list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
-		mutex wmMutex;
-		mutex joystickMutex;
-		mutex motionBurstMutex;
-		mutex correctedOdemetryMutex;
-		ros::AsyncSpinner* spinner;
+    mutex wmMutex;
+    mutex joystickMutex;
+    mutex motionBurstMutex;
+    mutex correctedOdemetryMutex;
+    ros::AsyncSpinner *spinner;
 
-	protected:
-
-	};
+  protected:
+};
 
 } /* namespace msl */
 

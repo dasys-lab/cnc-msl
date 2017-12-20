@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/Duel.h"
 
 /*PROTECTED REGION ID(inccpp1450178699265) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
@@ -294,12 +295,11 @@ namespace alica
             // replaced with new moveToPoint method
 //            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 100);
             //mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
-            msl::RobotMovement rm;
             query->egoDestinationPoint = egoTarget;
             query->egoAlignPoint = egoTarget;
             query->snapDistance = 100;
 
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             if (!std::isnan(mc.motion.translation))
             {

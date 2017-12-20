@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
@@ -34,8 +35,6 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
@@ -80,7 +79,7 @@ namespace alica
             query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
             query->snapDistance = 100;
 
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             if (me->distanceTo(alloTarget) <= 100)
             {

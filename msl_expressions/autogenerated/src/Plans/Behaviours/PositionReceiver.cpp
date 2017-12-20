@@ -1,14 +1,16 @@
 using namespace std;
 #include "Plans/Behaviours/PositionReceiver.h"
 
-/*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ // Add additional includes here
-#include "MSLWorldModel.h"
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+/*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <MSLWorldModel.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
+#include <RawSensorData.h>
 #include <Ball.h>
 #include <Game.h>
-#include <RawSensorData.h>
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
