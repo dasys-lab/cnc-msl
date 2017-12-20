@@ -392,6 +392,8 @@ namespace alica
 
             case 1513609404882:
 
+            case 1513784309003:
+
                 return make_shared<Align4PassTest>();
                 break;
 

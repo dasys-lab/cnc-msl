@@ -3,13 +3,14 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1513609382468) ENABLED START*/ //Add additional includes here
-#include <msl_robot/robotmovement/MovementQuery.h>
-#include <msl_robot/MSLRobot.h>
 namespace geometry
 {
     class CNPoint2D;
 }
-
+namespace msl
+{
+    class MovementQuery;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,11 +28,17 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1513609382468) ENABLED START*/ //Add additional private methods here
-        double recBallDist;
+        bool isReceiver;
+        string taskName;
+
+        double alignAngleTolerance;
+        double positionDistanceTolerance;
+        double executerDistanceToBall;
+        double receiverDistanceToBall;
+        double receiverBallMovedThreshold;
         shared_ptr<msl::MovementQuery> m_Query;
+        shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
         shared_ptr<geometry::CNPoint2D> oldBallPos;
-        shared_ptr<geometry::CNPoint2D> alloTarget;
-        msl::MSLRobot* rob;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
