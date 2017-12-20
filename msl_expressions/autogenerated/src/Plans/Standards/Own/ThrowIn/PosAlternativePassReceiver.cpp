@@ -2,12 +2,13 @@ using namespace std;
 #include "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
 /*PROTECTED REGION ID(inccpp1461674942156) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SystemConfig.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -32,7 +33,6 @@ namespace alica
     void PosAlternativePassReceiver::run(void* msg)
     {
         /*PROTECTED REGION ID(run1461674942156) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -101,7 +101,7 @@ namespace alica
             query->egoDestinationPoint = egoTarget;
             query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             // if we reach the point and are aligned, the behavior is successful
             if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)

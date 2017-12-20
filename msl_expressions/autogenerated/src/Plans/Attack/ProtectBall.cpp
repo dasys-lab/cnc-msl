@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/ProtectBall.h"
 
 /*PROTECTED REGION ID(inccpp1457706592232) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <Ball.h>
 #include <RawSensorData.h>
 #include <pathplanner/PathProxy.h>
@@ -43,8 +45,6 @@ namespace alica
     void ProtectBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706592232) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         auto ballPos = wm->ball->getEgoBallPosition();
         auto ballVel = wm->ball->getEgoBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
@@ -54,7 +54,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         if (ownPos == nullptr)
         {
-            mc = rm.driveRandomly(500);
+            mc = this->robot->robotMovement->driveRandomly(500);
             send(mc);
             return;
         }

@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
 
 /*PROTECTED REGION ID(inccpp1465474139420) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/constraintmodul/Query.h"
-#include "GSolver.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <engine/constraintmodul/Query.h>
+#include <GSolver.h>
+#include <SolverType.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -41,7 +42,6 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
 
-        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
@@ -75,7 +75,7 @@ namespace alica
             moveQuery->snapDistance = 100.0;
             moveQuery->additionalPoints = additionalPoints;
 
-            mc = rm.moveToPoint(moveQuery);
+            mc = this->robot->robotMovement->moveToPoint(moveQuery);
 
         }
         else

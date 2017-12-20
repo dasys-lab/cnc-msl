@@ -7,6 +7,7 @@ using namespace std;
 #include <Ball.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 //#include "msl_msgs/PathPlanner.h"
 //#include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
@@ -56,7 +57,6 @@ namespace alica
         /*PROTECTED REGION ID(run1498664309837) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto egoBallPos = wm->ball->getEgoBallPosition();
-        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < msl::VoronoiNet > vNet = wm->pathPlanner->getCurrentVoronoiNet();
 
@@ -81,7 +81,7 @@ namespace alica
         query->egoDestinationPoint = egoDestinationPoint;
 
         // get movement command
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         // turn the robot to the nearest opponent while he is rotating around the ball
         auto closestOpponent = getClosestOpp();
@@ -114,7 +114,7 @@ namespace alica
         }
 
         query->rotateAroundTheBall = true;
-        mc = rm.alignTo(query);
+        mc = this->robot->robotMovement->alignTo(query);
         // use rm.alignTo() method
         // try to combine moveToPoint and alignTo
 

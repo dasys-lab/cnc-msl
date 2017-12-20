@@ -1,12 +1,4 @@
-/*
- * MSLRobot.h
- *
- *  Created on: Jun 12, 2016
- *      Author: Stephan Opfer
- */
-
-#ifndef SRC_MSLROBOT_H_
-#define SRC_MSLROBOT_H_
+#pragma once
 
 namespace msl
 {
@@ -29,4 +21,3 @@ class MSLRobot
 
 } /* namespace msl */
 
-#endif /* SRC_MSLROBOT_H_ */

@@ -1,25 +1,26 @@
 using namespace std;
 #include "Plans/GenericStandards/StandardAlignToPoint.h"
 
-/*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ // Add additional includes here
-#include "msl_robot/robotmovement/MovementQuery.h"
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include <Ball.h>
-#include <MSLWorldModel.h>
+/*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/MSLRobot.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
 #include <RawSensorData.h>
+#include <Ball.h>
 #include <Robots.h>
 #include <engine/Assignment.h>
-#include <engine/Assignment.h>
-#include <engine/RunningPlan.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1433949970592) ENABLED START*/ // initialise static variables here
+    /*PROTECTED REGION ID(staticVars1433949970592) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     StandardAlignToPoint::StandardAlignToPoint() :
             DomainBehaviour("StandardAlignToPoint")
     {
-        /*PROTECTED REGION ID(con1433949970592) ENABLED START*/ // Add additional options here
+        /*PROTECTED REGION ID(con1433949970592) ENABLED START*/ //Add additional options here
         this->taskName = "";
         this->isReceiver = false;
         this->alignAngleTolerance = (M_PI / 180)
@@ -38,12 +39,12 @@ namespace alica
     }
     StandardAlignToPoint::~StandardAlignToPoint()
     {
-        /*PROTECTED REGION ID(dcon1433949970592) ENABLED START*/ // Add additional options here
+        /*PROTECTED REGION ID(dcon1433949970592) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
     void StandardAlignToPoint::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ // Add additional options here
+        /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -62,12 +63,11 @@ namespace alica
         additionalPoints->push_back(alloBall);
         shared_ptr < geometry::CNPoint2D > egoTarget;
         MotionControl mc;
-        RobotMovement rm;
         if (!isReceiver)
         { // robot is executor
 
             // get entry point of task name to locate robot with task name
-            EntryPoint *ep = getParentEntryPoint(taskName);
+            EntryPoint* ep = getParentEntryPoint(taskName);
             if (ep == nullptr)
             {
                 return;
@@ -102,7 +102,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(m_Query);
+            mc = this->robot->robotMovement->moveToPoint(m_Query);
         }
         else
         { // robot is receiver
@@ -121,7 +121,7 @@ namespace alica
 
                 oldBallPos = alloBall;
 
-                // calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
+                //calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
                 alloReceiverTarget = (alloBall + (alloBall->normalize() * -this->receiverDistanceToBall));
             }
 
@@ -130,7 +130,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.moveToPoint(m_Query);
+            mc = this->robot->robotMovement->moveToPoint(m_Query);
         }
 
         // if we reach the point and are aligned, the behavior is successful
@@ -140,17 +140,12 @@ namespace alica
             this->setSuccess(true);
         }
 
-        if (!std::isnan(mc.motion.translation))
-        {
-            send(mc);
-        }
-
-
+        send(mc);
         /*PROTECTED REGION END*/
     }
     void StandardAlignToPoint::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ // Add additional options here
+        /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
         this->m_Query = make_shared<MovementQuery>();
         this->alloReceiverTarget.reset();
         this->oldBallPos.reset();
@@ -174,6 +169,6 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1433949970592) ENABLED START*/ // Add additional methods here
+/*PROTECTED REGION ID(methods1433949970592) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

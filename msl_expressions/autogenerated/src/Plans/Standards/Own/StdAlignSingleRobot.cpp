@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/Standards/Own/StdAlignSingleRobot.h"
 
 /*PROTECTED REGION ID(inccpp1467385758084) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "msl_robot/robotmovement/MovementQuery.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -64,12 +65,12 @@ namespace alica
 //		egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
 //				*ownPos);
 
-        MotionControl mc;
-        RobotMovement rm;
+        msl_actuator_msgs::MotionControl mc;
         this->m_Query->egoAlignPoint = egoBallPos;
         this->m_Query->additionalPoints = additionalPoints;
         this->m_Query->egoDestinationPoint = egoTarget;
-        mc = rm.moveToPoint(m_Query);
+        mc = this->robot->robotMovement->moveToPoint(m_Query);
+        send(mc);
         /*PROTECTED REGION END*/
     }
     void StdAlignSingleRobot::initialiseParameters()
