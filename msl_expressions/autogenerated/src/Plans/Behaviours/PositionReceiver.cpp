@@ -10,7 +10,6 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Game.h>
-#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -33,7 +32,6 @@ void PositionReceiver::run(void *msg)
 {
     /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ // Add additional options here
     // TODO  not allowed in enemy half (rules), new conf for rules
-    msl::RobotMovement rm;
     shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
     auto egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -60,18 +58,18 @@ void PositionReceiver::run(void *msg)
     {   // they already pressed start and we are still positioning, so speed up!
         // removed with new moveToPoint method
         query->snapDistance = fastCatchRadius;
-        query->velocityMode = msl::MovementQuery::Velocity::FAST;
+        query->velocityMode = msl::VelocityMode::FAST;
     }
     else
     { // still enough time to position ...
         query->snapDistance = slowCatchRadius;
-        query->velocityMode = msl::MovementQuery::Velocity::DEFAULT;
+        query->velocityMode = msl::VelocityMode::DEFAULT;
     }
 
     query->egoDestinationPoint = egoTarget;
     query->egoAlignPoint = egoBallPos;
     query->additionalPoints = additionalPoints;
-    mc = rm.moveToPoint(query);
+    mc = this->robot->robotMovement->moveToPoint(query);
 
     // if we reach the point and are aligned, the behavior is successful
     if (mc.motion.translation == 0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
