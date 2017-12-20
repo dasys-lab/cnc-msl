@@ -7,6 +7,7 @@ using namespace std;
 #include <container/CNPoint2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Rules.h>
 /*PROTECTED REGION END*/
@@ -31,7 +32,6 @@ namespace alica
     void Pos4PenaltyRebounce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1466972686566) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (!ownPos)
         {
@@ -42,7 +42,7 @@ namespace alica
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = this->wm->field->posOppGoalMid()->alloToEgo(*ownPos);
         query->snapDistance = this->catchRadius;
-        auto mc = rm.moveToPoint(query);
+        auto mc = this->robot->robotMovement->moveToPoint(query);
 
         if (egoTarget->length() < this->catchRadius)
         {

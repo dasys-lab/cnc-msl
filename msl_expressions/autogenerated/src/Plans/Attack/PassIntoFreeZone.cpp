@@ -2,11 +2,12 @@ using namespace std;
 #include "Plans/Attack/PassIntoFreeZone.h"
 
 /*PROTECTED REGION ID(inccpp1508951632953) ENABLED START*/
-#include "GSolver.h"
-#include "SolverType.h"
-#include "engine/constraintmodul/Query.h"
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "msl_helper_msgs/DebugMsg.h"
+#include <GSolver.h>
+#include <SolverType.h>
+#include <engine/constraintmodul/Query.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_helper_msgs/DebugMsg.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
@@ -67,12 +68,11 @@ void PassIntoFreeZone::run(void *msg)
         dm.points.push_back(dp);
         this->send(dm);
 
-        msl::RobotMovement rm;
         mQuery->egoDestinationPoint = alloTarget->alloToEgo(*ownPos);
         mQuery->egoAlignPoint = alloBall->alloToEgo(*ownPos);
         mQuery->snapDistance = 100;
         mQuery->additionalPoints = additionalPoints;
-        mc = rm.moveToPoint(mQuery);
+        mc = this->robot->robotMovement->moveToPoint(mQuery);
     }
     else
     {

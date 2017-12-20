@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/Attack/Wander.h"
 
 /*PROTECTED REGION ID(inccpp1434716215423) ENABLED START*/ //Add additional includes here
-#include "MSLFootballField.h"
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <MSLFootballField.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Game.h>
 #include <MSLWorldModel.h>
@@ -90,8 +91,6 @@ namespace alica
     void Wander::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData->getOwnPositionVision();
         if (ownPosition == nullptr)
             return;
@@ -148,7 +147,7 @@ namespace alica
         query->egoDestinationPoint = targetPoint;
         query->egoAlignPoint = targetPoint;
 
-        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(query);
         if (!std::isnan(mc.motion.translation))
         {
             send(mc);

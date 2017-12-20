@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 /*PROTECTED REGION ID(inccpp1457532279657) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SolverType.h>
 #include <RawSensorData.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <Ball.h>
@@ -31,7 +32,6 @@ namespace alica
     void StandardAlignToPassPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457532279657) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getAlloBallPosition();
@@ -65,7 +65,7 @@ namespace alica
 //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, egoBall, maxVel);
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
-            mc = rm.moveToPoint(movQuery);
+            mc = this->robot->robotMovement->moveToPoint(movQuery);
             if (driveTo->length() < 100)
             {
                 mc.motion.translation = 0;

@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
 
 /*PROTECTED REGION ID(inccpp1464780799716) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SystemConfig.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -29,7 +30,6 @@ namespace alica
     void PositionReceiverFreeKickOppHalf::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464780799716) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -105,7 +105,7 @@ namespace alica
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         query->additionalPoints = additionalPoints;
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))
         {
