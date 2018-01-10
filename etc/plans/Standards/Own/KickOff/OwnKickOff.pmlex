@@ -76,19 +76,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/KickOffPassDefault.beh#1438778223495"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="OwnKickOff.pml#1440772873418"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../../Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
     <value/>
   </extensions>
   <extensions>
