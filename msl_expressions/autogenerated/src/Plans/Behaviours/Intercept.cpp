@@ -113,12 +113,8 @@ namespace alica
         shared_ptr < geometry::CNPosition > predPos = make_shared < geometry::CNPosition > (0.0, 0.0, 0.0);
         double timestep = 33;
         double rot = od->motion.rotation * timestep / 1000.0;
-        for (int i = 1; i * timestep < 160; i++)
+        for (int i = 1; i < 6; i++)
         {
-            if (i > 6)
-            {
-                break;
-            }
             predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
             predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
             predPos->theta += rot;
@@ -132,7 +128,6 @@ namespace alica
             }
         }
 
-        auto egoPredBall = predBall->alloToEgo(*predPos);
         //TODO dirty fix to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos->getPoint()))
         {
@@ -145,6 +140,7 @@ namespace alica
         }
 //		}
         // PID controller for minimizing the distance between ball and me
+        auto egoPredBall = predBall->alloToEgo(*predPos);
         double distErr = max(egoPredBall->length(), minDistErr);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
