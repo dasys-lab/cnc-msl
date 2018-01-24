@@ -34,46 +34,19 @@ namespace alica
 
         if (!joy)
         {
-            msl_actuator_msgs::MotionControl mc;
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastControlInput.pop();
-            pastControlInput.pop();
-            pastControlInput.pop();
-            pastTranslations.pop();
-            pastTranslations.pop();
-            pastTranslations.pop();
-            send(mc);
-
-            cout << "Joystick: x = " << mc.motion.translation << endl;
-
+        	// send empty mc for stop
             send(mc);
             return;
         }
-
-//		if (lastProcessedCmd == joy) // only process new commands from WM
-//		{
-//			msl_actuator_msgs::MotionControl mc;
-//			send(mc);
-//			return;
-//		}
-        //cout << "Joystick-Beh: " << *joy << endl;
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
-            double input[] = {cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
-                                      * joy->motion.translation,
-                              joy->motion.rotation};
-
-            // smooth driving stuff
-            pastControlInput.push(std::valarray<double>(input, 3));
-
+  
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
-
+            	std::cout << "Joystick: PT-Controller is on" << std::endl;
+		            // smooth driving stuff
+            	pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
+                                      * joy->motion.translation, joy->motion.rotation}));
                 std::valarray<double> translation = ptController();
                 mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
                 mc.motion.angle = atan2(translation[1], translation[0]);
@@ -81,39 +54,20 @@ namespace alica
             }
             else
             {
-                pastTranslations.push(std::valarray<double>(init, 3));
-                pastControlInput.pop();
-                pastTranslations.pop();
-                pastTranslations.back() =
-                {   mc.motion.translation, 0.0, 0.0};
-
+            	std::cout << "Joystick: PT-Controller is off" << std::endl;
                 mc.motion = joy->motion;
             }
 
-            cout << "Joystick: x = " << mc.motion.translation << endl;
-            // acceleration memory
-            // saving translation of the last 3 iterations
+            cout << "Joystick: Translation " << mc.motion.translation << endl;
 
             mc.motion.angle = joy->motion.angle;
             send(mc);
         }
         else
         {
+            //cout << "Joystick: Some Motion Value is NaN! Sending Stop instead." << endl;
             msl_actuator_msgs::MotionControl mc;
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastControlInput.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastTranslations.push(std::valarray<double>(init, 3));
-            pastControlInput.pop();
-            pastControlInput.pop();
-            pastControlInput.pop();
-            pastTranslations.pop();
-            pastTranslations.pop();
-            pastTranslations.pop();
             send(mc);
-            //cout << "Joystick: Some Motion Value is NaN!" << endl;
         }
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)

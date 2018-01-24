@@ -1,0 +1,17 @@
+<library path="lib/libmsl_control">
+  <class name="msl_control/MSLControl" type="msl_control::MSLControl" base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to monitor MSL robot specific things like kicker voltage, ball possession etc.
+    </description>
+    <qtgui>
+      <group>
+        <label>Robot Tools</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to robot tools.</statustip>
+      </group>
+      <label>MSL Control</label>
+      <icon type="file">resources/Football.png</icon>
+      <statustip>A GUI plugin for controlling and monitoring robots.</statustip>
+    </qtgui>
+  </class>
+</library>

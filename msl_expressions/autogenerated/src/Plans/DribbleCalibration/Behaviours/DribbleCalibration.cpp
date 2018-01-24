@@ -8,7 +8,6 @@ using namespace std;
 #include <msl_actuator_msgs/MotionControl.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
-#include <msl_robot/robotmovement/RobotMovement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -47,7 +46,6 @@ namespace alica
         /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
         // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
         MotionControl mc;
-        msl::RobotMovement rm;
 //		MovementContainer moveCont;
         // if ball is in kicker
         if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))

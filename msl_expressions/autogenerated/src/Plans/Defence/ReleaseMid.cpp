@@ -2,9 +2,10 @@ using namespace std;
 #include "Plans/Defence/ReleaseMid.h"
 
 /*PROTECTED REGION ID(inccpp1458033482289) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/RunningPlan.h"
-#include "engine/model/AbstractPlan.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <engine/RunningPlan.h>
+#include <engine/model/AbstractPlan.h>
 #include <Robots.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
@@ -36,15 +37,13 @@ namespace alica
     void ReleaseMid::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
-            mc = rm.driveRandomly(500);
+            mc = this->robot->robotMovement->driveRandomly(500);
             send(mc);
             cout << "AAPR: OwnPos is null" << endl;
             return;
@@ -105,14 +104,14 @@ namespace alica
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
         else
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
 //                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
             query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
         }
         if (!std::isnan(mc.motion.translation))
         {

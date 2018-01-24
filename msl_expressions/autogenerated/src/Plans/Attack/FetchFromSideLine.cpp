@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Attack/FetchFromSideLine.h"
 
 /*PROTECTED REGION ID(inccpp1450175655102) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -31,7 +32,6 @@ namespace alica
     void FetchFromSideLine::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450175655102) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
         if (ownPos == nullptr)
         {
@@ -45,7 +45,7 @@ namespace alica
             this->setFailure(true);
             return;
         }
-        auto bm = rm.ruleActionForBallGetter();
+        auto bm = this->robot->robotMovement->ruleActionForBallGetter();
 
         if (!std::isnan(bm.motion.translation))
         {
@@ -86,7 +86,7 @@ namespace alica
             query->egoDestinationPoint = dest->alloToEgo(*ownPos);
             query->egoAlignPoint = dest->alloToEgo(*ownPos);
             query->additionalPoints = additionalPoints;
-            bm = rm.moveToPoint(query);
+            bm = this->robot->robotMovement->moveToPoint(query);
 
             //DriveHelper.DriveToPointAndAlignCareBall(WorldHelper.Allo2Ego(dest, ownPos), ballPos, maxVel, WM);
         }
@@ -120,7 +120,7 @@ namespace alica
             query->egoDestinationPoint = dest->alloToEgo(*ownPos);
             query->egoAlignPoint = dest->alloToEgo(*ownPos);
             query->additionalPoints = additionalPoints;
-            bm = rm.moveToPoint(query);
+            bm = this->robot->robotMovement->moveToPoint(query);
             //DriveHelper.DriveToPointAndAlignCareBall(WorldHelper.Allo2Ego(dest, ownPos), ballPos, maxVel, WM);
         }
 //		if (mc == nullptr)
