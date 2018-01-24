@@ -183,6 +183,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
+#include  "Plans/GenericBehaviours/DriveAndAlignToPoint.h"
+
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
 #include  "Plans/Attack/SearchForPassPoint.h"
@@ -733,6 +735,11 @@ namespace alica
             case 1482165487602:
 
                 return make_shared<Stop>();
+                break;
+
+            case 1516808848891:
+
+                return make_shared<DriveAndAlignToPoint>();
                 break;
 
             case 1464189840525:
