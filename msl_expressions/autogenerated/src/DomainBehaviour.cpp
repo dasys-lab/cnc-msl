@@ -24,7 +24,7 @@ namespace alica
 		this->wm = msl::MSLWorldModel::get();
 		this->robot = msl::MSLRobot::get();
 
-		if (wm->timeLastSimMsgReceived > 0)
+		if (this->wm->isUsingSimulator())
 		{
 			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
 			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);

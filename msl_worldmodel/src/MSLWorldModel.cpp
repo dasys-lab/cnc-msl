@@ -149,7 +149,12 @@ namespace msl
 
     bool MSLWorldModel::isUsingSimulator()
     {
-        return this->timeLastSimMsgReceived > 10;
+        return this->timeLastSimMsgReceived > 0;
+    }
+
+    void MSLWorldModel::setIsUsingSimulator()
+    {
+        this->timeLastSimMsgReceived = 1;
     }
 
     void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)

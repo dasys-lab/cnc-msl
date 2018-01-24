@@ -45,7 +45,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     wm = MSLWorldModel::get();
     if (sim)
     {
-        wm->timeLastSimMsgReceived = 1;
+        wm->setIsUsingSimulator();
     }
     wm->setEngine(ae);
 
