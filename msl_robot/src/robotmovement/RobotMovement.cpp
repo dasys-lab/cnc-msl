@@ -102,7 +102,6 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
     }
     else
     {
-        cout << "RobotMovement::stopTranslation called" << endl;
         mc.motion.translation = 0;
         stopTranslation();
     }
