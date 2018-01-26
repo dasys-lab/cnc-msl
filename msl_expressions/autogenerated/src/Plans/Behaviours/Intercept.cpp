@@ -12,6 +12,7 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <pathplanner/PathPlannerQuery.h>
+#include <stdio.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -56,7 +57,7 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-        this->setSuccess(true);
+        //this->setSuccess(true);
 
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
@@ -214,6 +215,7 @@ namespace alica
             }
         }
         mc.motion.rotation = controlRot;
+	printf("98jewc | %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f\n", rotErr, prot, rotIntErr, pirot, lastRotErr, pdrot, controlRot);
 
 // Special handling for things around critical areas
         auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
