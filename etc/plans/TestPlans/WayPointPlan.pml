@@ -19,6 +19,7 @@
     <outTransitions>#1513182981534</outTransitions>
   </states>
   <states id="1513182863558" name="NewState" comment="">
+    <plans xsi:type="alica:Plan">Circle.pml#1517049779097</plans>
     <inTransitions>#1513182956007</inTransitions>
     <outTransitions>#1513182979433</outTransitions>
   </states>
@@ -27,6 +28,7 @@
     <outTransitions>#1513182971945</outTransitions>
   </states>
   <states id="1513182867816" name="NewState" comment="">
+    <plans xsi:type="alica:Plan">curves.pml#1517056420902</plans>
     <inTransitions>#1513182960034</inTransitions>
     <outTransitions>#1513182975102</outTransitions>
   </states>

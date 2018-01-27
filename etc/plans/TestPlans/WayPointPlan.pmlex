@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182863558"/>
-    <value xPos="452" yPos="205" width="82" height="67"/>
+    <value xPos="452" yPos="205" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182865455"/>
@@ -102,6 +102,14 @@
   </extensions>
   <extensions>
     <key href="SoftSquarePlan.pml#1513183613607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Circle.pml#1517049779097"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="curves.pml#1517056420902"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
