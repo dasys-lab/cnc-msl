@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1516808796983" name="DriveAndAlignToPoint" comment="" destinationPath="">
-  <configurations id="1516808848891" name="DriveAndAlignToPointDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1516808796983" name="DriveAndAlignToPoint" comment="" destinationPath="Plans/GenericBehaviours">
+  <configurations id="1516808848891" name="DriveAndAlignToPointDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517048262612" name="MISSING_NAME" comment="" key="X" value="0"/>
+    <parameters id="1517048272496" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1517048306996" name="MISSING_NAME" comment="" key="OriX" value="1000"/>
+    <parameters id="1517048330842" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1517048441399" name="MISSING_NAME" comment="" key="R" value="1000"/>
+  </configurations>
+  <configurations id="1517048742417" name="DriveAndAlignTo[1000,0,2000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517048755698" name="MISSING_NAME" comment="" key="X" value="1000"/>
+    <parameters id="1517048767003" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1517048788068" name="MISSING_NAME" comment="" key="OriX" value="2000"/>
+    <parameters id="1517048803515" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1517048813237" name="MISSING_NAME" comment="" key="R" value="1000"/>
+  </configurations>
+  <configurations id="1517052480399" name="DriveAndAlignTo[1000,1000,2000,1000]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517052528141" name="DriveAndAlignTo[0,1000,2000,1000]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
 </alica:Behaviour>

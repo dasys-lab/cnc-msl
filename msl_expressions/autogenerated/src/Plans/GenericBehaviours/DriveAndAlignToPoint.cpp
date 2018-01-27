@@ -2,6 +2,10 @@ using namespace std;
 #include "Plans/GenericBehaviours/DriveAndAlignToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1516808796983) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <RawSensorData.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -23,7 +27,6 @@ namespace alica
     void DriveAndAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1516808796983) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;	//when necessary change to singleton
         auto me = wm->rawSensorData->getOwnPositionVision();
 
         if (me == nullptr)
@@ -37,8 +40,7 @@ namespace alica
 
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoOrientationTarget;
-        mc = rm.moveToPoint(query);
-
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (egoTarget->length() < catchRadius)
         {
@@ -59,45 +61,45 @@ namespace alica
     void DriveAndAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1516808796983) ENABLED START*/ //Add additional options here
-    	string tmp;
-		bool success = true;
-		success &= getParameter("X", tmp);
-		try
-		{
-			if (success)
-			{
-				alloTarget.x = stod(tmp);
-			}
-			success &= getParameter("Y", tmp);
-			if (success)
-			{
-				alloTarget.y = stod(tmp);
-			}
-			success &= getParameter("OriX", tmp);
-			if (success)
-			{
-				alloOrientationTarget.x = stod(tmp);
-			}
-			success &= getParameter("OriY", tmp);
-			if (success)
-			{
-				alloOrientationTarget.y = stod(tmp);
-			}
-			success &= getParameter("R", tmp);
-			if (success)
-			{
-				catchRadius = stod(tmp);
-			}
-		}
-		catch (exception& e)
-		{
-			cerr << "Could not cast the parameter properly" << endl;
-		}
-		if (!success)
-		{
-			cerr << "D2P: Parameter does not exist" << endl;
-		}
-    	/*PROTECTED REGION END*/
+        string tmp;
+        bool success = true;
+        success &= getParameter("X", tmp);
+        try
+        {
+            if (success)
+            {
+                alloTarget.x = stod(tmp);
+            }
+            success &= getParameter("Y", tmp);
+            if (success)
+            {
+                alloTarget.y = stod(tmp);
+            }
+            success &= getParameter("OriX", tmp);
+            if (success)
+            {
+                alloOrientationTarget.x = stod(tmp);
+            }
+            success &= getParameter("OriY", tmp);
+            if (success)
+            {
+                alloOrientationTarget.y = stod(tmp);
+            }
+            success &= getParameter("R", tmp);
+            if (success)
+            {
+                catchRadius = stod(tmp);
+            }
+        }
+        catch (exception& e)
+        {
+            cerr << "Could not cast the parameter properly" << endl;
+        }
+        if (!success)
+        {
+            cerr << "D2P: Parameter does not exist" << endl;
+        }
+        /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1516808796983) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/

@@ -109,7 +109,6 @@ namespace alica
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
 
-
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
         auto left = getLeftArmVelocity(ballVel, ballAngle);
@@ -247,7 +246,6 @@ namespace alica
         translationOld = translation;
         rotationOld = rotation;
         angleOld = angle;
-
 
         // if we start moving forward, we don't want to push directly
         if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound
