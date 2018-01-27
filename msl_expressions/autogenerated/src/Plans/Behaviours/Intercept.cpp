@@ -56,7 +56,6 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-        this->setSuccess(true);
 
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
