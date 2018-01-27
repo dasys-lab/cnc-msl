@@ -89,7 +89,7 @@ namespace alica
             {
                 // calculate target 60cm away from the ball and on a line with the receiver
                 egoTarget = (alloBall + ((receiverPos - alloBall)->normalize() * ballDistanceEx))->alloToEgo(*ownPos);
-                egoAlignPoint = receiverPos;
+                egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             }
             else
             {
