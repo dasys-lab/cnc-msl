@@ -96,6 +96,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/TestPlans/Circle1517049779097.h"
+
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
@@ -1305,6 +1307,60 @@ namespace alica
             case 1434050690800:
 
                 return make_shared<TransitionCondition1434050690800>();
+
+                break;
+
+            case 1517053226586:
+
+                return make_shared<TransitionCondition1517053226586>();
+
+                break;
+
+            case 1517053229128:
+
+                return make_shared<TransitionCondition1517053229128>();
+
+                break;
+
+            case 1517053230743:
+
+                return make_shared<TransitionCondition1517053230743>();
+
+                break;
+
+            case 1517053232269:
+
+                return make_shared<TransitionCondition1517053232269>();
+
+                break;
+
+            case 1517053234317:
+
+                return make_shared<TransitionCondition1517053234317>();
+
+                break;
+
+            case 1517053236593:
+
+                return make_shared<TransitionCondition1517053236593>();
+
+                break;
+
+            case 1517053238931:
+
+                return make_shared<TransitionCondition1517053238931>();
+
+                break;
+
+            case 1517053333358:
+
+                return make_shared<TransitionCondition1517053333358>();
+
+                break;
+
+            case 1517053335120:
+
+                return make_shared<TransitionCondition1517053335120>();
 
                 break;
 

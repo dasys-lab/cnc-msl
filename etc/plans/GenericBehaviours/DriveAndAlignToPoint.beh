@@ -1,4 +1,71 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1516808796983" name="DriveAndAlignToPoint" comment="" destinationPath="">
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1516808796983" name="DriveAndAlignToPoint" comment="" destinationPath="Plans/GenericBehaviours">
   <configurations id="1516808848891" name="DriveAndAlignToPointDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517050654918" name="DriveAndAlignTo[0,0,0,-2000]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517051192291" name="MISSING_NAME" comment="" key="X" value="0"/>
+    <parameters id="1517051204357" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1517052138053" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517052192974" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517052215595" name="MISSING_NAME" comment="" key="OriY" value="2000"/>
+  </configurations>
+  <configurations id="1517050868764" name="DriveAndAlignTo[2000,0,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054101893" name="MISSING_NAME" comment="" key="X" value="2000"/>
+    <parameters id="1517054120721" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1517054133451" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054147241" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517054159713" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
+  <configurations id="1517051612340" name="DriveAndAlignTo[0,-2000,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054448239" name="MISSING_NAME" comment="" key="Y" value="-2000"/>
+    <parameters id="1517054468034" name="MISSING_NAME" comment="" key="X" value="0"/>
+    <parameters id="1517054477508" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054490211" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517054501490" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
+  <configurations id="1517051638768" name="DriveAndAlignTo[-2000,0,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054730092" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1517054741973" name="MISSING_NAME" comment="" key="X" value="-2000"/>
+    <parameters id="1517054755393" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054764727" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1517054782461" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+  </configurations>
+  <configurations id="1517051759967" name="DriveAndAlignTo[1732,-1000,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054181305" name="MISSING_NAME" comment="" key="X" value="1732"/>
+    <parameters id="1517054192701" name="MISSING_NAME" comment="" key="Y" value="-1000"/>
+    <parameters id="1517054206844" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054275346" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517054286527" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
+  <configurations id="1517051793270" name="DriveAndAlignTo[1000,-1732,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054303505" name="MISSING_NAME" comment="" key="Y" value="-1732"/>
+    <parameters id="1517054317417" name="MISSING_NAME" comment="" key="X" value="1000"/>
+    <parameters id="1517054350464" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054388108" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1517054397004" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+  </configurations>
+  <configurations id="1517051857520" name="DriveAndAlignTo[-1000,-1732,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054514419" name="MISSING_NAME" comment="" key="Y" value="-1732"/>
+    <parameters id="1517054541031" name="MISSING_NAME" comment="" key="X" value="-1000"/>
+    <parameters id="1517054542401" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054555133" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517054564881" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
+  <configurations id="1517051904486" name="DriveAndAlignTo[-866,-500,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517052049926" name="DriveAndAlignTo[-866,-500,0,0]2" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517052103672" name="DriveAndAlignTo[-1732,-1000,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1517054617276" name="MISSING_NAME" comment="" key="Y" value="-1000"/>
+    <parameters id="1517054628792" name="MISSING_NAME" comment="" key="X" value="-1732"/>
+    <parameters id="1517054641042" name="MISSING_NAME" comment="" key="R" value="100"/>
+    <parameters id="1517054658095" name="MISSING_NAME" comment="" key="OriX" value="0"/>
+    <parameters id="1517054702647" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
+  <configurations id="1517054884113" name="DriveAndAlignTo[0,0,2000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517059846150" name="DriveAndAlignTo[0,0,1000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517059916015" name="DriveAndAlignTo[2000,0,3000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517059982345" name="DriveAndAlignTo[0,0,-1000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517060154678" name="DriveAndAlignTo[1732,-1000,2598,1500]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517060240311" name="DriveAndAlignTo[0,0,-2598,1500]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517060299670" name="DriveAndAlignTo[0,-2000,0,-3000]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517060347896" name="DriveAndAlignTo[0,0,0,3000]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1517060430547" name="DriveAndAlignTo[-2000,0,-3000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
 </alica:Behaviour>

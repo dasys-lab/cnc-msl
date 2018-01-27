@@ -97,6 +97,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/TestPlans/Circle1517049779097.h"
+
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
@@ -355,6 +357,10 @@ namespace alica
 
             case 1434049476066:
                 return make_shared<UtilityFunction1434049476066>();
+                break;
+
+            case 1517049779097:
+                return make_shared<UtilityFunction1517049779097>();
                 break;
 
             case 1449076138236:

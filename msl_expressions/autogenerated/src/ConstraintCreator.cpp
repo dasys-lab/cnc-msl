@@ -97,6 +97,8 @@
 
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
 
+#include  "Plans/TestPlans/constraints/Circle1517049779097Constraints.h"
+
 #include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
 
 #include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInNearGoal1461237603689Constraints.h"

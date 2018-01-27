@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1513182751590" name="WayPointPlan" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1513182751590" name="WayPointPlan" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1513182781377" name="Wait" comment="" entryPoint="1513182781378">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1513182971945</inTransitions>
@@ -19,6 +19,7 @@
     <outTransitions>#1513182981534</outTransitions>
   </states>
   <states id="1513182863558" name="NewState" comment="">
+    <plans xsi:type="alica:Plan">Circle.pml#1517049779097</plans>
     <inTransitions>#1513182956007</inTransitions>
     <outTransitions>#1513182979433</outTransitions>
   </states>
@@ -27,6 +28,7 @@
     <outTransitions>#1513182971945</outTransitions>
   </states>
   <states id="1513182867816" name="NewState" comment="">
+    <plans xsi:type="alica:Plan">curves.pml#1517056420902</plans>
     <inTransitions>#1513182960034</inTransitions>
     <outTransitions>#1513182975102</outTransitions>
   </states>
