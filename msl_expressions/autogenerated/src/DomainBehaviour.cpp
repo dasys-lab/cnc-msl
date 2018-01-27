@@ -11,6 +11,7 @@
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
 
 namespace alica
@@ -120,6 +121,16 @@ namespace alica
 	{
 		dbm.senderID = ownID;
 		debugMsgPublisher.publish(dbm);
+	}
+
+	void alica::DomainBehaviour::sendAndUpdatePT(msl_actuator_msgs::MotionControl& mc)
+	{
+		mc.senderID = ownID;
+		mc.timestamp = wm->getTime();
+		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+		motionControlPub.publish(mc);
+		wm->rawSensorData->processMotionControlMessage(mc);
+		robot->robotMovement->updatePT();
 	}
 } /* namespace alica */
 
