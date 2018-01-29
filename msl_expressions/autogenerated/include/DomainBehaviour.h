@@ -50,6 +50,11 @@ class DomainBehaviour : public BasicBehaviour
 	private:
 
 		double __maxTranslation;
+		double minRotation;
+		double minRotationLeft;
+		double minRotationRight;
+		double dribbleFactorRight;
+		double dribbleFactorLeft;
 		int ownID;
 		ros::Publisher simlatorPub;
 		ros::Publisher motionControlPub;
