@@ -52,7 +52,7 @@
     <inState>#1513184467378</inState>
     <outState>#1513184447350</outState>
   </transitions>
-  <entryPoints id="1513183636300" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1513183636300" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1513183636299</state>
   </entryPoints>

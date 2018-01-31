@@ -46,6 +46,7 @@ RobotMovement::RobotMovement()
     this->pp = PathProxy::getInstance();
 
     readConfigParameters();
+    initializePTControllerParameters();
 }
 
 RobotMovement::~RobotMovement()
@@ -605,10 +606,12 @@ void RobotMovement::initializePTControllerParameters()
 
 void RobotMovement::stopTranslation()
 {
+	std::cout<<"RobotMovement::stopTranslation: before queue access"<<std::endl;
     this->pastControlledValues.front()[0] = 0.0;
     this->pastControlledValues.back()[0] = 0.0;
     this->pastControlInput.front()[0] = 0.0;
     this->pastControlInput.back()[0] = 0.0;
+    std::cout<<"RobotMovement::stopTranslation: after queue access"<<std::endl;
 }
 
 void RobotMovement::clearPTControllerQueues()

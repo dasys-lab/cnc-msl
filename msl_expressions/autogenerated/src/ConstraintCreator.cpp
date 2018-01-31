@@ -27,6 +27,8 @@
 
 #include  "Plans/DribbleCalibration/constraints/DribbleCalibration1469108805289Constraints.h"
 
+#include  "Plans/TestPlans/constraints/curves1517056420902Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerPosBounceShot1459361999064Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"

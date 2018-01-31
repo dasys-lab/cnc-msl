@@ -27,6 +27,8 @@
 
 #include  "Plans/DribbleCalibration/DribbleCalibration1469108805289.h"
 
+#include  "Plans/TestPlans/curves1517056420902.h"
+
 #include  "Plans/Standards/Own/Corner/CornerPosBounceShot1459361999064.h"
 
 #include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
@@ -217,6 +219,10 @@ namespace alica
 
             case 1469108805289:
                 return make_shared<UtilityFunction1469108805289>();
+                break;
+
+            case 1517056420902:
+                return make_shared<UtilityFunction1517056420902>();
                 break;
 
             case 1459361999064:

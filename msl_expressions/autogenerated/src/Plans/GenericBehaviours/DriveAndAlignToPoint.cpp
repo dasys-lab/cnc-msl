@@ -17,6 +17,7 @@ namespace alica
         /*PROTECTED REGION ID(con1516808796983) ENABLED START*/ //Add additional options here
         query = make_shared<msl::MovementQuery>();
         this->defaultTranslation = 1000;
+        this->catchRadius = 100;
         /*PROTECTED REGION END*/
     }
     DriveAndAlignToPoint::~DriveAndAlignToPoint()
@@ -40,6 +41,11 @@ namespace alica
 
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoOrientationTarget;
+        query->snapDistance = catchRadius / 2;
+        cout << "DriveAndAlignToPoint::run::query::Target " << query->egoDestinationPoint->x << " "
+                << query->egoDestinationPoint->y << " " << query->egoDestinationPoint->z;
+        cout << "DriveAndAlignToPoint::run::query::Align " << query->egoAlignPoint->x << " " << query->egoAlignPoint->y
+                << " " << query->egoAlignPoint->z;
         mc = this->robot->robotMovement->moveToPoint(query);
 
         if (egoTarget->length() < catchRadius)
@@ -47,7 +53,7 @@ namespace alica
             //mc.motion.translation = 0;
             //send(mc);
             //sleep(1);
-            cout << "DriveToPoint: Success" << endl;
+            cout << "DriveAndAlignToPoint: Success" << endl;
             this->setSuccess(true);
         }
 

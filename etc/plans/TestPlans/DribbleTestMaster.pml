@@ -7,6 +7,7 @@
   </states>
   <states id="1513182703528" name="Start" comment="">
     <plans xsi:type="alica:Plan">WayPointPlan.pml#1513182751590</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513182711121</inTransitions>
     <outTransitions>#1513182712911</outTransitions>
   </states>

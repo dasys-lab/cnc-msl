@@ -36,52 +36,52 @@
     <inTransitions>#1513182958003</inTransitions>
     <outTransitions>#1513182977357</outTransitions>
   </states>
-  <transitions id="1513182954370" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182954370" name="MISSING_NAME" comment="Opp Kick Off" msg="">
     <preCondition id="1513182955846" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182781377</inState>
     <outState>#1513182861309</outState>
   </transitions>
-  <transitions id="1513182956007" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182956007" name="MISSING_NAME" comment="Opp Free Kick" msg="">
     <preCondition id="1513182957882" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182781377</inState>
     <outState>#1513182863558</outState>
   </transitions>
-  <transitions id="1513182958003" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182958003" name="MISSING_NAME" comment="Opp Goal Kick" msg="">
     <preCondition id="1513182959777" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182781377</inState>
     <outState>#1513182870017</outState>
   </transitions>
-  <transitions id="1513182960034" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182960034" name="MISSING_NAME" comment="Opp Throwin" msg="">
     <preCondition id="1513182968659" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182781377</inState>
     <outState>#1513182867816</outState>
   </transitions>
-  <transitions id="1513182968804" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182968804" name="MISSING_NAME" comment="Opp Corner" msg="">
     <preCondition id="1513182971720" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182781377</inState>
     <outState>#1513182865455</outState>
   </transitions>
-  <transitions id="1513182971945" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182971945" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1513182974957" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182865455</inState>
     <outState>#1513182781377</outState>
   </transitions>
-  <transitions id="1513182975102" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182975102" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1513182977188" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182867816</inState>
     <outState>#1513182781377</outState>
   </transitions>
-  <transitions id="1513182977357" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182977357" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1513182979288" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182870017</inState>
     <outState>#1513182781377</outState>
   </transitions>
-  <transitions id="1513182979433" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182979433" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1513182981413" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182863558</inState>
     <outState>#1513182781377</outState>
   </transitions>
-  <transitions id="1513182981534" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1513182981534" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1513182984479" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1513182861309</inState>
     <outState>#1513182781377</outState>

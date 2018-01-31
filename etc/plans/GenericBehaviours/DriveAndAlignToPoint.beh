@@ -5,7 +5,7 @@
     <parameters id="1517048272496" name="MISSING_NAME" comment="" key="Y" value="0"/>
     <parameters id="1517048306996" name="MISSING_NAME" comment="" key="OriX" value="1000"/>
     <parameters id="1517048330842" name="MISSING_NAME" comment="" key="OriY" value="0"/>
-    <parameters id="1517048441399" name="MISSING_NAME" comment="" key="R" value="1000"/>
+    <parameters id="1517048441399" name="MISSING_NAME" comment="" key="R" value="200"/>
   </configurations>
   <configurations id="1517050868764" name="DriveAndAlignTo[2000,0,0,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1517054101893" name="MISSING_NAME" comment="" key="X" value="2000"/>
