@@ -127,7 +127,7 @@ class MSLWorldModel
     supplementary::EventTrigger visionTrigger;
 
   private:
-    InfoTime timeLastSimMsgReceived;
+    bool usingSimulator;
     MSLWorldModel();
     virtual ~MSLWorldModel();
 

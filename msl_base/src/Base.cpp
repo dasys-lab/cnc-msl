@@ -38,15 +38,12 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
         cout << "Base Vorher: " << ae->getIAlicaClock()->now() << endl;
         ae->getIAlicaClock()->sleep(200000);
         cout << "Base Nachher: " << ae->getIAlicaClock()->now() << endl;
+	wm->setIsUsingSimulator();
     }
 
     ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
 
     wm = MSLWorldModel::get();
-    if (sim)
-    {
-        wm->setIsUsingSimulator();
-    }
     wm->setEngine(ae);
 
     ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);

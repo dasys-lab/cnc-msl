@@ -108,7 +108,7 @@ namespace msl
         processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
 
         this->sharedWorldModel = new MSLSharedWorldModel(this);
-        this->timeLastSimMsgReceived = 0;
+        this->usingSimulator = false;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
         this->maySendMessages = (*this->sc)["WorldModel"]->get<bool>("WorldModel", "MaySendMessages", NULL);
         // initialize ringbuffers
@@ -149,25 +149,23 @@ namespace msl
 
     bool MSLWorldModel::isUsingSimulator()
     {
-        return this->timeLastSimMsgReceived > 0;
+        return this->usingSimulator;
     }
 
     void MSLWorldModel::setIsUsingSimulator()
     {
-        this->timeLastSimMsgReceived = 1;
+        this->usingSimulator = true;
     }
 
     void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
     {
-        if (this->timeLastSimMsgReceived == 0)
+        if (!this->usingSimulator)
         {
             cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
             return;
         }
 
         alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
-
-        this->timeLastSimMsgReceived = now;
 
         msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>();
 
