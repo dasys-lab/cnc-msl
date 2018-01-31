@@ -71,8 +71,11 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)
     // this is only for nase and his new left motor
     if (bh.rightMotor != 0 && bh.leftMotor != 0)
     {
-        bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * bh.rightMotor >= 0 ? 1 : -1;
+    	cout << "dribble factors: " << this->dribbleFactorLeft << ", " << this->dribbleFactorRight << ", " << endl;
+    	cout << "min rotations_ " << this->minRotationLeft << ", " << this->minRotationRight << ", " << endl;
+    	bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * bh.rightMotor >= 0 ? 1 : -1;
         bh.leftMotor = (int)(max(this->minRotationLeft, (abs(bh.leftMotor)) / this->dribbleFactorLeft)) * bh.leftMotor >= 0 ? 1 : -1;
+        cout << "left motor: " << bh.leftMotor << ", right motor: " << bh.rightMotor << endl;
     }
     this->ballHandlePub.publish(bh);
 }
