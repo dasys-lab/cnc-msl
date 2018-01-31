@@ -139,7 +139,7 @@ namespace alica
 			mc.motion.angle = 0;
 			mc.motion.rotation = 0;
 			mc.motion.translation = 0;
-			send(mc);
+			sendAndUpdatePT(mc);
 			return;
 		}
 //		}
@@ -223,7 +223,7 @@ namespace alica
 		}
 		else
 		{
-			send(mc);
+			sendAndUpdatePT(mc);
 			cout << "Intercept: Normal: " << mc.motion.translation << endl;
 		}
 
