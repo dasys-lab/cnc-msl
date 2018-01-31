@@ -1,46 +1,47 @@
 #include "DomainBehaviour.h"
 
-#include <MSLWorldModel.h>
 #include <RawSensorData.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <SystemConfig.h>
+#include <MSLWorldModel.h>
+#include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/KickControl.h>
-#include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_robot/MSLRobot.h>
-#include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 
 namespace alica
 {
-DomainBehaviour::DomainBehaviour(string name)
-    : BasicBehaviour(name)
-{
-    this->sc = supplementary::SystemConfig::getInstance();
-    this->ownID = sc->getOwnRobotID();
-    ros::NodeHandle n;
-    this->wm = msl::MSLWorldModel::get();
-    this->robot = msl::MSLRobot::get();
+	DomainBehaviour::DomainBehaviour(string name) :
+			BasicBehaviour(name)
+	{
+		this->sc = supplementary::SystemConfig::getInstance();
+		this->ownID = sc->getOwnRobotID();
+		ros::NodeHandle n;
+		this->wm = msl::MSLWorldModel::get();
+		this->robot = msl::MSLRobot::get();
 
-    if (this->wm->timeLastSimMsgReceived > 0)
-    {
-        this->motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
-        this->ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
-        this->kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
-        this->shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
-    }
-    else
-    {
-        this->motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
-        this->ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
-        this->kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
-        this->shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
-    }
-    this->passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
-    this->watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
-    this->debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
+		if (wm->timeLastSimMsgReceived > 0)
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
+		}
+		else
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
+		}
+		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
+		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
+		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
     this->__maxTranslation = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
     this->minRotation = (*sc)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
@@ -50,19 +51,19 @@ DomainBehaviour::DomainBehaviour(string name)
     this->dribbleFactorLeft = (*sc)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL);
 }
 
-DomainBehaviour::~DomainBehaviour()
-{
-}
+	DomainBehaviour::~DomainBehaviour()
+	{
+	}
 
-void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl &mc)
-{
-    //        this->wm->prediction.monitoring();
-    mc.senderID = ownID;
-    mc.timestamp = wm->getTime();
-    mc.motion.translation = min(this->__maxTranslation, mc.motion.translation);
-    this->motionControlPub.publish(mc);
-    this->wm->rawSensorData->processMotionControlMessage(mc);
-}
+	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
+	{
+//        this->wm->prediction.monitoring();
+		mc.senderID = ownID;
+		mc.timestamp = wm->getTime();
+		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+		motionControlPub.publish(mc);
+		wm->rawSensorData->processMotionControlMessage(mc);
+	}
 
 void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)
 {
@@ -114,9 +115,20 @@ void alica::DomainBehaviour::send(msl_helper_msgs::WatchBallMsg &wb)
     this->watchBallMsgPublisher.publish(wb);
 }
 
-void alica::DomainBehaviour::send(msl_helper_msgs::DebugMsg &dbm)
-{
-    dbm.senderID = ownID;
-    this->debugMsgPublisher.publish(dbm);
-}
+	void alica::DomainBehaviour::send(msl_helper_msgs::DebugMsg& dbm)
+	{
+		dbm.senderID = ownID;
+		debugMsgPublisher.publish(dbm);
+	}
+
+	void alica::DomainBehaviour::sendAndUpdatePT(msl_actuator_msgs::MotionControl& mc)
+	{
+		mc.senderID = ownID;
+		mc.timestamp = wm->getTime();
+		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+		motionControlPub.publish(mc);
+		wm->rawSensorData->processMotionControlMessage(mc);
+		robot->robotMovement->updatePT();
+	}
 } /* namespace alica */
+

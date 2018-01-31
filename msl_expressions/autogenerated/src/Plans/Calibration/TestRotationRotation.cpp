@@ -62,7 +62,7 @@ namespace alica
         }
         else if (inited == limit)
         {
-            initialBearing = wm->rawOdometry->position.angle;
+            initialBearing = wm->rawSensorData->getOwnPositionMotion()->theta;
             inited++;
         }
 
@@ -71,7 +71,7 @@ namespace alica
         mc.motion.rotation = rotationSpeed;
         send(mc);
 
-        double currentBearing = wm->rawOdometry->position.angle;
+        double currentBearing = wm->rawSensorData->getOwnPositionMotion()->theta;
         double cd = circularDiff(initialBearing, currentBearing);
         if (cd > 3)
         {
