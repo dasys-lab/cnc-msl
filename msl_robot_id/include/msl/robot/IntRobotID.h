@@ -23,8 +23,8 @@ class IntRobotID : public supplementary::IAgentID
     std::string toString() const;
     std::size_t hash() const;
 
-    bool operator== ( const supplementary::IAgentID& obj ) const;
-    bool operator!= ( const supplementary::IAgentID& obj ) const;
+    bool operator== (const supplementary::IAgentID& obj) const;
+    bool operator!= (const supplementary::IAgentID& obj) const;
     bool operator< (const supplementary::IAgentID& other) const;
     bool operator> (const supplementary::IAgentID& other) const;
 
