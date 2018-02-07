@@ -6,6 +6,7 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPoint3D.h"
 #include "MSLFootballField.h"
+#include "PenaltyAlignment.h"
 #include <sstream>
 #include <container/CNVelocity2D.h>
 #include <GeometryCalculator.h>
@@ -39,7 +40,7 @@ namespace alica
         double kickPower;
         double timeForPenaltyShot;
         //0 = not alignt, 1 = left, 2 = right
-        int lastAlignment;
+        PenaltyAlignment lastAlignment;
         unsigned long waitBeforeBlindKick;
 
         // PID variables for alignToPointWithBall

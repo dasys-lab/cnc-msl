@@ -19,7 +19,7 @@ namespace alica
             DomainBehaviour("PenaltyShoot")
     {
         /*PROTECTED REGION ID(con1466940246275) ENABLED START*/ //Add additional options here
-        lastAlignment = 0;
+        lastAlignment = NO_ALIGN;
         // for alignToPointWithBall
         lastRotError = 0;
 //		lastRotErrorWithBall = 0;
@@ -46,14 +46,13 @@ namespace alica
 
         //Constant ball handle wheel speed
         BallHandleCmd bhc;
-        bhc.leftMotor = (int8_t)this->wheelSpeed;
-        bhc.rightMotor = (int8_t)this->wheelSpeed;
+        bhc.leftMotor = (int32_t)this->wheelSpeed;
+        bhc.rightMotor = (int32_t)this->wheelSpeed;
         send(bhc);
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         // Create target point next to left/right opp goal post
-        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > ((wm->field->getFieldLength() / 2) + ballDiameter, (goalWidth / 2) - (aimOffset * ballDiameter));
+        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D> ((wm->field->getFieldLength() / 2) + ballDiameter, (goalWidth / 2) - (aimOffset * ballDiameter));
         shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D
                 > ((wm->field->getFieldLength() / 2) + ballDiameter, -(goalWidth / 2) + (aimOffset * ballDiameter));
 
@@ -67,11 +66,11 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > back = nullptr;
 
         // Hysteresis
-        if (lastAlignment == 0) // not aligned before (default)
+        if (lastAlignment == NO_ALIGN) // not aligned before (default)
         {
             back = make_shared < geometry::CNPoint2D > ((wm->field->getFieldLength() / 2) + robotRadius, 0);
         }
-        else if (lastAlignment == 1) // last alignment left
+        else if (lastAlignment == LEFT) // last alignment left
         {
             back = make_shared < geometry::CNPoint2D > ((wm->field->getFieldLength() / 2) + robotRadius, robotRadius);
         }
@@ -115,14 +114,14 @@ namespace alica
         // if counter <= 0, there are obstacles on the right side, so we aim left
         if (counter <= 0)
         {
-            lastAlignment = 1;
+            lastAlignment = LEFT;
             cout << "PenaltyBeh: left!" << endl;
             egoTarget = alloLeftAimPoint->alloToEgo(*ownPos);
         }
         // if counter > 0, there are obstacles on the left side, so we aim right
         else
         {
-            lastAlignment = 2;
+            lastAlignment = RIGHT;
             cout << "PenaltyBeh: right!" << endl;
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
@@ -150,7 +149,7 @@ namespace alica
     void PenaltyShoot::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1466940246275) ENABLED START*/ //Add additional options here
-        lastAlignment = 0;
+        lastAlignment = NO_ALIGN;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1466940246275) ENABLED START*/ //Add additional methods here
