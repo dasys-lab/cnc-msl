@@ -22,15 +22,15 @@
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182865455"/>
-    <value xPos="142" yPos="587"/>
+    <value xPos="142" yPos="587" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182867816"/>
-    <value xPos="356" yPos="584" width="82" height="67"/>
+    <value xPos="356" yPos="584" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182870017"/>
-    <value xPos="454" yPos="394" width="82" height="67"/>
+    <value xPos="454" yPos="394" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WayPointPlan.pml#1513182954370"/>
@@ -110,6 +110,18 @@
   </extensions>
   <extensions>
     <key href="curves.pml#1517056420902"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ZigZag-looking.pml#1517415924695"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleControlTest/ZigZag-small.pml#1517050419596"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="SoftSquarePlan.pml#1513183613607"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
