@@ -44,11 +44,7 @@ namespace alica
             return;
         }
 
-        //Constant ball handle wheel speed
-//		BallHandleCmd bhc;
-//		bhc.leftMotor = (int8_t)this->wheelSpeed;
-//		bhc.rightMotor = (int8_t)this->wheelSpeed;
-//		send(bhc);
+
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         // Create target point next to left/right opp goal post
@@ -86,7 +82,7 @@ namespace alica
 
         for (int i = 0; i < wm->getRingBufferLength(); i++)
         {
-            alloOpps = wm->robots->opponents.getOpponentsAlloClustered();
+            alloOpps = wm->robots->opponents.getOpponentsAlloClustered(i);
             if (alloOpps != nullptr)
             {
                 // weighted analysis of past and current obstacles
@@ -106,7 +102,7 @@ namespace alica
             }
             else
             {
-                cout << "PenaltyBeh: no obstacles!" << endl;
+                cout << "AFGS: no obstacles!" << endl;
             }
         }
 
