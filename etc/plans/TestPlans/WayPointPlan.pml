@@ -22,7 +22,8 @@
     <inTransitions>#1513182956007</inTransitions>
     <outTransitions>#1513182979433</outTransitions>
   </states>
-  <states id="1513182865455" name="NewState" comment="">
+  <states id="1513182865455" name="ZigZag-looking" comment="">
+    <plans xsi:type="alica:Plan">ZigZag-looking.pml#1517415924695</plans>
     <inTransitions>#1513182968804</inTransitions>
     <outTransitions>#1513182971945</outTransitions>
   </states>
@@ -30,7 +31,8 @@
     <inTransitions>#1513182960034</inTransitions>
     <outTransitions>#1513182975102</outTransitions>
   </states>
-  <states id="1513182870017" name="NewState" comment="">
+  <states id="1513182870017" name="ZigZag-small" comment="">
+    <plans xsi:type="alica:Plan">DribbleControlTest/ZigZag-small.pml#1517050419596</plans>
     <inTransitions>#1513182958003</inTransitions>
     <outTransitions>#1513182977357</outTransitions>
   </states>
