@@ -27,6 +27,8 @@
 
 #include  "Plans/DribbleCalibration/constraints/DribbleCalibration1469108805289Constraints.h"
 
+#include  "Plans/TestPlans/constraints/curves1517056420902Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerPosBounceShot1459361999064Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
@@ -96,6 +98,8 @@
 #include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
 
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
+
+#include  "Plans/TestPlans/constraints/Circle1517049779097Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
 

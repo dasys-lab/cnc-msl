@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1513182639097" name="DribbleTestMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1513182639097" name="DribbleTestMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1513182639098" name="Stop" comment="" entryPoint="1513182639099">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1513182712911</inTransitions>
@@ -7,6 +7,7 @@
   </states>
   <states id="1513182703528" name="Start" comment="">
     <plans xsi:type="alica:Plan">WayPointPlan.pml#1513182751590</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513182711121</inTransitions>
     <outTransitions>#1513182712911</outTransitions>
   </states>

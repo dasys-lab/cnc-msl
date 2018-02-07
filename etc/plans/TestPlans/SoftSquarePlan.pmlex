@@ -72,4 +72,24 @@
     <key href="../GenericBehaviours/DriveToPoint.beh#1484145243859"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveAndAlignToPoint.beh#1516808848891"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveAndAlignToPoint.beh#1517048742417"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveAndAlignToPoint.beh#1517052480399"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveAndAlignToPoint.beh#1517052528141"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1443003717671"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
