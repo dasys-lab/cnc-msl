@@ -152,9 +152,14 @@ namespace alica
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
+            cout << "AFGS: target reached" << endl;
         }
         else
         {
+        	cout << "afgs: deltatargetAngle: " << deltaTargetAngle << endl;
+        	cout << "afgs: defaultRotateP " << defaultRotateP << endl;
+        	cout << "afgs: lastRotError: " << lastRotError << endl;
+        	cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
 
             mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
                     + (deltaTargetAngle - lastRotError) * alignToPointpRot);
