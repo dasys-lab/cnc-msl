@@ -176,7 +176,7 @@ namespace alica
             driveTo = driveTo * mc.motion.rotation;
 
             // add the motion towards the ball
-            driveTo = driveTo + egoBallPos->normalize() * 500;
+            driveTo = driveTo + egoBallPos->normalize() * 100;
 
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = min(alignMaxVel, driveTo->length());
