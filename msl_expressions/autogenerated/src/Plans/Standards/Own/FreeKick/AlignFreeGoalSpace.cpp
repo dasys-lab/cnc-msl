@@ -125,6 +125,8 @@ namespace alica
         double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // Create Motion Command for aiming
         MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+
+        cout << "AFGS MC: " << mc.motion.angle << ", " << mc.motion.rotation << ", " << mc.motion.translation << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
