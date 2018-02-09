@@ -25,6 +25,7 @@ namespace alica
         lastAlignment = 0;
         // for alignToPointWithBall
         lastRotError = 0;
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     AlignFreeGoalSpace::~AlignFreeGoalSpace()
@@ -180,7 +181,7 @@ namespace alica
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = min(alignMaxVel, driveTo->length());
         }
-        return mc;
+	return mc;
     }
     void AlignFreeGoalSpace::readConfigParameters()
     {
