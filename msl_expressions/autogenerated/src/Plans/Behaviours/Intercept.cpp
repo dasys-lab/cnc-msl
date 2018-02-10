@@ -57,7 +57,6 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-        //this->setSuccess(true);
 
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
@@ -112,9 +111,9 @@ namespace alica
 //		if (egoBallVel->length() > 4000.0)
 //		{
         shared_ptr < geometry::CNPosition > predPos = make_shared < geometry::CNPosition > (0.0, 0.0, 0.0);
-        double timestep = 33;
+        const double timestep = 33;
         double rot = od->motion.rotation * timestep / 1000.0;
-        for (int i = 1; i < 6; i++)
+        for (int i = 1; i < 5; i++)
         {
             predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
             predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;

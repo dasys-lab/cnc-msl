@@ -89,17 +89,13 @@ void PositionReceiver::run(void *msg)
 void PositionReceiver::initialiseParameters()
 {
     /*PROTECTED REGION ID(initialiseParameters1439379316897) ENABLED START*/ // Add additional options here
-    readConfigParameters();
-    /*PROTECTED REGION END*/
-}
-/*PROTECTED REGION ID(methods1439379316897) ENABLED START*/ // Add additional methods here
-void PositionReceiver::readConfigParameters()
-{
     supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
     fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
     slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
     alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
     ballDistanceRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+    /*PROTECTED REGION END*/
 }
+/*PROTECTED REGION ID(methods1439379316897) ENABLED START*/ // Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
