@@ -26,22 +26,22 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257157495</plans>
     <inTransitions>#1518257035564</inTransitions>
   </states>
-  <transitions id="1518257015951" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1518257015951" name="MISSING_NAME" comment="7 seconds till start" msg="">
     <preCondition id="1518257017227" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1518256723974</inState>
     <outState>#1518257013318</outState>
   </transitions>
-  <transitions id="1518257017363" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1518257017363" name="MISSING_NAME" comment="7 seconds till start" msg="">
     <preCondition id="1518257026137" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1518256475492</inState>
     <outState>#1518257009829</outState>
   </transitions>
-  <transitions id="1518257030924" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1518257030924" name="MISSING_NAME" comment="14 seconds till start" msg="">
     <preCondition id="1518257031921" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1518257009829</inState>
     <outState>#1518257028132</outState>
   </transitions>
-  <transitions id="1518257035564" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1518257035564" name="MISSING_NAME" comment="14 seconds till start" msg="">
     <preCondition id="1518257036260" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1518257013318</inState>
     <outState>#1518257033220</outState>
