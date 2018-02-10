@@ -152,9 +152,9 @@ namespace msl
         return this->usingSimulator;
     }
 
-    void MSLWorldModel::setIsUsingSimulator()
+    void MSLWorldModel::setUsingSimulator(bool usingSimulator)
     {
-        this->usingSimulator = true;
+        this->usingSimulator = usingSimulator;
     }
 
     void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)

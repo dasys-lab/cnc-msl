@@ -108,7 +108,7 @@ class MSLWorldModel
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
-    void setIsUsingSimulator();
+    void setUsingSimulator(bool usingSimulator);
 
     Monitoring *monitoring;
     RawSensorData *rawSensorData;

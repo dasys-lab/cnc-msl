@@ -38,7 +38,7 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
         cout << "Base Vorher: " << ae->getIAlicaClock()->now() << endl;
         ae->getIAlicaClock()->sleep(200000);
         cout << "Base Nachher: " << ae->getIAlicaClock()->now() << endl;
-	wm->setIsUsingSimulator();
+        wm->setUsingSimulator(true);
     }
 
     ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
