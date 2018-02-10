@@ -8,6 +8,8 @@
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
+#include  "Plans/Standards/Own/Test/TestActuateMaster1518256493210.h"
+
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
@@ -125,6 +127,8 @@
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
 
 #include  "Plans/Attack/FreeZonePassing1508950989519.h"
+
+#include  "Plans/Standards/Own/Test/TestConfigurableActuate1518256475491.h"
 
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
@@ -1841,6 +1845,30 @@ namespace alica
             case 1508951693560:
 
                 return make_shared<RunTimeCondition1508951693560>();
+
+                break;
+
+            case 1518257017227:
+
+                return make_shared<TransitionCondition1518257017227>();
+
+                break;
+
+            case 1518257026137:
+
+                return make_shared<TransitionCondition1518257026137>();
+
+                break;
+
+            case 1518257031921:
+
+                return make_shared<TransitionCondition1518257031921>();
+
+                break;
+
+            case 1518257036260:
+
+                return make_shared<TransitionCondition1518257036260>();
 
                 break;
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256475492"/>
+    <value xPos="74" yPos="145" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256475491"/>
+    <value width="820" height="578"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256475493"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256719934"/>
+    <value xPos="557" yPos="243"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256723974"/>
+    <value xPos="80" yPos="297" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257009829"/>
+    <value xPos="283" yPos="161" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257013318"/>
+    <value xPos="274" yPos="327" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257015951"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257017363"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257028132"/>
+    <value xPos="501" yPos="183" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257030924"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257033220"/>
+    <value xPos="519" yPos="337" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518257035564"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257157495"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

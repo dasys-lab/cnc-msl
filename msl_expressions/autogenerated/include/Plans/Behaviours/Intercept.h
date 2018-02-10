@@ -39,7 +39,6 @@ namespace alica
 
         double minDistErr;
 
-
         double lastDistErr;
         double distIntErr;
 

@@ -9,6 +9,8 @@
 
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
 
+#include  "Plans/Standards/Own/Test/constraints/TestActuateMaster1518256493210Constraints.h"
+
 #include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleControlMaster1479905043165Constraints.h"
 
 #include  "Plans/TestPlans/MotorControlTest/constraints/TestMotorControlMaster1482163489121Constraints.h"
@@ -126,6 +128,8 @@
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
 
 #include  "Plans/Attack/constraints/FreeZonePassing1508950989519Constraints.h"
+
+#include  "Plans/Standards/Own/Test/constraints/TestConfigurableActuate1518256475491Constraints.h"
 
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 

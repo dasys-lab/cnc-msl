@@ -45,7 +45,6 @@ namespace alica
             return;
         }
 
-
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         // Create target point next to left/right opp goal post
@@ -157,14 +156,13 @@ namespace alica
         }
         else
         {
-        	cout << "afgs: deltatargetAngle: " << deltaTargetAngle << endl;
-        	cout << "afgs: defaultRotateP " << defaultRotateP << endl;
-        	cout << "afgs: lastRotError: " << lastRotError << endl;
-        	cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
+            cout << "afgs: deltatargetAngle: " << deltaTargetAngle << endl;
+            cout << "afgs: defaultRotateP " << defaultRotateP << endl;
+            cout << "afgs: lastRotError: " << lastRotError << endl;
+            cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
 
             mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
                     + (deltaTargetAngle - lastRotError) * alignToPointpRot);
-
 
             mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
                     * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
@@ -181,7 +179,7 @@ namespace alica
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = min(alignMaxVel, driveTo->length());
         }
-	return mc;
+        return mc;
     }
     void AlignFreeGoalSpace::readConfigParameters()
     {

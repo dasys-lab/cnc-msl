@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestActuateMaster.pml#1518256493211"/>
+    <value xPos="348" yPos="236" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestActuateMaster.pml#1518256493210"/>
+    <value width="927" height="658"/>
+  </extensions>
+  <extensions>
+    <key href="TestActuateMaster.pml#1518256493212"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestConfigurableActuate.pml#1518256475491"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

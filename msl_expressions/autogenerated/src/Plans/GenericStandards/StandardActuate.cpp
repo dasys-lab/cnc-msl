@@ -33,7 +33,28 @@ namespace alica
     void StandardActuate::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1435766212595) ENABLED START*/ //Add additional options here
-        readConfigParameters();
+        string tmp;
+        bool success = true;
+
+        //try to read parameter from beh config
+        try
+        {
+            success &= getParameter("ConstWheelSpeed", tmp);
+            if (success)
+            {
+                this->wheelSpeed = stod(tmp);
+            }
+        }
+        catch (exception& e)
+        {
+            cerr << "Could not cast the parameter properly" << endl;
+        }
+        if (!success)
+        {
+            //no parameters given in behaviour config, so use config parameter instead
+            this->readConfigParameters();
+        }
+        //readConfigParameters();
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1435766212595) ENABLED START*/ //Add additional methods here

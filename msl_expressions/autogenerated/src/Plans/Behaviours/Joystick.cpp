@@ -33,19 +33,22 @@ namespace alica
 
         if (!joy)
         {
-        	// send empty mc for stop
+            // send empty mc for stop
             send(mc);
             return;
         }
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
-  
+
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
-            	std::cout << "Joystick: PT-Controller is on" << std::endl;
-		            // smooth driving stuff
-            	pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
-                                      * joy->motion.translation, joy->motion.rotation}));
+                std::cout << "Joystick: PT-Controller is on" << std::endl;
+                // smooth driving stuff
+                pastControlInput.push(
+                        std::valarray<double>(
+                                {cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
+                                         * joy->motion.translation,
+                                 joy->motion.rotation}));
                 std::valarray<double> translation = ptController();
                 mc.motion.translation = sqrt(pow(translation[0], 2.0) + pow(translation[1], 2.0));
                 mc.motion.angle = atan2(translation[1], translation[0]);
@@ -53,7 +56,7 @@ namespace alica
             }
             else
             {
-            	std::cout << "Joystick: PT-Controller is off" << std::endl;
+                std::cout << "Joystick: PT-Controller is off" << std::endl;
                 mc.motion = joy->motion;
             }
 
