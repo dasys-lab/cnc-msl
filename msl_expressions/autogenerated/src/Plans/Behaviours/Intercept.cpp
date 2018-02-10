@@ -57,7 +57,6 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
         msl_actuator_msgs::MotionControl mc;
@@ -210,7 +209,8 @@ namespace alica
             }
         }
         mc.motion.rotation = controlRot;
-	printf("98jewc | %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f\n", rotErr, prot, rotIntErr, pirot, lastRotErr, pdrot, controlRot);
+        printf("98jewc | %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f\n", rotErr, prot, rotIntErr, pirot, lastRotErr,
+               pdrot, controlRot);
 
 // Special handling for things around critical areas
         auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
