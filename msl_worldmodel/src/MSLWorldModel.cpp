@@ -276,7 +276,6 @@ namespace msl
 
     void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
     {
-        rawOdometry = msg;
         rawSensorData->processRawOdometryInfo(msg);
     }
 

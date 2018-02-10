@@ -122,7 +122,6 @@ class MSLWorldModel
     Prediction *prediction;
     LightBarrier *lightBarrier;
     Calibration *calibration;
-    msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
 
     supplementary::EventTrigger visionTrigger;
 
