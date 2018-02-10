@@ -24,24 +24,24 @@ DomainBehaviour::DomainBehaviour(string name)
     ros::NodeHandle n;
     this->wm = msl::MSLWorldModel::get();
     this->robot = msl::MSLRobot::get();
-
-    if (wm->timeLastSimMsgReceived > 0)
-    {
-        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
-        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
-        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
-        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
-    }
-    else
-    {
-        motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
-        ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
-        kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
-        shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
-    }
-    passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
-    watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
-    debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
+      
+		if (this->wm->isUsingSimulator())
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
+		}
+		else
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
+		}
+		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
+		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
+		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
     this->__maxTranslation = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
     this->minRotation = (*sc)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
