@@ -33,6 +33,12 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
     crc = new alica::ConstraintCreator();
     ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
     ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
+
+    ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
+
+    wm = MSLWorldModel::get();
+    wm->setEngine(ae);
+
     if (sim)
     {
         cout << "Base Vorher: " << ae->getIAlicaClock()->now() << endl;
@@ -40,12 +46,6 @@ Base::Base(string roleSetName, string masterPlanName, string roleSetDir, bool si
         cout << "Base Nachher: " << ae->getIAlicaClock()->now() << endl;
         wm->setUsingSimulator(true);
     }
-
-    ae->addSolver(SolverType::GRADIENTSOLVER, new alica::reasoner::CGSolver(ae));
-
-    wm = MSLWorldModel::get();
-    wm->setEngine(ae);
-
     ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);
 }
 
