@@ -7,5 +7,7 @@
   <configurations id="1518257157495" name="StandardActuateSlow" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1518257184344" name="MISSING_NAME" comment="" key="ConstWheelSpeed" value="1000"/>
   </configurations>
-  <configurations id="1518257626027" name="StandardActuate2k" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1518257626027" name="StandardActuate2k" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1518262721079" name="MISSING_NAME" comment="" key="ConstWheelSpeed" value="2000"/>
+  </configurations>
 </alica:Behaviour>
