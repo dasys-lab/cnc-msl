@@ -213,7 +213,7 @@ namespace alica
 
     double RotateOnce::getMotionBearing()
     {
-        return wm->rawOdometry->position.angle;
+        return wm->rawSensorData->getOwnPositionMotion()->theta;
     }
 
     double RotateOnce::getIMUBearing()

@@ -13,6 +13,7 @@
   </states>
   <states id="1438785501838" name="PosRecv" comment="" entryPoint="1438785392109">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionReceiver.beh#1439379352605</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <outTransitions>#1440772549851</outTransitions>
   </states>
   <states id="1440675376134" name="GrabBall" comment="">
@@ -33,6 +34,7 @@
   </states>
   <states id="1440772454611" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1440772549851</inTransitions>
     <outTransitions>#1440772873418</outTransitions>
   </states>
