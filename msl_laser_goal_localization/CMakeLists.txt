@@ -40,5 +40,7 @@ target_link_libraries(msl_laser_goal_localization
 	${catkin_LIBRARIES}
 	${PCL_LIBRARIES}
 	${PCL_CONVERSIONS_LIBRARIES}
+	${PCL_IO_LIBRARIES}
+	${PCL_COMMON_LIBRARIES}
 	rt
 )

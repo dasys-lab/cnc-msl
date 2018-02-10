@@ -26,7 +26,8 @@ class LaserGoalDetection
   private:
     ros::NodeHandle rosNode;
     ros::Subscriber subscriber;
-    std::shared_ptr<ros::Publisher> publisher;
+    std::shared_ptr<ros::Publisher> debugPublisher;
+    std::shared_ptr<ros::Publisher> linePublisher;
     ros::AsyncSpinner spinner;
 };
 }
