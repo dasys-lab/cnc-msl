@@ -13,7 +13,7 @@
   <states id="1462373376007" name="AlignExec" comment="" entryPoint="1462373376008">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
     <outTransitions>#1464784050959</outTransitions>
   </states>
   <states id="1462374515826" name="AlignRecv" comment="" entryPoint="1462373457908">
