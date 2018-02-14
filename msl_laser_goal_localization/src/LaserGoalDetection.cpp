@@ -70,7 +70,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     cloud->height = 1;
     lineCloud->height = 1;
 
-    for (int i = 0; i < laserScan->ranges.size(); i++)
+    for (int i = 150; i < (laserScan->ranges.size()-150); i++)
     {
         double range = laserScan->ranges.at(i);
         double angle = laserScan->angle_min + i * laserScan->angle_increment;
@@ -98,7 +98,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     line_list.pose.orientation.w = 1.0;
     line_list.id = 2;
     line_list.type = visualization_msgs::Marker::LINE_LIST;
-    line_list.scale.x = 0.1;
+    line_list.scale.x = 0.01;
     line_list.color.r = 1.0;
     line_list.color.a = 1.0;
 
