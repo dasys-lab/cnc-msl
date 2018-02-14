@@ -94,7 +94,7 @@
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518623882447"/>
-    <value xPos="468" yPos="51" width="197" height="67"/>
+    <value xPos="468" yPos="51" width="197" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518623967163"/>
@@ -109,7 +109,15 @@
     </value>
   </extensions>
   <extensions>
-    <key href="DriveZigZag_ViewStraight.pml#1518623233217"/>
+    <key href="DriveZigZagViewStraight.pml#1518623233217"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveZigZagViewZigZag.pml#1518623186077"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628181064"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

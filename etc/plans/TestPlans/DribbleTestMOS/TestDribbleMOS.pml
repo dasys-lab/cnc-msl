@@ -14,20 +14,21 @@
     <outTransitions>#1518622844428</outTransitions>
     <outTransitions>#1518623967163</outTransitions>
   </states>
-  <states id="1518622802933" name="DriveZigZag_ViewZigZag" comment="">
+  <states id="1518622802933" name="DriveZigZagViewZigZag" comment="">
+    <plans xsi:type="alica:Plan">DriveZigZagViewZigZag.pml#1518623186077</plans>
     <inTransitions>#1518622827729</inTransitions>
     <outTransitions>#1518622829104</outTransitions>
   </states>
-  <states id="1518622804332" name="DriveZigZag_ViewStraight" comment="">
-    <plans xsi:type="alica:Plan">DriveZigZag_ViewStraight.pml#1518623233217</plans>
+  <states id="1518622804332" name="DriveZigZagViewStraight" comment="">
+    <plans xsi:type="alica:Plan">DriveZigZagViewStraight.pml#1518623233217</plans>
     <inTransitions>#1518622834600</inTransitions>
     <outTransitions>#1518622830792</outTransitions>
   </states>
-  <states id="1518622806277" name="Circle_center" comment="">
+  <states id="1518622806277" name="CircleCenter" comment="">
     <inTransitions>#1518622838067</inTransitions>
     <outTransitions>#1518622836117</outTransitions>
   </states>
-  <states id="1518622811110" name="Circle_line" comment="">
+  <states id="1518622811110" name="CircleLine" comment="">
     <inTransitions>#1518622842678</inTransitions>
     <outTransitions>#1518622839547</outTransitions>
   </states>
@@ -35,7 +36,8 @@
     <inTransitions>#1518622844428</inTransitions>
     <outTransitions>#1518622846236</outTransitions>
   </states>
-  <states id="1518623882447" name="DriveStraight_ViewZigZag" comment="">
+  <states id="1518623882447" name="DriveStraightViewZigZag" comment="">
+    <plans xsi:type="alica:Plan">DriveStraightViewZigZag.pml#1518628181064</plans>
     <inTransitions>#1518623967163</inTransitions>
     <outTransitions>#1518623968955</outTransitions>
   </states>
