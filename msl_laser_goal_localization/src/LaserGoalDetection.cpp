@@ -1,6 +1,5 @@
 #include "LaserGoalDetection.h"
-//#include <pcl/common/projection_matrix.h>
-#include <pcl/point_types.h>
+#include <pcl/filters/extract_indices.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/sample_consensus/ransac.h>
 #include <pcl/sample_consensus/sac_model_line.h>
@@ -45,7 +44,6 @@ LaserGoalDetection::~LaserGoalDetection()
 void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
 {
 
-
     /*
      * some info for our hokuyo on foxy:
      * angle min: -2.35619
@@ -56,7 +54,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
      */
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZ>::Ptr lineCloud(new pcl::PointCloud<pcl::PointXYZ>());;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr lineCloud(new pcl::PointCloud<pcl::PointXYZ>());
     sensor_msgs::PointCloud pclMsg;
     sensor_msgs::PointCloud lineMsg;
     vector<geometry_msgs::Point32> points;
@@ -65,6 +63,8 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     cloud->width = laserScan->ranges.size();
     // setting height to 1 because our pcl is unorganized
     cloud->height = 1;
+    lineCloud->width = laserScan->ranges.size();
+    lineCloud->height = 1;
 
     for (int i = 0; i < laserScan->ranges.size(); i++)
     {
@@ -86,6 +86,36 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pclMsg.points = points;
     debugPublisher->publish(pclMsg);
 
+    for (int i = 0; i < 6; i++)
+    {
+
+        auto inliers = this->detectLinePoints(cloud);
+
+        for (auto j : inliers)
+        {
+            lineCloud->points.push_back(cloud->points.at(j));
+        }
+        this->deleteInliers(cloud, inliers);
+    }
+
+    for (auto pt : lineCloud->points)
+    {
+        geometry_msgs::Point32 point32;
+        point32.x = pt.x;
+        point32.y = pt.y;
+        linePoints.push_back(point32);
+    }
+
+    lineMsg.header.frame_id = "line_cloud";
+    lineMsg.points = linePoints;
+
+    linePublisher->publish(lineMsg);
+
+}
+
+vector<int> LaserGoalDetection::detectLinePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+{
+
     std::vector<int> inliers;
     pcl::SampleConsensusModelLine<pcl::PointXYZ>::Ptr model(new pcl::SampleConsensusModelLine<pcl::PointXYZ>(cloud));
     pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(model);
@@ -93,21 +123,24 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     ransac.computeModel();
     ransac.getInliers(inliers);
 
-    pcl::copyPointCloud<pcl::PointXYZ>(*cloud, inliers, *lineCloud);
+    return inliers;
+}
 
-    lineMsg.header.frame_id = "line_cloud";
+void LaserGoalDetection::deleteInliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::vector<int> inliers)
+{
 
-    for(auto pt : lineCloud->points) {
-    	geometry_msgs::Point32 point32;
-        point32.x = pt.x;
-        point32.y = pt.y;
-        linePoints.push_back(point32);
+    pcl::ExtractIndices<pcl::PointXYZ> extract;
+    extract.setInputCloud(cloud);
+    pcl::PointIndices::Ptr inds(new pcl::PointIndices());
+    for (auto i : inliers)
+    {
+        inds->indices.push_back(i);
     }
 
-    lineMsg.points = linePoints;
-
-    linePublisher->publish(lineMsg);
-
+    extract.setNegative(true);
+    extract.setIndices(inds);
+    extract.filter(*cloud);
 }
-}
+
+} /* namespace msl::goaldetection */
 } /* namespace msl */

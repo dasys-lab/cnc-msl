@@ -1,7 +1,9 @@
 #pragma once
 
-#include <ros/spinner.h>
+#include <pcl/common/projection_matrix.h>
+#include <pcl/point_types.h>
 #include <ros/node_handle.h>
+#include <ros/spinner.h>
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud.h>
 
@@ -21,7 +23,7 @@ class LaserGoalDetection
     LaserGoalDetection(int argc, char **argv);
     virtual ~LaserGoalDetection();
 
-    void onScan(const sensor_msgs::LaserScanConstPtr& );
+    void onScan(const sensor_msgs::LaserScanConstPtr &);
 
   private:
     ros::NodeHandle rosNode;
@@ -29,6 +31,9 @@ class LaserGoalDetection
     std::shared_ptr<ros::Publisher> debugPublisher;
     std::shared_ptr<ros::Publisher> linePublisher;
     ros::AsyncSpinner spinner;
+
+    std::vector<int> detectLinePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+    void deleteInliers(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::vector<int> inliers);
 };
 }
 } /* namespace msl */
