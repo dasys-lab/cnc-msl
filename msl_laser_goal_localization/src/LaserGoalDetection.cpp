@@ -3,6 +3,7 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/sample_consensus/ransac.h>
 #include <pcl/sample_consensus/sac_model_line.h>
+#include <visualization_msgs/Marker.h>
 
 using std::cout;
 using std::endl;
@@ -34,6 +35,7 @@ LaserGoalDetection::LaserGoalDetection(int argc, char **argv)
     this->subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10, &LaserGoalDetection::onScan, (LaserGoalDetection *)this);
     this->debugPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/goal_cloud", 10));
     this->linePublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/line_cloud", 10));
+    this->linesPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/line", 10));
 }
 
 LaserGoalDetection::~LaserGoalDetection()
@@ -55,15 +57,17 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
     pcl::PointCloud<pcl::PointXYZ>::Ptr lineCloud(new pcl::PointCloud<pcl::PointXYZ>());
+
+
     sensor_msgs::PointCloud pclMsg;
     sensor_msgs::PointCloud lineMsg;
     vector<geometry_msgs::Point32> points;
     vector<geometry_msgs::Point32> linePoints;
 
     cloud->width = laserScan->ranges.size();
+    lineCloud->width = laserScan->ranges.size();
     // setting height to 1 because our pcl is unorganized
     cloud->height = 1;
-    lineCloud->width = laserScan->ranges.size();
     lineCloud->height = 1;
 
     for (int i = 0; i < laserScan->ranges.size(); i++)
@@ -86,10 +90,40 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pclMsg.points = points;
     debugPublisher->publish(pclMsg);
 
+    visualization_msgs::Marker line_list;
+    line_list.header.frame_id = "/line_cloud";
+    line_list.header.stamp = ros::Time::now();
+    line_list.ns = "points_and_lines";
+    line_list.action = visualization_msgs::Marker::ADD;
+    line_list.pose.orientation.w = 1.0;
+    line_list.id = 2;
+    line_list.type = visualization_msgs::Marker::LINE_LIST;
+    line_list.scale.x = 0.1;
+    line_list.color.r = 1.0;
+    line_list.color.a = 1.0;
+
     for (int i = 0; i < 6; i++)
     {
-
         auto inliers = this->detectLinePoints(cloud);
+
+        auto lineVectorX = cloud->points.at(inliers.at(0)).x- cloud->points.at(inliers.at(inliers.size()-1)).x;
+        auto lineVectorY = cloud->points.at(inliers.at(0)).y- cloud->points.at(inliers.at(inliers.size()-1)).y;
+        auto length = sqrt(lineVectorX*lineVectorX + lineVectorY*lineVectorY);
+
+        geometry_msgs::Point p1;
+        p1.x = cloud->points.at(inliers.at(0)).x;
+        p1.y = cloud->points.at(inliers.at(0)).y;
+        p1.z = 0;
+
+        geometry_msgs::Point p2;
+        p2.x = cloud->points.at(inliers.at(inliers.size()-1)).x;
+        p2.y = cloud->points.at(inliers.at(inliers.size()-1)).y;
+        p2.z = 0;
+
+        line_list.points.push_back(p1);
+        line_list.points.push_back(p2);
+
+        cout << i << ": " << length << endl;
 
         for (auto j : inliers)
         {
@@ -97,6 +131,8 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         }
         this->deleteInliers(cloud, inliers);
     }
+    cout << endl;
+    linesPublisher->publish(line_list);
 
     for (auto pt : lineCloud->points)
     {
@@ -105,12 +141,9 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         point32.y = pt.y;
         linePoints.push_back(point32);
     }
-
     lineMsg.header.frame_id = "line_cloud";
     lineMsg.points = linePoints;
-
     linePublisher->publish(lineMsg);
-
 }
 
 vector<int> LaserGoalDetection::detectLinePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
