@@ -33,9 +33,10 @@ LaserGoalDetection::LaserGoalDetection(int argc, char **argv)
 {
     this->spinner.start();
     this->subscriber = rosNode.subscribe<sensor_msgs::LaserScan>("/scan", 10, &LaserGoalDetection::onScan, (LaserGoalDetection *)this);
-    this->debugPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/goal_cloud", 10));
-    this->linePublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/line_cloud", 10));
-    this->linesPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/line", 10));
+    this->debugPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/point_cloud", 10));
+    this->lineCloudPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<sensor_msgs::PointCloud>("/line_cloud", 10));
+    this->linesPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/lines", 10));
+    this->pointPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/points", 10));
 }
 
 LaserGoalDetection::~LaserGoalDetection()
@@ -58,7 +59,6 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
     pcl::PointCloud<pcl::PointXYZ>::Ptr lineCloud(new pcl::PointCloud<pcl::PointXYZ>());
 
-
     sensor_msgs::PointCloud pclMsg;
     sensor_msgs::PointCloud lineMsg;
     vector<geometry_msgs::Point32> points;
@@ -70,7 +70,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     cloud->height = 1;
     lineCloud->height = 1;
 
-    for (int i = 150; i < (laserScan->ranges.size()-150); i++)
+    for (int i = 150; i < (laserScan->ranges.size() - 150); i++)
     {
         double range = laserScan->ranges.at(i);
         double angle = laserScan->angle_min + i * laserScan->angle_increment;
@@ -86,12 +86,12 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         points.push_back(point32);
     }
 
-    pclMsg.header.frame_id = "goal_cloud";
+    pclMsg.header.frame_id = "line_detection";
     pclMsg.points = points;
     debugPublisher->publish(pclMsg);
 
     visualization_msgs::Marker line_list;
-    line_list.header.frame_id = "/line_cloud";
+    line_list.header.frame_id = "line_detection";
     line_list.header.stamp = ros::Time::now();
     line_list.ns = "points_and_lines";
     line_list.action = visualization_msgs::Marker::ADD;
@@ -106,33 +106,93 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     {
         auto inliers = this->detectLinePoints(cloud);
 
-        auto lineVectorX = cloud->points.at(inliers.at(0)).x- cloud->points.at(inliers.at(inliers.size()-1)).x;
-        auto lineVectorY = cloud->points.at(inliers.at(0)).y- cloud->points.at(inliers.at(inliers.size()-1)).y;
-        auto length = sqrt(lineVectorX*lineVectorX + lineVectorY*lineVectorY);
+        auto lineVectorX = cloud->points.at(inliers.at(0)).x - cloud->points.at(inliers.at(inliers.size() - 1)).x;
+        auto lineVectorY = cloud->points.at(inliers.at(0)).y - cloud->points.at(inliers.at(inliers.size() - 1)).y;
+        auto length = sqrt(lineVectorX * lineVectorX + lineVectorY * lineVectorY);
 
+        if ((!((length < 3.25 && length > 1.00) || (length < 0.6 && length > 0.1))) || inliers.size() < 30)
+        {
+            continue;
+        }
         geometry_msgs::Point p1;
-        p1.x = cloud->points.at(inliers.at(0)).x;
-        p1.y = cloud->points.at(inliers.at(0)).y;
+        p1.x = cloud->points.at(inliers.at(0)).x + lineVectorX * 0.2;
+        p1.y = cloud->points.at(inliers.at(0)).y + lineVectorY * 0.2;
         p1.z = 0;
 
         geometry_msgs::Point p2;
-        p2.x = cloud->points.at(inliers.at(inliers.size()-1)).x;
-        p2.y = cloud->points.at(inliers.at(inliers.size()-1)).y;
+        p2.x = cloud->points.at(inliers.at(inliers.size() - 1)).x - lineVectorX * 0.2;
+        p2.y = cloud->points.at(inliers.at(inliers.size() - 1)).y - lineVectorY * 0.2;
         p2.z = 0;
 
         line_list.points.push_back(p1);
         line_list.points.push_back(p2);
 
-        cout << i << ": " << length << endl;
+//        cout << i << ": "  << length << endl;
 
-        for (auto j : inliers)
+        for ( auto j : inliers )
         {
             lineCloud->points.push_back(cloud->points.at(j));
         }
         this->deleteInliers(cloud, inliers);
     }
-    cout << endl;
     linesPublisher->publish(line_list);
+
+
+
+    visualization_msgs::Marker point_list;
+    point_list.header.frame_id = "line_detection";
+    point_list.header.stamp = ros::Time::now();
+    point_list.ns = "points_and_lines";
+    point_list.action = visualization_msgs::Marker::ADD;
+    point_list.pose.orientation.w = 1.0;
+    point_list.id = 2;
+    point_list.type = visualization_msgs::Marker::POINTS;
+    point_list.scale.x = 0.1;
+    point_list.color.g = 1.0;
+    point_list.color.a = 1.0;
+    cout << "===================================" << endl;
+
+    for (int i = 0; i < line_list.points.size() - 2; i += 2)
+    {
+        for (int j = i + 2; j < line_list.points.size(); j += 2)
+        {
+        	if (i == j)
+        		continue;
+
+            auto line1Point1 = line_list.points.at(i);
+            auto line1Point2 = line_list.points.at(i + 1);
+            auto line2Point1 = line_list.points.at(j);
+            auto line2Point2 = line_list.points.at(j + 1);
+
+        	cout << line1Point1 << ", " << line1Point2 << "  : " << line2Point1 << ", " << line2Point2 <<endl;
+
+            float x12 = line1Point1.x - line1Point2.x;
+            float x34 = line2Point1.x - line2Point2.x;
+            float y12 = line1Point1.y - line1Point2.y;
+            float y34 = line2Point1.y - line2Point2.y;
+
+            float c = x12 * y34 - y12 * x34;
+
+            if (!(fabs(c) < 0.01))
+            {
+                float a = line1Point1.x * line1Point2.y - line1Point1.y * line1Point2.x;
+                float b = line2Point1.x * line2Point2.y - line2Point1.y * line2Point2.x;
+
+                float x = (a * x34 - b * x12) / c;
+                float y = (a * y34 - b * y12) / c;
+
+                geometry_msgs::Point point;
+                point.x = x;
+                point.y = y;
+                point.z = 0;
+                point_list.points.push_back(point);
+
+                cout << x << ", " << y << "  intersection: " << i/2 << " x " << j/2 <<endl;
+            }
+        }
+    }
+    pointPublisher->publish(point_list);
+
 
     for (auto pt : lineCloud->points)
     {
@@ -141,9 +201,9 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         point32.y = pt.y;
         linePoints.push_back(point32);
     }
-    lineMsg.header.frame_id = "line_cloud";
+    lineMsg.header.frame_id = "line_detection";
     lineMsg.points = linePoints;
-    linePublisher->publish(lineMsg);
+    lineCloudPublisher->publish(lineMsg);
 }
 
 vector<int> LaserGoalDetection::detectLinePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
@@ -152,7 +212,7 @@ vector<int> LaserGoalDetection::detectLinePoints(pcl::PointCloud<pcl::PointXYZ>:
     std::vector<int> inliers;
     pcl::SampleConsensusModelLine<pcl::PointXYZ>::Ptr model(new pcl::SampleConsensusModelLine<pcl::PointXYZ>(cloud));
     pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(model);
-    ransac.setDistanceThreshold(0.01);
+    ransac.setDistanceThreshold(0.008);
     ransac.computeModel();
     ransac.getInliers(inliers);
 
