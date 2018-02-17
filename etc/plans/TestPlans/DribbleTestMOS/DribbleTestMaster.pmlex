@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866346674"/>
+    <value xPos="45" yPos="124" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866346673"/>
+    <value width="732" height="480"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866346675"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866360499"/>
+    <value xPos="365" yPos="136" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866388604"/>
+    <value>
+      <bendpoints xPos="372" yPos="306"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleTestMaster.pml#1518866390610"/>
+    <value>
+      <bendpoints xPos="358" yPos="122"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleMOS.pml#1518622787399"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

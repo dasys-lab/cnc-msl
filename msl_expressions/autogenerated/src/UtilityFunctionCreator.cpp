@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveStraightViewZigZag1518628181064.h"
+
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
@@ -16,6 +18,8 @@
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
+
+#include  "Plans/TestPlans/SoftSquarePlan1513183613607.h"
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
@@ -54,6 +58,8 @@
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
 
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
 
@@ -99,6 +105,8 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/AfterGamePenalty1466934340668.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewZigZag1518623186077.h"
+
 #include  "Plans/Standards/Own/Corner/CornerKick1462373376006.h"
 
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
@@ -107,11 +115,15 @@
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewStraight1518623233217.h"
+
 #include  "Plans/Standards/Own/KickOff/OwnKickOff1438785376159.h"
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/CircleCenter1518624635783.h"
 
 #include  "Plans/Defence/MidfieldDefense1458033329973.h"
 
@@ -126,6 +138,8 @@
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DribbleTestMaster1518866346673.h"
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -167,6 +181,10 @@ namespace alica
                 return make_shared<UtilityFunction1467383326416>();
                 break;
 
+            case 1518628181064:
+                return make_shared<UtilityFunction1518628181064>();
+                break;
+
             case 1492620432380:
                 return make_shared<UtilityFunction1492620432380>();
                 break;
@@ -189,6 +207,10 @@ namespace alica
 
             case 1426695119330:
                 return make_shared<UtilityFunction1426695119330>();
+                break;
+
+            case 1513183613607:
+                return make_shared<UtilityFunction1513183613607>();
                 break;
 
             case 1432132075122:
@@ -265,6 +287,10 @@ namespace alica
 
             case 1426696586622:
                 return make_shared<UtilityFunction1426696586622>();
+                break;
+
+            case 1518622787399:
+                return make_shared<UtilityFunction1518622787399>();
                 break;
 
             case 1459361887233:
@@ -355,6 +381,10 @@ namespace alica
                 return make_shared<UtilityFunction1466934340668>();
                 break;
 
+            case 1518623186077:
+                return make_shared<UtilityFunction1518623186077>();
+                break;
+
             case 1462373376006:
                 return make_shared<UtilityFunction1462373376006>();
                 break;
@@ -371,6 +401,10 @@ namespace alica
                 return make_shared<UtilityFunction1430924951132>();
                 break;
 
+            case 1518623233217:
+                return make_shared<UtilityFunction1518623233217>();
+                break;
+
             case 1438785376159:
                 return make_shared<UtilityFunction1438785376159>();
                 break;
@@ -381,6 +415,10 @@ namespace alica
 
             case 1462360503828:
                 return make_shared<UtilityFunction1462360503828>();
+                break;
+
+            case 1518624635783:
+                return make_shared<UtilityFunction1518624635783>();
                 break;
 
             case 1458033329973:
@@ -409,6 +447,10 @@ namespace alica
 
             case 1457015643757:
                 return make_shared<UtilityFunction1457015643757>();
+                break;
+
+            case 1518866346673:
+                return make_shared<UtilityFunction1518866346673>();
                 break;
 
             case 1417621468963:
