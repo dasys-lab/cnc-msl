@@ -108,8 +108,4 @@
     <key href="DriveStraightViewZigZag.pml#1518628789283"/>
     <value xPos="735" yPos="90" width="82" height="67"/>
   </extensions>
-  <extensions>
-    <key href="../../GenericBehaviours/DriveAndAlignToPoint.beh#1518629564666"/>
-    <value/>
-  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

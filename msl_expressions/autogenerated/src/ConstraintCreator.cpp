@@ -5,6 +5,8 @@
 
 #include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DriveStraightViewZigZag1518628181064Constraints.h"
+
 #include  "Plans/Calibration/constraints/TestRotation1492620432380Constraints.h"
 
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
@@ -16,6 +18,8 @@
 #include  "Plans/Standards/Own/Penalty/AfterGame/constraints/PenaltyMaster1466973051873Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/Parking1426695119330Constraints.h"
+
+#include  "Plans/TestPlans/constraints/SoftSquarePlan1513183613607Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
@@ -54,6 +58,8 @@
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/TestDribbleMOS1518622787399Constraints.h"
 
 #include  "Plans/Standards/Own/Corner/constraints/CornerBounceShot1459361887233Constraints.h"
 
@@ -99,6 +105,8 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/constraints/AfterGamePenalty1466934340668Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DriveZigZagViewZigZag1518623186077Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerKick1462373376006Constraints.h"
 
 #include  "Plans/Standards/Opponent/constraints/OppStandardExecution1457015277573Constraints.h"
@@ -107,11 +115,15 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DriveZigZagViewStraight1518623233217Constraints.h"
+
 #include  "Plans/Standards/Own/KickOff/constraints/OwnKickOff1438785376159Constraints.h"
 
 #include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
 
 #include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInOwnHalf1462360503828Constraints.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/CircleCenter1518624635783Constraints.h"
 
 #include  "Plans/Defence/constraints/MidfieldDefense1458033329973Constraints.h"
 
@@ -126,6 +138,8 @@
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/constraints/StopRobots1457015643757Constraints.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DribbleTestMaster1518866346673Constraints.h"
 
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 

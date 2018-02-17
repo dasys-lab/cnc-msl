@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="TestDribbleMOS.pml#1518622787400"/>
-    <value xPos="67" yPos="283" width="82" height="67"/>
+    <value xPos="67" yPos="283" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518622787399"/>
@@ -22,15 +22,11 @@
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518622806277"/>
-    <value xPos="479" yPos="457" width="82" height="67"/>
-  </extensions>
-  <extensions>
-    <key href="TestDribbleMOS.pml#1518622811110"/>
-    <value xPos="367" yPos="559"/>
+    <value xPos="479" yPos="457" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518622824671"/>
-    <value xPos="172" yPos="617"/>
+    <value xPos="172" yPos="617" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestDribbleMOS.pml#1518622827729"/>
@@ -66,18 +62,6 @@
     <key href="TestDribbleMOS.pml#1518622838067"/>
     <value>
       <bendpoints xPos="464" yPos="466"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="TestDribbleMOS.pml#1518622839547"/>
-    <value>
-      <bendpoints xPos="394" yPos="537"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="TestDribbleMOS.pml#1518622842678"/>
-    <value>
-      <bendpoints xPos="419" yPos="519"/>
     </value>
   </extensions>
   <extensions>
@@ -118,6 +102,18 @@
   </extensions>
   <extensions>
     <key href="DriveStraightViewZigZag.pml#1518628181064"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CircleCenter.pml#1518624635783"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../SoftSquarePlan.pml#1513183613607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

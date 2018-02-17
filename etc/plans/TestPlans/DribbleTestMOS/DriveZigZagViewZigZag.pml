@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1518623186077" name="DriveZigZagViewZigZag" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1518623186077" name="DriveZigZagViewZigZag" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans/DribbleTestMOS" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1518623225899" name="Zig1" comment="" entryPoint="1518623225900">
     <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1517415399331</plans>
     <outTransitions>#1518625925018</outTransitions>
@@ -122,6 +122,10 @@
   <states id="1518625307527" name="Zig12" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1517415399331</plans>
     <inTransitions>#1518625992939</inTransitions>
+    <outTransitions>#1518869291908</outTransitions>
+  </states>
+  <states xsi:type="alica:SuccessState" id="1518869281982" name="NewSuccessState" comment="">
+    <inTransitions>#1518869291908</inTransitions>
   </states>
   <transitions id="1518625925018" name="MISSING_NAME" comment="" msg="">
     <preCondition id="1518625926563" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -243,7 +247,12 @@
     <inState>#1518625302958</inState>
     <outState>#1518625307527</outState>
   </transitions>
-  <entryPoints id="1518623225900" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <transitions id="1518869291908" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1518869293795" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1518625307527</inState>
+    <outState>#1518869281982</outState>
+  </transitions>
+  <entryPoints id="1518623225900" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
     <task>../../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1518623225899</state>
   </entryPoints>

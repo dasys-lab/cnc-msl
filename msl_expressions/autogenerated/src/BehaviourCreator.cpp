@@ -183,6 +183,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
+#include  "Plans/GenericBehaviours/DriveAndAlignToPoint.h"
+
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
 #include  "Plans/Attack/SearchForPassPoint.h"
@@ -729,6 +731,129 @@ namespace alica
             case 1482165487602:
 
                 return make_shared<Stop>();
+                break;
+
+            case 1516808848891:
+
+            case 1517050799588:
+
+            case 1517052566683:
+
+            case 1517052704566:
+
+            case 1517054090420:
+
+            case 1517054165498:
+
+            case 1517054241072:
+
+            case 1517054288108:
+
+            case 1517054365259:
+
+            case 1517054380022:
+
+            case 1517054559436:
+
+            case 1517054583522:
+
+            case 1517054756760:
+
+            case 1517054780047:
+
+            case 1517413343977:
+
+            case 1517413374873:
+
+            case 1517413717087:
+
+            case 1517413743789:
+
+            case 1517413986109:
+
+            case 1517414007376:
+
+            case 1517414454147:
+
+            case 1517414498820:
+
+            case 1517415111859:
+
+            case 1517415170220:
+
+            case 1517415329054:
+
+            case 1517415399331:
+
+            case 1517416779403:
+
+            case 1517416856727:
+
+            case 1517416964916:
+
+            case 1517416991102:
+
+            case 1517417012255:
+
+            case 1517417110968:
+
+            case 1517417780816:
+
+            case 1517417835320:
+
+            case 1518625061828:
+
+            case 1518625117909:
+
+            case 1518625156903:
+
+            case 1518625189001:
+
+            case 1518625265141:
+
+            case 1518625653420:
+
+            case 1518625669215:
+
+            case 1518625684021:
+
+            case 1518625698001:
+
+            case 1518625721179:
+
+            case 1518625802968:
+
+            case 1518625824531:
+
+            case 1518625852380:
+
+            case 1518630243941:
+
+            case 1518630243942:
+
+            case 1518630243943:
+
+            case 1518630243951:
+
+            case 1518630243961:
+
+            case 1518630243971:
+
+            case 1518630244941:
+
+            case 1518630245941:
+
+            case 1518630245942:
+
+            case 1518630245943:
+
+            case 1518630246041:
+
+            case 1518630248941:
+
+            case 1518632911294:
+
+                return make_shared<DriveAndAlignToPoint>();
                 break;
 
             case 1464189840525:
