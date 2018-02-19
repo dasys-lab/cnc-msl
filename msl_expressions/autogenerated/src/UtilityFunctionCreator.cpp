@@ -13,13 +13,13 @@
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/InitialForwardBackward1519032290449.h"
+
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
-
-#include  "Plans/TestPlans/SoftSquarePlan1513183613607.h"
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
@@ -197,6 +197,10 @@ namespace alica
                 return make_shared<UtilityFunction1479905043165>();
                 break;
 
+            case 1519032290449:
+                return make_shared<UtilityFunction1519032290449>();
+                break;
+
             case 1482163489121:
                 return make_shared<UtilityFunction1482163489121>();
                 break;
@@ -207,10 +211,6 @@ namespace alica
 
             case 1426695119330:
                 return make_shared<UtilityFunction1426695119330>();
-                break;
-
-            case 1513183613607:
-                return make_shared<UtilityFunction1513183613607>();
                 break;
 
             case 1432132075122:

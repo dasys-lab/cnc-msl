@@ -29,7 +29,7 @@
     <outTransitions>#1518622836117</outTransitions>
   </states>
   <states id="1518622824671" name="Square" comment="">
-    <plans xsi:type="alica:Plan">../SoftSquarePlan.pml#1513183613607</plans>
+    <plans xsi:type="alica:Plan">InitialForwardBackward.pml#1519032290449</plans>
     <inTransitions>#1518622844428</inTransitions>
     <outTransitions>#1518622846236</outTransitions>
   </states>
