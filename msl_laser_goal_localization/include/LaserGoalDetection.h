@@ -32,6 +32,8 @@ class LaserGoalDetection
     std::shared_ptr<ros::Publisher> lineCloudPublisher;
     std::shared_ptr<ros::Publisher> linesPublisher;
     std::shared_ptr<ros::Publisher> pointPublisher;
+    std::shared_ptr<ros::Publisher> candPublisher;
+
     ros::AsyncSpinner spinner;
 
     std::vector<int> detectLinePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
