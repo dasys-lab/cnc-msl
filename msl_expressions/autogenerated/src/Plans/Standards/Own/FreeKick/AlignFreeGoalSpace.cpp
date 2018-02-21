@@ -25,6 +25,7 @@ namespace alica
         lastAlignment = 0;
         // for alignToPointWithBall
         lastRotError = 0;
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     AlignFreeGoalSpace::~AlignFreeGoalSpace()
@@ -44,11 +45,6 @@ namespace alica
             return;
         }
 
-        //Constant ball handle wheel speed
-//		BallHandleCmd bhc;
-//		bhc.leftMotor = (int8_t)this->wheelSpeed;
-//		bhc.rightMotor = (int8_t)this->wheelSpeed;
-//		send(bhc);
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         // Create target point next to left/right opp goal post
@@ -86,7 +82,7 @@ namespace alica
 
         for (int i = 0; i < wm->getRingBufferLength(); i++)
         {
-            alloOpps = wm->robots->opponents.getOpponentsAlloClustered();
+            alloOpps = wm->robots->opponents.getOpponentsAlloClustered(i);
             if (alloOpps != nullptr)
             {
                 // weighted analysis of past and current obstacles
@@ -106,7 +102,7 @@ namespace alica
             }
             else
             {
-                cout << "PenaltyBeh: no obstacles!" << endl;
+                cout << "AFGS: no obstacles!" << endl;
             }
         }
 
@@ -129,6 +125,8 @@ namespace alica
         double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // Create Motion Command for aiming
         MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+
+        cout << "AFGS MC: " << mc.motion.angle << ", " << mc.motion.rotation << ", " << mc.motion.translation << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
@@ -154,11 +152,18 @@ namespace alica
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
+            cout << "AFGS: target reached" << endl;
         }
         else
         {
+            cout << "afgs: deltatargetAngle: " << deltaTargetAngle << endl;
+            cout << "afgs: defaultRotateP " << defaultRotateP << endl;
+            cout << "afgs: lastRotError: " << lastRotError << endl;
+            cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
+
             mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
                     + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+
             mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
                     * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 
@@ -169,7 +174,7 @@ namespace alica
             driveTo = driveTo * mc.motion.rotation;
 
             // add the motion towards the ball
-            driveTo = driveTo + egoBallPos->normalize() * 10;
+            driveTo = driveTo + egoBallPos->normalize() * 100;
 
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = min(alignMaxVel, driveTo->length());

@@ -7,6 +7,7 @@ using namespace std;
 #include <Game.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <pathplanner/PathProxy.h>
+#include <pathplanner/PathPlanner.h>
 #include <container/CNVelocity2D.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
@@ -32,6 +33,7 @@ namespace alica
 
         maxBallVelocity = (*sc)["Drive"]->get<double>("Drive.Intercept.MaxBallVelocity", NULL);
         catchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+        mapInFieldOffset = (*sc)["Drive"]->get<double>("Drive.Intercept.mapInFieldOffset", NULL);
 
         prot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationP", NULL);
         pirot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationI", NULL);
@@ -45,6 +47,9 @@ namespace alica
 
         maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
+        predictionTimestep = (*sc)["Drive"]->get<double>("Drive.Intercept.predictionTimestep", NULL);
+        predictionHorizon = (*sc)["Drive"]->get<int>("Drive.Intercept.predictionHorizon", NULL);
+
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -56,8 +61,6 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-        this->setSuccess(true);
-
         // ACQUIRE NECESSARY DATA
         auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
         msl_actuator_msgs::MotionControl mc;
@@ -86,10 +89,11 @@ namespace alica
         }
 
         // Ball is outside field, so drive to its position mapped into field
+        // Emergency-stop
         auto alloBall = egoBallPos->egoToAllo(*ownPos);
         if (!this->wm->field->isInsideField(alloBall))
         {
-            auto egoTarget = this->wm->field->mapInsideField(alloBall)->alloToEgo(*ownPos);
+            auto egoTarget = this->wm->field->mapInsideField(alloBall, mapInFieldOffset)->alloToEgo(*ownPos);
 
             this->query->egoDestinationPoint = egoTarget;
             this->query->egoAlignPoint = egoBallPos;
@@ -111,68 +115,64 @@ namespace alica
 //		if (egoBallVel->length() > 4000.0)
 //		{
         shared_ptr < geometry::CNPosition > predPos = make_shared < geometry::CNPosition > (0.0, 0.0, 0.0);
-        double timestep = 33;
-        double rot = od->motion.rotation * timestep / 1000.0;
-        for (int i = 1; i * timestep < 160; i++)
+        double rot = od->motion.rotation * predictionTimestep / 1000.0;
+
+        for (int i = 1; i < predictionHorizon; i++)
         {
-            if (i > 6)
-            {
-                break;
-            }
-            predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
-            predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+            predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * predictionTimestep / 1000.0;
+            predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * predictionTimestep / 1000.0;
             predPos->theta += rot;
 
-            predBall->x += egoBallVel->x * timestep / 1000.0;
-            predBall->y += egoBallVel->y * timestep / 1000.0;
+            predBall->x += egoBallVel->x * predictionTimestep / 1000.0;
+            predBall->y += egoBallVel->y * predictionTimestep / 1000.0;
 
-            if (predBall->distanceTo(predPos) < 250 + 110) //robotRadius+ballRadius
+            if (predBall->distanceTo(predPos) < wm->pathPlanner->getRobotRadius() + wm->ball->getBallDiameter() / 2) //robotRadius+ballRadius
             {
                 break;
             }
         }
 
-        auto egoPredBall = predBall->alloToEgo(*predPos);
-        //TODO dirty fix to avoid crashing into the surrounding
+//        auto egoPredBall = predBall->alloToEgo(*predPos);
+        //to avoid crashing into the surrounding
         if (!this->wm->field->isInsideField(predPos->getPoint()))
         {
             msl_actuator_msgs::MotionControl mc;
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
-            send(mc);
+            sendAndUpdatePT(mc);
             return;
         }
 //		}
         // PID controller for minimizing the distance between ball and me
-        double distErr = max(egoPredBall->length(), minDistErr);
+        double distErr = max(predBall->length(), minDistErr);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
         distIntErr = max(0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
         lastDistErr = distErr;
 
-        shared_ptr < geometry::CNPoint2D > egoVelocity;
+        shared_ptr < geometry::CNPoint2D > ballVelocity;
         auto currentGameState = this->wm->game->getGameState();
         if (currentGameState == msl::GameState::OppBallPossession)
         {
-            egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
+            ballVelocity = make_shared < geometry::CNPoint2D > (0, 0);
         }
         else
         {
-            egoVelocity = egoBallVel->getPoint();
+            ballVelocity = egoBallVel->getPoint();
         }
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
-        egoVelocity->x += controlDist * cos(egoPredBall->angleTo());
-        egoVelocity->y += controlDist * sin(egoPredBall->angleTo());
+        ballVelocity->x += controlDist * cos(predBall->angleTo());
+        ballVelocity->y += controlDist * sin(predBall->angleTo());
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
-        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoPredBall->length());
+        auto pathPlanningPoint = ballVelocity->normalize() * min(ballVelocity->length(), predBall->length());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-        if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
+        if (this->wm->field->isInsideField(alloBall, -mapInFieldOffset) && !this->wm->field->isInsideField(alloDest))
         {
             //pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
-            pathPlanningPoint = this->wm->field->mapInsideField((alloDest, alloBall - alloDest))->alloToEgo(*ownPos);
+            pathPlanningPoint = this->wm->field->mapInsideField(alloDest, alloBall - alloDest)->alloToEgo(*ownPos);
         }
 
         shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
@@ -189,7 +189,7 @@ namespace alica
             mc.motion.angle = pathPlanningResult->angleTo();
         }
 
-        mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
+        mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), ballVelocity->length()));
 
 // PID controller for minimizing the kicker angle to ball
         double angleGoal = msl::Kicker::kickerAngle;
@@ -207,7 +207,7 @@ namespace alica
                         || currentGameState == msl::GameState::NobodyInBallPossession))
         {
             controlRot *= 2.3;
-            //we probably translate to fast and cannot rotate anymore: So translate slower
+            //we probably translate too fast and cannot rotate anymore: So translate slower
             if (fabs(rotErr) > M_PI / 6)
             {
                 mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
@@ -224,7 +224,7 @@ namespace alica
         }
         else
         {
-            send(mc);
+            sendAndUpdatePT(mc);
             cout << "Intercept: Normal: " << mc.motion.translation << endl;
         }
 
@@ -241,11 +241,16 @@ namespace alica
     void Intercept::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
-        lastDistErr = 0;
-        distIntErr = 0;
+        //only update when not in StandardAttack-Loop
+        auto gs = this->wm->game->getGameState();
+        if (gs != msl::GameState::OppBallPossession)
+        {
+            lastDistErr = 0;
+            distIntErr = 0;
 
-        lastRotErr = 0;
-        rotIntErr = 0;
+            lastRotErr = 0;
+            rotIntErr = 0;
+        }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here

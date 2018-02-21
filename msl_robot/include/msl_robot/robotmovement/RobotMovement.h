@@ -97,6 +97,7 @@ class RobotMovement
      * Default carefully rotation speed
      */
     double carefullyRotation;
+    void updatePT();
 
   private:
     RobotMovement();
@@ -134,6 +135,7 @@ class RobotMovement
     void clearPTControllerQueues();
 
     void stopTranslation();
+
 
     /**
      * Past sent translation for PT-Controller

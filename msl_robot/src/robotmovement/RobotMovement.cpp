@@ -102,7 +102,6 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
     }
     else
     {
-        cout << "RobotMovement::stopTranslation called" << endl;
         mc.motion.translation = 0;
         stopTranslation();
     }
@@ -621,6 +620,32 @@ void RobotMovement::clearPTControllerQueues()
     while (!pastControlledValues.empty())
     {
         pastControlledValues.pop();
+    }
+}
+
+void RobotMovement::updatePT()
+{
+    auto odom = this->wm->rawSensorData->getOwnVelocityMotion();
+    auto mc = this->wm->rawSensorData->getLastMotionCommand();
+    if (odom != nullptr)
+    {
+        clearPTControllerQueues();
+        this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+        this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+        if (mc == nullptr)
+        {
+            this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
+            this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
+        }
+        else
+        {
+            this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
+            this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
+        }
+    }
+    else
+    {
+        initializePTControllerParameters();
     }
 }
 

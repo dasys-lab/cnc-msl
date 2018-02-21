@@ -514,6 +514,12 @@ namespace alica
 
             case 1435766278023:
 
+            case 1518257136977:
+
+            case 1518257157495:
+
+            case 1518257626027:
+
                 return make_shared<StandardActuate>();
                 break;
 

@@ -3,16 +3,19 @@
   <states id="1513176006535" name="AlignExec" comment="" entryPoint="1513176006536">
     <plans xsi:type="alica:BehaviourConfiguration">Align4PassTest.beh#1513609404882</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <outTransitions>#1513176124567</outTransitions>
   </states>
   <states id="1513176035432" name="AlignRec" comment="" entryPoint="1513176019047">
     <plans xsi:type="alica:BehaviourConfiguration">Align4PassTest.beh#1513784309003</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <outTransitions>#1513176174538</outTransitions>
   </states>
   <states id="1513176098858" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1513176284031</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513176124567</inTransitions>
     <inTransitions>#1513176153574</inTransitions>
     <outTransitions>#1513176125489</outTransitions>
@@ -20,6 +23,7 @@
   <states id="1513176103139" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../ThrowIn/ThrowInPass.beh#1462363309950</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513176125489</inTransitions>
     <outTransitions>#1513176126396</outTransitions>
     <outTransitions>#1513176153574</outTransitions>
@@ -35,6 +39,7 @@
   <states id="1513176169159" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513786331557</inTransitions>
     <outTransitions>#1513176175579</outTransitions>
     <outTransitions>#1513786448936</outTransitions>
@@ -42,6 +47,7 @@
   <states id="1513786312435" name="CatchPass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Attack/CatchPass.beh#1440754543898</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1513176174538</inTransitions>
     <inTransitions>#1513786448936</inTransitions>
     <outTransitions>#1513786331557</outTransitions>

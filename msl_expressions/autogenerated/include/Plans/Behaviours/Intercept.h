@@ -51,6 +51,10 @@ namespace alica
 
         double maxBallVelocity;
         double catchRadius;
+        double mapInFieldOffset;
+
+        double predictionTimestep; //in ms
+        int predictionHorizon;
 
         bool interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel,
                             double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo);

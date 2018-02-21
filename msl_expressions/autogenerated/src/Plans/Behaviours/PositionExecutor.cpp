@@ -83,16 +83,19 @@ namespace alica
             }
             msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
+            shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
 
             if (receiverPos != nullptr)
             {
                 // calculate target 60cm away from the ball and on a line with the receiver
                 egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * ballDistanceEx))->alloToEgo(*ownPos);
+                egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             }
             else
             {
                 // if there is no receiver, align to middle
                 egoTarget = (alloBall + alloTarget)->alloToEgo(*ownPos);
+                egoAlignPoint = egoBallPos;
             }
 
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
@@ -101,7 +104,7 @@ namespace alica
               // removed with new moveToPoint method
 //                mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
                 query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
+                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = fastCatchRadius;
                 query->additionalPoints = additionalPoints;
                 query->velocityMode = msl::VelocityMode::FAST;
@@ -111,7 +114,7 @@ namespace alica
             { // still enough time to position ...
 //                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
                 query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
+                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = slowCatchRadius;
                 query->additionalPoints = additionalPoints;
                 query->velocityMode = msl::VelocityMode::DEFAULT;
@@ -119,8 +122,7 @@ namespace alica
             }
 
             // if we reached the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 120
-                    && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+            if (egoTarget->length() < 120 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);
             }

@@ -22,15 +22,15 @@
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176098858"/>
-    <value xPos="304" yPos="114" collapsed="false"/>
+    <value xPos="259" yPos="31" width="286" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176103139"/>
-    <value xPos="479" yPos="125" collapsed="false"/>
+    <value xPos="510" yPos="31" width="248" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176106132"/>
-    <value xPos="631" yPos="141" collapsed="false"/>
+    <value xPos="728" yPos="60" width="204" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="LongPassBasement.pml#1513176112686"/>
@@ -51,7 +51,7 @@
   <extensions>
     <key href="LongPassBasement.pml#1513176153574"/>
     <value>
-      <bendpoints xPos="596" yPos="139"/>
+      <bendpoints xPos="590" yPos="91"/>
     </value>
   </extensions>
   <extensions>
@@ -126,6 +126,10 @@
   </extensions>
   <extensions>
     <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
