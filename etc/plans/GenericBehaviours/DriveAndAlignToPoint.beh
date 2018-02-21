@@ -4,8 +4,8 @@
   <configurations id="1517050799588" name="DriveAndAlignTo[0,0,1000,0]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1517050816131" name="MISSING_NAME" comment="" key="X" value="0"/>
     <parameters id="1517050819829" name="MISSING_NAME" comment="" key="Y" value="0"/>
-    <parameters id="1517050832434" name="MISSING_NAME" comment="" key="OriX" value="0"/>
-    <parameters id="1517050849686" name="MISSING_NAME" comment="" key="OriY" value="1000"/>
+    <parameters id="1517050832434" name="MISSING_NAME" comment="" key="OriX" value="1000"/>
+    <parameters id="1517050849686" name="MISSING_NAME" comment="" key="OriY" value="0"/>
     <parameters id="1517050867050" name="MISSING_NAME" comment="" key="R" value="50"/>
   </configurations>
   <configurations id="1517052566683" name="DriveAndAlignTo[700,700,700,700,50]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
