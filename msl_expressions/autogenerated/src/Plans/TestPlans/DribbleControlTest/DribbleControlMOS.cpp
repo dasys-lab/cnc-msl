@@ -62,12 +62,15 @@ namespace alica
     void DribbleControlMOS::run(void* msg)
     {
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ // Add additional options here
+    	//if joystick sends own ball handle commands -> return
         auto joyCmd = wm->rawSensorData->getJoystickCommand();
 
         if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
             return;
         }
+
+        //get odometry data
         shared_ptr < msl_msgs::MotionInfo > odom = nullptr;
         if (wm->isUsingSimulator())
         {
@@ -84,9 +87,26 @@ namespace alica
             return;
         }
 
-        auto robotAngle = odom->angle;
+
+
+
+		auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
         auto robotRot = (double)odom->rotation;
+
+        //get motion command
+        //check if backwards movement is planned
+        shared_ptr<msl_actuator_msgs::MotionControl> plannedMotion = wm->rawSensorData->getLastMotionCommand();
+
+        //angle query might be wrong at the moment it expects angles between 0 and 2pi
+        if (robotVel<50 && (plannedMotion->motion.angle < M_PI/4 || plannedMotion->motion.angle > M_PI*7/4) && plannedMotion->motion.translation > 100) {
+        	//take planned motion instead of odom values
+        	robotAngle = plannedMotion->motion.angle;
+        	robotVel = plannedMotion->motion.translation;
+        	robotRot = (double)plannedMotion->motion.rotation;
+        }
+
+
         msl_actuator_msgs::BallHandleCmd msgback;
 
         bool haveBall = wm->ball->haveBall();
@@ -234,6 +254,7 @@ namespace alica
                     || angleTolerance <= fabs(angle - angleOld))
             {
                 // powerFactor decays over the iterations
+            	cout<<"DribbleControlMOS::getBallPath: Jump detected"<<endl;
                 decayedPowerFactor = powerFactor;
             }
 
