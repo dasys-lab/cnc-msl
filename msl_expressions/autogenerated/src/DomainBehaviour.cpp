@@ -89,7 +89,7 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)
 {
     bh.enabled = true;
     bh.senderID = ownID;
-    // this is only for nase and his new left motor
+    // this was written for nase and his new left motor
     if (bh.rightMotor != 0 && bh.leftMotor != 0)
     {
         bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * (bh.rightMotor >= 0 ? 1 : -1);
