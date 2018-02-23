@@ -223,8 +223,8 @@ namespace alica
         slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
         minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
         // left and right are swapped!!!!
-        dribbleFactorLeft = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL);
-        dribbleFactorRight = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL);
+        dribbleFactorRight = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL);
+        dribbleFactorLeft = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL);
 
         // maybe put in config
         changingValue = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingValue", NULL);
@@ -248,9 +248,9 @@ namespace alica
                                  "Dribble.SlowTranslationWheelSpeed", NULL);
         (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (minRotation), "Dribble.MinRotation", NULL);
         // left and right are swapped!!
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorLeft), "Dribble.DribbleFactorRight",
+        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorRight), "Dribble.DribbleFactorRight",
                                  NULL);
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorRight), "Dribble.DribbleFactorLeft",
+        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorLeft), "Dribble.DribbleFactorLeft",
                                  NULL);
 
         (*sys)["Actuation"]->store();
