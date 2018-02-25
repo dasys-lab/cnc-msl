@@ -132,8 +132,6 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         line_list.points.push_back(p1);
         line_list.points.push_back(p2);
 
-//        cout << i << ": "  << length << endl;
-
         for ( auto j : inliers )
         {
             lineCloud->points.push_back(cloud->points.at(j));
@@ -157,15 +155,12 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     point_list.color.g = 1.0;
     point_list.color.a = 1.0;
     //point_list.lifetime = ros::Duration(0.05);
-    //cout << "================ points size: "<< line_list.points.size() <<" ===================" << endl;
 
     if (line_list.points.size() == 0)
     	return;
 
     for (int i = 0; i < line_list.points.size() - 2; i += 2)
     {
-    	//cout << "================= it:" << i << " ==================" << endl;
-
         for (int j = i + 2; j < line_list.points.size(); j += 2)
         {
         	if (i == j)
@@ -175,8 +170,6 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
             auto line1Point2 = line_list.points.at(i + 1);
             auto line2Point1 = line_list.points.at(j);
             auto line2Point2 = line_list.points.at(j + 1);
-
-        	//cout << line1Point1 << ", " << line1Point2 << "  : " << line2Point1 << ", " << line2Point2 <<endl;
 
             float x12 = line1Point1.x - line1Point2.x;
             float x34 = line2Point1.x - line2Point2.x;
@@ -213,10 +206,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
                 point.y = y;
                 point.z = 0;
                 point_list.points.push_back(point);
-
-                cout << x << ", " << y << "  intersection: " << i/2 << " x " << j/2 << "  angle: " << delta <<endl;
-
-
+//                cout << x << ", " << y << "  intersection: " << i/2 << " x " << j/2 << "  angle: " << delta <<endl;
             }
         }
     }
@@ -232,17 +222,16 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pointCandidates.scale.x = 0.01;
     pointCandidates.color.b = 1.0;
     pointCandidates.color.a = 1.0;
+    int size = point_list.points.size();
 
-    for (int i = 0; i < point_list.points.size() - 1; i++)
+    for (int i = 0; i < size - 1; i++)
     {
-        for (int j = i + 1; j < point_list.points.size(); j++)
+        for (int j = i + 1; j < size; j++)
         {
         	geometry_msgs::Point point1 = point_list.points.at(i);
         	geometry_msgs::Point point2 = point_list.points.at(j);
 
         	auto length = sqrt((point1.x-point2.x)*(point1.x-point2.x) + (point1.y-point2.y)*(point1.y-point2.y));
-
-        	cout << length << endl;
 
         	if (length > 1.8 && length < 2.5) {
         		pointCandidates.points.push_back(point1);
@@ -251,6 +240,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         }
     }
 
+    cout << "amount of detected goal lines: " << (pointCandidates.points.size() / 2) << endl;
     pointPublisher->publish(point_list);
     candPublisher->publish(pointCandidates);
 
