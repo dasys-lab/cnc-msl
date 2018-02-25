@@ -236,6 +236,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         	if (length > 1.8 && length < 2.5) {
         		pointCandidates.points.push_back(point1);
         		pointCandidates.points.push_back(point2);
+        		i = j = size;
         	}
         }
     }
