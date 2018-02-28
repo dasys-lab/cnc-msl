@@ -491,7 +491,6 @@ namespace msl
             sharedWorldPub.publish(msg);
         }
     }
-}
 
 void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 {
