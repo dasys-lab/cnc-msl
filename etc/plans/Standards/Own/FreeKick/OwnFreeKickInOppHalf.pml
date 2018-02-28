@@ -40,6 +40,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1464778513652</inTransitions>
+    <inTransitions>#1519832906025</inTransitions>
     <outTransitions>#1464778515443</outTransitions>
   </states>
   <states id="1464535263395" name="Shoot" comment="">
@@ -48,6 +49,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1467265292648</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
+    <outTransitions>#1519832906025</outTransitions>
   </states>
   <states id="1464535682818" name="PositionInsideOppPenalty" comment="" entryPoint="1464532128302">
     <plans xsi:type="alica:BehaviourConfiguration">Pos2Penalty.beh#1465474190742</plans>
@@ -95,6 +97,11 @@
     <preCondition id="1464785280406" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464535263395</inState>
     <outState>#1464785222776</outState>
+  </transitions>
+  <transitions id="1519832906025" name="MISSING_NAME" comment="yikes. for unfortunate ball-losses. maybe delete as soon as pass power is tuned nicely." msg="">
+    <preCondition id="1519832908120" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1464535263395</inState>
+    <outState>#1464535253598</outState>
   </transitions>
   <entryPoints id="1464531946025" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>

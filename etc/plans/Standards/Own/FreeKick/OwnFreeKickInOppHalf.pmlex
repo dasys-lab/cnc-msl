@@ -66,7 +66,9 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464778515443"/>
-    <value/>
+    <value>
+      <bendpoints xPos="1070" yPos="245"/>
+    </value>
   </extensions>
   <extensions>
     <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
@@ -173,6 +175,10 @@
   </extensions>
   <extensions>
     <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1519832906025"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
