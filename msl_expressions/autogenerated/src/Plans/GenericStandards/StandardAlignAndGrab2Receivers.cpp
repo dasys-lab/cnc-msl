@@ -2,16 +2,16 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
 
 /*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
-#include "obstaclehandler/Obstacles.h"
+#include <obstaclehandler/Obstacles.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
@@ -39,7 +39,8 @@ namespace alica
         this->angleIntErr = 0;
         this->trans = 0;
         this->haveBallCounter = 0;
-
+        this->canPassCounter = 1;
+        this->canPassThreshold = 1;
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -51,7 +52,6 @@ namespace alica
     void StandardAlignAndGrab2Receivers::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462368682104) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         // return if necessary information is missing
@@ -59,6 +59,7 @@ namespace alica
         {
             return;
         }
+
         canPass = true;
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
@@ -170,13 +171,24 @@ namespace alica
                 canPass = false;
             }
         }
+        // Hack coimbra 17
         if (canPass)
         {
+            this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
+        }
+        else
+        {
+            this->canPassCounter = max(-4, min(this->canPassCounter - 1, 5));
+        }
+        if (this->canPassCounter > this->canPassThreshold)
+        {
+            this->canPassThreshold = -2;
             cout << "SAAG2R: aiming to receiver" << endl;
             alloTarget = recPos1;
         }
         else
         {
+            this->canPassThreshold = 2;
             cout << "SAAG2R: aiming to alternative receiver" << endl;
             alloTarget = recPos2;
         }
@@ -189,7 +201,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
 //			cout << "SAAG2R: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             if (mc.motion.angle != NAN)
@@ -216,7 +228,7 @@ namespace alica
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
@@ -341,6 +353,9 @@ namespace alica
         this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         string tmp;
         bool success = true;
+        this->canPass = true;
+        this->canPassCounter = 1;
+        this->canPassThreshold = 1;
         try
         {
             success &= getParameter("TeamMateTaskName1", tmp);

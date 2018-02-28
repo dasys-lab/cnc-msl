@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/DribbleToAttackPointConservative.h"
 
 /*PROTECTED REGION ID(inccpp1458132872550) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLFootballField.h>
@@ -30,36 +32,43 @@ namespace alica
     void DribbleToAttackPointConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458132872550) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
         auto dstscan = wm->rawSensorData->getDistanceScan();
 
         if (ownPos == nullptr)
+        {
             return;
+        }
         if (currentTarget == nullptr)
+        {
             trueInitialize();
+        }
         if (currentTarget == nullptr)
+        {
             return;
+        }
         auto egoTarget = currentTarget->alloToEgo(*ownPos);
         if (egoTarget->length() < 1200)
         {
             this->setSuccess(true);
         }
 
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
-        query->dribble = true;
 
-        auto bm = rm.moveToPoint(query);
-        auto tmpMC = rm.ruleActionForBallGetter();
 
+        auto bm = this->robot->robotMovement->moveToPoint(query);
+        auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
         {
             send(tmpMC);
         }
-        send(bm);
+        else if (!std::isnan(bm.motion.translation))
+        {
+            send(bm);
+        } else {
+
+        }
         /*PROTECTED REGION END*/
     }
     void DribbleToAttackPointConservative::initialiseParameters()
@@ -75,7 +84,9 @@ namespace alica
     {
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
+        {
             return;
+        }
 //		Random rand = new Random();
 //		int index = (int)Math.Round(rand.NextDouble()*2.0);
 

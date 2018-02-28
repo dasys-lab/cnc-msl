@@ -2,14 +2,15 @@ using namespace std;
 #include "Plans/Standards/Own/ThrowIn/ReceiveInOppHalf.h"
 
 /*PROTECTED REGION ID(inccpp1462370340143) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
-#include "engine/model/EntryPoint.h"
-#include "engine/constraintmodul/Query.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SystemConfig.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/constraintmodul/Query.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
+#include <SolverType.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
@@ -36,7 +37,6 @@ namespace alica
     void ReceiveInOppHalf::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPose = wm->ball->getAlloBallPosition();
         if (!ownPos || !alloBallPose)
@@ -116,7 +116,7 @@ namespace alica
         mQuery->egoAlignPoint = alloBallPose->alloToEgo(*ownPos);
         mQuery->snapDistance = 100;
         mQuery->additionalPoints = additionalPoints;
-        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(mQuery);
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(mQuery);
 
         send(mc);
         /*PROTECTED REGION END*/

@@ -81,6 +81,7 @@ class LightBarrier;
 class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
+class Calibration;
 class MSLWorldModel
 {
   public:
@@ -105,14 +106,16 @@ class MSLWorldModel
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
 
+    MSLSharedWorldModel *getSharedWorldModel();
     InfoTime getTime();
-    void sendSharedWorldModelData(const ros::TimerEvent& event);
+    void sendSharedWorldModelData();
 
     int getRingBufferLength();
     int getOwnId();
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
+    void setUsingSimulator(bool usingSimulator);
 
     Monitoring *monitoring;
     RawSensorData *rawSensorData;
@@ -125,11 +128,12 @@ class MSLWorldModel
     Obstacles *obstacles;
     Prediction *prediction;
     LightBarrier *lightBarrier;
+    Calibration *calibration;
 
     supplementary::EventTrigger visionTrigger;
-    InfoTime timeLastSimMsgReceived;
 
   private:
+    bool usingSimulator;
     MSLWorldModel();
     virtual ~MSLWorldModel();
 
@@ -140,6 +144,7 @@ class MSLWorldModel
     int ringBufferLength;
     bool maySendMessages;
 
+    MSLSharedWorldModel *sharedWorldModel;
     alica::AlicaEngine *alicaEngine;
 
     ros::NodeHandle n;
@@ -158,7 +163,7 @@ class MSLWorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
-    ros::Timer sharedWorldModelTimer;
+    ros::Publisher processCommandPub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

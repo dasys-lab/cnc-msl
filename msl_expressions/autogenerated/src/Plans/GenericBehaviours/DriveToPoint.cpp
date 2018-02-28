@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/GenericBehaviours/DriveToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1417620568675) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -16,6 +17,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
         query = make_shared<msl::MovementQuery>();
+        this->defaultTranslation = 1000;
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
@@ -26,10 +28,9 @@ namespace alica
     void DriveToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
-        if (!me.operator bool())
+        if (me == nullptr)
         {
             return;
         }
@@ -47,7 +48,7 @@ namespace alica
 //        mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
         //mc.motion.translation = 500;
         //}
 

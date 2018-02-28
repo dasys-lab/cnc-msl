@@ -2,15 +2,19 @@ using namespace std;
 #include "Plans/Behaviours/PositionExecutor.h"
 
 /*PROTECTED REGION ID(inccpp1438790362133) ENABLED START*/ //Add additional includes here
-#include "engine/model/EntryPoint.h"
-#include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
+#include <engine/model/EntryPoint.h>
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
+#include <engine/model/Plan.h>
 
-#include "MSLWorldModel.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <MSLWorldModel.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+
+#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -37,8 +41,6 @@ namespace alica
     void PositionExecutor::run(void* msg)
     {
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -81,16 +83,19 @@ namespace alica
             }
             msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
+            shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
 
             if (receiverPos != nullptr)
             {
                 // calculate target 60cm away from the ball and on a line with the receiver
                 egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * ballDistanceEx))->alloToEgo(*ownPos);
+                egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             }
             else
             {
                 // if there is no receiver, align to middle
                 egoTarget = (alloBall + alloTarget)->alloToEgo(*ownPos);
+                egoAlignPoint = egoBallPos;
             }
 
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
@@ -99,25 +104,25 @@ namespace alica
               // removed with new moveToPoint method
 //                mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
                 query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
+                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = fastCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->fast = true;
-                mc = rm.moveToPoint(query);
+                query->velocityMode = msl::VelocityMode::FAST;
+                mc = this->robot->robotMovement->moveToPoint(query);
             }
             else
             { // still enough time to position ...
 //                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
                 query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoBallPos;
+                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = slowCatchRadius;
                 query->additionalPoints = additionalPoints;
-                query->fast = false;
-                mc = rm.moveToPoint(query);
+                query->velocityMode = msl::VelocityMode::DEFAULT;
+                mc = this->robot->robotMovement->moveToPoint(query);
             }
 
             // if we reached the point and are aligned, the behavior is successful
-            if (mc.motion.translation == 0.0
+            if (egoTarget->length() < 120
                     && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);

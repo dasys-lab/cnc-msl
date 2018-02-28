@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/Attack/CatchPass.h"
 
 /*PROTECTED REGION ID(inccpp1440754525537) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <WhiteBoard.h>
@@ -32,8 +33,6 @@ namespace alica
     void CatchPass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1440754525537) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
@@ -68,7 +67,7 @@ namespace alica
             query->egoDestinationPoint = egoDest;
             query->egoAlignPoint = ballPos;
             query->snapDistance = 100;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
 
             mc.motion.translation = min(mc.motion.translation, trans);
 

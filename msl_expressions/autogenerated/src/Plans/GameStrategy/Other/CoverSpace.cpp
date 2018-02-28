@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/GameStrategy/Other/CoverSpace.h"
 
 /*PROTECTED REGION ID(inccpp1455537892946) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include "container/CNPoint2D.h"
 #include <Ball.h>
 #include <RawSensorData.h>
@@ -29,7 +30,6 @@ namespace alica
     void CoverSpace::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
@@ -76,7 +76,7 @@ namespace alica
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoAlignPoint;
         query->snapDistance = 100;
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))
         {

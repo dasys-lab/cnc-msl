@@ -13,9 +13,11 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs alica_ros_proxy)
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(${QT_USE_FILE})
+find_package(Qt5 REQUIRED Core Gui Network Widgets)
+set(QT_LIBRARIES Qt5::Gui Qt5::Network Qt5::Widgets)
 
 set(msl_refbox_SRCS
   src/msl_refbox/RefBox.cpp
@@ -47,13 +49,15 @@ catkin_package(
 )
 catkin_python_setup()
 
-qt4_wrap_cpp(msl_refbox_MOCS ${msl_refbox_HDRS})
-qt4_wrap_ui(msl_refbox_UIS_H ${msl_refbox_UIS})
+qt5_wrap_cpp(msl_refbox_MOCS ${msl_refbox_HDRS})
+qt5_wrap_ui(msl_refbox_UIS_H ${msl_refbox_UIS})
 
 include_directories(${msl_refbox_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${msl_refbox_SRCS} ${msl_refbox_MOCS} ${msl_refbox_UIS_H})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_LIBRARIES})
 add_dependencies(${PROJECT_NAME} msl_msgs_generate_messages_cpp)
+
+qt5_use_modules(${PROJECT_NAME} Gui Network)
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})

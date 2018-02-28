@@ -2,8 +2,9 @@ using namespace std;
 #include "Plans/Standards/Own/PassIntoPath/ReceivePassIntoPathGeneric.h"
 
 /*PROTECTED REGION ID(inccpp1457531583460) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SolverType.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
+#include <SolverType.h>
 #include <Ball.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
@@ -30,7 +31,6 @@ namespace alica
     void ReceivePassIntoPathGeneric::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457531583460) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getAlloBallPosition();
@@ -61,7 +61,7 @@ namespace alica
 //            mc = msl::RobotMovement::placeRobotCareBall(driveTo, passGoal->alloToEgo(*ownPos), maxVel);
             movQuery->egoDestinationPoint = driveTo;
             movQuery->egoAlignPoint = ballPos;
-            mc = rm.moveToPoint(movQuery);
+            mc = this->robot->robotMovement->moveToPoint(movQuery);
             if (driveTo->length() < 100)
             {
                 mc.motion.translation = 0;

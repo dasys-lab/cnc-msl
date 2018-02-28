@@ -2,7 +2,8 @@ using namespace std;
 #include "Plans/TestPlans/MotorControlTest/PointToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1489068164649) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <RawSensorData.h>
@@ -28,7 +29,6 @@ namespace alica
     void PointToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1489068164649) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
         auto me = this->wm->rawSensorData->getOwnPositionVision();
         auto ballPos = this->wm->ball->getEgoBallPosition();
         if (me == nullptr)
@@ -46,7 +46,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         this->query->egoDestinationPoint = this->egoTarget;
 
-        mc = rm.moveToPoint(query);
+        mc = this->robot->robotMovement->moveToPoint(query);
 
         if (this->egoTarget->length() < 250)
         {

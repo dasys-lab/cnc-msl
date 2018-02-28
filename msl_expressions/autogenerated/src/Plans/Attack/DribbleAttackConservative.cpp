@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/DribbleAttackConservative.h"
 
 /*PROTECTED REGION ID(inccpp1457967322925) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <obstaclehandler/Obstacles.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -15,9 +17,8 @@ namespace alica
             DomainBehaviour("DribbleAttackConservative")
     {
         /*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
-        alloGoalMid = wm->field->posOppGoalMid();
         before = false;
-        this->setTrigger(wm->getVisionDataEventTrigger());
+//        this->setTrigger(wm->getVisionDataEventTrigger());
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -29,25 +30,20 @@ namespace alica
     void DribbleAttackConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-        ;
-        auto ballPos = wm->ball->getEgoBallPosition();
-
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (ownPos == nullptr)
+        if (ownPos == nullptr )
         {
             return;
         }
-
-        auto goalMid = alloGoalMid->alloToEgo(*ownPos);
+        auto tmp = make_shared<geometry::CNPoint2D>(wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
+        auto tragetPoint = tmp->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
-        query->egoDestinationPoint = goalMid;
-        query->dribble = true;
+        query->egoDestinationPoint = tragetPoint;
+        query->egoAlignPoint = tragetPoint;
 
-        auto tmpMC = rm.moveToPoint(query);
+        auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
         if (corner == nullptr && tmpMC.motion.translation != NAN)
         {
@@ -56,9 +52,8 @@ namespace alica
         else
         {
             query->egoDestinationPoint = corner;
-            query->dribble = true;
 
-            auto tmpMC = rm.moveToPoint(query);
+            auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
             if (tmpMC.motion.translation != NAN)
             {
@@ -69,7 +64,7 @@ namespace alica
         }
 
         //if I drive into the enemy goal area
-        msl_actuator_msgs::MotionControl mc = rm.ruleActionForBallGetter();
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->ruleActionForBallGetter();
         if (!std::isnan(mc.motion.translation))
         {
             send(mc);

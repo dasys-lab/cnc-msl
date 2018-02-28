@@ -40,8 +40,6 @@ namespace alica
     void BouncePassShoot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459357144291) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;
-
         ownPos = wm->rawSensorData->getOwnPositionVision(); //WM.OwnPositionCorrected;
         egoBallPos = wm->ball->getEgoBallPosition();
         msl_actuator_msgs::MotionControl mc;
@@ -49,7 +47,7 @@ namespace alica
 
         if (ownPos == nullptr)
         {
-            mc = rm.driveRandomly(2000.0);
+            mc = this->robot->robotMovement->driveRandomly(2000.0);
             send(mc);
             return;
         }
@@ -68,14 +66,11 @@ namespace alica
         auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
         auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, 0);
 
-        //this might only need to be WorldHelper.HaveBall
         if (!wm->ball->haveBallDribble(false))
         {
-            // removed method with new  moveToPoint method with Query-Object
-//            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoMatePos;
-            mc = rm.moveToPoint(query);
+            mc = this->robot->robotMovement->moveToPoint(query);
             mc.motion.translation = driveSlowSpeed;
 
             bhc.leftMotor = 80;

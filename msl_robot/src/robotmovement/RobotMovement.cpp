@@ -1,25 +1,19 @@
-/*
- * RobotMovement.cpp *
- *
- *  Created on: 17.12.2014
- *      Author: tobi
- */
-
 #include "msl_robot/robotmovement/RobotMovement.h"
-#include "Ball.h"
 #include "GeometryCalculator.h"
 #include "MSLFootballField.h"
-#include "MSLWorldModel.h"
-#include "RawSensorData.h"
-#include "Robots.h"
 #include "container/CNPoint2D.h"
 #include "msl_robot/kicker/Kicker.h"
 #include "msl_robot/robotmovement/AlloSearchArea.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
 #include "msl_robot/robotmovement/SearchArea.h"
 #include "obstaclehandler/Obstacles.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <Ball.h>
+#include <MSLEnums.h>
+#include <MSLWorldModel.h>
+#include <RawSensorData.h>
+#include <Robots.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 
 #include <SystemConfig.h>
 
@@ -37,21 +31,19 @@ double RobotMovement::assume_enemy_velo = 4500;
 double RobotMovement::assume_ball_velo = 5000;
 double RobotMovement::interceptQuotient = RobotMovement::assume_ball_velo / RobotMovement::assume_enemy_velo;
 double RobotMovement::robotRadius = 300;
+// 0.15 is fix and may not be changed -> fastest acceleration without overshoot
+double RobotMovement::asymptoticGain = 0.15;
+
+RobotMovement *RobotMovement::get()
+{
+    static RobotMovement instance;
+    return &instance;
+}
 
 RobotMovement::RobotMovement()
 {
     this->wm = MSLWorldModel::get();
     this->pp = PathProxy::getInstance();
-
-    double defaultTranslation = 0;
-    double defaultRotateP = 0;
-    double fastTranslation = 0;
-    double fastRotation = 0;
-
-    double rotationP = 0;
-    double rotationD = 0;
-    double transP = 0;
-    double transI = 0;
 
     readConfigParameters();
 }
@@ -59,8 +51,6 @@ RobotMovement::RobotMovement()
 RobotMovement::~RobotMovement()
 {
 }
-
-// new RobotMovement ===========================================================================================
 
 /**
  * Uses MovementQuery with Parameters
@@ -72,12 +62,7 @@ RobotMovement::~RobotMovement()
  * @param egoAlignPoint
  * @param snapDistance
  * @param additionalPoints
- * @param fast
- *
- * @param dribble
- * if dribble == true you can adapt the rotation and translation PD parameters for
- * query->curTransDribble
- * query->curRotDribble
+ * @param velocityMode -> from type msl::MovementQuery::Velocity
  *
  */
 msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> query)
@@ -99,41 +84,52 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
         egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, query->pathEval, query->getPathPlannerQuery());
     }
 
-    // ANGLE
-    mc.motion.angle = egoTarget->angleTo();
+    // ROTATION
+    if (query->egoAlignPoint != nullptr)
+    {
+        mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo();
+    }
+    else
+    {
+        mc.motion.rotation = 0;
+    }
 
     // TRANSLATION
     if (egoTarget->length() > query->snapDistance)
     {
-        mc.motion.translation = min(egoTarget->length(), (query->fast ? this->fastTranslation : this->defaultTranslation));
+
+        mc.motion.translation = egoTarget->length();
     }
     else
     {
+        cout << "RobotMovement::stopTranslation called" << endl;
         mc.motion.translation = 0;
+        stopTranslation();
     }
 
-    // ROTATION
-    if (query->egoAlignPoint != nullptr)
+    if (this->pastControlInput.empty() || this->pastControlledValues.empty())
     {
-        mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * (query->fast ? this->fastRotation : this->defaultRotateP);
+        initializePTControllerParameters();
     }
 
-    // dribble behavior -> used from dribbleToPointConservative ==============================================
-    if (query->dribble)
+    std::valarray<double> controlledValues = ptController(query, mc.motion.translation, mc.motion.rotation);
+    double maxTranslation = this->defaultTranslation;
+
+    if (query->velocityMode == VelocityMode::FAST)
     {
-        mc.motion.rotation = query->rotationPDForDribble(egoTarget);
-        double rotPointDist = 350.0;
-        if (auto ballPos = wm->ball->getEgoBallPosition())
-        {
-            rotPointDist = min(rotPointDist, ballPos->length()); // the point around which we rotate
-        }
-
-        double transOrt = mc.motion.rotation * rotPointDist; // the translation corresponding to the curve we drive
-
-        mc.motion.translation = query->translationPIForDribble(transOrt);
-        double toleranceDist = 500;
-        mc.motion.angle = query->angleCalcForDribble(transOrt);
+        maxTranslation = this->fastTranslation;
     }
+    else if (query->velocityMode == VelocityMode::CAREFULLY)
+    {
+        maxTranslation = this->carefullyTranslation;
+    }
+
+    mc.motion.translation = min(controlledValues[0], maxTranslation);
+
+    mc.motion.rotation = controlledValues[1]; // for PT
+
+    // angle correction to respect anlge change through rotation
+    mc.motion.angle = egoTarget->angleTo() - mc.motion.rotation * this->sampleTime; // 1/30 s= time step , time step * omega = phi
 
 #ifdef RM_DEBUG
     cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -143,76 +139,55 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
 
 msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
 {
-    cout << "RobotMovement::alignTo()" << endl;
+    MotionControl mc;
+    //	auto egoBallPos = wm->ball->getEgoBallPosition();
+
     if (m_Query == nullptr)
     {
-        cerr << "RobotMovement::alignTo() -> MovementQuery == nullptr" << endl;
+        cerr << "RobotMovement:alignTo: query is nullptr!" << endl;
         return setNAN();
     }
-
     if (m_Query->egoAlignPoint == nullptr)
     {
-        cerr << "RobotMovement::alignTo() -> egoAlignPoint -> nullptr" << endl;
+        cerr << "RobotMovement:alignTo: egoAlignPoint is nullptr!" << endl;
         return setNAN();
     }
-
-    MotionControl mc;
-
-    mc.motion.translation = 0;
-    mc.motion.angle = 0;
-    mc.motion.rotation = m_Query->rotationPDForDribble(m_Query->egoAlignPoint);
+    //	if (egoBallPos == nullptr)
+    //	{
+    //		cerr << "RobotMovement:experimentallyAlignTo: egoBallPos is nullptr!" << endl;
+    //		return setNAN();
+    //	}
 
     if (m_Query->rotateAroundTheBall)
     {
-        //			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
-        if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+        if (m_Query->egoAlignPoint->y > 0)
         {
-            //#ifdef RM_DEBUG
-            cout << "RobotMovement::alignTo(): rotate around the ball" << endl;
-            //#endif
-
-            if (wm->ball->getEgoBallPosition() == nullptr)
-            {
-                cerr << "RobotMovement::alignTo(): egoBallPosition == nullptr" << endl;
-                return setNAN();
-            }
-
-            // setting parameters for controller
-            m_Query->setRotationPDParameters(rotationP, rotationD);
-            m_Query->setTranslationPIParameters(transP, transI);
-
-            m_Query->additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-            m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
-
-            shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
-            if (m_Query->pathEval == nullptr)
-            {
-                egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, make_shared<PathEvaluator>(), m_Query->getPathPlannerQuery());
-            }
-            else
-            {
-                egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, m_Query->pathEval, m_Query->getPathPlannerQuery());
-            }
-
-            //				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-            //				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval,
-            //																						m_Query->additionalPoints);
-
-            mc.motion.rotation = m_Query->rotationPDForDribble(egoTarget);
-            double rotPointDist = 350.0;
-
-            if (auto ballPos = wm->ball->getEgoBallPosition())
-            {
-                rotPointDist = min(rotPointDist, ballPos->length()); // the point around which we rotate
-            }
-
-            double transOrt = mc.motion.rotation * rotPointDist; // the translation corresponding to the curve we drive
-
-            mc.motion.translation = m_Query->translationPIForDribble(transOrt);
-            //				double toleranceDist = 500;
-            mc.motion.angle = m_Query->egoAlignPoint->angleTo() < 0 ? M_PI / 2 : (M_PI + M_PI / 4);
-            //			mc.motion.angle = m_Query->angleCalcForDribble(transOrt);
+            // rigth = 1.57079632679
+            mc.motion.angle = (0.5 * M_PI);
         }
+        else
+        {
+            // left = 4.71238898038
+            mc.motion.angle = (1.5 * M_PI);
+        }
+
+        mc.motion.angle = mc.motion.angle * M_PI;
+        cout << "angle: " << mc.motion.angle << endl;
+        // right rotation is negative
+        // left rotation is positive
+        double rotation = m_Query->egoAlignPoint->angleTo();
+        mc.motion.rotation = rotation * -1;
+        cout << "rotation: " << mc.motion.rotation << endl;
+        cout << "egoAlignPoint: =" << m_Query->egoAlignPoint->x << " y=" << m_Query->egoAlignPoint->y << endl;
+        // for testing ... maybe you can use the pt-controller
+        // TODO need to stop if angle is good
+        mc.motion.translation = 1000;
+    }
+    else
+    {
+        MotionControl newMC = moveToPoint(m_Query);
+        newMC.motion.translation = 0;
+        mc = newMC;
     }
     return mc;
 }
@@ -304,7 +279,7 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
     }
     //#ifdef RM_DEBUG
     //		cout << "RobotMovement::ruleActionForBallGetter: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " <<
-    //mc.motion.rotation << endl;
+    // mc.motion.rotation << endl;
     //#endif
     return setNAN();
 }
@@ -362,6 +337,7 @@ msl_actuator_msgs::MotionControl RobotMovement::placeRobot(shared_ptr<geometry::
 
             mc = moveToPoint(query);
         }
+
 #ifdef RM_DEBUG
         cout << "RobotMovement::placeRobot: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
 #endif
@@ -477,7 +453,6 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(shared_ptr<Movem
     shared_ptr<MovementQuery> q = make_shared<MovementQuery>();
     q->egoDestinationPoint = dest;
     q->egoAlignPoint = align;
-    q->fast = true;
     mc = moveToPoint(q);
 #ifdef RM_DEBUG
     cout << "RobotMovementmoveToFreeSpace: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -607,15 +582,120 @@ msl_actuator_msgs::MotionControl RobotMovement::setNAN()
 void RobotMovement::readConfigParameters()
 {
     supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
-    defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
-    defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
-    fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
-    fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
+    this->carefullyTranslation = (*sc)["Drive"]->get<double>("Drive.Carefully.Velocity", NULL);
+    this->defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
+    this->fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
+    this->carefullyRotation = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
+    this->defaultRotation = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+    this->fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
+    this->carefullyControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.CarefullyControllerVelocity", NULL);
+    this->defaultControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.DefaultControllerVelocity", NULL);
+    this->fastControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.FastControllerVelocity", NULL);
+}
 
-    // for alignTo()
-    rotationD = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.RotationD", NULL);
-    rotationP = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.RotationP", NULL);
-    transI = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.TranslationI", NULL);
-    transP = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.TranslationP", NULL);
+/**
+ * Initializes the PTController by fillingits queues with vectroes of zeros
+ */
+void RobotMovement::initializePTControllerParameters()
+{
+//    std::cout << "initializePTControllerParameters called" << std::endl;
+    clearPTControllerQueues();
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlInput.push(std::valarray<double>({0.0, 0.0}));
+}
+
+/**
+ * Sets all values to zero
+ */
+void RobotMovement::stopTranslation()
+{
+    this->pastControlledValues.front()[0] = 0.0;
+    this->pastControlledValues.back()[0] = 0.0;
+    this->pastControlInput.front()[0] = 0.0;
+    this->pastControlInput.back()[0] = 0.0;
+}
+
+/**
+ * Removes all vectors from controll queues
+ */
+void RobotMovement::clearPTControllerQueues()
+{
+    std::cout << "clear called" << std::endl;
+    while (!pastControlInput.empty())
+    {
+        pastControlInput.pop();
+    }
+    while (!pastControlledValues.empty())
+    {
+        pastControlledValues.pop();
+    }
+}
+
+
+/**
+ * Updates PTController values to external controller values
+ * Is used by DomainBehaviour::sendAndUpdatePT
+ */
+void RobotMovement::updatePT()
+{
+    auto odom = this->wm->rawSensorData->getOwnVelocityMotion();
+    auto mc = this->wm->rawSensorData->getLastMotionCommand();
+    if (odom == nullptr)
+    {
+        initializePTControllerParameters();
+    }
+    clearPTControllerQueues();
+    this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+    this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+    if (mc == nullptr)
+    {
+        this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
+        this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
+    }
+    else
+    {
+        this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
+        this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
+    }
+}
+
+/**
+ * PT-Controller for smooth translation acceleration
+ */
+std::valarray<double> RobotMovement::ptController(shared_ptr<MovementQuery> query, double targetDistance, double angleError)
+{
+    // slope variable
+    double controllerVelocity = this->defaultControllerVelocity;
+    if (query->velocityMode == VelocityMode::FAST)
+    {
+        controllerVelocity = this->fastControllerVelocity;
+    }
+    else if (query->velocityMode == VelocityMode::CAREFULLY)
+    {
+        controllerVelocity = this->carefullyControllerVelocity;
+    }
+
+    targetDistance = targetDistance * this->asymptoticGain * controllerVelocity;
+    angleError = angleError * this->asymptoticGain * controllerVelocity;
+    this->pastControlInput.push(std::valarray<double>({targetDistance, angleError}));
+
+    // sending frequency
+
+    double numerator1 = 1.0 - exp(-controllerVelocity * this->sampleTime) - exp(-controllerVelocity * this->sampleTime) * controllerVelocity * this->sampleTime;
+    double numerator2 = exp(-2 * controllerVelocity * this->sampleTime) - exp(-controllerVelocity * this->sampleTime) +
+                        exp(-controllerVelocity * this->sampleTime) * this->sampleTime * controllerVelocity;
+
+    double denominator1 = -2 * exp(-controllerVelocity * this->sampleTime);
+    double denominator2 = exp(-2 * controllerVelocity * this->sampleTime);
+
+    this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
+    this->pastControlledValues.back() += numerator2 * this->pastControlInput.front() - denominator2 * this->pastControlledValues.front();
+    this->pastControlInput.pop();
+    this->pastControlledValues.pop();
+    this->pastControlledValues.back() += numerator1 * this->pastControlInput.front() - denominator1 * this->pastControlledValues.front();
+
+    return this->pastControlledValues.back();
 }
 }

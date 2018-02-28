@@ -223,9 +223,11 @@ namespace alica
             if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
             {
                 validGoalPoints.push_back(egoAim);
+                //std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
             }
             aim->y += 2 * abs(y) / samplePoints;
         }
+
         if (validGoalPoints.size() > 0)
         {
             shared_ptr < geometry::CNPoint2D > ret = nullptr;

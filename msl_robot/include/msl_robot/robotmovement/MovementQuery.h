@@ -1,54 +1,45 @@
-/*
- * MovementQuery.h
- *
- *  Created on: Apr 27, 2016
- *      Author: Michael Gottesleben
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_
-
+#pragma once
 #include "Ball.h"
 #include "GeometryCalculator.h"
 #include "RobotMovement.h"
 #include "SystemConfig.h"
 #include "msl_actuator_msgs/MotionControl.h"
+#include "valarray"
+#include "queue"
+#include <MSLEnums.h>
 
 using namespace std;
 using namespace msl_actuator_msgs;
 namespace msl
 {
-class MSLWorldModel;
-class MSLRobot;
-class IPathEvaluator;
-class PathPlannerQuery;
-class MovementQuery
-{
-    friend class msl::RobotMovement;
+    class MSLWorldModel;
+    class MSLRobot;
+    class IPathEvaluator;
+    class PathPlannerQuery;
+    class MovementQuery
+    {
+        friend class msl::RobotMovement;
 
-  public:
-    MovementQuery();
-    virtual ~MovementQuery();
+    public:
+        MovementQuery();
+        virtual ~MovementQuery();
+        /**
+         * Define the alignment at the egoDestinationPoint
+         */
+        shared_ptr<geometry::CNPoint2D> egoAlignPoint;
+        /**
+         * Point the robot is supposed to reach
+         */
+        shared_ptr<geometry::CNPoint2D> egoDestinationPoint;
+        /**
+         * Obstacles added to the PathPlanner’s Voronoi Diagram
+         */
+        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
+
     /**
-     * Define the alignment at the egoDestinationPoint
+     * Velocity enum to decide how fast we want do go
      */
-    shared_ptr<geometry::CNPoint2D> egoAlignPoint;
-    /**
-     * Point the robot is supposed to reach
-     */
-    shared_ptr<geometry::CNPoint2D> egoDestinationPoint;
-    /**
-     * Obstacles added to the PathPlanner’s Voronoi Diagram
-     */
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
-    /**
-     * FastTranslation or DefaultTranslation (Motion.conf)
-     */
-    bool fast;
-    /**
-     * Robot is dribbeling the ball
-     */
-    bool dribble;
+    VelocityMode velocityMode;
     /**
      * Distance when the goal is reached
      */
@@ -116,46 +107,15 @@ class MovementQuery
      */
     shared_ptr<PathPlannerQuery> getPathPlannerQuery();
 
-  protected:
+protected:
     double circleRadius;
     shared_ptr<geometry::CNPoint2D> circleCenterPoint;
     shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
     shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
-    void resetAllPIDParameters();
-    void resetRotationPDParameters();
-    void resetTransaltionPIParameters();
-    double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
-    double translationPIForDribble(double transOrt);
-    double angleCalcForDribble(double transOrt);
 
-    void setRotationPDParameters(double pParam, double dParam);
-    void setTranslationPIParameters(double pParam, double iParam);
 
-    double curRotDribble;
-    double curTransDribble;
-
-  private:
+private:
     MSLWorldModel *wm;
-    MSLRobot *robot;
 
-    // PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
-    double pRot;
-    double dRot;
-    double rotAccStep;
-    double maxRot;
-    double lastRotDribbleErr;
-
-    // PD variables for RobotMovement::moveToPoint() and RobotMovement::translationDribblePD()
-    double maxVel;
-    double angleDeadBand;
-    double iTrans;
-    double transControlIntegralMax;
-    double pTrans;
-    double transAccStep;
-    double transDecStep;
-    double transControlIntegralDribble;
-
-    void readConfigParameters();
 };
 }
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_ */
