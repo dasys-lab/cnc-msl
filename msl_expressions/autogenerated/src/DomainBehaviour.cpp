@@ -19,6 +19,7 @@ namespace alica
 			BasicBehaviour(name)
 	{
 		this->sc = supplementary::SystemConfig::getInstance();
+		this->logger = msl::Logger::getInstance();
 		this->ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
 		this->wm = msl::MSLWorldModel::get();

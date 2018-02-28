@@ -24,6 +24,7 @@ namespace supplementary {
 namespace msl{
 	class MSLRobot;
 	class MSLWorldModel;
+	class Logger;
 }
 
 namespace alica
@@ -43,6 +44,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_helper_msgs::DebugMsg& dbm);
 		msl::MSLRobot* robot;
 		msl::MSLWorldModel* wm;
+		msl::Logger* logger;
 
 	protected:
 		supplementary::SystemConfig* sc;

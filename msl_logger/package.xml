@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>msl_logger</name>
+  <version>0.0.0</version>
+  <description>The msl_logger package</description>
+
+  <maintainer email="stefan@todo.todo">stefan</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
+  <depend>msl_worldmodel</depend>
+  <depend>system_config</depend>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
