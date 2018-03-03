@@ -135,4 +135,8 @@
     <key href="OwnKickOff.pml#1469455112199"/>
     <value xPos="484" yPos="523"/>
   </extensions>
+  <extensions>
+    <key href="../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

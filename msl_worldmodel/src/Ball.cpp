@@ -486,8 +486,8 @@ void Ball::updateHaveBall() {
 
 	// check distance to ball
 	if ((KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length()
-			&& wm->timeLastSimMsgReceived == 0)
-			|| (wm->timeLastSimMsgReceived > 0
+			&& !wm->isUsingSimulator())
+			|| (wm->isUsingSimulator()
 					&& KICKER_DISTANCE_SIMULATOR < ballPos->length())) {
 		// if you lost the ball, further pretend that you have it for at most 2 iterations
 		hasBallIteration = max(
@@ -707,14 +707,14 @@ bool Ball::simpleHaveBallDribble(bool hadBefore) {
 
 	if (hadBefore) {
 		if ((KICKER_DISTANCE + haveDistance < ballDist
-				&& wm->timeLastSimMsgReceived == 0)
+				&& !wm->isUsingSimulator())
 				|| (KICKER_DISTANCE_SIMULATOR + haveDistance < ballPos->length()
-						&& wm->timeLastSimMsgReceived > 0)) {
+						&& wm->isUsingSimulator())) {
 			ret = false;
 		}
-	} else if ((KICKER_DISTANCE < ballDist && wm->timeLastSimMsgReceived == 0)
+	} else if ((KICKER_DISTANCE < ballDist && !wm->isUsingSimulator())
 			|| (KICKER_DISTANCE_SIMULATOR < ballPos->length()
-					&& wm->timeLastSimMsgReceived > 0)) {
+					&& wm->isUsingSimulator())) {
 		ret = false;
 	}
 	usedKicker = KICKER_ANGLE;

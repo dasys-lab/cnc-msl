@@ -108,6 +108,7 @@ class MSLWorldModel
     supplementary::ITrigger *getVisionDataEventTrigger();
 
     bool isUsingSimulator();
+    void setUsingSimulator(bool usingSimulator);
 
     Monitoring *monitoring;
     RawSensorData *rawSensorData;
@@ -121,12 +122,11 @@ class MSLWorldModel
     Prediction *prediction;
     LightBarrier *lightBarrier;
     Calibration *calibration;
-    msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
 
     supplementary::EventTrigger visionTrigger;
-    InfoTime timeLastSimMsgReceived;
 
   private:
+    bool usingSimulator;
     MSLWorldModel();
     virtual ~MSLWorldModel();
 

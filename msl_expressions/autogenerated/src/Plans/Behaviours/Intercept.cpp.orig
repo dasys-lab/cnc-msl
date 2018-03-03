@@ -7,10 +7,13 @@ using namespace std;
 #include <Game.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <pathplanner/PathProxy.h>
+#include <pathplanner/PathPlanner.h>
 #include <container/CNVelocity2D.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+#include <pathplanner/PathPlannerQuery.h>
+#include <stdio.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -41,6 +44,8 @@ namespace alica
         pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
         pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
+        minDistErr = (*sc)["Drive"]->get<double>("Drive.Intercept.minDistErr", NULL);
+
         maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
         query = make_shared<msl::MovementQuery>();
@@ -65,7 +70,8 @@ namespace alica
         }
 
         auto egoBallPos = this->wm->ball->getEgoBallPosition();
-        if (!egoBallPos)
+        auto od = this->wm->rawSensorData->getCorrectedOdometryInfo();
+        if (!egoBallPos || !od)
         {
             return;
         }
@@ -88,116 +94,6 @@ namespace alica
 
             this->query->egoDestinationPoint = egoTarget;
             this->query->egoAlignPoint = egoBallPos;
-            mc = this->robot->robotMovement->moveToPoint(query);
-            if (egoTarget->length() < catchRadius)
-            {
-                mc.motion.translation = 0;
-            }
-
-            send(mc);
-            return;
-        }
-
-        // PID controller for minimizing the distance between ball and me
-        double distErr = egoBallPos->length();
-        double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
-
-        distIntErr += distErr;
-        distIntErr = max(-1000.0, min(1000.0, distIntErr));
-        lastDistErr = distErr;
-
-        shared_ptr < geometry::CNPoint2D > egoVelocity;
-        auto currentGameState = this->wm->game->getGameState();
-        if (currentGameState == msl::GameState::OppBallPossession)
-        {
-            egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
-        }
-        else
-        {
-            egoVelocity = egoBallVel->getPoint();
-        }
-        egoVelocity->x += controlDist * cos(egoBallPos->angleTo());
-        egoVelocity->y += controlDist * sin(egoBallPos->angleTo());
-
-        auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoBallPos->length());
-        auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-        if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
-        {
-            //pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
-            pathPlanningPoint = this->wm->field->mapInsideField((alloDest, alloBall - alloDest))->alloToEgo(*ownPos);
-        }
-
-        shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
-        auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval);
-        if (pathPlanningResult == nullptr)
-        {
-            mc.motion.angle = pathPlanningPoint->angleTo();
-        }
-        else
-        {
-            mc.motion.angle = pathPlanningResult->angleTo();
-        }
-
-        if (pathPlanningResult->distanceTo(pathPlanningPoint) > 10.0)
-        {
-            mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
-        }
-        else
-        {
-            mc.motion.translation = min(this->maxVel, pathPlanningPoint->length());
-        }
-
-        // PID controller for minimizing the kicker angle to ball
-        double angleGoal = msl::Kicker::kickerAngle;
-        double rotErr = geometry::deltaAngle(angleGoal, egoBallPos->angleTo());
-        double controlRot = rotErr * prot + rotIntErr * pirot + (rotErr - lastRotErr) * pdrot;
-        controlRot = max(-4 * M_PI, min(4 * M_PI, controlRot));
-
-        rotIntErr += rotErr;
-        rotIntErr = max(-2 * M_PI, min(2 * M_PI, rotIntErr));
-        lastRotErr = rotErr;
-
-        // this is nice stuff but only when we are not approaching the opponent
-        if (egoBallPos->length() < 700
-                && (currentGameState == msl::GameState::OwnBallPossession
-                        || currentGameState == msl::GameState::NobodyInBallPossession))
-        {
-            controlRot *= 2.3;
-            //we probably translate to fast and cannot rotate anymore: So translate slower
-            if (abs(rotErr) > M_PI / 6)
-            {
-                mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
-            }
-        }
-        mc.motion.rotation = controlRot;
-
-        // Special handling for things around critical areas
-        auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
-        if (!std::isnan(tmpMC.motion.translation))
-        {
-            send(tmpMC);
-        }
-        else
-        {
-            send(mc);
-        }
-
-        if (this->wm->ball->haveBallDribble(false))
-        {
-            this->setSuccess(true);
-        }
-        /*PROTECTED REGION END*/
-    }
-    void Intercept::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
-        lastDistErr = 0;
-        distIntErr = 0;
-
-        lastRotErr = 0;
-        rotIntErr = 0;
-        /*PROTECTED REGION END*/
-    }
 =======
 	/*PROTECTED REGION ID(staticVars1458757170147) ENABLED START*/ //initialise static variables here
 	/*PROTECTED REGION END*/
@@ -216,6 +112,7 @@ namespace alica
 
 		maxBallVelocity = (*sc)["Drive"]->get<double>("Drive.Intercept.MaxBallVelocity", NULL);
 		catchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+		mapInFieldOffset = (*sc)["Drive"]->get<double>("Drive.Intercept.mapInFieldOffset", NULL);
 
 		prot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationP", NULL);
 		pirot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationI", NULL);
@@ -225,7 +122,12 @@ namespace alica
 		pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
 		pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
+		minDistErr = (*sc)["Drive"]->get<double>("Drive.Intercept.minDistErr", NULL);
+
 		maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
+
+		predictionTimestep = (*sc)["Drive"]->get<double>("Drive.Intercept.predictionTimestep", NULL);
+		predictionHorizon = (*sc)["Drive"]->get<int>("Drive.Intercept.predictionHorizon", NULL);
 
 		query = make_shared<msl::MovementQuery>();
 		/*PROTECTED REGION END*/
@@ -266,16 +168,18 @@ namespace alica
 		}
 
 		// Ball is outside field, so drive to its position mapped into field
+		// Emergency-stop
 		auto alloBall = egoBallPos->egoToAllo(*ownPos);
 		if (!this->wm->field->isInsideField(alloBall))
 		{
-			auto egoTarget = this->wm->field->mapInsideField(alloBall)->alloToEgo(*ownPos);
+			auto egoTarget = this->wm->field->mapInsideField(alloBall, mapInFieldOffset)->alloToEgo(*ownPos);
 
 			this->query->egoDestinationPoint = egoTarget;
 			this->query->egoAlignPoint = egoBallPos;
-			auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			additonalPopints->push_back(alloBall);
-			this->query->additionalPoints = additonalPopints;
+>>>>>>> 40d146dc84eda1cc147ad36f50f3c867d0a372e9
+//            auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//            additonalPopints->push_back(alloBall);
+//            this->query->additionalPoints = additonalPopints;
 			mc = this->robot->robotMovement->moveToPoint(query);
 			if (egoTarget->length() < catchRadius)
 			{
@@ -287,60 +191,125 @@ namespace alica
 		}
 
 		shared_ptr<geometry::CNPoint2D> predBall = make_shared<geometry::CNPoint2D>(egoBallPos->x, egoBallPos->y);
+//		if (egoBallVel->length() > 4000.0)
+//		{
+<<<<<<< HEAD
+        shared_ptr < geometry::CNPosition > predPos = make_shared < geometry::CNPosition > (0.0, 0.0, 0.0);
+        const double timestep = 33;
+        double rot = od->motion.rotation * timestep / 1000.0;
+        for (int i = 1; i < 5; i++)
+        {
+            predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+            predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+            predPos->theta += rot;
+
+            predBall->x += egoBallVel->x * timestep / 1000.0;
+            predBall->y += egoBallVel->y * timestep / 1000.0;
+
+            if (predBall->distanceTo(predPos) < 250 + 110) //robotRadius+ballRadius
+            {
+                break;
+            }
+        }
+
+        //TODO dirty fix to avoid crashing into the surrounding
+        if (!this->wm->field->isInsideField(predPos->getPoint()))
+        {
+            msl_actuator_msgs::MotionControl mc;
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+            send(mc);
+            return;
+        }
+//		}
+        // PID controller for minimizing the distance between ball and me
+        auto egoPredBall = predBall->alloToEgo(*predPos);
+        double distErr = max(egoPredBall->length(), minDistErr);
+        double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
+
+        distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
+        distIntErr = max(0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
+        lastDistErr = distErr;
+
+        shared_ptr < geometry::CNPoint2D > egoVelocity;
+        auto currentGameState = this->wm->game->getGameState();
+        if (currentGameState == msl::GameState::OppBallPossession)
+        {
+            egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
+        }
+        else
+        {
+            egoVelocity = egoBallVel->getPoint();
+        }
+=======
 		shared_ptr<geometry::CNPosition> predPos = make_shared<geometry::CNPosition>(0.0, 0.0, 0.0);
-		double timestep = 33;
-		double rot = od->motion.rotation * timestep / 1000.0;
-		for (int i = 1; i * timestep < 160; i++)
+		double rot = od->motion.rotation * predictionTimestep / 1000.0;
+
+		for (int i = 1; i < predictionHorizon; i++)
 		{
-			if (i > 6)
-			{
-				break;
-			}
-			predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
-			predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+			predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * predictionTimestep / 1000.0;
+			predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * predictionTimestep / 1000.0;
 			predPos->theta += rot;
 
-			predBall->x += egoBallVel->x * timestep / 1000.0;
-			predBall->y += egoBallVel->y * timestep / 1000.0;
+			predBall->x += egoBallVel->x * predictionTimestep / 1000.0;
+			predBall->y += egoBallVel->y * predictionTimestep / 1000.0;
 
-			if (predBall->distanceTo(predPos) < 250 + 110) //robotRadius+ballRadius
+			if (predBall->distanceTo(predPos) < wm->pathPlanner->getRobotRadius() + wm->ball->getBallDiameter() / 2) //robotRadius+ballRadius
 			{
 				break;
 			}
 		}
 
-		predBall->alloToEgo(*predPos);
+//        auto egoPredBall = predBall->alloToEgo(*predPos);
+		//to avoid crashing into the surrounding
+		if (!this->wm->field->isInsideField(predPos->getPoint()))
+		{
+			msl_actuator_msgs::MotionControl mc;
+			mc.motion.angle = 0;
+			mc.motion.rotation = 0;
+			mc.motion.translation = 0;
+			sendAndUpdatePT(mc);
+			return;
+		}
+//		}
 		// PID controller for minimizing the distance between ball and me
-		double distErr = predBall->length();
+		double distErr = max(predBall->length(), minDistErr);
 		double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
-		distIntErr += distErr;
-		distIntErr = max(-1000.0, min(1000.0, distIntErr));
+		distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
+		distIntErr = max(0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
 		lastDistErr = distErr;
 
-		shared_ptr<geometry::CNPoint2D> egoVelocity;
+		shared_ptr<geometry::CNPoint2D> ballVelocity;
 		auto currentGameState = this->wm->game->getGameState();
 		if (currentGameState == msl::GameState::OppBallPossession)
 		{
-			egoVelocity = make_shared<geometry::CNPoint2D>(0, 0);
+			ballVelocity = make_shared<geometry::CNPoint2D>(0, 0);
 		}
 		else
 		{
-			egoVelocity = egoBallVel->getPoint();
+			ballVelocity = egoBallVel->getPoint();
 		}
-		egoVelocity->x += controlDist * cos(predBall->angleTo());
-		egoVelocity->y += controlDist * sin(predBall->angleTo());
+>>>>>>> 40d146dc84eda1cc147ad36f50f3c867d0a372e9
+//		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+		ballVelocity->x += controlDist * cos(predBall->angleTo());
+		ballVelocity->y += controlDist * sin(predBall->angleTo());
+//		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
-		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
+		auto pathPlanningPoint = ballVelocity->normalize() * min(ballVelocity->length(), predBall->length());
 		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-		if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
+		if (this->wm->field->isInsideField(alloBall, -mapInFieldOffset) && !this->wm->field->isInsideField(alloDest))
 		{
 			//pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
-			pathPlanningPoint = this->wm->field->mapInsideField((alloDest, alloBall - alloDest))->alloToEgo(*ownPos);
+			pathPlanningPoint = this->wm->field->mapInsideField(alloDest, alloBall - alloDest)->alloToEgo(*ownPos);
 		}
 
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
-		auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval);
+		shared_ptr<msl::PathPlannerQuery> query = make_shared<msl::PathPlannerQuery>();
+		query->blockOppGoalArea = true;
+		query->blockOwnGoalArea = true;
+		auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval, query);
 		if (pathPlanningResult == nullptr)
 		{
 			mc.motion.angle = pathPlanningPoint->angleTo();
@@ -350,14 +319,7 @@ namespace alica
 			mc.motion.angle = pathPlanningResult->angleTo();
 		}
 
-		if (pathPlanningResult->distanceTo(pathPlanningPoint) > 10.0)
-		{
-			mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
-		}
-		else
-		{
-			mc.motion.translation = min(this->maxVel, pathPlanningPoint->length());
-		}
+		mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), ballVelocity->length()));
 
 // PID controller for minimizing the kicker angle to ball
 		double angleGoal = msl::Kicker::kickerAngle;
@@ -370,31 +332,54 @@ namespace alica
 		lastRotErr = rotErr;
 
 // this is nice stuff but only when we are not approaching the opponent
+<<<<<<< HEAD
+        if (egoBallPos->length() < 700
+                && (currentGameState == msl::GameState::OwnBallPossession
+                        || currentGameState == msl::GameState::NobodyInBallPossession))
+        {
+            controlRot *= 2.3;
+            //we probably translate to fast and cannot rotate anymore: So translate slower
+            if (fabs(rotErr) > M_PI / 6)
+            {
+                mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+            }
+        }
+        mc.motion.rotation = controlRot;
+        printf("98jewc | %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f %5.5f\n", rotErr, prot, rotIntErr, pirot, lastRotErr,
+               pdrot, controlRot);
+=======
 		if (egoBallPos->length() < 700
 				&& (currentGameState == msl::GameState::OwnBallPossession
 						|| currentGameState == msl::GameState::NobodyInBallPossession))
 		{
 			controlRot *= 2.3;
-			//we probably translate to fast and cannot rotate anymore: So translate slower
-			if (abs(rotErr) > M_PI / 6)
+			//we probably translate too fast and cannot rotate anymore: So translate slower
+			if (fabs(rotErr) > M_PI / 6)
 			{
-				mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+				mc.motion.translation *= min((fabs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
 			}
 		}
 		mc.motion.rotation = controlRot;
+>>>>>>> 40d146dc84eda1cc147ad36f50f3c867d0a372e9
 
 // Special handling for things around critical areas
 		auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
 		if (!std::isnan(tmpMC.motion.translation))
 		{
 			send(tmpMC);
+			cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
 		}
 		else
 		{
-			send(mc);
+			sendAndUpdatePT(mc);
+			cout << "Intercept: Normal: " << mc.motion.translation << endl;
 		}
 
-		if (this->wm->ball->haveBallDribble(false))
+//        if (this->wm->ball->haveBallDribble(false))
+//        {
+//            this->setSuccess(true);
+//        }
+		if (this->wm->ball->haveBall())
 		{
 			this->setSuccess(true);
 		}
@@ -403,15 +388,19 @@ namespace alica
 	void Intercept::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
-		lastDistErr = 0;
-		distIntErr = 0;
 
-		lastRotErr = 0;
-		rotIntErr = 0;
+		//only update when not in StandardAttack-Loop
+		auto gs = this->wm->game->getGameState();
+		if (gs != msl::GameState::OppBallPossession)
+		{
+			lastDistErr = 0;
+			distIntErr = 0;
+
+			lastRotErr = 0;
+			rotIntErr = 0;
+		}
 		/*PROTECTED REGION END*/
 	}
-
->>>>>>> 9458f09eba1ed3d99391483343b508226da54334
 /*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
