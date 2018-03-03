@@ -1,6 +1,6 @@
 #include "logging.h"
 
-bool isLogging = 0;
+bool isLogging = false;
 std::string fileName;
 FILE *logFile;
 extern Controlling::EposCan *ep;
