@@ -181,4 +181,8 @@
     <key href="OwnFreeKickInOppHalf.pml#1519832906025"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
