@@ -592,9 +592,12 @@ void RobotMovement::readConfigParameters()
     this->fastControllerVelocity = (*sc)["Drive"]->get<double>("Drive.RobotMovement.PTController.FastControllerVelocity", NULL);
 }
 
+/**
+ * Initializes the PTController by fillingits queues with vectroes of zeros
+ */
 void RobotMovement::initializePTControllerParameters()
 {
-    std::cout << "initializePTControllerParameters called" << std::endl;
+//    std::cout << "initializePTControllerParameters called" << std::endl;
     clearPTControllerQueues();
     this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
     this->pastControlledValues.push(std::valarray<double>({0.0, 0.0}));
@@ -602,6 +605,9 @@ void RobotMovement::initializePTControllerParameters()
     this->pastControlInput.push(std::valarray<double>({0.0, 0.0}));
 }
 
+/**
+ * Sets all values to zero
+ */
 void RobotMovement::stopTranslation()
 {
     this->pastControlledValues.front()[0] = 0.0;
@@ -610,6 +616,9 @@ void RobotMovement::stopTranslation()
     this->pastControlInput.back()[0] = 0.0;
 }
 
+/**
+ * Removes all vectors from controll queues
+ */
 void RobotMovement::clearPTControllerQueues()
 {
     std::cout << "clear called" << std::endl;
@@ -623,29 +632,31 @@ void RobotMovement::clearPTControllerQueues()
     }
 }
 
+
+/**
+ * Updates PTController values to external controller values
+ * Is used by DomainBehaviour::sendAndUpdatePT
+ */
 void RobotMovement::updatePT()
 {
     auto odom = this->wm->rawSensorData->getOwnVelocityMotion();
     auto mc = this->wm->rawSensorData->getLastMotionCommand();
-    if (odom != nullptr)
+    if (odom == nullptr)
     {
-        clearPTControllerQueues();
-        this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
-        this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
-        if (mc == nullptr)
-        {
-            this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
-            this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
-        }
-        else
-        {
-            this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
-            this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
-        }
+        initializePTControllerParameters();
+    }
+    clearPTControllerQueues();
+    this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+    this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
+    if (mc == nullptr)
+    {
+        this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
+        this->pastControlInput.push(std::valarray<double>({odom->translation, odom->rotation}));
     }
     else
     {
-        initializePTControllerParameters();
+        this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
+        this->pastControlInput.push(std::valarray<double>({mc->motion.translation, mc->motion.rotation}));
     }
 }
 
