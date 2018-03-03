@@ -152,7 +152,6 @@ int main(int argc, char** argv) {
 				printf("Unknown Mode, doing nothing\n");
 
 		}
-		cout<<"EposGonzales::main logging data"<<endl;
 		logData();
 
         gettimeofday(&time_cur,NULL);
