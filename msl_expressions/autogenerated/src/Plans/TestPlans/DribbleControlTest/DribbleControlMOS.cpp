@@ -98,15 +98,17 @@ namespace alica
         //check if backwards movement is planned
         shared_ptr<msl_actuator_msgs::MotionControl> plannedMotion = wm->rawSensorData->getLastMotionCommand();
 
-        cout<<"DribbleControlMOS::run: planned Motion Angle:"<<plannedMotion->motion.angle<<endl;
+        if (plannedMotion != nullptr) {
+			cout<<"DribbleControlMOS::run: planned Motion Angle:"<<plannedMotion->motion.angle<<endl;
 
-        //angle query might be wrong at the moment it expects angles between 0 and 2pi
-        //if we are not moving at the moment and plan to move backwards
-        if (robotVel<50 && (plannedMotion->motion.angle < M_PI/4 || plannedMotion->motion.angle > M_PI*7/4) && plannedMotion->motion.translation > 100) {
-        	//take planned motion instead of odom values
-        	robotAngle = plannedMotion->motion.angle;
-        	robotVel = plannedMotion->motion.translation;
-        	robotRot = (double)plannedMotion->motion.rotation;
+			//angle query might be wrong at the moment it expects angles between 0 and 2pi
+			//if we are not moving at the moment and plan to move backwards
+			if (robotVel<50 && (plannedMotion->motion.angle < M_PI/4 || plannedMotion->motion.angle > M_PI*7/4) && plannedMotion->motion.translation > 100) {
+				//take planned motion instead of odom values
+				robotAngle = plannedMotion->motion.angle;
+				robotVel = plannedMotion->motion.translation;
+				robotRot = (double)plannedMotion->motion.rotation;
+			}
         }
 
 
