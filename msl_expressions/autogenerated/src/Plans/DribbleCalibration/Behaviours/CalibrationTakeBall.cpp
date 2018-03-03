@@ -229,7 +229,7 @@ namespace alica
         changingValue = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingValue", NULL);
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
 
-        runBehaviour = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.Run.TakeBall", NULL);
+        runBehaviour = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.TakeBall", NULL);
     }
 
     void CalibrationTakeBall::writeConfigParameters()
