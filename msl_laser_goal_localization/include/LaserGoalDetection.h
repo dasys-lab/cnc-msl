@@ -33,6 +33,9 @@ class LaserGoalDetection
     std::shared_ptr<ros::Publisher> linesPublisher;
     std::shared_ptr<ros::Publisher> pointPublisher;
     std::shared_ptr<ros::Publisher> candPublisher;
+    std::shared_ptr<ros::Publisher> goalMidResultPublisher;
+    std::shared_ptr<ros::Publisher> goalMidPublisher;
+
 
     ros::AsyncSpinner spinner;
 

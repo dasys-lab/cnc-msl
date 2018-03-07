@@ -42,6 +42,8 @@ LaserGoalDetection::LaserGoalDetection(int argc, char **argv)
     this->linesPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/lines", 10));
     this->pointPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/points", 10));
     this->candPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/candidates", 10));
+    this->goalMidPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/goal_mid", 10));
+    this->goalMidResultPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/laser_goal_mid", 10));
 }
 
 LaserGoalDetection::~LaserGoalDetection()
@@ -206,7 +208,6 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
                 point.y = y;
                 point.z = 0;
                 point_list.points.push_back(point);
-//                cout << x << ", " << y << "  intersection: " << i/2 << " x " << j/2 << "  angle: " << delta <<endl;
             }
         }
     }
@@ -224,6 +225,32 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pointCandidates.color.a = 1.0;
     int size = point_list.points.size();
 
+    visualization_msgs::Marker goalMidPoint;
+    goalMidPoint.header.frame_id = "line_detection";
+    goalMidPoint.header.stamp = ros::Time::now();
+    goalMidPoint.ns = "points_and_lines";
+    goalMidPoint.action = visualization_msgs::Marker::ADD;
+    goalMidPoint.pose.orientation.w = 1.0;
+    goalMidPoint.id = 3;
+    goalMidPoint.type = visualization_msgs::Marker::POINTS;
+    goalMidPoint.scale.x = 0.03;
+    goalMidPoint.scale.y = 0.03;
+    goalMidPoint.color.r = 1.0;
+    goalMidPoint.color.a = 1.0;
+
+    visualization_msgs::Marker goalMidPointResult;
+    goalMidPointResult.header.frame_id = "line_detection";
+    goalMidPointResult.header.stamp = ros::Time::now();
+    goalMidPointResult.ns = "points_and_lines";
+    goalMidPointResult.action = visualization_msgs::Marker::ADD;
+    goalMidPointResult.pose.orientation.w = 1.0;
+    goalMidPointResult.id = 3;
+    goalMidPointResult.type = visualization_msgs::Marker::POINTS;
+    goalMidPointResult.scale.x = 0.03;
+    goalMidPointResult.scale.y = 0.03;
+    goalMidPointResult.color.r = 1.0;
+    goalMidPointResult.color.a = 1.0;
+
     for (int i = 0; i < size - 1; i++)
     {
         for (int j = i + 1; j < size; j++)
@@ -236,6 +263,17 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         	if (length > 1.8 && length < 2.5) {
         		pointCandidates.points.push_back(point1);
         		pointCandidates.points.push_back(point2);
+        	    geometry_msgs::Point goalMid;
+        	    goalMid.x = (point2.x + (point1.x - point2.x)/2);
+        	    goalMid.y = (point2.y + (point1.y - point2.y)/2);
+        	    goalMid.z = 0;
+        	    goalMidPoint.points.push_back(goalMid);
+
+        	    geometry_msgs::Point goalMidResult;
+        	    goalMidResult.x = (point2.x + (point1.x - point2.x)/2)*1000;
+        	    goalMidResult.y = (point2.y + (point1.y - point2.y)/2)*1000;
+        	    goalMidResult.z = 0;
+        	    goalMidPointResult.points.push_back(goalMidResult);
         		i = j = size;
         	}
         }
@@ -243,6 +281,8 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
 
     cout << "amount of detected goal lines: " << (pointCandidates.points.size() / 2) << endl;
     pointPublisher->publish(point_list);
+    goalMidPublisher->publish(goalMidPoint);
+    goalMidResultPublisher->publish(goalMidPointResult);
     candPublisher->publish(pointCandidates);
 
     for (auto pt : lineCloud->points)
