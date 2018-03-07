@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
+#include <container/CNPoint2D.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
@@ -52,6 +53,8 @@ namespace alica
         }
         else
         {
+        	updateGoalPosition();
+
             if (goalInitPos.compare("Left") == 0)
             {
                 alloTargetX = alloGoalLeft->x - 100;
@@ -103,11 +106,30 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
+
     void DriveToGoal::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1447863424939) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
+
 /*PROTECTED REGION ID(methods1447863424939) ENABLED START*/ //Add additional methods here
+    void DriveToGoal::updateGoalPosition()
+    {
+    	shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid =  wm->rawSensorData->getEgoGoalMid();
+
+        if (!laserDetectedEgoGoalMid)
+        {
+        	alloGoalMid = laserDetectedEgoGoalMid;
+        }
+        else
+        {
+        	alloGoalMid = wm->field->posOwnGoalMid();
+        }
+    	alloGoalLeft = make_shared < geometry::CNPoint2D
+    	                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+    	alloGoalRight = make_shared < geometry::CNPoint2D
+    	                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */
