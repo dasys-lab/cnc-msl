@@ -95,14 +95,14 @@ void PenaltyShoot::run(void *msg)
                 if (geometry::isInsideRectangle(frontLeft, back, alloObs))
                 {
                     // cout << "Found obstacle left" << endl;
-                    this->logger->log("PenaltyShoot", "Found obstacle left", msl::LogLevels::info);
+                    this->logger->log("PenaltyShoot", "Found obstacle left", msl::LogLevels::debug);
                     counter += wm->getRingBufferLength() - i;
                 }
                 // if obstacle is inside rectangle, decrease counter by inverse age (10 = newest, 1 = oldest)
                 if (geometry::isInsideRectangle(frontRight, back, alloObs))
                 {
                     // cout << "Found obstacle right" << endl;
-                    this->logger->log("PenaltyShoot", "Found obstacle right", msl::LogLevels::info);
+                    this->logger->log("PenaltyShoot", "Found obstacle right", msl::LogLevels::debug);
                     counter -= wm->getRingBufferLength() - i;
                 }
             }
@@ -110,7 +110,7 @@ void PenaltyShoot::run(void *msg)
         else
         {
             // cout << "PenaltyBeh: no obstacles!" << endl;
-            this->logger->log("PenaltyShoot", "no obstacles", msl::LogLevels::info);
+            this->logger->log("PenaltyShoot", "no obstacles", msl::LogLevels::debug);
         }
     }
 
@@ -118,14 +118,16 @@ void PenaltyShoot::run(void *msg)
     if (counter <= 0)
     {
         lastAlignment = 1;
-        cout << "PenaltyBeh: left!" << endl;
+        //cout << "PenaltyBeh: left!" << endl;
+        this->logger->log("PenaltyShoot", "left!", msl::LogLevels::debug);
         egoTarget = alloLeftAimPoint->alloToEgo(*ownPos);
     }
     // if counter > 0, there are obstacles on the left side, so we aim right
     else
     {
         lastAlignment = 2;
-        cout << "PenaltyBeh: right!" << endl;
+        //cout << "PenaltyBeh: right!" << endl;
+        this->logger->log("PenaltyShoot", "right!", msl::LogLevels::debug);
         egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
     }
     // calculate angle difference between robot and target and ball and target

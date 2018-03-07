@@ -120,11 +120,12 @@ namespace msl
 			}
 
 			if(this->thresholdLvl != LogLevels::console){
-				this->outfile << msg.str();
+				cout << "DirtyDebug:: write messagee to file!\n";
+				this->outfile << msg.str() << std::flush;
 			}
 
 			if(this->enableConsole && level >= this->thresholdLvl || forceConsole && this->enableConsole){
-				std::cout << msg.str();
+				std::cout << msg.str() << std::flush;
 			}
 		}
 	}
