@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
     msl_sensor_msgs 
     msl_actuator_msgs
     msl_robot
+    msl_logger
 )
 
 
@@ -44,6 +45,7 @@ catkin_package(
     msl_sensor_msgs 
     msl_actuator_msgs
     msl_robot
+    msl_logger
   DEPENDS
 )
 

@@ -8,6 +8,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <obstaclehandler/Obstacles.h>
@@ -106,7 +107,8 @@ namespace alica
             }
             else
             {
-                cout << "PenaltyBeh: no obstacles!" << endl;
+                //cout << "PenaltyBeh: no obstacles!" << endl;
+            	this->logger->log("AlignFreeGoalSpace", "no obstacles!", msl::LogLevels::debug);
             }
         }
 
@@ -114,14 +116,16 @@ namespace alica
         if (counter <= 0)
         {
             lastAlignment = 1;
-            cout << "AFGS: left!" << endl;
+            //cout << "AFGS: left!" << endl;
+            this->logger->log("AlignFreeGoalSpace", "left!", msl::LogLevels::debug);
             egoTarget = alloLeftAimPoint->alloToEgo(*ownPos);
         }
         // if counter > 0, there are obstacles on the left side, so we aim right
         else
         {
             lastAlignment = 2;
-            cout << "AFGS: right!" << endl;
+            //cout << "AFGS: right!" << endl;
+            this->logger->log("AlignFreeGoalSpace", "right!", msl::LogLevels::debug);
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
         // calculate angle difference between robot and target and ball and target

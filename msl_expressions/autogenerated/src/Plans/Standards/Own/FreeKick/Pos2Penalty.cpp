@@ -12,6 +12,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
 #include <Robots.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -45,7 +46,8 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
-            cout << "Pos2Penalty: FOUND a solution!" << endl;
+            //cout << "Pos2Penalty: FOUND a solution!" << endl;
+        	this->logger->log("Pos2Penalty", "FOUND a solution", msl::LogLevels::debug);
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                     vector<shared_ptr<geometry::CNPoint2D>>>();
             additionalPoints->push_back(alloBall);
@@ -65,7 +67,8 @@ namespace alica
 //			trianglePoints->push_back(wm->field->posRightOppGoalPost());
 //			trianglePoints->push_back(alloBall);
 
-            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+            //cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+            this->logger->log("Pos2Penalty", "Target x,y: " + std::to_string(alloTarget->x) + " " + std::to_string(alloTarget->y), msl::LogLevels::debug);
 
             shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 

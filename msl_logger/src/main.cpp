@@ -1,6 +1,7 @@
-#include "Logger.h"
+//#include "Logger.h"
 #include "ros/ros.h"
 #include <iostream>
+#include <Logger.h>
 #include <unistd.h>
 
 int main(int argc, char *argv[]){
@@ -33,13 +34,15 @@ int main(int argc, char *argv[]){
     l1->log("NONE", "Test als warn ohne explizite Ausgabe auf Console!",msl::LogLevels::warn);
     l1->log("NONE", "Test als warn mit expliziter Ausgabe auf Console!",msl::LogLevels::warn,true);
 
+    l1->log("Hallo", "test mit " + std::to_string(2));
+
     //l1->log2C("ein test nur auf der Console");
 
     std::cout << "Und jetzt der Langzeit-Test:\n";
 
     //l2->setLvlThreshold(msl::LogLevels::info);
 
-    for(int i = 0; i < 10000; i++){
+    for(int i = 0; i < 100; i++){
 
     	l1->log("STILL_NONE", "Anzahl der durchlaeufe: " + std::to_string(i),msl::LogLevels::console);
     	usleep(30);
