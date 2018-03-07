@@ -185,4 +185,12 @@
     <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
