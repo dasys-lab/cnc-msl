@@ -13,6 +13,7 @@
 #include <IMUDataRingBuffer.h>
 #include "InformationElement.h"
 #include <vector>
+#include <geometry_msgs/Point.h>
 #include "msl_sensor_msgs/BallInfo.h"
 #include "msl_msgs/MotionInfo.h"
 #include "msl_actuator_msgs/MotionControl.h"
@@ -54,6 +55,7 @@ namespace msl
 		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
 		shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
 		shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
+		shared_ptr<geometry::CNPoint2D> getEgoGoalMid(int index = 0);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
@@ -62,6 +64,7 @@ namespace msl
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
+		void processGoalMid(geometry_msgs::Point);
 		void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 		double getAverageBearing();
 
@@ -78,6 +81,7 @@ namespace msl
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
 		RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> egoGoalMid;
 		IMUDataRingBuffer imuData;
 		MSLWorldModel* wm;
 
