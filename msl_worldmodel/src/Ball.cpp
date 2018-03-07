@@ -651,9 +651,10 @@ bool Ball::oppHasBall() {
 
 	auto before = getOppBallPossession(0);
 	if (before != nullptr && *before) {
-		ret = (minDist <= 900);
+		//HACKY testing for entering opp ball possession
+		ret = (minDist <= BALL_DIAMETER + 250 + 200);
 	} else {
-		ret = (minDist <= 700);
+		ret = (minDist <= BALL_DIAMETER + 250 + 100);
 	}
 	return ret;
 }
