@@ -223,7 +223,8 @@ namespace alica
 
         // correction of velocity in x , depending on x (epsilonT), depending on y (epsilonY)
         // epsilonT<1 ; epsilonY<0.45*velYFactor
-        velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+        // velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+	velX = velX - epsilonT * std::abs(velXTemp) - epsilonY * std::abs(velYTemp); // should do exactly the same
 
         // correction of velocity in x depending on rotation (epsilonRot)
         if (fabs(velYTemp) > 200)
