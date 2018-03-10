@@ -41,7 +41,8 @@ namespace alica
         staticMiddleBound = 0;
         staticLowerBound = 0;
         staticNegVelX = 0;
-        epsilonT = 0;
+        epsilonTForward = 0;
+	epsilonTBackward = 0;
         epsilonY = 0;
         epsilonRot = 0;
         rBallRobot = 0;
@@ -154,7 +155,8 @@ namespace alica
         staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
         staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX", NULL);
         rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot", NULL);
-        epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT", NULL);
+        epsilonTForward = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonTForward", NULL);
+        epsilonTBackward = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonTBackward", NULL);
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
         epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
         velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
@@ -224,7 +226,9 @@ namespace alica
         // correction of velocity in x , depending on x (epsilonT), depending on y (epsilonY)
         // epsilonT<1 ; epsilonY<0.45*velYFactor
         // velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
-	velX = velX - epsilonT * std::abs(velXTemp) - epsilonY * std::abs(velYTemp); // should do exactly the same
+
+	double epsilonT = velXTemp > 0 ? epsilonTForward : epsilonTBackward;
+	velX = velX - epsilonT * std::abs(velXTemp) - epsilonY * std::abs(velYTemp);
 
         // correction of velocity in x depending on rotation (epsilonRot)
         if (fabs(velYTemp) > 200)
