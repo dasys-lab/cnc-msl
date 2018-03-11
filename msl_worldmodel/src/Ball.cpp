@@ -716,25 +716,24 @@ bool Ball::oppHasBall()
     {
         if(minDist <= this->oppDistWithoutBallBefore)
         {
-        	this->oppHasBallCounter = min(this->oppHasBallCounter++ , this->oppBallPossessionHystersis);
+        	this->oppHasBallCounter = min(++this->oppHasBallCounter , this->oppBallPossessionHystersis);
         }
         else
         {
-        	this->oppHasBallCounter = max(this->oppHasBallCounter-- , 0);
+        	this->oppHasBallCounter = max(--this->oppHasBallCounter , 0);
         }
     }
     else
     {
        if(minDist <= this->oppDistWithBallBefore)
        {
-    	   this->oppHasBallCounter = min(this->oppHasBallCounter++ , this->oppBallPossessionHystersis);
+    	   this->oppHasBallCounter = min(++this->oppHasBallCounter , this->oppBallPossessionHystersis);
        }
        else
        {
-       	this->oppHasBallCounter = max(this->oppHasBallCounter-- , 0);
+       	this->oppHasBallCounter = max(--this->oppHasBallCounter , 0);
        }
     }
-    std::cout << this->oppHasBallCounter << " " <<  this->oppBallPossessionHystersis << std::endl;
     return this->oppHasBallCounter == this->oppBallPossessionHystersis;
 }
 
