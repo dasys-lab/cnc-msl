@@ -46,6 +46,7 @@ namespace alica
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double calcGoalImpactY();
         void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
+        void updateGoalPosition();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
