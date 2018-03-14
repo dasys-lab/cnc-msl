@@ -649,6 +649,7 @@ void RobotMovement::updatePT()
     if (odom == nullptr)
     {
         initializePTControllerParameters();
+        return;
     }
     clearPTControllerQueues();
     this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
