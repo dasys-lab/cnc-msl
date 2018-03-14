@@ -264,7 +264,7 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
         		pointCandidates.points.push_back(point1);
         		pointCandidates.points.push_back(point2);
         	    geometry_msgs::Point goalMid;
-        	    goalMid.x = (point2.x + (point1.x - point2.x)/2);
+        	    goalMid.x = (point2.x + (point1.x - point2.x)/2) -0.48;
         	    goalMid.y = (point2.y + (point1.y - point2.y)/2);
         	    goalMid.z = 0;
         	    goalMidPoint.points.push_back(goalMid);
