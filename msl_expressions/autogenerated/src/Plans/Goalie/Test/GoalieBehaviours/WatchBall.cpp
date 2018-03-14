@@ -77,6 +77,7 @@ namespace alica
             return;
         }
 
+        updateGoalPosition();
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball->getAlloBallPosition();
 
         // TODO: Keep?
@@ -384,4 +385,21 @@ namespace alica
 //		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
     }
 /*PROTECTED REGION END*/
+    void WatchBall::updateGoalPosition()
+    {
+    	shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid =  wm->rawSensorData->getEgoGoalMid();
+
+        if (!laserDetectedEgoGoalMid)
+        {
+        	alloGoalMid = laserDetectedEgoGoalMid;
+        }
+        else
+        {
+        	alloGoalMid = wm->field->posOwnGoalMid();
+        }
+    	alloGoalLeft = make_shared < geometry::CNPoint2D
+    	                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+    	alloGoalRight = make_shared < geometry::CNPoint2D
+    	                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+    }
 } /* namespace alica */
