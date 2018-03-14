@@ -24,7 +24,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1435766212595) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
-        cout << "WheelSpeed: " << wheelSpeed << endl;
         bhc.leftMotor = -wheelSpeed;
         bhc.rightMotor = -wheelSpeed;
         send(bhc);
