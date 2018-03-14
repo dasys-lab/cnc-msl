@@ -151,10 +151,6 @@ msl_actuator_msgs::MotionControl AlignFreeGoalSpace::alignToPointWithBall(shared
         cout << "afgs: lastRotError: " << lastRotError << endl;
         cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
 
-//        ofstream logfile;
-//        logfile.open ("AFGSLog.txt",ios::app);
-//        logfile << deltaTargetAngle << "\t" << deltaBallAngle << "\t" << endl;
-//        logfile.close();
 
         mc.motion.rotation = -(deltaTargetAngle * defaultRotateP + (deltaTargetAngle - lastRotError) * alignToPointpRot);
 
