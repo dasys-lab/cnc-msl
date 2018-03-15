@@ -55,6 +55,7 @@ namespace alica
             //sleep(1);
             cout << "DriveAndAlignToPoint: Success" << endl;
             this->setSuccess(true);
+            return;
         }
 
         if (!std::isnan(mc.motion.translation))
