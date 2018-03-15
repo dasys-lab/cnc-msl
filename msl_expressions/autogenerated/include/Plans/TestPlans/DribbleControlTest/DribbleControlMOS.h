@@ -59,7 +59,8 @@ namespace alica
         double staticMiddleBound;
         double staticLowerBound;
         double staticNegVelX;
-        double epsilonT;
+        double epsilonTForward;
+	double epsilonTBackward;
         double epsilonY;
         double epsilonRot;
         double rBallRobot;
