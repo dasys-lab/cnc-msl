@@ -276,20 +276,22 @@ namespace msl
             v->certainty = data->odometry.certainty;
             ownVelocityVision.add(v);
 
+            //this is only necessary for simulator, irl these buffers are filled by the RawOdoInfo msg sent by the Motion process
+            if(this->wm->isUsingSimulator())
+            {
+
             //Motion
-            /*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
-             data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
-             shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
-             InformationElement<geometry::CNPosition>>(posMotion, time);
+            shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
+             shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<InformationElement<geometry::CNPosition>>(posMotion, time);
              odometryMotion->certainty = data->odometry.certainty;
              ownPositionMotion.add(odometryMotion);
 
-             // TODO: this is the same motion as for vision motion !?
              shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
              shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
              InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
              vMotion->certainty = data->odometry.certainty;
-             ownVelocityMotion.add(vMotion);*/
+             ownVelocityMotion.add(vMotion);
+            }
         }
 
         shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x,

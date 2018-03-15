@@ -46,6 +46,7 @@ RobotMovement::RobotMovement()
     this->pp = PathProxy::getInstance();
 
     readConfigParameters();
+    initializePTControllerParameters();
 }
 
 RobotMovement::~RobotMovement()
@@ -74,6 +75,12 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
         cerr << "RobotMovement::moveToPoint() -> egoDestinationPoint == nullptr or query = nullptr" << endl;
         return setNAN();
     }
+
+    if (this->pastControlInput.empty() || this->pastControlledValues.empty())
+    {
+        initializePTControllerParameters();
+    }
+
     shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
     if (query->pathEval == nullptr)
     {
@@ -102,14 +109,8 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
     }
     else
     {
-        cout << "RobotMovement::stopTranslation called" << endl;
         mc.motion.translation = 0;
         stopTranslation();
-    }
-
-    if (this->pastControlInput.empty() || this->pastControlledValues.empty())
-    {
-        initializePTControllerParameters();
     }
 
     std::valarray<double> controlledValues = ptController(query, mc.motion.translation, mc.motion.rotation);
@@ -611,6 +612,10 @@ void RobotMovement::initializePTControllerParameters()
  */
 void RobotMovement::stopTranslation()
 {
+    if (this->pastControlInput.empty() || this->pastControlledValues.empty())
+    {
+        initializePTControllerParameters();
+    }
     this->pastControlledValues.front()[0] = 0.0;
     this->pastControlledValues.back()[0] = 0.0;
     this->pastControlInput.front()[0] = 0.0;
@@ -622,7 +627,6 @@ void RobotMovement::stopTranslation()
  */
 void RobotMovement::clearPTControllerQueues()
 {
-    std::cout << "clear called" << std::endl;
     while (!pastControlInput.empty())
     {
         pastControlInput.pop();
@@ -645,6 +649,7 @@ void RobotMovement::updatePT()
     if (odom == nullptr)
     {
         initializePTControllerParameters();
+        return;
     }
     clearPTControllerQueues();
     this->pastControlledValues.push(std::valarray<double>({odom->translation, odom->rotation}));
