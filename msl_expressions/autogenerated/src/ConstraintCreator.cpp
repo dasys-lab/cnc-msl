@@ -49,6 +49,8 @@
 
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/CircleSeeForwards1520679916966Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/constraints/OwnInGamePenalty1466936775181Constraints.h"

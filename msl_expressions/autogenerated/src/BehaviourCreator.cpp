@@ -869,6 +869,26 @@ namespace alica
 
             case 1521106154772:
 
+            case 1520682100349:
+
+            case 1520682118655:
+
+            case 1520682164956:
+
+            case 1520682200024:
+
+            case 1520682353487:
+
+            case 1520682373772:
+
+            case 1520682426424:
+
+            case 1520682461896:
+
+            case 1520682511169:
+
+            case 1520682534452:
+
                 return make_shared<DriveAndAlignToPoint>();
                 break;
 
