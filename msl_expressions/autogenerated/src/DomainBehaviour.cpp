@@ -68,7 +68,7 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl &mc)
     mc.motion.translation = min(__maxTranslation, mc.motion.translation);
     motionControlPub.publish(mc);
     wm->rawSensorData->processMotionControlMessage(mc);
-    cout << "DomainBehaviour::send " << this->name << " sent " << mc.motion.translation <<endl;
+//    cout << "DomainBehaviour::send " << this->name << " sent " << mc.motion.translation <<endl;
 }
 
 /**
@@ -84,7 +84,7 @@ void alica::DomainBehaviour::sendAndUpdatePT(msl_actuator_msgs::MotionControl &m
     motionControlPub.publish(mc);
     wm->rawSensorData->processMotionControlMessage(mc);
     robot->robotMovement->updatePT();
-    cout << "DomainBehaviour::sendAndUpdatePT " << this->name << " sent " << mc.motion.translation <<endl;
+//    cout << "DomainBehaviour::sendAndUpdatePT " << this->name << " sent " << mc.motion.translation <<endl;
 }
 
 void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)

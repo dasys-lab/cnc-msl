@@ -136,6 +136,7 @@ namespace alica
         //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
+        cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
 
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
