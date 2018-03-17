@@ -2,16 +2,21 @@ using namespace std;
 #include "Plans/Attack/SearchForPassPoint.h"
 
 /*PROTECTED REGION ID(inccpp1436269017402) ENABLED START*/ //Add additional includes here
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/DebugMsg.h>
+#include <msl_helper_msgs/DebugPoint.h>
+
+#include <pathplanner/VoronoiNet.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/PathPlanner.h>
+
 #include <GeometryCalculator.h>
-#include "pathplanner/VoronoiNet.h"
-#include "pathplanner/PathProxy.h"
-#include "msl_helper_msgs/PassMsg.h"
-#include "msl_helper_msgs/DebugMsg.h"
-#include "msl_helper_msgs/DebugPoint.h"
+
 #include <Robots.h>
 #include <RawSensorData.h>
 #include <Ball.h>
-#include <pathplanner/PathPlanner.h>
+#include <MSLWorldModel.h>
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -30,7 +35,6 @@ namespace alica
         ballRadius = 0;
         minOppDist = 0;
         distToFieldBorder = 0;
-        sc = nullptr;
         minCloserOffset = 0;
         passCorridorWidth = 0;
         freeOppAngle = 0;
@@ -167,7 +171,6 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1436269017402) ENABLED START*/ //Add additional options here
         teamMatePlanName.clear();
         teamMateTaskName.clear();
-        sc = supplementary::SystemConfig::getInstance();
         this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
         this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
         this->closerFactor2 = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor2", NULL);

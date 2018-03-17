@@ -1,12 +1,4 @@
-/*
- * PathProxy.h
- *
- *  Created on: May 17, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
+#pragma once
 
 // includes for CGAL
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -27,8 +19,6 @@ typedef Kernel::Segment_2 Segment_2;
 typedef Kernel::Ray_2 Ray_2;
 typedef Kernel::Line_2 Line_2;
 
-#include "MSLWorldModel.h"
-#include "SystemConfig.h"
 #include "VoronoiNet.h"
 #include "container/CNPoint2D.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
@@ -36,11 +26,17 @@ typedef Kernel::Line_2 Line_2;
 #include <pathplanner/PathPlannerQuery.h>
 #include <ros/ros.h>
 
+namespace supplementary
+{
+	class SystemConfig;
+}
+
 namespace msl
 {
 /**
  * Interface for invoking the path planner
  */
+class MSLWorldModel;
 class PathProxy
 {
   public:
@@ -96,6 +92,7 @@ class PathProxy
     ros::Publisher voroniPub;
     supplementary::SystemConfig *sc;
     bool pathPlannerDebug;
+    bool ignorePathsInsideRobot;
 
     /**
      * Calculates possible shortcuts in the path
@@ -110,4 +107,3 @@ class PathProxy
 
 } /* namespace msl */
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_ */

@@ -1,18 +1,18 @@
-/*
- * PathProxy.cpp
- *
- *  Created on: May 17, 2015
- *      Author: Stefan Jakob
- */
 
 #include "pathplanner/PathProxy.h"
-#include "RawSensorData.h"
-#include "container/CNPosition.h"
-#include "msl_msgs/PathPlanner.h"
-#include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/PathPlanner.h"
 #include "pathplanner/PathPlannerQuery.h"
 #include "pathplanner/VoronoiNet.h"
+
+#include <container/CNPosition.h>
+
+#include <msl_msgs/PathPlanner.h>
+#include <msl_msgs/VoronoiNetInfo.h>
+
+#include "MSLWorldModel.h"
+#include "RawSensorData.h"
+
+#include <SystemConfig.h>
 
 namespace msl
 {
@@ -55,10 +55,11 @@ struct Cropped_voronoi_from_delaunay
 PathProxy::PathProxy()
 {
     this->wm = MSLWorldModel::get();
-    pathPub = n.advertise<msl_msgs::PathPlanner>("/PathPlanner/PathPlanner", 10);
-    voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
-    sc = supplementary::SystemConfig::getInstance();
+    this->pathPub = n.advertise<msl_msgs::PathPlanner>("/PathPlanner/PathPlanner", 10);
+    this->voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
+    this->sc = supplementary::SystemConfig::getInstance();
     this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug", NULL);
+    this->ignorePathsInsideRobot = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "PathProxy", "ignorePathsInsideRobot", NULL);
 }
 
 PathProxy::~PathProxy()
@@ -100,6 +101,14 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
 
     if (path != nullptr && path->size() > 0)
     {
+    	/**
+    	 * return the ego target if we ignore paths inside the robot, we have a path with size 2
+    	 * and below and the distance to the target is below the robot radius
+    	 */
+        if (this->ignorePathsInsideRobot && path->size() < 3 && alloTarget->distanceTo(ownPos) < this->wm->pathPlanner->getRobotRadius())
+        {
+            return egoTarget;
+        }
         // get first point of returned path
         if (path->size() < 3)
         {
@@ -191,6 +200,14 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
 
     if (path != nullptr && path->size() > 0)
     {
+    	/**
+    	 * return the ego target if we ignore paths inside the robot, we have a path with size 2
+    	 * and below and the distance to the target is below the robot radius
+    	 */
+        if (this->ignorePathsInsideRobot && path->size() < 3 && alloTarget->distanceTo(ownPos) < this->wm->pathPlanner->getRobotRadius())
+        {
+            return egoTarget;
+        }
         // get first point of returned path
         if (path->size() < 3)
         {
@@ -309,7 +326,7 @@ void PathProxy::sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi)
         netMsg.linePoints.push_back(info);
     }
     voroniPub.publish(netMsg);
-	return;
+    return;
 }
 
 /**

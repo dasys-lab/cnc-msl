@@ -2,22 +2,26 @@ using namespace std;
 #include "Plans/Attack/AlignAndPassRapid.h"
 
 /*PROTECTED REGION ID(inccpp1436269063295) ENABLED START*/ //Add additional includes here
-#include "msl_helper_msgs/PassMsg.h"
-#include "pathplanner/VoronoiNet.h"
-#include "pathplanner/PathProxy.h"
-#include "msl_helper_msgs/DebugMsg.h"
-#include "msl_helper_msgs/DebugPoint.h"
-#include <engine/model/EntryPoint.h>
-#include <SystemConfig.h>
-#include <RawSensorData.h>
-#include <msl_robot/kicker/Kicker.h>
-#include <Robots.h>
-#include <pathplanner/PathPlanner.h>
-#include <Ball.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/DebugMsg.h>
+#include <msl_helper_msgs/DebugPoint.h>
+
 #include <engine/model/EntryPoint.h>
 #include <engine/Assignment.h>
-#include <msl_robot/MSLRobot.h>
+#include <engine/model/EntryPoint.h>
 
+#include <pathplanner/VoronoiNet.h>
+#include <pathplanner/PathPlanner.h>
+
+#include <msl_robot/kicker/Kicker.h>
+
+#include <msl_robot/MSLRobot.h>
+#include <RawSensorData.h>
+#include <Robots.h>
+#include <Ball.h>
+#include <MSLWorldModel.h>
+
+#include <SystemConfig.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -47,9 +51,7 @@ namespace alica
         this->minRot = 0.1;
         this->maxRot = M_PI * 4;
         this->accel = 2000;
-        this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
-        this->pathProxy = msl::PathProxy::getInstance();
         this->alloBall = nullptr;
         this->alloPos = nullptr;
         this->bestAoc = nullptr;

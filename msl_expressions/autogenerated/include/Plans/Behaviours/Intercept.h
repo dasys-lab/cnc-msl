@@ -30,7 +30,6 @@ namespace alica
         /*PROTECTED REGION ID(pro1458757170147) ENABLED START*/ //Add additional protected methods here
         double maxVel;
 
-        supplementary::SystemConfig* sc;
         msl::PathProxy* pp;
 
         double pdist;

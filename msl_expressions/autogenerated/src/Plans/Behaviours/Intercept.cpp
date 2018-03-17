@@ -2,17 +2,19 @@ using namespace std;
 #include "Plans/Behaviours/Intercept.h"
 
 /*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
-#include <Ball.h>
-#include <RawSensorData.h>
-#include <Game.h>
+#include <container/CNVelocity2D.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <pathplanner/PathProxy.h>
 #include <pathplanner/PathPlanner.h>
-#include <container/CNVelocity2D.h>
+#include <pathplanner/PathPlannerQuery.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
-#include <pathplanner/PathPlannerQuery.h>
+
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <Game.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,7 +24,6 @@ namespace alica
 			DomainBehaviour("Intercept")
 	{
 		/*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
-		sc = supplementary::SystemConfig::getInstance();
 		pp = msl::PathProxy::getInstance();
 
 		lastDistErr = 0;

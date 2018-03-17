@@ -5,8 +5,8 @@
 /*PROTECTED REGION ID(inc1436269063295) ENABLED START*/ //Add additional includes here
 #include <vector>
 #include <MSLFootballField.h>
-#include "GameState.h"
-#include "pathplanner/PathProxy.h"
+#include <GameState.h>
+#include <pathplanner/PathProxy.h>
 #define DBM_DEBUG 1
 namespace supplementary
 {
@@ -64,9 +64,7 @@ namespace alica
     double maxRot;
     double accel;
 
-    supplementary::SystemConfig* sc;
     shared_ptr<geometry::CNPoint2D> alloAimPoint;
-    msl::PathProxy* pathProxy;
     static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
             shared_ptr<geometry::CNPoint2D> c, double tolerance,
             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
