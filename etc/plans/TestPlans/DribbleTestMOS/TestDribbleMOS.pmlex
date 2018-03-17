@@ -116,4 +116,12 @@
     <key href="InitialForwardBackward.pml#1519032290449"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280800018"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283132783"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

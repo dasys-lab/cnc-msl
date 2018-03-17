@@ -512,4 +512,25 @@
     <parameters id="1520683445971" name="MISSING_NAME" comment="" key="OriY" value="-520"/>
     <parameters id="1520683455235" name="MISSING_NAME" comment="" key="OriX" value="300"/>
   </configurations>
+  <configurations id="1521281255214" name="DriveAndAlignTo[-4000,0,4000,0,250]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1521281280187" name="MISSING_NAME" comment="" key="X" value="-4000"/>
+    <parameters id="1521281288891" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1521281304680" name="MISSING_NAME" comment="" key="OriX" value="4000"/>
+    <parameters id="1521281320213" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1521281330309" name="MISSING_NAME" comment="" key="R" value="250"/>
+  </configurations>
+  <configurations id="1521281418695" name="DriveAndAlignTo[4000,0,4100,0,250]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1521281424177" name="MISSING_NAME" comment="" key="X" value="4000"/>
+    <parameters id="1521281433155" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1521281440606" name="MISSING_NAME" comment="" key="OriX" value="4100"/>
+    <parameters id="1521281449839" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1521281459082" name="MISSING_NAME" comment="" key="R" value="250"/>
+  </configurations>
+  <configurations id="1521283343854" name="DriveAndAlignTo[4000,0,-4100,0,250]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1521283361178" name="MISSING_NAME" comment="" key="X" value="4000"/>
+    <parameters id="1521283370782" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1521283378762" name="MISSING_NAME" comment="" key="OriX" value="-4100"/>
+    <parameters id="1521283389522" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1521283394974" name="MISSING_NAME" comment="" key="R" value="250"/>
+  </configurations>
 </alica:Behaviour>

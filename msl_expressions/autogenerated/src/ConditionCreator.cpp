@@ -58,6 +58,8 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveToOppsiteSite1521280800018.h"
+
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
 #include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
@@ -97,6 +99,8 @@
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveAndTurnToOppositeSite1521283132783.h"
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
@@ -1054,6 +1058,30 @@ namespace alica
 
                 break;
 
+            case 1521280931730:
+
+                return make_shared<TransitionCondition1521280931730>();
+
+                break;
+
+            case 1521280987477:
+
+                return make_shared<TransitionCondition1521280987477>();
+
+                break;
+
+            case 1521280994181:
+
+                return make_shared<TransitionCondition1521280994181>();
+
+                break;
+
+            case 1521281060067:
+
+                return make_shared<TransitionCondition1521281060067>();
+
+                break;
+
             case 1426696641527:
 
                 return make_shared<TransitionCondition1426696641527>();
@@ -1495,6 +1523,30 @@ namespace alica
             case 1434050690800:
 
                 return make_shared<TransitionCondition1434050690800>();
+
+                break;
+
+            case 1521283236610:
+
+                return make_shared<TransitionCondition1521283236610>();
+
+                break;
+
+            case 1521283237926:
+
+                return make_shared<TransitionCondition1521283237926>();
+
+                break;
+
+            case 1521283239559:
+
+                return make_shared<TransitionCondition1521283239559>();
+
+                break;
+
+            case 1521283249550:
+
+                return make_shared<TransitionCondition1521283249550>();
 
                 break;
 

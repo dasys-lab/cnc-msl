@@ -59,6 +59,8 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveToOppsiteSite1521280800018.h"
+
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
 #include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
@@ -98,6 +100,8 @@
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveAndTurnToOppositeSite1521283132783.h"
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
@@ -291,6 +295,10 @@ namespace alica
                 return make_shared<UtilityFunction1441106995954>();
                 break;
 
+            case 1521280800018:
+                return make_shared<UtilityFunction1521280800018>();
+                break;
+
             case 1426696586622:
                 return make_shared<UtilityFunction1426696586622>();
                 break;
@@ -369,6 +377,10 @@ namespace alica
 
             case 1434049476066:
                 return make_shared<UtilityFunction1434049476066>();
+                break;
+
+            case 1521283132783:
+                return make_shared<UtilityFunction1521283132783>();
                 break;
 
             case 1449076138236:

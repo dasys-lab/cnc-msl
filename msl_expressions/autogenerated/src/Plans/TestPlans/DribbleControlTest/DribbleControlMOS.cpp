@@ -101,8 +101,9 @@ namespace alica
             cout << "DribbleControlMOS::run: planned Motion Angle:" << plannedMotion->motion.angle << endl;
 
             //if we are not moving at the moment and plan to move backwards
-            if (robotVel < 50 && ((plannedMotion->motion.angle < M_PI / 4 && plannedMotion->motion.angle > -M_PI / 4 ) || plannedMotion->motion.angle > M_PI * 7 / 4)
-                    && plannedMotion->motion.translation > 100)
+            if (robotVel < 50
+                    && ((plannedMotion->motion.angle < M_PI / 4 && plannedMotion->motion.angle > -M_PI / 4)
+                            || plannedMotion->motion.angle > M_PI * 7 / 4) && plannedMotion->motion.translation > 100)
             {
                 //take planned motion instead of odom values
                 robotAngle = plannedMotion->motion.angle;
@@ -262,10 +263,11 @@ namespace alica
         {
             // detect jump in odometry values
             if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld))
-                   // || angleTolerance <= fabs(angle - angleOld))
+            // || angleTolerance <= fabs(angle - angleOld))
             {
                 // powerFactor decays over the iterations
-                cout << "DribbleControlMOS::getBallPath: Jump detected" << fabs(translation - translationOld)<<" "<< fabs(rotation - rotationOld)<<" "<<fabs(angle - angleOld)<< endl;
+                cout << "DribbleControlMOS::getBallPath: Jump detected" << fabs(translation - translationOld) << " "
+                        << fabs(rotation - rotationOld) << " " << fabs(angle - angleOld) << endl;
                 decayedPowerFactor = powerFactor;
             }
 

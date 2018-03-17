@@ -43,9 +43,9 @@ namespace alica
         query->egoAlignPoint = egoOrientationTarget;
         query->snapDistance = catchRadius;
         //cout << "DriveAndAlignToPoint::run::query::Target " << query->egoDestinationPoint->x << " "
-                //<< query->egoDestinationPoint->y << " " << query->egoDestinationPoint->z <<endl;
+        //<< query->egoDestinationPoint->y << " " << query->egoDestinationPoint->z <<endl;
         //cout << "DriveAndAlignToPoint::run::query::Align " << query->egoAlignPoint->x << " " << query->egoAlignPoint->y
-               // << " " << query->egoAlignPoint->z<<endl;
+        // << " " << query->egoAlignPoint->z<<endl;
         mc = this->robot->robotMovement->moveToPoint(query);
 
         if (egoTarget->length() < catchRadius)
@@ -95,7 +95,7 @@ namespace alica
             if (success)
             {
                 catchRadius = stod(tmp);
-                catchRadius = max(catchRadius,250.0);
+                catchRadius = max(catchRadius, 250.0);
             }
         }
         catch (exception& e)
