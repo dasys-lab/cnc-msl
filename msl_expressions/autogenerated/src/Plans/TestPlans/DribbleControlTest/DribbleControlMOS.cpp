@@ -101,7 +101,7 @@ namespace alica
             cout << "DribbleControlMOS::run: planned Motion Angle:" << plannedMotion->motion.angle << endl;
 
             //if we are not moving at the moment and plan to move backwards
-            if (robotVel < 50
+            if (robotVel < 200
                     && ((plannedMotion->motion.angle < M_PI / 4 && plannedMotion->motion.angle > -M_PI / 4)
                             || plannedMotion->motion.angle > M_PI * 7 / 4) && plannedMotion->motion.translation > 100)
             {
@@ -110,7 +110,7 @@ namespace alica
                 robotVel = plannedMotion->motion.translation;
                 robotRot = (double)plannedMotion->motion.rotation;
 
-                cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
+                //cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
 
             }
         }
@@ -136,7 +136,7 @@ namespace alica
         //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
-        cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
+        //cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
 
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
