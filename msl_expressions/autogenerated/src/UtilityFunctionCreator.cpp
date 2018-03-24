@@ -49,6 +49,8 @@
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/CircleSeeForwards1520679916966.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -56,6 +58,8 @@
 #include  "Plans/Standards/Opponent/FreeKick/OppFreeKick1445411471122.h"
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveToOppsiteSite1521280800018.h"
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
@@ -96,6 +100,8 @@
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveAndTurnToOppositeSite1521283132783.h"
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
@@ -269,6 +275,10 @@ namespace alica
                 return make_shared<UtilityFunction1442919721161>();
                 break;
 
+            case 1520679916966:
+                return make_shared<UtilityFunction1520679916966>();
+                break;
+
             case 1434046634656:
                 return make_shared<UtilityFunction1434046634656>();
                 break;
@@ -283,6 +293,10 @@ namespace alica
 
             case 1441106995954:
                 return make_shared<UtilityFunction1441106995954>();
+                break;
+
+            case 1521280800018:
+                return make_shared<UtilityFunction1521280800018>();
                 break;
 
             case 1426696586622:
@@ -363,6 +377,10 @@ namespace alica
 
             case 1434049476066:
                 return make_shared<UtilityFunction1434049476066>();
+                break;
+
+            case 1521283132783:
+                return make_shared<UtilityFunction1521283132783>();
                 break;
 
             case 1449076138236:

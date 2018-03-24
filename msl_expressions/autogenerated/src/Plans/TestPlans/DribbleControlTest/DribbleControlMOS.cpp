@@ -41,7 +41,8 @@ namespace alica
         staticMiddleBound = 0;
         staticLowerBound = 0;
         staticNegVelX = 0;
-        epsilonT = 0;
+        epsilonTForward = 0;
+        epsilonTBackward = 0;
         epsilonY = 0;
         epsilonRot = 0;
         rBallRobot = 0;
@@ -62,7 +63,7 @@ namespace alica
     void DribbleControlMOS::run(void* msg)
     {
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ // Add additional options here
-    	//if joystick sends own ball handle commands -> return
+        //if joystick sends own ball handle commands -> return
         auto joyCmd = wm->rawSensorData->getJoystickCommand();
 
         if (joyCmd != nullptr && joyCmd->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
@@ -87,30 +88,32 @@ namespace alica
             return;
         }
 
-
-
-
-		auto robotAngle = odom->angle;
+        auto robotAngle = odom->angle;
         auto robotVel = odom->translation;
         auto robotRot = (double)odom->rotation;
 
         //get motion command
         //check if backwards movement is planned
-        shared_ptr<msl_actuator_msgs::MotionControl> plannedMotion = wm->rawSensorData->getLastMotionCommand();
+        shared_ptr < msl_actuator_msgs::MotionControl > plannedMotion = wm->rawSensorData->getLastMotionCommand();
 
-        if (plannedMotion != nullptr) {
-			cout<<"DribbleControlMOS::run: planned Motion Angle:"<<plannedMotion->motion.angle<<endl;
+        if (plannedMotion != nullptr)
+        {
+            //cout << "DribbleControlMOS::run: planned Motion Angle:" << plannedMotion->motion.angle << endl;
 
-			//angle query might be wrong at the moment it expects angles between 0 and 2pi
-			//if we are not moving at the moment and plan to move backwards
-			if (robotVel<50 && (plannedMotion->motion.angle < M_PI/4 || plannedMotion->motion.angle > M_PI*7/4) && plannedMotion->motion.translation > 100) {
-				//take planned motion instead of odom values
-				robotAngle = plannedMotion->motion.angle;
-				robotVel = plannedMotion->motion.translation;
-				robotRot = (double)plannedMotion->motion.rotation;
-			}
+            //if we are not moving at the moment and plan to move backwards
+            if (robotVel < 200
+                    && ((plannedMotion->motion.angle < M_PI / 4 && plannedMotion->motion.angle > -M_PI / 4)
+                            || plannedMotion->motion.angle > M_PI * 7 / 4) && plannedMotion->motion.translation > 100)
+            {
+                //take planned motion instead of odom values
+                robotAngle = plannedMotion->motion.angle;
+                robotVel = plannedMotion->motion.translation;
+                robotRot = (double)plannedMotion->motion.rotation;
+
+                //cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
+
+            }
         }
-
 
         msl_actuator_msgs::BallHandleCmd msgback;
 
@@ -133,6 +136,7 @@ namespace alica
         //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
+        //cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
 
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
@@ -154,7 +158,8 @@ namespace alica
         staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
         staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX", NULL);
         rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot", NULL);
-        epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT", NULL);
+        epsilonTForward = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonTForward", NULL);
+        epsilonTBackward = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonTBackward", NULL);
         epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
         epsilonY = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonY", NULL);
         velYFactor = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velYFactor", NULL);
@@ -223,7 +228,10 @@ namespace alica
 
         // correction of velocity in x , depending on x (epsilonT), depending on y (epsilonY)
         // epsilonT<1 ; epsilonY<0.45*velYFactor
-        velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+        // velX = velX - (epsilonT * velXTemp * sign(velXTemp)) - epsilonY * velYTemp * sign(velYTemp);
+
+        double epsilonT = velXTemp > 0 ? epsilonTForward : epsilonTBackward;
+        velX = velX - epsilonT * std::abs(velXTemp) - epsilonY * std::abs(velYTemp);
 
         // correction of velocity in x depending on rotation (epsilonRot)
         if (fabs(velYTemp) > 200)
@@ -255,11 +263,12 @@ namespace alica
         if (velXTemp < 0)
         {
             // detect jump in odometry values
-            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld)
-                    || angleTolerance <= fabs(angle - angleOld))
+            if (transTolerance <= fabs(translation - translationOld) || rotTolerance <= fabs(rotation - rotationOld))
+            // || angleTolerance <= fabs(angle - angleOld))
             {
                 // powerFactor decays over the iterations
-            	cout<<"DribbleControlMOS::getBallPath: Jump detected"<<endl;
+                cout << "DribbleControlMOS::getBallPath: Jump detected" << fabs(translation - translationOld) << " "
+                        << fabs(rotation - rotationOld) << " " << fabs(angle - angleOld) << endl;
                 decayedPowerFactor = powerFactor;
             }
 

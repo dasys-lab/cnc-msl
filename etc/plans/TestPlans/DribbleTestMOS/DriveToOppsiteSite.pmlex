@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280800020"/>
+    <value xPos="60" yPos="155" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280800018"/>
+    <value width="932" height="438"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280800021"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280896157"/>
+    <value xPos="188" yPos="78" width="96" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280930325"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280936955"/>
+    <value xPos="460" yPos="158" width="135" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280974028"/>
+    <value xPos="348" yPos="74" width="96" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280986276"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521280993055"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521281050940"/>
+    <value xPos="685" yPos="210"/>
+  </extensions>
+  <extensions>
+    <key href="DriveToOppsiteSite.pml#1521281058637"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/DriveAndAlignToPoint.beh#1521281255214"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/DriveAndAlignToPoint.beh#1521281418695"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -49,6 +49,8 @@
 
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/CircleSeeForwards1520679916966Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/constraints/OwnInGamePenalty1466936775181Constraints.h"
@@ -56,6 +58,8 @@
 #include  "Plans/Standards/Opponent/FreeKick/constraints/OppFreeKick1445411471122Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DriveToOppsiteSite1521280800018Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
@@ -96,6 +100,8 @@
 #include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
 
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/constraints/DriveAndTurnToOppositeSite1521283132783Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
 

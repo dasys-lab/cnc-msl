@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283132784"/>
+    <value xPos="-1" yPos="106" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283132783"/>
+    <value width="967" height="309"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283132785"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283171226"/>
+    <value xPos="289" yPos="50" width="96" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283172827"/>
+    <value xPos="406" yPos="134" width="94" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283174412"/>
+    <value xPos="130" yPos="33" width="96" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283235652"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283236778"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283238079"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283242241"/>
+    <value xPos="559" yPos="141"/>
+  </extensions>
+  <extensions>
+    <key href="DriveAndTurnToOppositeSite.pml#1521283248282"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/DriveAndAlignToPoint.beh#1521281255214"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/DriveAndAlignToPoint.beh#1521283343854"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

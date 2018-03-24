@@ -13,8 +13,8 @@
     <outTransitions>#1518622844428</outTransitions>
     <outTransitions>#1518623967163</outTransitions>
   </states>
-  <states id="1518622802933" name="DriveZigZagViewZigZag" comment="">
-    <plans xsi:type="alica:Plan">DriveZigZagViewZigZag.pml#1518623186077</plans>
+  <states id="1518622802933" name="DriveAndTurn" comment="">
+    <plans xsi:type="alica:Plan">DriveAndTurnToOppositeSite.pml#1521283132783</plans>
     <inTransitions>#1518622827729</inTransitions>
     <outTransitions>#1518622829104</outTransitions>
   </states>
@@ -33,8 +33,8 @@
     <inTransitions>#1518622844428</inTransitions>
     <outTransitions>#1518622846236</outTransitions>
   </states>
-  <states id="1518623882447" name="DriveStraightViewZigZag" comment="">
-    <plans xsi:type="alica:Plan">DriveStraightViewZigZag.pml#1518628181064</plans>
+  <states id="1518623882447" name="DriveToOppositeSite" comment="">
+    <plans xsi:type="alica:Plan">DriveToOppsiteSite.pml#1521280800018</plans>
     <inTransitions>#1518623967163</inTransitions>
     <outTransitions>#1518623968955</outTransitions>
   </states>
@@ -78,7 +78,7 @@
     <inState>#1518622824671</inState>
     <outState>#1518622787400</outState>
   </transitions>
-  <transitions id="1518623967163" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1518623967163" name="MISSING_NAME" comment="OppFreeKick" msg="">
     <preCondition id="1518623968811" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1518622787400</inState>
     <outState>#1518623882447</outState>
