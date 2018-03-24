@@ -132,7 +132,7 @@ namespace alica
 			}
 		}
 
-//        auto egoPredBall = predBall->alloToEgo(*predPos);
+        auto egoPredBall = predBall->alloToEgo(*predPos);
 		//to avoid crashing into the surrounding
 		if (!this->wm->field->isInsideField(predPos->getPoint()))
 		{

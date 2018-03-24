@@ -20,7 +20,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1439379316897) ENABLED START*/ // Add additional options here
         query = make_shared<msl::MovementQuery>();
-        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     PositionReceiver::~PositionReceiver()
