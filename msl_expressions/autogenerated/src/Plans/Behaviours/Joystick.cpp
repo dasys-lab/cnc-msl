@@ -58,7 +58,6 @@ namespace alica
                 mc.motion = joy->motion;
             }
 
-
             mc.motion.angle = joy->motion.angle;
             send(mc);
         }

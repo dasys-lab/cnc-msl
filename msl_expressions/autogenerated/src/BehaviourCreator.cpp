@@ -530,6 +530,8 @@ namespace alica
 
             case 1458757193843:
 
+            case 1521898536366:
+
                 return make_shared<Intercept>();
                 break;
 

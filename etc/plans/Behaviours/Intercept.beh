@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1458757170147" name="Intercept" comment="" destinationPath="Plans/Behaviours">
   <configurations id="1458757193843" name="InterceptDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1521898536366" name="InterceptStandardSituation" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1521898556888" name="MISSING_NAME" comment="" key="StandardSituationReceiver" value="true"/>
+  </configurations>
 </alica:Behaviour>

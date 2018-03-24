@@ -4,8 +4,9 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467039782450) ENABLED START*/ //Add additional includes here
 #include "msl_actuator_msgs/MotionControl.h"
-namespace geometry {
-	class CNPoint2D;
+namespace geometry
+{
+    class CNPoint2D;
 }
 /*PROTECTED REGION END*/
 namespace alica
@@ -29,10 +30,10 @@ namespace alica
                                                               double angleTolerance, double ballAngleTolerance);
         void readConfigParameters();
         shared_ptr<geometry::CNPoint2D> alloTarget;
-        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint;
-        shared_ptr < geometry::CNPoint2D > alloRightAimPoint;
-        shared_ptr < geometry::CNPoint2D > frontLeft;
-        shared_ptr < geometry::CNPoint2D > frontRight;
+        shared_ptr<geometry::CNPoint2D> alloLeftAimPoint;
+        shared_ptr<geometry::CNPoint2D> alloRightAimPoint;
+        shared_ptr<geometry::CNPoint2D> frontLeft;
+        shared_ptr<geometry::CNPoint2D> frontRight;
 
         // PID parameters for alignToPointWithBall
         double defaultRotateP;
@@ -51,7 +52,6 @@ namespace alica
 
         //0 = not aligned, 1 = left, 2 = right
         int lastAlignment;
-
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */
