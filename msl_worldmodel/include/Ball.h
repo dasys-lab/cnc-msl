@@ -102,6 +102,10 @@ class Ball
     double HAVE_BALL_MAX_ANGLE_DELTA;
     double BALL_DIAMETER;
     double LOCALIZATION_SUCCESS_CONFIDENCE;
+    double oppDistWithoutBallBefore;
+    double oppDistWithBallBefore;
+    int oppBallPossessionHystersis;
+    int oppHasBallCounter;
 
     /**
      * The minimum amount of ALICA cycles (the 30 Hz frequency) the ball has to be seen.
