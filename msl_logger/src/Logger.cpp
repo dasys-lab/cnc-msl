@@ -18,6 +18,7 @@ namespace msl
 		this->enabled = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableLogging", NULL);
 		this->enableConsole = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableConsole", NULL);
 		this->thresholdLvl = (*sc)["Behaviour"]->get<int>("BehaviourLogging.debugLevel", NULL);
+		this->robotName = sc->getHostname();
 		if(this->thresholdLvl == LogLevels::console){
 			this->initConsole = true;
 		}else{
@@ -55,7 +56,7 @@ namespace msl
 		int day = nun->tm_mday;
 
 		filename << location << '/';
-		filename << path << year << '_';
+		filename << path << this->robotName << year << '_';
 		filename << std::setfill('0') << std::setw(2) << month << '_';
 		filename << std::setfill('0') << std::setw(2) << day << '-';
 		filename << getTimeStamp(false);
