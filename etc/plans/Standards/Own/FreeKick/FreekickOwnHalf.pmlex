@@ -150,4 +150,16 @@
     <key href="../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1521898536366"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
