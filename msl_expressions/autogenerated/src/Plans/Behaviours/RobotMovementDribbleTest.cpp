@@ -8,6 +8,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <MSLFootballField.h>
 #include <MSLEnums.h>
 /*PROTECTED REGION END*/
@@ -44,9 +45,10 @@ namespace alica
         query->egoAlignPoint = query->egoDestinationPoint;
         query->velocityMode = msl::VelocityMode::DEFAULT;
 
-        cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
-                << endl;
-        cout << "ego Ball Pos: x: " << ballPos->x << " y: " << ballPos->y << endl;
+        //cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y << endl;
+        this->logger->log(this->getName(), "alloBallPos: x= " + std::to_string(ballPos->egoToAllo(*ownPos)->x) + " y= " + std::to_string(ballPos->egoToAllo(*ownPos)->y), msl::LogLevels::debug);
+        //cout << "ego Ball Pos: x: " << ballPos->x << " y: " << ballPos->y << endl;
+        this->logger->log(this->getName(), "egoBallPos: x= " + std::to_string(ballPos->x) + " y= " + std::to_string(ballPos->y), msl::LogLevels::debug);
 
         if (wm->ball->haveBall())
         {

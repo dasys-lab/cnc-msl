@@ -8,6 +8,8 @@ using namespace std;
 #include <msl_actuator_msgs/KickControl.h>
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
+#include <sstream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -238,12 +240,14 @@ namespace alica
         {
             if (repeat)
             {
-                cout << "restart test..." << endl;
+//                cout << "restart test..." << endl;
+                this->logger->log(this->getName(), "restart test...", msl::LogLevels::info);
                 initialiseParameters();
             }
             else
             {
-                cout << "finished testing" << endl;
+//                cout << "finished testing" << endl;
+                this->logger->log(this->getName(), "finished testing", msl::LogLevels::info);
                 this->setSuccess(true);
             }
 
@@ -258,12 +262,15 @@ namespace alica
         setFinParmsFalse();
         readConfigParms();
 
-        cout << "\nstart testing ..." << endl;
+//        cout << "\nstart testing ..." << endl;
+        this->logger->log(this->getName(), "start testing ...", msl::LogLevels::info);
         if (!startAll)
         {
 
-            cout << "test is manually configured!\n"
-                    "starting the first test!" << endl;
+//            cout << "test is manually configured!\n"
+//                    "starting the first test!" << endl;
+            this->logger->log(this->getName(), "test is manually configured!", msl::LogLevels::info);
+            this->logger->log(this->getName(), "starting first test!", msl::LogLevels::info);
 
         }
 
@@ -316,7 +323,8 @@ namespace alica
         }
         else
         {
-            cerr << "Kick power may not be negative!" << endl;
+//            cerr << "Kick power may not be negative!" << endl;
+            this->logger->log(this->getName(), "Kick power may not be negative!", msl::LogLevels::error);
             kc.power = 0;
         }
         return true;
@@ -342,7 +350,8 @@ namespace alica
             {
                 bhc.leftMotor = 0;
                 bhc.rightMotor = 0;
-                cerr << "Rotation speed may only be in range of -100 to 100!" << endl;
+//                cerr << "Rotation speed may only be in range of -100 to 100!" << endl;
+                this->logger->log(this->getName(), "Rotation speed may only be in range of -100 to 100!", msl::LogLevels::error);
             }
         }
         else
@@ -365,7 +374,8 @@ namespace alica
         if (lb_old != lbi)
         {
             lb_old = lbi;
-            cout << "toggle light barrier!" << endl;
+//            cout << "toggle light barrier!" << endl;
+            this->logger->log(this->getName(), "toggle light barrier", msl::LogLevels::debug);
             move++;
         }
         if (move > 5)
@@ -381,12 +391,14 @@ namespace alica
         auto of = wm->rawSensorData->getOpticalFlow();
         if (of != nullptr)
         {
-            cout << "receive data from optical flow!" << endl;
+//            cout << "receive data from optical flow!" << endl;
+            this->logger->log(this->getName(), "recive data from optical flow!", msl::LogLevels::debug);
             return false;
         }
         else
         {
-            cerr << "No data from optical flow!" << endl;
+//            cerr << "No data from optical flow!" << endl;
+            this->logger->log(this->getName(), "No data from optical flow!", msl::LogLevels::error);
             return false;
         }
         return true;
@@ -394,7 +406,8 @@ namespace alica
 
     bool RobotTest::imuRobot()
     {
-        cout << "IMU currently not included in world model" << endl;
+//        cout << "IMU currently not included in world model" << endl;
+        this->logger->log(this->getName(), "IMU currently not included in world model", msl::LogLevels::warn);
         return false;
     }
 
@@ -492,7 +505,8 @@ namespace alica
     {
         if (t)
         {
-            cout << "testing: " << s << endl;
+//            cout << "testing: " << s << endl;
+            this->logger->log(this->getName(), "testing: " + s, msl::LogLevels::debug);
         }
         return false;
     }
@@ -508,7 +522,7 @@ namespace alica
                 && finShovelSelectHigh == shovelSelectHigh);
     }
 
-    void RobotTest::controllOutput()
+    void RobotTest::controllOutput()///NOTE Soll das auch???
     {
         cout << driveForward << driveBack << rotateForward << rotateBack << actuatorPushLeft << actuatorPushRight
                 << actuatorPullLeft << actuatorPullRight << kicker << lightBarrier << opticalFlow << imu
@@ -516,6 +530,15 @@ namespace alica
                 << finRotateBack << finActuatorPushLeft << finActuatorPushRight << finActuatorPullLeft
                 << finActuatorPullRight << finLightBarrier << finOpticalFlow << finImu << finShovelSelectLow
                 << finShovelSelectHigh << finKicker << endl;
+
+        std::stringstream msg;
+        msg << driveForward << driveBack << rotateForward << rotateBack << actuatorPushLeft << actuatorPushRight
+			<< actuatorPullLeft << actuatorPullRight << kicker << lightBarrier << opticalFlow << imu
+			<< shovelSelectLow << shovelSelectHigh << " | " << finDriveForward << finDriveBack << finRotateForward
+			<< finRotateBack << finActuatorPushLeft << finActuatorPushRight << finActuatorPullLeft
+			<< finActuatorPullRight << finLightBarrier << finOpticalFlow << finImu << finShovelSelectLow
+			<< finShovelSelectHigh << finKicker;
+        this->logger->log(this->getName(), msg.str(), msl::LogLevels::info, true);
 
     }
 /*PROTECTED REGION END*/

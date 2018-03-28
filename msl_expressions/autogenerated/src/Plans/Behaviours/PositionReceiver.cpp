@@ -9,6 +9,7 @@ using namespace std;
 #include <pathplanner/evaluator/PathEvaluator.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <Game.h>
 #include <MSLEnums.h>
 /*PROTECTED REGION END*/
@@ -88,7 +89,8 @@ namespace alica
         }
         else
         {
-            cout << "Motion command is NaN!" << endl;
+            //cout << "Motion command is NaN!" << endl;
+        	this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
         }
         /*PROTECTED REGION END*/
     }

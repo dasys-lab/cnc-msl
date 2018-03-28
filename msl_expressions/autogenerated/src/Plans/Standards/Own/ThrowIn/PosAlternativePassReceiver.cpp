@@ -13,6 +13,7 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <Robots.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -56,7 +57,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+                this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -73,7 +75,8 @@ namespace alica
                 }
                 else
                 {
-                    cout << "PAPR: no receiver found looking at (0, 0)!" << endl;
+//                    cout << "PAPR: no receiver found looking at (0, 0)!" << endl;
+                    this->logger->log(this->getName(), "no reciver found looking at (0, 0)", msl::LogLevels::debug);
                     receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
                 }
             }
@@ -114,7 +117,8 @@ namespace alica
             }
             else
             {
-                cout << "Motion command is NaN!" << endl;
+//                cout << "Motion command is NaN!" << endl;
+                this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             }
         }
         /*PROTECTED REGION END*/
@@ -137,11 +141,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+//            cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "PAPR: Parameter does not exist" << endl;
+//            cerr << "PAPR: Parameter does not exist" << endl;
+            this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

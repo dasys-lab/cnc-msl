@@ -75,7 +75,8 @@ void AlignAndPassRapid::run(void *msg)
         //			mc = DriveHelper.DriveRandomly(500,WM);
         //			Send(mc);
         // cout << "AAPR: OwnPos is null" << endl;
-        this->logger -> log("AlignAndPassRapid", "OwnPos is null", msl::LogLevels::error);
+        //this->logger -> log("AlignAndPassRapid", "OwnPos is null", msl::LogLevels::error);
+        this->logger -> log(this->getName(), "OwnPos is null", msl::LogLevels::error);
         ;
         return;
     }
@@ -190,7 +191,7 @@ void AlignAndPassRapid::run(void *msg)
 #endif
     if (!found)
     {                           // No Pass point found, so return everything
-        this->setSuccess(true); // NOTE Was soll das???? Konstant true???
+        this->setSuccess(true);
         // cout << "AAPR: No valid pass point found! SuccessStatus: " << this->isSuccess() << endl;
         this->logger->log("AlignAndPassRapid", "No valid pass point found! SuccessStatus: " + this->isSuccess(), msl::LogLevels::debug);
 
@@ -384,11 +385,14 @@ void AlignAndPassRapid::initialiseParameters()
     }
     catch (exception &e)
     {
-        cerr << "Could not cast the parameter properly" << endl;
+    	this->logger->log(this->getName(), "Could not cast the parameter properly", msl::LogLevels::error, true);
+        //cerr << "Could not cast the parameter properly" << endl;
     }
     if (!success)
     {
-        cerr << "AAPR: Parameter does not exist" << endl;
+    	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error, true);
+        //cerr << "AAPR: Parameter does not exist" << endl;
+
     }
     /*PROTECTED REGION END*/
 }

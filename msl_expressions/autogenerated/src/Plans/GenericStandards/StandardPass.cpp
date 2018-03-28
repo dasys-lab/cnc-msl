@@ -14,6 +14,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -49,7 +50,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+                this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
@@ -108,11 +110,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+//            cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "StandardPass: Parameter does not exist" << endl;
+//            cerr << "StandardPass: Parameter does not exist" << endl;
+            this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

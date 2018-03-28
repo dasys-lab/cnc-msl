@@ -8,6 +8,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -76,7 +77,8 @@ namespace alica
         if (aimPoint == nullptr)
         {
             this->setFailure(true);
-            cout << "AlignToGoal: no aimPoint" << endl;
+            //cout << "AlignToGoal: no aimPoint" << endl;
+            this->logger->log(this->getName(),"no aimPoint",msl::LogLevels::error);
             return;
         }
 
@@ -89,7 +91,8 @@ namespace alica
             double distBeforeBall = minFree(ballAngle, 200, dstscan);
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
-                cout << "AlignToGoal: failure!" << endl;
+                //cout << "AlignToGoal: failure!" << endl;
+                this->logger->log(this->getName(),"failure",msl::LogLevels::error);
                 this->setFailure(true);
             }
         }
@@ -223,7 +226,9 @@ namespace alica
             if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
             {
                 validGoalPoints.push_back(egoAim);
+
                 //std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
+                this->logger->log(this->getName(),"AlignPoint" + std::to_string(i) + ":" + std::to_string(aim->x) + ", " + std::to_string(aim->y), msl::LogLevels::debug);
             }
             aim->y += 2 * abs(y) / samplePoints;
         }

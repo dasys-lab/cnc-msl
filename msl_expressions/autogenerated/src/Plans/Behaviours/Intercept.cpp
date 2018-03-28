@@ -12,6 +12,7 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <pathplanner/PathPlannerQuery.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -163,9 +164,11 @@ namespace alica
             egoVelocity = egoBallVel->getPoint();
         }
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+//		this->logger->log(this->getName(), "egoVelocity: " + egoVelocity->toString(), msl::LogLevels::debug);
         egoVelocity->x += controlDist * cos(egoPredBall->angleTo());
         egoVelocity->y += controlDist * sin(egoPredBall->angleTo());
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+//      this->logger->log(this->getName(), "egoVelocity: " + egoVelocity->toString(), msl::LogLevels::debug);
 
         auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoPredBall->length());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
@@ -220,12 +223,14 @@ namespace alica
         if (!std::isnan(tmpMC.motion.translation))
         {
             send(tmpMC);
-            cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
+            //cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
+            this->logger->log(this->getName(), "RuleAction: " + std::to_string(tmpMC.motion.translation), msl::LogLevels::info); /// NOTE Welches level???
         }
         else
         {
             send(mc);
-            cout << "Intercept: Normal: " << mc.motion.translation << endl;
+            //cout << "Intercept: Normal: " << mc.motion.translation << endl;
+            this->logger->log(this->getName(), "Normal: " + std::to_string(mc.motion.translation), msl::LogLevels::debug);
         }
 
 //        if (this->wm->ball->haveBallDribble(false))

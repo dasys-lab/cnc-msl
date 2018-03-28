@@ -18,6 +18,8 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <Robots.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
+#include <sstream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -38,10 +40,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
         // check if it is ok to score a goal
-        cout << "==========================================================================" << endl;
+        //cout << "==========================================================================" << endl;
         if (false == this->wm->game->isMayScore())
         {
-            cout << "may score: false" << endl;
+//            cout << "may score: false" << endl;
+            this->logger->log(this->getName(), "may score: false", msl::LogLevels::error);
             return;
         }
         // get sensor data from WM and check validity
@@ -75,12 +78,16 @@ namespace alica
 
         if (false == hitPoint)
         {
-            cout << "hits the goal: false" << endl;
+//            cout << "hits the goal: false" << endl;
+            this->logger->log(this->getName(), "hits the goal: false", msl::LogLevels::error);
             return;
         }
         else
         {
             cout << "hits the goal: x: " << hitPoint->x << ", y: " << hitPoint->y << endl;
+            std::stringstream msg;
+            msg << "hits the goal: x: " << hitPoint->x << ", y: " << hitPoint->y;
+			this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
         }
 
         // Sending debug message for visualization
@@ -107,48 +114,63 @@ namespace alica
         {
             if (!this->checkGoalKeeper(hitPoint))
             { // we hit the goal keeper
-                cout << "check goal keeper: false" << endl;
+//                cout << "check goal keeper: false" << endl;
+                this->logger->log(this->getName(), "check goal keeper: false", msl::LogLevels::error);
                 return;
             }
             else
             {
-                cout << "check goal keeper: true" << endl;
+//                cout << "check goal keeper: true" << endl;
+                this->logger->log(this->getName(), "check goal keeper: true", msl::LogLevels::debug);
             }
         }
 
         double kickPowerObs = 0;
         if (!this->checkShootPossibility(hitPoint, kickPowerObs))
         { // we cannot shoot over the closest obstacles
-            cout << "check shoot possibility: false" << endl;
+//            cout << "check shoot possibility: false" << endl;
+            this->logger->log(this->getName(), "check shoot possibility: false", msl::LogLevels::error);
             return;
         }
         else
         {
-            cout << "check shoot possibility: true" << endl;
-            cout << "kick power obs: " << kickPowerObs << endl;
+//            cout << "check shoot possibility: true" << endl;
+//            cout << "kick power obs: " << kickPowerObs << endl;
+            std::stringstream msg;
+            msg << "kick power obs: " << kickPowerObs;
+            this->logger->log(this->getName(), "check shoot possibility: true", msl::LogLevels::debug);
+            this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
         }
 
         double kickPowerGoal = this->getKickPower(hitPoint);
-        cout << "dist ball to hit point: " << cout_distBall2HitPoint << endl;
-        cout << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs << endl;
+        //cout << "dist ball to hit point: " << cout_distBall2HitPoint << endl;
+        //cout << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs << endl;
+        std::stringstream mesg;
+        mesg << "dist ball to hit point: " << cout_distBall2HitPoint;
+		this->logger->log(this->getName(), "", msl::LogLevels::debug);
+        mesg << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs;
+        this->logger->log(this->getName(), "", msl::LogLevels::debug);
 
         // no closest obstacle, FIRE
         if (kickPowerObs == -2)
         {
-            cout << "kick power: " << kickPowerGoal << endl;
+//            cout << "kick power: " << kickPowerGoal << endl;
+            this->logger->log(this->getName(), "kick power: " + std::to_string(kickPowerGoal), msl::LogLevels::debug);
             kick(kickPowerGoal);
             return;
         }
 
         if (kickPowerGoal < kickPowerObs)
         {
-            cout << "goal power < obs power" << endl;
+//            cout << "goal power < obs power" << endl;
+            this->logger->log(this->getName(), "goal power < obs power", msl::LogLevels::error);
             return;
         }
         else
         {
             double kickPower = (kickPowerGoal + kickPowerObs) / 2;
-            cout << "kick power: " << kickPower << endl;
+//            cout << "kick power: " << kickPower << endl;
+            this->logger->log(this->getName(), "kick power: " + std::to_string(kickPower), msl::LogLevels::debug);
             kick(kickPower);
         }
         /*PROTECTED REGION END*/
@@ -276,7 +298,10 @@ namespace alica
 
         auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
         double dist2Obs = alloBallPos->distanceTo(closestObs);
-        cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
+        //cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
+        std::stringstream msg;
+        msg << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs;
+        this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug); /// NOTE ist debug okay?
         kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
         {
@@ -332,7 +357,10 @@ namespace alica
         {
             if (opp->distanceTo(hitPoint) < keeperDistGoal)
             {
-                std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
+//                std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
+                std::stringstream msg;
+                msg << "Position of evil goalkeeper " << opp->x << ", " << opp->y;
+                this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
 //            	double deltaAngleGoalie2HitPoint = opp->angleToPoint(hitPoint);
 //            	double stuff = tan(deltaAngleGoalie2HitPoint) * opp->distanceTo(ownPos);
                 auto egoGoalKeeper = opp->alloToEgo(*this->ownPos);
@@ -343,7 +371,9 @@ namespace alica
 
                 double keeperDisBallTrajectory = abs(egoGoalKeeper->y / egoGoalKeeper->x) * egoGoalKeeper->length();
 
-                std::cout << "keeperDisBallTrajectory " << keeperDisBallTrajectory << std::endl;
+                //std::cout << "keeperDisBallTrajectory " << keeperDisBallTrajectory << std::endl;
+                msg << "keeperDisBallTrajectory " << keeperDisBallTrajectory;
+                this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
 
                 if (keeperDisBallTrajectory < minKeeperDistBallTrajectory)
                 {

@@ -10,6 +10,7 @@ using namespace std;
 #include <msl_robot/kicker/Kicker.h>
 #include <Game.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -108,7 +109,8 @@ namespace alica
             }
             else
             {
-                cout << "PenaltyBeh: no obstacles!" << endl;
+//                cout << "PenaltyBeh: no obstacles!" << endl;
+                this->logger->log(this->getName(), "no obsticles!", msl::LogLevels::info);
             }
         }
 
@@ -116,14 +118,16 @@ namespace alica
         if (counter <= 0)
         {
             lastAlignment = 1;
-            cout << "PenaltyBeh: left!" << endl;
+//            cout << "PenaltyBeh: left!" << endl;
+            this->logger->log(this->getName(), "left!", msl::LogLevels::debug);
             egoTarget = alloLeftAimPoint->alloToEgo(*ownPos);
         }
         // if counter > 0, there are obstacles on the left side, so we aim right
         else
         {
             lastAlignment = 2;
-            cout << "PenaltyBeh: right!" << endl;
+//            cout << "PenaltyBeh: right!" << endl;
+            this->logger->log(this->getName(), "right!", msl::LogLevels::debug);
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
         // calculate angle difference between robot and target and ball and target
@@ -134,7 +138,8 @@ namespace alica
         // if too much time has passed or the robot is aligned, we shoot
         if (timePassed >= waitBeforeBlindKick || fabs(deltaHoleAngle) < this->angleTolerance)
         {
-            cout << "PenaltyBeh: Success!" << endl;
+//            cout << "PenaltyBeh: Success!" << endl;
+            this->logger->log(this->getName(), "Success!", msl::LogLevels::debug);
             KickControl kc;
             kc.enabled = true;
             kc.kicker = egoBallPos->angleTo();

@@ -10,6 +10,9 @@ using namespace std;
 #include <container/CNPoint2D.h>
 #include "ConsoleCommandHelper.h"
 //#include "Plans/Calibration/RotateOnce.h"
+
+/// NOTE Braucht man das überhaupt???
+
 /*PROTECTED REGION END*/
 namespace alica
 {

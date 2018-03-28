@@ -6,6 +6,7 @@ ros::Publisher calibCoeff_pub;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <SystemConfig.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -87,7 +88,8 @@ namespace alica
         }
         else
         {
-            std::cout << "keine CalibData!" << std::endl;
+            //std::cout << "keine CalibData!" << std::endl;
+        	this->logger->log(this->getName(), "keine CalibData!", msl::LogLevels::error);
         }
 
         ros::NodeHandle calibCEP;
@@ -234,26 +236,34 @@ namespace alica
         switch (calibCounter)
         {
             case 1:
-                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)\n" << std::endl;
+                //std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)\n" << std::endl;
+                this->logger->log(this->getName(), "Difference X: " + std::to_string(diffX) + " (" + std::to_string((diffX / lengthSegment) * 100) + "%)", msl::LogLevels::debug);
                 break;
 
             case 2:
-                std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)" << std::endl;
-                std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
+                //std::cout << "Difference X: " << diffX << " (" << (diffX / lengthSegment) * 100 << " %)" << std::endl;
+                //std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
+                this->logger->log(this->getName(), "Difference X: " + std::to_string(diffX) + " (" + std::to_string((diffX / lengthSegment) * 100) + "%)", msl::LogLevels::debug);
+            	this->logger->log(this->getName(), "new calibration coefficient X: " + std::to_string(calibCoefficientX), msl::LogLevels::debug);
                 break;
 
             case 3:
                 std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)\n" << std::endl;
+                this->logger->log(this->getName(), "Difference Y: " + std::to_string(diffY) + " (" + std::to_string((diffY / lengthSegment) * 100) + "%)", msl::LogLevels::debug);
                 break;
 
             case 4:
-                std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)" << std::endl;
-                std::cout << "new calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+                //std::cout << "Difference Y: " << diffY << " (" << (diffY / lengthSegment) * 100 << " %)" << std::endl;
+                //std::cout << "new calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+                this->logger->log(this->getName(), "Difference Y: " + std::to_string(diffY) + " (" + std::to_string((diffY / lengthSegment) * 100) + "%)", msl::LogLevels::debug);
+                this->logger->log(this->getName(), "new calibration coefficient Y: " + std::to_string(calibCoefficientY), msl::LogLevels::debug);
                 break;
 
             default:
-                std::cout << "\nold calibration coefficient X: " << calibCoefficientX
-                        << "\nold calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+                //std::cout << "\nold calibration coefficient X: " << calibCoefficientX
+                //        << "\nold calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+            	this->logger->log(this->getName(), "old calibration coefficient X: " + std::to_string(calibCoefficientX), msl::LogLevels::debug);
+            	this->logger->log(this->getName(), "old calibration coefficient Y: " + std::to_string(calibCoefficientY), msl::LogLevels::debug);
         }
         /* std::cout << "Differenzen: " << std::endl;
          std::cout << "X: " << diffX << std::endl;

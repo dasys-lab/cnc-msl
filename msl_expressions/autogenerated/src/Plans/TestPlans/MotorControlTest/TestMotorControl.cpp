@@ -5,6 +5,8 @@ using namespace std;
 #include "msl_actuator_msgs/MotionControl.h"
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
+#include <Logger.h>
+#include <sstream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -33,8 +35,12 @@ namespace alica
             motorMsg.motion.angle = (double)angle / 180 * M_PI;
             motorMsg.motion.rotation = 0;
 
-            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
-                    << motorMsg.motion.rotation << endl;
+//            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+//                    << motorMsg.motion.rotation << endl;
+            std::stringstream msg;
+            msg << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+               << motorMsg.motion.rotation;
+            this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
             send(motorMsg);
 
         }
@@ -47,8 +53,12 @@ namespace alica
             motorMsg.motion.angle = (double)(angle + 120) / 180 * M_PI;
             motorMsg.motion.rotation = 0;
 
-            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
-                    << motorMsg.motion.rotation << endl;
+//            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+//                    << motorMsg.motion.rotation << endl;
+            std::stringstream msg;
+            msg << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                << motorMsg.motion.rotation << endl;
+            this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
             send(motorMsg);
 
         }
@@ -60,8 +70,12 @@ namespace alica
             motorMsg.motion.angle = (double)(angle + 240) / 180 * M_PI;
             motorMsg.motion.rotation = 0;
 
-            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
-                    << motorMsg.motion.rotation << endl;
+//            cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+//                    << motorMsg.motion.rotation << endl;
+            std::stringstream msg;
+			msg << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+				<< motorMsg.motion.rotation << endl;
+			this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
             send(motorMsg);
 
         }

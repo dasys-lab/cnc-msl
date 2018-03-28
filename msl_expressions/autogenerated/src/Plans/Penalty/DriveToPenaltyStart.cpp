@@ -8,6 +8,7 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -57,7 +58,8 @@ namespace alica
         }
         else
         {
-            cout << "Motion command is NaN!" << endl;
+//            cout << "Motion command is NaN!" << endl;
+            this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
         }
         /*PROTECTED REGION END*/
     }

@@ -13,6 +13,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -72,7 +73,8 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         auto parent = this->runningPlan->getParent().lock();
         if (parent == nullptr)
         {
-            cout << "parent null" << endl;
+//            cout << "parent null" << endl;
+            this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
             return;
         }
         // get robot ids of robots in found entry point
@@ -100,7 +102,8 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         auto parent = this->runningPlan->getParent().lock();
         if (parent == nullptr)
         {
-            cout << "parent null" << endl;
+//            cout << "parent null" << endl;
+            this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
             return;
         }
         // get robot ids of robots in found entry point
@@ -185,13 +188,15 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     if (this->canPassCounter > this->canPassThreshold)
     {
         this->canPassThreshold = -2;
-        cout << "SAAG2R: aiming to receiver" << endl;
+//        cout << "SAAG2R: aiming to receiver" << endl;
+        this->logger->log(this->getName(), "aiming to reciver", msl::LogLevels::debug);
         receiverPos = recPos1;
     }
     else
     {
         this->canPassThreshold = 2;
-        cout << "SAAG2R: aiming to alternative receiver" << endl;
+//        cout << "SAAG2R: aiming to alternative receiver" << endl;
+        this->logger->log(this->getName(), "aiming to alternative reciver", msl::LogLevels::debug);
         receiverPos = recPos2;
     }
 
@@ -244,11 +249,13 @@ void StandardAlignToPoint2Receivers::initialiseParameters()
     }
     catch (exception &e)
     {
-        cerr << "Could not cast the parameter properly" << endl;
+//        cerr << "Could not cast the parameter properly" << endl;
+        this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
     }
     if (!success)
     {
-        cerr << "SAAG2R: Parameter does not exist" << endl;
+//        cerr << "SAAG2R: Parameter does not exist" << endl;
+        this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
     }
     /*PROTECTED REGION END*/
 }

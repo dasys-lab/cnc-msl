@@ -16,6 +16,7 @@ using namespace std;
 #include <Ball.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -141,11 +142,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+//            cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "PRT: Parameter does not exist" << endl;
+//            cerr << "PRT: Parameter does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

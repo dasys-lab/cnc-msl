@@ -7,6 +7,7 @@ using namespace std;
 #include "engine/Assignment.h"
 #include "MSLWorldModel.h"
 #include "Game.h"
+#include <Logger.h>
 
 #include <iostream>
 /*PROTECTED REGION END*/
@@ -85,7 +86,8 @@ namespace alica
             }
             else
             {
-                cerr << "SS: Parameter does not exist Uncertain" << endl;
+                //cerr << "SS: Parameter does not exist Uncertain" << endl;
+                this->logger->log(this->getName(), "Parameter does not exist Uncertain", msl::LogLevels::warn);
             }
             if (getParameter("passing", tmp))
             {
@@ -95,13 +97,15 @@ namespace alica
             }
             else
             {
-                cerr << "SS: Parameter does not exist Passing" << endl;
+                //cerr << "SS: Parameter does not exist Passing" << endl;
+            	this->logger->log(this->getName(), "Parameter does not exist Passing", msl::LogLevels::warn);
             }
 
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+        	this->logger->log(this->getName(), "Could not cast the parameter properly", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

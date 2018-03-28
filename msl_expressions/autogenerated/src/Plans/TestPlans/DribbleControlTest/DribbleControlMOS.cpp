@@ -8,6 +8,7 @@ using namespace std;
 #include "SystemConfig.h"
 #include "math.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -79,7 +80,8 @@ namespace alica
 
         if (odom == nullptr)
         {
-            cerr << "DribbleControlMOS: no odometry!" << endl;
+//            cerr << "DribbleControlMOS: no odometry!" << endl;
+            this->logger->log(this->getName(), "no odometry!", msl::LogLevels::error);
             return;
         }
 

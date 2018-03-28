@@ -6,6 +6,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include "container/CNPoint2D.h"
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -34,7 +35,8 @@ namespace alica
         /*PROTECTED REGION ID(run1469284294147) ENABLED START*/ //Add additional options here
         if (!runBehaviour)
         {
-            cout << "skipping BallHolding behaviour" << endl;
+            //cout << "skipping BallHolding behaviour" << endl;
+        	this->logger->log(this->getName(), "skipping BallHolding behaviour", msl::LogLevels::info);
             this->setSuccess(true);
             return;
         }
@@ -80,7 +82,8 @@ namespace alica
 
         if (ballWasRotating && ballWasStanding && !ballIsRotating())
         {
-            cout << "finished ball holding calibration!" << endl;
+//            cout << "finished ball holding calibration!" << endl;
+            this->logger->log(this->getName(), "finished ball holding calibration!", msl::LogLevels::debug);
             this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
@@ -88,7 +91,8 @@ namespace alica
     void CalibrationBallHolding::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1469284294147) ENABLED START*/ //Add additional options here
-        cout << "starting ball holding calibration..." << endl;
+        //cout << "starting ball holding calibration..." << endl;
+        this->logger->log(this->getName(), "starting ball holding calibration...", msl::LogLevels::info);
         readConfigParameters();
 
         ballWasStanding = false;
@@ -106,7 +110,8 @@ namespace alica
 //		shared_ptr<geometry::CNPoint2D> opticalFlow = wm->rawSensorData->getOpticalFlow(0);
         double averageXValue = dcc.getAverageOpticalFlowXValue(opQueue);
 
-        cout << "opticalFlow->x: " << averageXValue << endl;
+//        cout << "opticalFlow->x: " << averageXValue << endl;
+        this->logger->log(this->getName(), "opticalFlow->x" + std::to_string(averageXValue), msl::LogLevels::debug);
 
         opQueue->clear();
         return averageXValue > 0 ? true : false;
@@ -126,9 +131,12 @@ namespace alica
 
     void CalibrationBallHolding::writeConfigParameters()
     {
-        cout << "writing config parameters" << endl;
-        cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
-        cout << "minRotation: " << minRotation << endl;
+//        cout << "writing config parameters" << endl;
+        this->logger->log(this->getName(), "writing config parameters", msl::LogLevels::debug);
+        //cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
+        this->logger->log(this->getName(), "slowTranslationWheelspeed: " + std::to_string(slowTranslationWheelSpeed), msl::LogLevels::debug);
+        //cout << "minRotation: " << minRotation << endl;
+        this->logger->log(this->getName(), "minRotation: " + std::to_string(minRotation), msl::LogLevels::debug);
 
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (slowTranslationWheelSpeed),

@@ -8,6 +8,8 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include "container/CNPoint2D.h"
+#include <Logger.h>
+#include <sstream>
 //#include <msl_actuator_msgs/BallHandleCmd.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -45,7 +47,8 @@ namespace alica
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
         if (!runBehaviour)
         {
-            cout << "skipping TakeBall behaviour..." << endl;
+            //cout << "skipping TakeBall behaviour..." << endl;
+        	this->logger->log(this->getName(), "skipping TakeBall behaviour...", msl::LogLevels::info);
             this->setSuccess(true);
             return;
         }
@@ -64,12 +67,14 @@ namespace alica
 
                 if (ballRotation == RotateErr)
                 {
-                    cout << "ROTATE_ERR" << endl;
+                    //cout << "ROTATE_ERR" << endl;
+                	this->logger->log(this->getName(), "ROTATE_ERR", msl::LogLevels::error);
                     return;
                 }
                 else if (ballRotation == RotateCorrect)
                 {
-                    cout << "ROTATE_CORRECT" << endl;
+                    //cout << "ROTATE_CORRECT" << endl;
+                    this->logger->log(this->getName(), "ROTATE_CORRECT", msl::LogLevels::debug);
                     this->ballRotateCorrect = true;
                 }
                 else if (ballRotation == RotateLeft)
@@ -94,7 +99,8 @@ namespace alica
             //			send(mc);
             return;
         }
-        cout << "successfully calibrated the ball taking!" << endl;
+        //cout << "successfully calibrated the ball taking!" << endl;
+        this->logger->log(this->getName(), "successfully calibrated the ball taking!", msl::LogLevels::info);
         this->setSuccess(true);
 
         /*PROTECTED REGION END*/
@@ -102,7 +108,8 @@ namespace alica
     void CalibrationTakeBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1469109429392) ENABLED START*/ //Add additional options here
-        cout << "starting dribble calibration..." << endl;
+        //cout << "starting dribble calibration..." << endl;
+    	this->logger->log(this->getName(), "starting dribble calibration...", msl::LogLevels::debug);
         changingValue = 0;
         queueSize = 0;
         oldOperation = Add;
@@ -117,7 +124,8 @@ namespace alica
         dribbleFactorLeft = 0;
         speedNoBall = 0;
         readConfigParameters();
-        cout << "try to synchronize the actuators..." << endl;
+        //cout << "try to synchronize the actuators..." << endl;
+        this->logger->log(this->getName(), "try to synchronize th actuators...", msl::LogLevels::debug);
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1469109429392) ENABLED START*/ //Add additional methods here
@@ -135,8 +143,10 @@ namespace alica
         double yValue = dcc.getAverageOpticalFlowYValue(opQueue);
         //		double qosValue = dcc.getAverageOpticalFlowQOSValue(opQueue);
 
-        cout << "checkBallRotation x: " << xValue << endl;
-        cout << "checkBallRotation y: " << yValue << endl;
+//        cout << "checkBallRotation x: " << xValue << endl;
+        this->logger->log(this->getName(), "checkBallRotation x: " + std::to_string(xValue), msl::LogLevels::debug);
+        //cout << "checkBallRotation y: " << yValue << endl;
+        this->logger->log(this->getName(), "checkBallRotation y: " + std::to_string(yValue), msl::LogLevels::debug);
 
         //		if (qosValue == 0)
         //		{
@@ -174,13 +184,15 @@ namespace alica
     {
         if (rotation != RotateRight && rotation != RotateLeft && rotation != RotateTooSlow)
         {
-            cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
+//            cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
+            this->logger->log(this->getName(), "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!", msl::LogLevels::error);
             return;
         }
         if (rotation == RotateTooSlow)
         {
             // increase booth wheels speed (decrease dribbleFactor)
-            cout << "ball is rotating too slow!" << endl;
+//            cout << "ball is rotating too slow!" << endl;
+            this->logger->log(this->getName(), "ball is rotating too slow!", msl::LogLevels::error);
             return;
         }
         // check which wheel need to be corrected and safes it so we know in further iterations which wheel we need to fixed
@@ -188,7 +200,8 @@ namespace alica
         {
             adaptWheel = rotation;
         }
-        cout << "changinFactor: " << changingValue << endl;
+//        cout << "changinFactor: " << changingValue << endl;
+        this->logger->log(this->getName(), "changingFactor: " + std::to_string(changingValue), msl::LogLevels::debug);
         // check if the defect wheel is too fast or to slow
         if (rotation == adaptWheel)
         {
@@ -235,12 +248,16 @@ namespace alica
 
     void CalibrationTakeBall::writeConfigParameters()
     {
-        cout << "writing config parameters" << endl;
-        cout << "speedNoBall:               " << speedNoBall << endl;
-        cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
-        cout << "minRotation:               " << minRotation << endl;
-        cout << "dribbleFactorRight:        " << dribbleFactorRight << endl;
-        cout << "dribbleFlactorLeft:        " << dribbleFactorLeft << endl;
+//        cout << "writing config parameters" << endl;
+//        cout << "speedNoBall:               " << speedNoBall << endl;
+//        cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
+//        cout << "minRotation:               " << minRotation << endl;
+//        cout << "dribbleFactorRight:        " << dribbleFactorRight << endl;
+//        cout << "dribbleFlactorLeft:        " << dribbleFactorLeft << endl;
+        std::stringstream msg;
+        msg << "writing config parameters      speedNoBall: " << speedNoBall << "   slowTranslationWheelSpeed: " << slowTranslationWheelSpeed;
+        msg << "   minRotation: " << minRotation << "   dribbleFactorRight: " << dribbleFactorRight << "   dribbleFlactorLeft: " << dribbleFactorLeft;
+        this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
 
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (speedNoBall), "Dribble.SpeedNoBall", NULL);

@@ -440,7 +440,7 @@ namespace alica
                 break;
 
             default:
-                cerr << "UtilityFunctionCreator: Unknown utility requested: " << utilityfunctionConfId << endl;
+                cerr << "UtilityFunctionCreator: Unknown utility requested: " << utilityfunctionConfId << endl;/// NOTE muss das auch?
                 throw new exception();
                 break;
         }

@@ -15,6 +15,7 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -70,7 +71,8 @@ namespace alica
         }
         else
         {
-            cout << "Motion command is NaN!" << endl;
+//            cout << "Motion command is NaN!" << endl;
+            this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
         }
 
         /*PROTECTED REGION END*/
@@ -95,11 +97,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+//            cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "PRT: Parameter does not exist" << endl;
+//            cerr << "PRT: Parameter does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

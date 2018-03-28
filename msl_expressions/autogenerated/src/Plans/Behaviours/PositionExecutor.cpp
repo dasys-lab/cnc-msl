@@ -17,6 +17,7 @@ using namespace std;
 #include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <Robots.h>
 #include <Game.h>
 
@@ -67,7 +68,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+                //cout << "parent null" << endl;
+            	this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -130,7 +132,8 @@ namespace alica
             }
             else
             {
-                cout << "Motion command is NaN!" << endl;
+                //cout << "Motion command is NaN!" << endl;
+            	this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
             }
         }
         /*PROTECTED REGION END*/
@@ -165,7 +168,8 @@ namespace alica
             }
             else
             {
-                cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+                //cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+            	this->logger->log(this->getName(), "Could not determine the recivers entry point!", msl::LogLevels::error);
                 throw std::runtime_error("PositionExecutor: Could not determine the receivers entry point!");
             }
         }

@@ -7,6 +7,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -35,7 +36,8 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        cout << "### DriveToGoal ###" << endl;
+//        cout << "### DriveToGoal ###" << endl;
+        this->logger->log(this->getName(), "### DriveToGoal ###", msl::LogLevels::debug);
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
 
@@ -47,8 +49,10 @@ namespace alica
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
 
-            cout << " [DriveToGoal] Stop!" << endl;
-            cout << "### DriveToGoal ###\n" << endl;
+//            cout << " [DriveToGoal] Stop!" << endl;
+//            cout << "### DriveToGoal ###\n" << endl;
+            this->logger->log(this->getName(), "Stop!", msl::LogLevels::debug);
+            this->logger->log(this->getName(), "### DriveToGoal ###", msl::LogLevels::debug);
         }
         else
         {
@@ -71,7 +75,8 @@ namespace alica
             alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
             alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
-            cout << " Driving to goal" << endl;
+//            cout << " Driving to goal" << endl;
+            this->logger->log(this->getName(), "Driving to goal", msl::LogLevels::debug);
             // replaced with new moveToPoint method
 //            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
 //                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
@@ -92,14 +97,17 @@ namespace alica
             }
             else if (!std::isnan(mc.motion.translation))
             {
-                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
+//                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
+                this->logger->log(this->getName(), "Distance left: " + std::to_string(me->distanceTo(alloTarget)), msl::LogLevels::debug);
                 send (mc);
             }
             else
             {
-                cout << "Motion command is NaN!" << endl;
+//                cout << "Motion command is NaN!" << endl;
+            	this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             }
-            cout << "### DriveToGoal ###\n" << endl;
+//            cout << "### DriveToGoal ###\n" << endl;
+            this->logger->log(this->getName(), "### DriveToGoal ###", msl::LogLevels::debug);
         }
         /*PROTECTED REGION END*/
     }

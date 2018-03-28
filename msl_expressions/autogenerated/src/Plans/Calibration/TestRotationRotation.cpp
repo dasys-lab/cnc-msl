@@ -10,6 +10,7 @@ using namespace std;
 #include <SystemConfig.h>
 #include <FileSystem.h>
 #include "ConsoleCommandHelper.h"
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -76,10 +77,12 @@ namespace alica
         if (cd > 3)
         {
             halfwayDone = true;
-            cout << "HALFWAY DONE!!!" << endl;
+            //cout << "HALFWAY DONE!!!" << endl;
+            this->logger->log(this->getName(), "HALFWAY DONE!!!", msl::LogLevels::debug);
         }
 
-        cout << cd << endl;
+        //cout << cd << endl;
+        this->logger->log(this->getName(), std::to_string(cd), msl::LogLevels::debug);
 
         if (halfwayDone && cd < 0)
         {

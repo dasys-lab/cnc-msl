@@ -10,6 +10,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -59,7 +60,8 @@ namespace alica
             query->egoAlignPoint = egoBallPos;
             mc = this->robot->robotMovement->moveToPoint(query);
 
-            cout << "SAAG: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
+//            cout << "SAAG: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
+            this->logger->log(this->getName(), "egoBallPos->length() > 900 ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::error);
             send(mc);
             return;
         }
@@ -81,7 +83,8 @@ namespace alica
 
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
-            cout << "SAAG: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
+//            cout << "SAAG: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
+            this->logger->log(this->getName(), "egoBallPos->length() > 450 ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::error);
             send(mc);
             return;
         }
@@ -136,8 +139,9 @@ namespace alica
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
             mc.motion.rotation = fac * rot * 1.6;
-            cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
-                    << mc.motion.rotation << endl;
+//            cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
+//                    << mc.motion.rotation << endl;
+            this->logger->log(this->getName(), "egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180 ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::error);
             send(mc);
             return;
         }
@@ -149,7 +153,8 @@ namespace alica
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
                 mc.motion.angle = M_PI;
                 mc.motion.translation = 100;
-                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
+//                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
+                this->logger->log(this->getName(), "fabs(balldangle) > 20.0 * M_PI /180 ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::debug);
                 send(mc);
                 return;
             }
@@ -158,7 +163,8 @@ namespace alica
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length() * 1.5;
-                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
+//                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
+                this->logger->log(this->getName(), "fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::debug);
                 send(mc);
                 return;
             }
@@ -194,7 +200,8 @@ namespace alica
                 this->setSuccess(true);
             }
         }
-        cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;
+//        cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;
+        this->logger->log(this->getName(), "last mc ROT:    " + std::to_string(mc.motion.rotation), msl::LogLevels::debug);
         send(mc);
         /*PROTECTED REGION END*/
     }
@@ -217,17 +224,20 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "StandardAlignAndGrab: Parameter does not exist" << endl;
+//            cerr << "StandardAlignAndGrab: Parameter does not exist" << endl;
+            this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
 
         receiver = getHigherEntryPoint(planName, teamMateTaskName);
         if (receiver == nullptr)
         {
-            cerr << "StdAlign: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+//            cerr << "StdAlign: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+            this->logger->log(this->getName(), "Reciver==null, because planName, teamMateTaskName does not match", msl::LogLevels::warn);
         }
         /*PROTECTED REGION END*/
     }

@@ -11,6 +11,7 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLWorldModel.h>
 #include <Game.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -115,7 +116,8 @@ namespace alica
         }
         else
         {
-            cout << "Motin command is NaN!" << endl;
+            //cout << "Motin command is NaN!" << endl;
+        	this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
         }
         /*PROTECTED REGION END*/
     }

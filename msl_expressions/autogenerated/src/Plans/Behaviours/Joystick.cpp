@@ -9,6 +9,7 @@ using namespace std;
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include "MSLWorldModel.h"
 #include <RawSensorData.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +29,7 @@ namespace alica
     void Joystick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
-        cout << "=========================" << endl;
+        //cout << "=========================" << endl; /// NOTE Muss das bleiben??? Kann weg...
         auto joy = wm->rawSensorData->getJoystickCommand();
         msl_actuator_msgs::MotionControl mc;
 
@@ -43,7 +44,8 @@ namespace alica
   
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
-            	std::cout << "Joystick: PT-Controller is on" << std::endl;
+            	//std::cout << "Joystick: PT-Controller is on" << std::endl;
+            	this->logger->log(this->getName(), "PT-Controller is on", msl::LogLevels::debug);
 		            // smooth driving stuff
             	pastControlInput.push(std::valarray<double>({cos(joy->motion.angle) * joy->motion.translation, sin(joy->motion.angle)
                                       * joy->motion.translation, joy->motion.rotation}));
@@ -54,11 +56,13 @@ namespace alica
             }
             else
             {
-            	std::cout << "Joystick: PT-Controller is off" << std::endl;
+            	//std::cout << "Joystick: PT-Controller is off" << std::endl;
+            	this->logger->log(this->getName(), "PT-Controller is off", msl::LogLevels::warn);/// NOTE ist das okay?
                 mc.motion = joy->motion;
             }
 
-            cout << "Joystick: Translation " << mc.motion.translation << endl;
+            //cout << "Joystick: Translation " << mc.motion.translation << endl;
+            this->logger->log(this->getName(), "Translation " + std::to_string(mc.motion.translation), msl::LogLevels::debug);
 
             mc.motion.angle = joy->motion.angle;
             send(mc);
@@ -66,6 +70,7 @@ namespace alica
         else
         {
             //cout << "Joystick: Some Motion Value is NaN! Sending Stop instead." << endl;
+        	this->logger->log(this->getName(), "Some Motion Value is NaN! Sending Stop instead.", msl::LogLevels::error);
             msl_actuator_msgs::MotionControl mc;
             send(mc);
         }

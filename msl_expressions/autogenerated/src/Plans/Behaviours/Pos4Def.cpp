@@ -9,6 +9,7 @@ using namespace std;
 #include <SolverType.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -43,14 +44,16 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
-            cout << "Pos4Def: FOUND a solution!" << endl;
+            //cout << "Pos4Def: FOUND a solution!" << endl;
+            this->logger->log(this->getName(), "FOUND a solution!", msl::LogLevels::debug);
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                     vector<shared_ptr<geometry::CNPoint2D>>>();
             additionalPoints->push_back(alloBall);
             shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
                     > (result.at(0), result.at(1));
 
-            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+            //cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+            this->logger->log(this->getName(), "Target x,y: " + std::to_string(alloTarget->x) + " " + std::to_string(alloTarget->y), msl::LogLevels::debug);
 
             shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
@@ -65,7 +68,8 @@ namespace alica
         else
         {
 
-            cout << "Pos4Def: Did not get a filled result vector!" << endl;
+            //cout << "Pos4Def: Did not get a filled result vector!" << endl;
+        	this->logger->log(this->getName(), "Did not get a filled result vector!", msl::LogLevels::error);
         }
         if (!std::isnan(mc.motion.translation))
         {
@@ -73,7 +77,8 @@ namespace alica
         }
         else
         {
-            cout << "Motion command is NaN!" << endl;
+            //cout << "Motion command is NaN!" << endl;
+            this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
         }
         /*PROTECTED REGION END*/
     }

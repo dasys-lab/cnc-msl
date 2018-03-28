@@ -11,6 +11,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <obstaclehandler/Obstacles.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

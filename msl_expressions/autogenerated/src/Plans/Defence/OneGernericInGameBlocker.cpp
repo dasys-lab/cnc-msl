@@ -13,6 +13,7 @@ using namespace std;
 #include <msl_helper_msgs/DebugMsg.h>
 #include <MSLWorldModel.h>
 #include <MSLEnums.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -56,7 +57,8 @@ namespace alica
 
         if (ep == nullptr)
         {
-            cout << "OGIGB Taskname " << teamMateTaskName << " Planname " << teamMatePlanName << ": EP is null" << endl;
+            //cout << "OGIGB Taskname " << teamMateTaskName << " Planname " << teamMatePlanName << ": EP is null" << endl;
+            this->logger->log(this->getName(), "Taskname " + teamMateTaskName + " Planname " + teamMatePlanName + ": EP is null", msl::LogLevels::error);
             return;
         }
         // the only teammate in the corresponding task/ entrypoint
@@ -87,8 +89,13 @@ namespace alica
         }
 
         bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
-        cout << "BEH " << this->getRunningPlan()->getPlan()->getName() << ": Solver found valid solution: "
-                << (ret ? "true" : "false") << endl;
+        std::string tv = "false";
+        if(ret)
+        {
+        	tv = "true";
+        }
+        //cout << "BEH " << this->getRunningPlan()->getPlan()->getName() << ": Solver found valid solution: " << (ret ? "true" : "false") << endl;
+        this->logger->log(this->getName(), "BEH " + this->getRunningPlan()->getPlan()->getName() + ": Solver found valid solution: " + tv, msl::LogLevels::debug);
 
         if (false == ret)
         {
@@ -195,25 +202,28 @@ namespace alica
 
             success &= getParameter("TeamMatePlanName", teamMatePlanName);
             success &= getParameter("TeamMateTaskName", teamMateTaskName);
-            cout << teamMatePlanName << " : " << teamMateTaskName << endl;
+//            cout << teamMatePlanName << " : " << teamMateTaskName << endl;
+            this->logger->log(this->getName(), teamMatePlanName + " : " + teamMateTaskName, msl::LogLevels::debug);
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
             avoidBall = false;
             failTimeThreshold = 250000000;
         }
 
         if (!success)
         {
-            cerr << "OneGenericInGameBlocker: Parameter does not exist" << endl;
+            //cerr << "OneGenericInGameBlocker: Parameter does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
 
         ep = getHigherEntryPoint(teamMatePlanName, teamMateTaskName);
         if (ep == nullptr)
         {
-            cerr << "OneGenericInGameBlocker: Receiver==null, because planName, teamMateTaskName does not match"
-                    << endl;
+            //cerr << "OneGenericInGameBlocker: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+            this->logger->log(this->getName(), "Receiver==null, because planName, teamMateTaskName does not match", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

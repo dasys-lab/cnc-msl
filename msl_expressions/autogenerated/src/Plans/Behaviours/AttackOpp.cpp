@@ -11,6 +11,7 @@ using namespace std;
 #include <pathplanner/PathPlanner.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -56,8 +57,9 @@ namespace alica
         if (!blocked)
         {
             auto egoBallVelocity = wm->ball->getEgoBallVelocity();
-            cout << "ego ball vel: " << egoBallVelocity->x << "|" << egoBallVelocity->y << " "
-                    << egoBallVelocity->length() << endl;
+            //cout << "ego ball vel: " << egoBallVelocity->x << "|" << egoBallVelocity->y << " "
+            //        << egoBallVelocity->length() << endl;
+            this->logger->log(this->getName(),"ego ball vel: " + std::to_string(egoBallVelocity->x) + "|" + std::to_string(egoBallVelocity->y) + " " + std::to_string(egoBallVelocity->length()),msl::LogLevels::debug);
             auto vector = egoBallVelocity + egoBallPos;
             double vectorLength = vector->length();
             if (wm->ball->haveBall())
@@ -77,12 +79,14 @@ namespace alica
             }
             if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
             {
-                cout << "roll away" << endl;
+                //cout << "roll away" << endl;
+            	this->logger->log(this->getName(),"roll away",msl::LogLevels::debug);
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
             }
             else if (isMovingCloserIter >= maxIter)
             {
-                cout << "get closer" << endl;
+                //cout << "get closer" << endl;
+            	this->logger->log(this->getName(), "get closer", msl::LogLevels::debug);
                 mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
             }

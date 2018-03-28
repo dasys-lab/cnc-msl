@@ -16,6 +16,7 @@ using namespace std;
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
 #include <Game.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -77,7 +78,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+                this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -106,7 +108,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+            	this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -335,11 +338,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+//            cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "SA2P: Parameter does not exist" << endl;
+//            cerr << "SA2P: Parameter does not exist" << endl;
+            this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
 
         /*PROTECTED REGION END*/

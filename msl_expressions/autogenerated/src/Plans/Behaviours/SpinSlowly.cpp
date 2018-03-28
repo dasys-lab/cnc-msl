@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1435159253296) ENABLED START*/ //Add additional includes here
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,8 +41,9 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-        cout << "angle, epsilon: " << abs(startAngle - alpha) << ", " << epsilon << endl;
-        cout << "counter: " << counter << endl;
+        //cout << "angle, epsilon: " << abs(startAngle - alpha) << ", " << epsilon << endl;
+        //cout << "counter: " << counter << endl;
+        this->logger->log(this->getName(), "angle epsilon: " + std::to_string(abs(startAngle - alpha)) + ", " + std::to_string(epsilon) + "    Counter: " + std::to_string(counter), msl::LogLevels::debug);
 
         if (abs(startAngle - alpha) < epsilon && counter > 90)
         {

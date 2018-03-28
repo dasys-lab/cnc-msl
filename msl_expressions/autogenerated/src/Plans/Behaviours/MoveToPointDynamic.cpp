@@ -9,6 +9,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -85,7 +86,8 @@ namespace alica
         }
         else
         {
-            cout << "no solution found!!!" << endl;
+            //cout << "no solution found!!!" << endl;
+        	this->logger->log(this->getName(), "no solution found!!!", msl::LogLevels::warn);
             return;
         }
         send(mc);
@@ -111,11 +113,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+        	this->logger->log(this->getName(), "Could not cast the parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "M2PD: Parameter 'AvoidBall' does not exist" << endl;
+            //cerr << "M2PD: Parameter 'AvoidBall' does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter 'AvoidBall' does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

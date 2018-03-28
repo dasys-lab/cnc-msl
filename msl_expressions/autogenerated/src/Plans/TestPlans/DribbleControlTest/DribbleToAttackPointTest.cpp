@@ -13,6 +13,7 @@ using namespace std;
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
 #include <pathplanner/PathPlanner.h>
+#include <Logger.h>
 
 /*PROTECTED REGION END*/
 namespace alica
@@ -62,16 +63,19 @@ namespace alica
 
         if (ownPos == nullptr)
         {
-            cerr << "DribbleToAttackPointTest::run(): own position is nullptr!" << endl;
+//            cerr << "DribbleToAttackPointTest::run(): own position is nullptr!" << endl;
+            this->logger->log(this->getName(), "own position is nullptr!", msl::LogLevels::error);
             return;
         }
         if (egoBallPos == nullptr)
         {
-            cerr << "DribbleToAttackPointTest::run(): egoBallPos is nullptr!" << endl;
+//            cerr << "DribbleToAttackPointTest::run(): egoBallPos is nullptr!" << endl;
+        	this->logger->log(this->getName(), "egoBallPos is nullptr!", msl::LogLevels::error);
         }
         if (vNet == nullptr)
         {
-            cerr << "DribbleToAttackPointTest::run(): voronoi net is nullptr!" << endl;
+//            cerr << "DribbleToAttackPointTest::run(): voronoi net is nullptr!" << endl;
+            this->logger->log(this->getName(), "voronoi net is nullptr!", msl::LogLevels::error);
         }
 
         // drive to destination point
@@ -91,7 +95,8 @@ namespace alica
         if (closestOpponent == nullptr)
         {
 //			query->egoAlignPoint = egoBallPos;
-            cout << "no opponent nearby!" << endl;
+//            cout << "no opponent nearby!" << endl;
+            this->logger->log(this->getName(), "no opponent nearby!", msl::LogLevels::error);
             return;
         }
         else
@@ -102,7 +107,7 @@ namespace alica
             oppVec = oppVec * 1.2;
             // getting point out of vector
             alloAlignPoint = closestOpponent + oppVec;
-            cout << "============================" << endl;
+//            cout << "============================" << endl;
 //			cout << "ownPos:        x=" << ownPos->x << " y=" << ownPos->y << endl;
 //			cout << "closesOpp:     x=" << closestOpponent->x << " y=" << closestOpponent->y << endl;
 //			cout << "newVector:     x=" << oppVec->x << " y=" << oppVec->y << endl;
@@ -121,7 +126,8 @@ namespace alica
         // send movement command
         if (mc.motion.rotation == NAN || mc.motion.translation == NAN || mc.motion.angle == NAN)
         {
-            cerr << "DribbleToAttackPoint::run(): Motion command is NaN!" << endl;
+//            cerr << "DribbleToAttackPoint::run(): Motion command is NaN!" << endl;
+            this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             return;
         }
         send(mc);

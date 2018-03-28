@@ -11,6 +11,7 @@ using namespace std;
 #include <FileSystem.h>
 #include "ConsoleCommandHelper.h"
 #include <Calibration.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,7 +41,7 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-        cout.precision(4);
+        //cout.precision(4);
         if (this->isSuccess())
         {
             return;
@@ -79,22 +80,24 @@ namespace alica
 #endif
 #ifndef ROT_CALIB_DEBUG_ONLY
             int percent = floor(100 * currentDiff / MIN_BEARING_DIFF_FOR_REGRESSION);
-            cout << floor(iR) << "/" << MAX_ROTATIONS << " rotations, difference sums up to " << percent
-                    << "% of the calibration threshold" << endl;
+            /*cout << floor(iR) << "/" << MAX_ROTATIONS << " rotations, difference sums up to " << percent
+                    << "% of the calibration threshold" << endl;*/
+            this->logger->log(this->getName(), std::to_string(floor(iR)) + "/" + std::to_string(MAX_ROTATIONS) + " rotations, difference sums up to " + std::to_string(percent) + "% of the calibration threshold", msl::LogLevels::info);
+
 #endif
             logIMUMotionDifference(currentDiff);
             if (iR > MAX_ROTATIONS)
             {
                 // MAX_ROTATIONS reached - calibration finished!
-                cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
+                //cout << "MAX_ROTATIONS reached - calibration finished!" << endl;
+                this->logger->log(this->getName(), "MAX_ROTATIONS reached - calibration finished!", msl::LogLevels::debug);
                 this->setSuccess(true);
             }
             else if (iR > MIN_ROTATIONS && fabs(currentDiff) > MIN_BEARING_DIFF_FOR_REGRESSION)
             {
                 // MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius
-                cout
-                        << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius"
-                        << endl;
+                //cout << "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius" << endl;
+            	this->logger->log(this->getName(), "MIN_BEARING_DIFF_FOR_REGRESSION reached - we can start a regression calculation in order to improve on the RobotRadius", msl::LogLevels::debug);
                 calculateRadius();
                 this->setFailure(true);
             }
@@ -172,7 +175,8 @@ namespace alica
         slopeStr = strtok(NULL, "=");
         if (slopeStr == NULL)
         {
-            cerr << "ERROR parsing gnuplot output" << endl;
+            //cerr << "ERROR parsing gnuplot output" << endl;
+            this->logger->log(this->getName(), "error parsing gnuplot output", msl::LogLevels::error);
             this->setSuccess(true); // not really tho
             return;
         }
@@ -181,6 +185,7 @@ namespace alica
         double calculatedSlope = strtod(slopeStr, NULL);
         double newRadius = robotRadius * (1 - calculatedSlope);
         cout << "changed radius: " << robotRadius << " -> " << newRadius << endl;
+        this->logger->log(this->getName(), "changed radius: " + std::to_string(robotRadius) + " -> " + std::to_string(newRadius), msl::LogLevels::info);
         robotRadius = newRadius;
         wm->calibration->setRobotRadius(newRadius);
     }

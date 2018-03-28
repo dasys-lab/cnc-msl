@@ -7,6 +7,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -73,7 +74,8 @@ namespace alica
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             send (mc);
-            cout << "[WatchBall]: ownPos is null" << endl;
+//            cout << "[WatchBall]: ownPos is null" << endl;
+            this->logger->log(this->getName(), "ownPos is null", msl::LogLevels::error);
             return;
         }
 
@@ -86,7 +88,8 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > alignPoint = make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y); // align to mirrored ownPos
             mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
             send (mc);
-            cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
+//            cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
+            this->logger->log(this->getName(), "ball is far away from goal! BallX: " + std::to_string(alloBall->x), msl::LogLevels::error);
             return;
         }
         // TODO: Keep?
@@ -98,7 +101,8 @@ namespace alica
              * Goalie drives to last known target and rotates towards mirrored own position
              */
 
-            cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
+//            cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
+            this->logger->log(this->getName(), "Goalie can't see ball! Moving to prevTarget", msl::LogLevels::warn);
             mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
             rotate(make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y));
             mc.motion.translation = std::min(
@@ -214,6 +218,7 @@ namespace alica
                     if (!(diffpp <= diffp || diffpp + buffer <= diffp || diffpp - buffer <= diffp))
                     {
 //						cout << "[WatchBall] corner detected! cond2" << endl;
+                    	this->logger->log(this->getName(), "corner detected! cond2", msl::LogLevels::debug);
                         break;
                     }
                 }
@@ -247,6 +252,7 @@ namespace alica
         if (alloBallVel != nullptr && alloBallVel->x < -1000)
         {
             cout << "[WatchBall] alloBallVelX: " << alloBallVel->x << endl;
+            this->logger->log(this->getName(), "alloBallVelX: " + std::to_string(alloBallVel->x), msl::LogLevels::debug);
             calcTargetY = prevTarget->y;
         } // TODO: Keep?
         else if (nPoints > 1 && variance > maxVariance)
@@ -254,7 +260,8 @@ namespace alica
             /*
              * Ball is moving, so that its variance is greater than maxVariance
              */
-            cout << "[WatchBall] -LinearRegression- Variance   : " << variance << endl;
+//            cout << "[WatchBall] -LinearRegression- Variance   : " << variance << endl;
+            this->logger->log(this->getName(), "-LinearRegression- Variance: " + std::to_string(variance), msl::LogLevels::debug);
             for (int i = 0; i < nPoints; i++)
             {
                 auto curBall = ballPositions->getLast(i);
@@ -313,7 +320,8 @@ namespace alica
 //			 * Goalie drives to ball x position, meaning he just follows the ball
 //			 */
 
-            cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
+//            cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
+            this->logger->log(this->getName(), "-BallY- Variance: " + std::to_string(variance), msl::LogLevels::debug);
             calcTargetY = ballPositions->getLast(0)->y;
             //cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
         }

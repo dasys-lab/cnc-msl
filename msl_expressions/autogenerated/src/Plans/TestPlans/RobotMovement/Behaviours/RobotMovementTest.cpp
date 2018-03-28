@@ -9,6 +9,8 @@ using namespace std;
 #include <pathplanner/PathPlanner.h>
 #include <MSLWorldModel.h>
 #include <container/CNPoint2D.h>
+#include <Logger.h>
+#include <sstream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -95,8 +97,12 @@ namespace alica
                 mc = this->robot->robotMovement->moveToPoint(query);
             }
 //            cout << "angle to goal = " << egoGoalPos->angleTo() << endl;
-            cout << "Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = "
-                    << mc.motion.rotation << endl;
+//            cout << "Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = "
+//                    << mc.motion.rotation << endl;
+            std::stringstream msg;
+            msg << "Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = "
+                    << mc.motion.rotation;
+            this->logger->log(this->getName(), msg.str(), msl::LogLevels::debug);
             send(mc);
 
         }

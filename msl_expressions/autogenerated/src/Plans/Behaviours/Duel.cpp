@@ -8,6 +8,7 @@ using namespace std;
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
 #include <Robots.h>
+#include <Logger.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
@@ -231,7 +232,8 @@ namespace alica
 
                 if (counter <= 0)
                 {
-                    //cout << "Duel: Success, far away from opponent" << endl;
+                    //  << "Duel: Success, far away from opponent" << endl;
+                	//this->logger->log(this->getName(), "Success, far away from opponent", msl::logLevels::debug);
                     //this->success = true;
                     return;
                 }
@@ -251,11 +253,13 @@ namespace alica
             else
             {
                 //found no team member at all
-                cout << "Duel: Found nobody" << endl;
+                //cout << "Duel: Found nobody" << endl;
+                this->logger->log(this->getName(), "Found nobody", msl::LogLevels::debug);
                 if (ownPos == nullptr)
                 {
                     //no idea
-                    cout << "Duel: no idea" << endl;
+                    //cout << "Duel: no idea" << endl;
+                	this->logger->log(this->getName(), "no idea", msl::LogLevels::debug);
                     egoAlignPoint = oppGoal->alloToEgo(*ownPos);
                 }
                 else
@@ -263,7 +267,8 @@ namespace alica
                     //try closest field border
 
                     //TODO testen
-                    cout << "Duel: try closest field border" << endl;
+                    //cout << "Duel: try closest field border" << endl;
+                    this->logger->log(this->getName(), "try closest field to border", msl::LogLevels::debug);
 
                     shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
                             > (egoBallPos->y, -egoBallPos->x);
@@ -307,14 +312,16 @@ namespace alica
             }
             else
             {
-                cout << "Motion command is NaN!" << endl;
+                //cout << "Motion command is NaN!" << endl;
+                this->logger->log(this->getName(), "Motion command is NaN!", msl::LogLevels::warn);
             }
         }
 
         // too much time has passed, we don't want to stay in duel for too long (rules says sth like 10s until ball dropped)
         if (wm->getTime() - entryTime > duelMaxTime)
         {
-            cout << "Duel: time over " << endl;
+            //cout << "Duel: time over " << endl;
+        	this->logger->log(this->getName(), "time over", msl::LogLevels::error);
             this->setSuccess(true);
         }
 

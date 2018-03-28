@@ -8,6 +8,8 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <Logger.h>
+
 using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
@@ -38,7 +40,8 @@ namespace alica
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
-            cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
+            //cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
+            this->logger->log(this->getName(), "No own position!!! Initiating Selfdestruction!!!", msl::LogLevels::error);
             return;
         }
 
@@ -61,7 +64,8 @@ namespace alica
         }
         else
         {
-            cout << "Motion command is NaN!" << endl;
+            //cout << "Motion command is NaN!" << endl;
+            this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
         }
 
         /*PROTECTED REGION END*/

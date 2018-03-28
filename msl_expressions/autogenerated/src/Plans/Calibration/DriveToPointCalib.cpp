@@ -6,6 +6,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Logger.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -56,7 +57,9 @@ namespace alica
             mc.motion.translation = 0;
             send(mc);
             sleep(1);
-            cout << "DriveToPoint: Success" << endl;
+            //cout << "DriveToPoint: Success" << endl;
+            this->logger->log(this->getName(), "success", msl::LogLevels::debug);
+
             this->setSuccess(true);
         }
 
@@ -86,11 +89,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "D2P: Parameter does not exist" << endl;
+            //cerr << "D2P: Parameter does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/

@@ -12,6 +12,7 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -126,11 +127,13 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "S4PP: Could not cast the parameter properly" << endl;
+//            cerr << "S4PP: Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "S4PP: Parameter does not exist" << endl;
+//            cerr << "S4PP: Parameter does not exist" << endl;
+            this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
         /*PROTECTED REGION END*/
     }

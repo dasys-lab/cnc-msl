@@ -8,6 +8,8 @@ using namespace std;
 #include <msl_actuator_msgs/MotionControl.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
+#include <sstream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -65,6 +67,7 @@ namespace alica
             }
             haveBallCount++;
 
+            ///NOTE: muss das auch? das wird normalerweise ja nicht mit compiliert...
 #ifdef DEBUG_DC
             cout << "DribbleCalibration::run(): haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
 #endif
@@ -84,7 +87,8 @@ namespace alica
             {
                 if (mc->motion.translation == NAN)
                 {
-                    cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
+                    //cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
+                    this->logger->log(this->getName(), "motion command is NaN", msl::LogLevels::error);
                     return;
                 }
                 else
@@ -94,7 +98,8 @@ namespace alica
             }
             else
             {
-                cout << "no MotionControl received!" << endl;
+                //cout << "no MotionControl received!" << endl;
+                this->logger->log(this->getName(), "no MotionControl recived!", msl::LogLevels::error);
             }
 
             shared_ptr < BallHandleCmd > bhc = query->getBhc();
@@ -111,8 +116,10 @@ namespace alica
             if (haveBallCount >= minHaveBallIter)
             {
                 moveCount++;
-                cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..."
-                        << endl;
+                //cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..." << endl;
+                stringstream msg;
+                msg << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "...";
+                this->logger->log(this->getName(), msg.str(), msl::LogLevels::error);
 
                 haveBallCount = 0;
 
@@ -129,7 +136,8 @@ namespace alica
             dcc.writeConfigParameres(param);
 //			cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is "
 //					<< orthoDriveFactor << endl;
-            cout << "finished calibration" << endl;
+            //cout << "finished calibration" << endl;
+            this->logger->log(this->getName(), "finished calibration", msl::LogLevels::info);
             this->setSuccess(true);
             return;
         }
@@ -137,7 +145,8 @@ namespace alica
         {
             if (getBallFlag)
             {
-                cout << "getting ball" << endl;
+//                cout << "getting ball" << endl;
+                this->logger->log(this->getName(), "getting ball", msl::LogLevels::debug);
             }
 
             // we need to adapt our weel Speed!
@@ -154,7 +163,8 @@ namespace alica
             }
             else
             {
-                cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
+                //cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
+                this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             }
         }
         /*PROTECTED REGION END*/
@@ -203,13 +213,15 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
-                    << "\033[0m\n" << endl;
+            //cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly"
+            //        << "\033[0m\n" << endl;
+        	this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
-                    << endl;
+            //cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n"
+            //        << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
 
         /*PROTECTED REGION END*/

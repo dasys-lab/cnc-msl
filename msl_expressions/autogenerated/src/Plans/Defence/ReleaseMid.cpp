@@ -10,6 +10,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -45,13 +46,15 @@ namespace alica
         {
             mc = this->robot->robotMovement->driveRandomly(500);
             send(mc);
-            cout << "AAPR: OwnPos is null" << endl;
+            //cout << "AAPR: OwnPos is null" << endl;
+            this->logger->log(this->getName(), "OnPos is null", msl::LogLevels::error);
             return;
         }
 
         if (ep == nullptr)
         {
-            cout << this->getRunningPlan()->getPlan()->getName() << ": EP is null" << endl;
+            //cout << this->getRunningPlan()->getPlan()->getName() << ": EP is null" << endl;
+            this->logger->log(this->getName(), this->getRunningPlan()->getPlan()->getName() + ": EP is null", msl::LogLevels::debug);
             return;
         }
 
@@ -138,17 +141,20 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            //cerr << "Could not cast the parameter properly" << endl;
+            this->logger->log(this->getName(), "Could not cast parameter properly", msl::LogLevels::error);
         }
         if (!success)
         {
-            cerr << "StandardAlignAndGrab: Parameter does not exist" << endl;
+            //cerr << "StandardAlignAndGrab: Parameter does not exist" << endl;
+        	this->logger->log(this->getName(), "Parameter does not exist", msl::LogLevels::error);
         }
 
         ep = getHigherEntryPoint(teamMatePlanName, teamMateTaskName);
         if (ep == nullptr)
         {
-            cerr << "ReleaseMid: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+            //cerr << "ReleaseMid: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+            this->logger->log(this->getName(), "ReleaseMid: Receiver==null, because planName, teamMateTaskName does not match", msl::LogLevels::debug);
         }
         /*PROTECTED REGION END*/
     }

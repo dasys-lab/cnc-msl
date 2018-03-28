@@ -15,6 +15,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
+#include <Logger.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -71,7 +72,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+                this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -99,7 +101,8 @@ namespace alica
             auto parent = this->runningPlan->getParent().lock();
             if (parent == nullptr)
             {
-                cout << "parent null" << endl;
+//                cout << "parent null" << endl;
+                this->logger->log(this->getName(), "parent null", msl::LogLevels::error);
                 return;
             }
             // get robot ids of robots in found entry point
@@ -183,13 +186,15 @@ namespace alica
         if (this->canPassCounter > this->canPassThreshold)
         {
             this->canPassThreshold = -2;
-            cout << "SAAG2R: aiming to receiver" << endl;
+//            cout << "SAAG2R: aiming to receiver" << endl;
+            this->logger->log(this->getName(), "aiming to reciver", msl::LogLevels::debug);
             alloTarget = recPos1;
         }
         else
         {
             this->canPassThreshold = 2;
-            cout << "SAAG2R: aiming to alternative receiver" << endl;
+//            cout << "SAAG2R: aiming to alternative receiver" << endl;
+            this->logger->log(this->getName(), "aiming to alternative reciver", msl::LogLevels::debug);
             alloTarget = recPos2;
         }
 
@@ -210,7 +215,8 @@ namespace alica
             }
             else
             {
-                cout << "motion command is NaN!!" << endl;
+//                cout << "motion command is NaN!!" << endl;
+                this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             }
             return;
         }
@@ -239,7 +245,8 @@ namespace alica
             }
             else
             {
-                cout << "motion command is NaN!!" << endl;
+//                cout << "motion command is NaN!!" << endl;
+                this->logger->log(this->getName(), "motion command is NaN!", msl::LogLevels::error);
             }
 
             return;
@@ -312,7 +319,8 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-                cout << "SAAG2R: haveBall" << endl;
+//                cout << "SAAG2R: haveBall" << endl;
+                this->logger->log(this->getName(), "haveBall", msl::LogLevels::debug);
                 this->setSuccess(true);
             }
             else if (haveBallCounter > 3
@@ -324,7 +332,8 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-                cout << "SAAG2R: haveBall esle if" << endl;
+//                cout << "SAAG2R: haveBall esle if" << endl;
+                this->logger->log(this->getName(), "haveBall else if", msl::LogLevels::debug);
                 this->setSuccess(true);
             }
         }
