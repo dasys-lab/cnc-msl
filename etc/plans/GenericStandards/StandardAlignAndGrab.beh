@@ -24,8 +24,4 @@
     <parameters id="1516967541468" name="MISSING_NAME" comment="" key="planName" value="TestSAAG"/>
     <parameters id="1516967554672" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
   </configurations>
-  <configurations id="1513176284031" name="StandardAlignAndGrabLongPass" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1513176294252" name="MISSING_NAME" comment="" key="planName" value="LongPassBasement"/>
-    <parameters id="1513176310565" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
-  </configurations>
 </alica:Behaviour>

@@ -68,7 +68,6 @@ namespace alica
             query->egoAlignPoint = ballPos;
             query->snapDistance = 100;
             mc = this->robot->robotMovement->moveToPoint(query);
-            std::cout << passDestination->toString() << std::endl;
 
             mc.motion.translation = min(mc.motion.translation, trans);
 
@@ -79,9 +78,9 @@ namespace alica
 
         }
 
-        if (!std::isnan(mc.motion.translation))
+        if (!std::isnan(mc.motion.rotation))
         {
-            send(mc);
+            sendAndUpdatePT(mc);
         }
         else
         {

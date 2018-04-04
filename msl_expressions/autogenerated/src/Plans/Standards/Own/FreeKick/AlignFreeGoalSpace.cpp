@@ -12,7 +12,6 @@ using namespace std;
 #include <Robots.h>
 #include <msl_robot/MSLRobot.h>
 #include <obstaclehandler/Obstacles.h>
-using msl_actuator_msgs::MotionControl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -107,7 +106,7 @@ namespace alica
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
         // Create Motion Command for aiming
-        MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+        msl_actuator_msgs::MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
 
         cout << "AFGS MC: " << mc.motion.angle << ", " << mc.motion.rotation << ", " << mc.motion.translation << endl;
         send(mc);
@@ -146,14 +145,9 @@ namespace alica
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
-            cout << "AFGS: target reached" << endl;
         }
         else
         {
-            cout << "afgs: deltatargetAngle: " << deltaTargetAngle << endl;
-            cout << "afgs: defaultRotateP " << defaultRotateP << endl;
-            cout << "afgs: lastRotError: " << lastRotError << endl;
-            cout << "afga: alignToPointPRot: " << alignToPointpRot << endl;
 
             mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
                     + (deltaTargetAngle - lastRotError) * alignToPointpRot);
