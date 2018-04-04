@@ -72,8 +72,7 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.kicker = 1;
-        //OWN FREE KICK BRANCH: raise pass power for simulator
-        kc.power = 750; //wm->kicker.getKickPowerPass(egoAlignPoint->length());
+        kc.power = 500; //wm->kicker.getKickPowerPass(egoAlignPoint->length());
         send(kc);
 
         msl_helper_msgs::PassMsg pm;

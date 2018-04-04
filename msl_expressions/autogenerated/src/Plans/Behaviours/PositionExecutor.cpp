@@ -122,7 +122,8 @@ namespace alica
             }
 
             // if we reached the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 120 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+            if (egoTarget->length() < 120
+                    && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);
             }

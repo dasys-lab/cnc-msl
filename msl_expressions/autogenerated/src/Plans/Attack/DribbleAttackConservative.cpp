@@ -32,12 +32,11 @@ namespace alica
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (ownPos == nullptr)
+        if (ownPos == nullptr )
         {
             return;
         }
-        auto tmp = make_shared < geometry::CNPoint2D
-                > (wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
+        auto tmp = make_shared<geometry::CNPoint2D>(wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
         auto tragetPoint = tmp->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;

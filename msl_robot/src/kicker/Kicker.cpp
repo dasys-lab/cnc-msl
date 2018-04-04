@@ -74,7 +74,7 @@ int Kicker::getKickPowerPass(double dist)
 {
     if (lowShovelSelected)
     {
-        return kickLowPass->getKickPower(dist + 1000, 0);
+        return kickLowPass->getKickPower(dist, 0);
     }
     else
     {

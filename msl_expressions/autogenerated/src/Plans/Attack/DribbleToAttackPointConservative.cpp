@@ -56,6 +56,7 @@ namespace alica
 
         query->egoDestinationPoint = egoTarget;
 
+
         auto bm = this->robot->robotMovement->moveToPoint(query);
         auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
@@ -65,9 +66,7 @@ namespace alica
         else if (!std::isnan(bm.motion.translation))
         {
             send(bm);
-        }
-        else
-        {
+        } else {
 
         }
         /*PROTECTED REGION END*/
