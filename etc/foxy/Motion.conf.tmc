@@ -1,0 +1,141 @@
+#
+# Configuration for the motion
+
+[Motion]
+	DriversPath = drivers
+	Driver = TMC200a
+	#Driver = TMC200
+
+	ModelsPath = models
+	TraceModel = CircleTrace
+
+	AlivePeriod = 20
+	OpenAttemptPeriod = 1000
+
+	[MotionModel]
+		PIDKp  = 0.3723694032198045
+		PIDKi  = 0.19851611310247744
+		PIDb   = 0.47287993333370065
+		PIDKd  = 0.09117597393429111
+		PIDKdd = 0.552619924341136
+
+		PIDRefTime = 30.0
+
+#		PIDKp  = 0.2655277976155541
+#		PIDKi  = 0.19851611310247744
+#		PIDb   = 0.6130345665167478
+#		PIDKd  = 0.09623187349081457
+#		PIDKdd = 0.6184221840514541
+
+		RotationErrorWeight = 0.35
+		RotationErrorByAccel = 0.05
+		RotationErrorByVelocity = 1
+		RotationCare = 0
+
+		MotorEncoderPositiveDirection = 1
+		#1= clockwise (TMC) -1= (VMC)
+		
+		MinimalAccelerationAllowed = 250000 #mm/s^2 
+		MaximalAccelerationAllowed = 350000 #mm/s^2
+		#1=linear, > 1 = spikes at maxima, =< 2 spikes at
+		AccelerationFunctionOfAngleDegree = 1
+		FailSafeHighValue = 600
+		FailSafeLowValue = 50
+	[!MotionModel]
+
+	# mm/s^2
+	[AccelComp]
+		Enabled = false
+		MaxAccel = -4000.0
+		MaxAngularAccel = 1.570796
+	[!AccelComp]
+
+	[SlipControl]
+		Enabled = false
+		MinSpeed = 1250.0
+		DiffAngle = 0.01745
+		DiffAngleMinSpeed = 400.0
+		OldMaxRot = 0.1570796
+		NewMinRot = 1.570796
+	[!SlipControl]
+
+	[CircleTrace]
+		Initial X = 0.0
+		Initial Y = 0.0
+		Initial Angle = 0.0
+	[!CircleTrace]
+
+	[TMC200]
+#		Device = /dev/motion
+                Device = udp://192.168.0.2:10002
+                Listen = udp://192.168.0.5:10002
+
+		MinCycleTime = 10000
+
+		Mode = 0
+		Timeout = 1000
+
+		RobotRadius = 240
+	
+#		MotionModel = SimpleMotion 
+		MotionModel = DynMotionModel
+
+
+		InitReadTimeout = 1500
+		ReadTimeout = 250
+		WriteTimeout = 250
+
+		[Motor 1]
+			EncoderResolution = 500
+			MaxMotorSpeed = 5520
+#			DistanceDelta = 34
+
+			ThermalMotorConstantDenominator = 2
+			ThermalMotorConstantNumerator = 18
+			WindingCompensationTime = 17
+
+			#WheelRadius = 62
+			WheelRadius = 40
+			GearReduction = 12
+
+			MaxCurrent = 1000
+			LimitedCurrent = 950
+		[!Motor 1]
+
+		[Motor 2]
+			EncoderResolution = 500
+			MaxMotorSpeed = 5520
+#			DistanceDelta = 34
+
+			ThermalMotorConstantDenominator = 2
+			ThermalMotorConstantNumerator = 18
+			WindingCompensationTime = 17
+
+			#WheelRadius = 62
+			WheelRadius = 40
+			GearReduction = 12
+
+			MaxCurrent = 1000
+			LimitedCurrent = 950
+		[!Motor 2]
+
+		[Motor 3]
+			EncoderResolution = 500
+			MaxMotorSpeed = 5520
+#			DistanceDelta = 34
+
+			ThermalMotorConstantDenominator = 2
+			ThermalMotorConstantNumerator = 18
+			WindingCompensationTime = 17
+
+			#WheelRadius = 62
+			WheelRadius = 40
+			GearReduction = 12
+
+			MaxCurrent = 1000
+			LimitedCurrent = 950
+		[!Motor 3]
+	[!TMC200]
+
+[!Motion]
+
