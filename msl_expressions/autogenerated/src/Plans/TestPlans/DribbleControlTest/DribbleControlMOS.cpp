@@ -68,13 +68,14 @@ namespace alica
         {
             return;
         }
-	shared_ptr<msl_msgs::MotionInfo> odom = nullptr;
+        shared_ptr < msl_msgs::MotionInfo > odom = nullptr;
         if (wm->isUsingSimulator())
         {
-        	odom = wm->rawSensorData->getOwnVelocityVision();
+            odom = wm->rawSensorData->getOwnVelocityVision();
         }
-        else {
-        	odom = wm->rawSensorData->getOwnVelocityMotion();
+        else
+        {
+            odom = wm->rawSensorData->getOwnVelocityMotion();
         }
 
         if (odom == nullptr)
@@ -107,7 +108,6 @@ namespace alica
         //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
         auto ballVel = getBallVelocity(velX, velY);
         auto ballAngle = getBallAngle(velX, velY);
-
 
         // calculates dribble wheel velocities depending on Ball path
         auto right = getRightArmVelocity(ballVel, ballAngle);
@@ -235,7 +235,7 @@ namespace alica
             {
                 // powerFactor decays over the iterations
                 decayedPowerFactor = powerFactor;
-             }
+            }
 
             //velY = velY * (1 + decayedPowerFactor);
             velX = velX * (1 + decayedPowerFactor);
@@ -246,7 +246,6 @@ namespace alica
         translationOld = translation;
         rotationOld = rotation;
         angleOld = angle;
-
 
         // if we start moving forward, we don't want to push directly
         if (velXTemp <= staticUpperBound && velXTemp >= staticMiddleBound && velYTemp <= staticUpperBound

@@ -28,6 +28,7 @@ namespace alica
     void Joystick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
+        cout << "=========================" << endl;
         auto joy = wm->rawSensorData->getJoystickCommand();
         msl_actuator_msgs::MotionControl mc;
 
@@ -42,6 +43,7 @@ namespace alica
 
             if (joy->ptControllerState == msl_msgs::JoystickCommand::PT_CONTROLLER_ON)
             {
+                std::cout << "Joystick: PT-Controller is on" << std::endl;
                 // smooth driving stuff
                 pastControlInput.push(
                         std::valarray<double>(
@@ -55,8 +57,11 @@ namespace alica
             }
             else
             {
+                std::cout << "Joystick: PT-Controller is off" << std::endl;
                 mc.motion = joy->motion;
             }
+
+            cout << "Joystick: Translation " << mc.motion.translation << endl;
 
             mc.motion.angle = joy->motion.angle;
             send(mc);
