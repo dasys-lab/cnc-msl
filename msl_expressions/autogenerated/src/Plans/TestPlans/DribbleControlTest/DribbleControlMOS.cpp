@@ -36,7 +36,9 @@ namespace alica
         rotTolerance = 0;
         angleTolerance = 0;
 
-        velToInput = 0;
+        velAt2000 = 0;
+        velAt3500 = 0;
+
         staticUpperBound = 0;
         staticMiddleBound = 0;
         staticLowerBound = 0;
@@ -152,7 +154,8 @@ namespace alica
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ // Add additional options her
-        velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
+        velAt2000 = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velAt2000", NULL);
+        velAt3500 = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velAt3500", NULL);
         staticUpperBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound", NULL);
         staticMiddleBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticMiddleBound", NULL);
         staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);
@@ -193,6 +196,21 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
+    double DribbleControlMOS::velToInput(double wheelVelocity)
+    {
+    	double input = 0;
+
+    	if (wheelVelocity != 0)
+    	{
+    		double gradient = (3500-2000)/(velAt3500-velAt2000);
+    		input = gradient * (abs(wheelVelocity)-velAt2000) + 2000;
+    		input *= sign(wheelVelocity);
+    	}
+
+    	return input;
+    }
+
+
     void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback)
     {
         double maxDelta = 100.0;
@@ -207,9 +225,9 @@ namespace alica
 //        }
         this->wheelSpeedLeftOld = msgback.leftMotor;
         this->wheelSpeedRightOld = msgback.rightMotor;
-
-        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
-        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
+//
+//        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
+//        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
 
         send(msgback);
     }
@@ -374,7 +392,7 @@ namespace alica
             angleConst = -diagConst + (ballAngle - sec7) * (-forwConst + diagConst) / (sec8 - sec7);
         }
 
-        return ballVelocity * angleConst * velToInput;
+        return velToInput(ballVelocity * angleConst);
     }
 
     double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAngle)
@@ -428,7 +446,7 @@ namespace alica
             angleConst = (ballAngle - sec7) * (-forwConst) / (sec8 - sec7);
         }
 
-        return ballVelocity * angleConst * velToInput;
+        return velToInput(ballVelocity * angleConst);
     }
 
 /*PROTECTED REGION END*/
