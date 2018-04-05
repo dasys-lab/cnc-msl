@@ -206,7 +206,7 @@ namespace alica
     		input = gradient * (abs(wheelVelocity)-velAt2000) + 2000;
     		input *= sign(wheelVelocity);
     	}
-
+//    	cout << "DribbleControlMOS::velToInput Velocity: "<<wheelVelocity<<", Input: "<<input<< endl;
     	return input;
     }
 
