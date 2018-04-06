@@ -7,10 +7,10 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include <MSLFootballField.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
-#include <pathplanner/PathPlanner.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_helper_msgs/PassMsg.h>
@@ -295,7 +295,7 @@ namespace alica
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = driveTo->length();
 
-        send(mc);
+        sendAndUpdatePT(mc);
 
         /*PROTECTED REGION END*/
     }
