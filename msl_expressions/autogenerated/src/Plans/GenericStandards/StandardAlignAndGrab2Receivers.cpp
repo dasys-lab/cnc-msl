@@ -235,7 +235,7 @@ namespace alica
 //			cout << "SAAG2R: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
             if (mc.motion.angle != NAN)
             {
-                send(mc);
+                sendAndUpdatePT(mc);
             }
             else
             {
@@ -272,7 +272,7 @@ namespace alica
             mc.motion.rotation = fac * rot * 1.6;
 //			cout << "SAAG2R: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
 //					<< mc.motion.rotation << endl;
-            send(mc);
+            sendAndUpdatePT(mc);
             return;
         }
 
@@ -284,7 +284,7 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.translation = 100;
 //				cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
-                send(mc);
+                sendAndUpdatePT(mc);
                 return;
             }
             else
@@ -293,7 +293,7 @@ namespace alica
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length() * 1.5;
 //				cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
-                send(mc);
+                sendAndUpdatePT(mc);
                 return;
             }
         }
@@ -339,7 +339,6 @@ namespace alica
         this->haveBallCounter = 0;
         this->angleIntErr = 0;
         this->oldAngleErr = 0;
-        this->haveBallCounter = 0;
         this->startTime = wm->getTime();
         auto sc = supplementary::SystemConfig::getInstance();
         this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);

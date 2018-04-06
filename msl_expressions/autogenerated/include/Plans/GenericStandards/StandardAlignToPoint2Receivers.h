@@ -3,7 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467228931063) ENABLED START*/ //Add additional includes here
-using namespace msl;
 namespace geometry
 {
     class CNPoint2D;
@@ -44,7 +43,7 @@ namespace alica
         double ballRadius;
         double maxTurnAngle;
         double ratio;
-        shared_ptr<MovementQuery> m_Query;
+        shared_ptr<msl::MovementQuery> m_Query;
         shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
         shared_ptr<geometry::CNPoint2D> oldBallPos;
         int canPassCounter;

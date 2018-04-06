@@ -221,7 +221,7 @@ void StandardAlignToPoint2Receivers::initialiseParameters()
     this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
     this->maxTurnAngle = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "maxTurnAngle", NULL);
     this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
-    this->m_Query = make_shared<MovementQuery>();
+    this->m_Query = make_shared<msl::MovementQuery>();
     this->alloReceiverTarget.reset();
     this->oldBallPos.reset();
     this->canPassCounter = 1;
