@@ -280,5 +280,5 @@ bool StandardAlignToPoint2Receivers::outsideCorridoreTeammates(shared_ptr<geomet
     return true;
 }
 
-/*PROTECTED REGION END*/
-} /* namespace alica */
+/*PROTECTED REGION END*/			
+		} /* namespace alica */

@@ -27,7 +27,6 @@ namespace alica
                                                                 double snapDistance,
                                                                 shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 
-                                                            void readConfigParameters();
                                                             double fastCatchRadius;
                                                             double slowCatchRadius;
                                                             double alignTolerance;
