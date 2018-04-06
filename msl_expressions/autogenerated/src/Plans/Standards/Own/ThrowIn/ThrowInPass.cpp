@@ -30,7 +30,6 @@ namespace alica
         this->closerFactor = 0;
         this->ballRadius = 0;
         this->minOppDist = 0;
-        this->sc = nullptr;
         this->passCorridorWidth = 0;
         this->maxTurnAngle = 0;
         this->canPass = true;
@@ -303,7 +302,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1462363192018) ENABLED START*/ //Add additional options here
         this->sentPm = false;
-        auto sc = supplementary::SystemConfig::getInstance();
         this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
         this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
         this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
@@ -317,6 +315,7 @@ namespace alica
         this->maxRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MaxRotation", NULL);
         this->accel = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "ReceiverRobotAcceleration", NULL);
         this->arrivalTimeOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "ArrivalTimeOffset", NULL);
+
         string tmp;
         bool success = true;
         try
