@@ -16,6 +16,7 @@ using namespace std;
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
 #include <Game.h>
+#include <GeometryCalculator.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -175,7 +176,7 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, obs)
+            if (canPass && !geometry::outsideTriangle(alloBall, right, left, ballRadius, obs)
                     && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
             {
                 canPass = false;
@@ -370,35 +371,6 @@ namespace alica
             {
                 return false;
             }
-        }
-        return true;
-    }
-
-    bool ThrowInPass::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                                      shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                      shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        shared_ptr<geometry::CNPoint2D> a2b = b - a;
-        shared_ptr<geometry::CNPoint2D> b2c = c - b;
-        shared_ptr<geometry::CNPoint2D> c2a = a - c;
-        shared_ptr<geometry::CNPoint2D> a2p;
-        shared_ptr<geometry::CNPoint2D> b2p;
-        shared_ptr<geometry::CNPoint2D> c2p;
-        shared_ptr<geometry::CNPoint2D> p;
-        for (int i = 0; i < points->size(); i++)
-        {
-            p = points->at(i);
-            a2p = p - a;
-            b2p = p - b;
-            c2p = p - c;
-
-            if ((a2p->x * a2b->y - a2p->y * a2b->x) / a2p->normalize()->length()<tolerance
-            && (b2p->x * b2c->y - b2p->y * b2c->x) / b2p->normalize()->length() < tolerance
-            && (c2p->x * c2a->y - c2p->y * c2a->x) / c2p->normalize()->length() < tolerance)
-            {
-                return false;
-            }
-
         }
         return true;
     }
