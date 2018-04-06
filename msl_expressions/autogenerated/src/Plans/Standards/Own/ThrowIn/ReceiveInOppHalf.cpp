@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1462370340143) ENABLED START*/ // Add additional includes here
 #include <Ball.h>
 #include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <SystemConfig.h>
@@ -13,7 +14,6 @@ using namespace std;
 #include <engine/model/Plan.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
-#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -38,6 +38,11 @@ void ReceiveInOppHalf::run(void *msg)
     auto alloBallPos = wm->ball->getAlloBallPosition();
     if (!ownPos || !alloBallPos)
         return;
+
+    // Create additional points for path planning
+    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+    // add alloBall to path planning
+    additionalPoints->push_back(alloBallPos);
 
     double yCordOfReceiver = 0.0;
     double securityReceiver = 40.0;
@@ -92,22 +97,16 @@ void ReceiveInOppHalf::run(void *msg)
         }
     }
 
-    auto alloTarget = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 4, yCordOfReceiver);
+    alloTarget = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 4, yCordOfReceiver);
 
     if (lowestX < wm->field->getFieldLength() / 2 - 2000)
     { // opponent close to pass line
         alloTarget->x = min(alloTarget->x, max(lowestX - 2000, 2000.0));
     }
 
-    // Create additional points for path planning
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-
-    // add alloBall to path planning
-    additionalPoints->push_back(alloBallPos);
-
     mQuery->egoDestinationPoint = alloTarget->alloToEgo(*ownPos);
     mQuery->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
-    mQuery->snapDistance = 100;
+    mQuery->snapDistance = this->snapDist;
     mQuery->additionalPoints = additionalPoints;
     msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(mQuery);
 
@@ -120,6 +119,9 @@ void ReceiveInOppHalf::run(void *msg)
 void ReceiveInOppHalf::initialiseParameters()
 {
     /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ // Add additional options here
+    this->securityReceiver = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "securityReceiver", NULL);
+    this->snapDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "snapDist", NULL);
+    this->oppFarAwayDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "oppFarAwayDist", NULL);
     string tmp;
     bool success = true;
     alloTarget = make_shared<geometry::CNPoint2D>(0, 0);

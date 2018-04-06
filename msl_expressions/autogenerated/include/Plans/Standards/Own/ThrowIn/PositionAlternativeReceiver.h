@@ -22,6 +22,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462978634990) ENABLED START*/ //Add additional private methods here
+        double ballDistRec;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

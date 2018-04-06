@@ -45,10 +45,8 @@ namespace alica
                 vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        if (oldBallPos == nullptr)
-        {
-            oldBallPos = alloBall;
-        }
+
+
         EntryPoint* ep = getParentEntryPoint(taskName);
         if (ep != nullptr)
         {
@@ -96,8 +94,6 @@ namespace alica
                 egoTarget = alloTarget->alloToEgo(*ownPos);
             }
             // ask the path planner how to get there
-//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-//                                                          additionalPoints);
             query->egoDestinationPoint = egoTarget;
             query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             query->additionalPoints = additionalPoints;
@@ -125,8 +121,6 @@ namespace alica
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
-        oldBallPos.reset();
-        oldAlloTarget.reset();
         try
         {
             success &= getParameter("TeamMateTaskName", tmp);

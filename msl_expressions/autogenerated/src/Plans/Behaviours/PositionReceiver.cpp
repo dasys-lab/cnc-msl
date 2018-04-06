@@ -5,8 +5,6 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
 #include <MSLWorldModel.h>
-#include <pathplanner/PathProxy.h>
-#include <pathplanner/evaluator/PathEvaluator.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Game.h>
@@ -53,11 +51,8 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-        msl::MSLWorldModel *wm = msl::MSLWorldModel::get();
-
         if (wm->game->getSituation() == msl::Situation::Start)
         { // they already pressed start and we are still positioning, so speed up!
-          // removed with new moveToPoint method
             query->snapDistance = fastCatchRadius;
             query->velocityMode = msl::VelocityMode::FAST;
         }

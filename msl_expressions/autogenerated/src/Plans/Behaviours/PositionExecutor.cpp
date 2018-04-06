@@ -6,15 +6,9 @@ using namespace std;
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
 #include <engine/model/Plan.h>
-
 #include <MSLWorldModel.h>
-#include <pathplanner/PathProxy.h>
-#include <pathplanner/evaluator/PathEvaluator.h>
-
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
-
-#include <MSLEnums.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -52,15 +46,14 @@ namespace alica
 
         // Create allo ball
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
-
         // Create additional points for path planning
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                 vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        // get entry point of task name to locate robot with task name
 
+        // get entry point of task name to locate robot with task name
         if (receiverEp != nullptr)
         {
             // get the plan in which the behavior is running
@@ -101,26 +94,21 @@ namespace alica
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
             if (wm->game->getSituation() == msl::Situation::Start)
             { // they already pressed start and we are still positioning, so speed up!
-              // removed with new moveToPoint method
-//                mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
-                query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = fastCatchRadius;
-                query->additionalPoints = additionalPoints;
                 query->velocityMode = msl::VelocityMode::FAST;
-                mc = this->robot->robotMovement->moveToPoint(query);
             }
             else
             { // still enough time to position ...
-//                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
-                query->egoDestinationPoint = egoTarget;
-                query->egoAlignPoint = egoAlignPoint;
                 query->snapDistance = slowCatchRadius;
-                query->additionalPoints = additionalPoints;
                 query->velocityMode = msl::VelocityMode::DEFAULT;
-                mc = this->robot->robotMovement->moveToPoint(query);
             }
 
+            query->additionalPoints = additionalPoints;
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoAlignPoint;
+
+
+            mc = this->robot->robotMovement->moveToPoint(query);
             // if we reached the point and are aligned, the behavior is successful
             if (egoTarget->length() < 120 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
