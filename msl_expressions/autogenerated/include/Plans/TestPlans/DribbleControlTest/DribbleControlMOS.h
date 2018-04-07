@@ -24,10 +24,9 @@ namespace alica
         double getBallAngle(double velX, double velY);
         double getLeftArmVelocity(double ballVelocity, double ballAngle);
         double getRightArmVelocity(double ballVelocity, double ballAngle);
-        void getBallPath(double translation, double angle, double rotation, double &velX, double &velY);
+        double velToInput(double wheelVelocity);
+        void getBallPath(double translation, double angle, double rotation, double& velX, double& velY);
         void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback);
-
-        int sign(double x);
 
 //        int testBehaviour;
 //        int testSpeed;
@@ -54,7 +53,8 @@ namespace alica
 
         bool testingMode;
 
-        double velToInput;
+        double velAt2000;
+        double velAt3500;
         double staticUpperBound;
         double staticMiddleBound;
         double staticLowerBound;
@@ -71,8 +71,6 @@ namespace alica
         double velYFactor;
         double velXFactor;
         double powerOfRotation;
-
-        supplementary::SystemConfig* sc;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

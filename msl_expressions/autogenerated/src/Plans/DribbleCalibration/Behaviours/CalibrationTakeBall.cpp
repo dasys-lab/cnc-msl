@@ -230,9 +230,10 @@ namespace alica
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
 
         runBehaviour = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.TakeBall", NULL);
-        if (speedNoBall == 0.0) {
-        	cerr << "SpeedNoBall is not set! Should be 4000." << endl;
-        	throw exception();
+        if (speedNoBall == 0.0)
+        {
+            cerr << "SpeedNoBall is not set! Should be 4000." << endl;
+            throw exception();
         }
     }
 
