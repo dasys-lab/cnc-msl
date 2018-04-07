@@ -176,6 +176,10 @@ void DribbleControlMOS::initialiseParameters()
 
     this->phi = M_PI / 6.0; // horizontal angle between y and arm
 
+    this->armInputs = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.InputList", NULL);
+    this->armLeftVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.RightVelList", NULL);
+    this->armRightVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.LeftVelList", NULL);
+
     // very static
     // forwConst => ~0.89907059794455198110
     this->forwConst = sqrt((sin(M_PI / 2.0 - 0.82)) * sin(M_PI / 2.0 - 0.82) + (sin(0.75) * cos(M_PI / 2.0 - 0.82)) * (sin(0.75) * cos(M_PI / 2.0 - 0.82))) /
@@ -192,8 +196,24 @@ void DribbleControlMOS::initialiseParameters()
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
-double DribbleControlMOS::velToInput(double wheelVelocity)
+double DribbleControlMOS::velToInput(msl::ArmMotor arm, double wheelVelocity)
 {
+	// TODO SPLINE STUFF
+//	shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+//	        vector<double> robotSpeed(speedsSections->size());
+//	        vector<double> actuatorSpeed(speedsSections->size());
+//	        int i = 0;
+//	        for (string subsection : *speedsSections)
+//	        {
+//	            robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed",
+//	                                                            NULL);
+//	            actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
+//	                                                               "actuatorSpeed", NULL);
+//	//            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+//	            i++;
+//	        }
+//	        forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
+
     if (wheelVelocity == 0.0)
     {
         return 0.0;
@@ -246,7 +266,7 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
     velX = velX - epsilonT * std::abs(velXTemp) - this->epsilonY * std::abs(velYTemp);
 
     // correction of velocity in x depending on rotation (epsilonRot)
-    if (fabs(velYTemp) > 200)
+    if (fabs(velYTemp) > 200.0)
     {
         velX = velX - this->epsilonRot * geometry::sgn(velYTemp) * this->rBallRobot * rotation;
     }
@@ -378,22 +398,22 @@ double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAng
         angleConst = -this->diagConst + (ballAngle - sec7) * (-this->forwConst + this->diagConst) / (sec8 - sec7);
     }
 
-    return velToInput(ballVelocity * angleConst);
+    return velToInput(msl::ArmMotor::LEFT, ballVelocity * angleConst);
 }
 
 double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAngle)
 {
     double sec0 = -M_PI;
-    double sec1 = -M_PI / 2 - phi;
-    double sec2 = -M_PI / 2;
-    double sec3 = -M_PI / 2 + phi;
-    double sec4 = 0;
-    double sec5 = M_PI / 2 - phi;
-    double sec6 = M_PI / 2;
-    double sec7 = M_PI / 2 + phi;
+    double sec1 = -M_PI / 2.0 - this->phi;
+    double sec2 = -M_PI / 2.0;
+    double sec3 = -M_PI / 2.0 + this->phi;
+    double sec4 = 0.0;
+    double sec5 = M_PI / 2.0 - this->phi;
+    double sec6 = M_PI / 2.0;
+    double sec7 = M_PI / 2.0 + this->phi;
     double sec8 = M_PI;
 
-    double angleConst = 0;
+    double angleConst = 0.0;
 
     // linear interpolation of the constants in the 8 sectors
 
@@ -432,7 +452,7 @@ double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAn
         angleConst = (ballAngle - sec7) * (-this->forwConst) / (sec8 - sec7);
     }
 
-    return velToInput(ballVelocity * angleConst);
+    return velToInput(msl::ArmMotor::RIGHT, ballVelocity * angleConst);
 }
 
 /*PROTECTED REGION END*/
