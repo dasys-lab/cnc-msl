@@ -2,12 +2,17 @@ using namespace std;
 #include "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
 
 /*PROTECTED REGION ID(inccpp1479905178049) ENABLED START*/ // Add additional includes here
-#include "Ball.h"
-#include "MSLWorldModel.h"
-#include "RawSensorData.h"
-#include "SystemConfig.h"
-#include "math.h"
-#include "msl_actuator_msgs/BallHandleCmd.h"
+#include <math.h>
+
+#include <SystemConfig.h>
+
+#include <GeometryCalculator.h>
+
+#include <MSLWorldModel.h>
+#include <Ball.h>
+#include <RawSensorData.h>
+
+#include <msl_actuator_msgs/BallHandleCmd.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -109,7 +114,7 @@ void DribbleControlMOS::run(void *msg)
             // take planned motion instead of odom values
             robotAngle = plannedMotion->motion.angle;
             robotVel = plannedMotion->motion.translation;
-            robotRot = (double)plannedMotion->motion.rotation;
+            robotRot = plannedMotion->motion.rotation;
 
             // cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
         }
@@ -125,20 +130,20 @@ void DribbleControlMOS::run(void *msg)
         return;
     }
 
-    double velX;
-    double velY;
+    double velX = 0.0;
+    double velY = 0.0;
 
     // calculates desired ball path depending on robot movement, corrected to guarantee grip
     this->getBallPath(robotVel, robotAngle, robotRot, velX, velY);
 
     //		auto ballVel = getBallVelocity(velX, velX); <-- maybe bug?
-    double ballVel = getBallVelocity(velX, velY);
-    double ballAngle = getBallAngle(velX, velY);
+    double ballVel = this->getBallVelocity(velX, velY);
+    double ballAngle = this->getBallAngle(velX, velY);
     // cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
 
     // depends on hardware connection, left and right in this method are as seen from the robots point of view
-    msgback.leftMotor = getRightArmVelocity(ballVel, ballAngle);
-    msgback.rightMotor = getLeftArmVelocity(ballVel, ballAngle);
+    msgback.leftMotor = this->getRightArmVelocity(ballVel, ballAngle);
+    msgback.rightMotor = this->getLeftArmVelocity(ballVel, ballAngle);
     this->sendWheelSpeed(msgback);
 
     /*PROTECTED REGION END*/
@@ -196,15 +201,14 @@ double DribbleControlMOS::velToInput(double wheelVelocity)
 
     double gradient = (3500.0 - 2000.0) / (this->velAt3500 - this->velAt2000);
     double input = gradient * (abs(wheelVelocity) - this->velAt2000) + 2000.0;
-    input *= sign(wheelVelocity);
+    input *= geometry::sgn(wheelVelocity);
 
     return input;
 }
 
 void DribbleControlMOS::sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback)
 {
-    double maxDelta = 100.0;
-
+	//    double maxDelta = 100.0;
     //        if (this->wheelSpeedLeftOld < -2000 && this->wheelSpeedRightOld < -2000
     //                && msgback.leftMotor > this->wheelSpeedLeftOld && msgback.rightMotor > this->wheelSpeedRightOld
     //                && fabs(msgback.leftMotor - this->wheelSpeedLeftOld) > maxDelta
@@ -244,12 +248,12 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
     // correction of velocity in x depending on rotation (epsilonRot)
     if (fabs(velYTemp) > 200)
     {
-        velX = velX - this->epsilonRot * sign(velYTemp) * this->rBallRobot * rotation;
+        velX = velX - this->epsilonRot * geometry::sgn(velYTemp) * this->rBallRobot * rotation;
     }
     else
     {
         // rotation goes in nonlinear to fit for high as well as low
-        velX = velX - this->epsilonRot * pow(rotation * sign(rotation), this->powerOfRotation) * rBallRobot;
+        velX = velX - this->epsilonRot * pow(rotation * geometry::sgn(rotation), this->powerOfRotation) * rBallRobot;
     }
 
     // special case where y velocity and rotation result in positive x velocity (sign(velY)!=sign(rot))
@@ -315,15 +319,6 @@ double DribbleControlMOS::getBallVelocity(double velX, double velY)
 double DribbleControlMOS::getBallAngle(double velX, double velY)
 {
     return atan2(velY, velX);
-}
-
-int DribbleControlMOS::sign(double x)
-{
-    if (x == 0.0)
-    {
-        return 0;
-    }
-    return x > 0 ? 1 : -1;
 }
 
 double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAngle)

@@ -28,8 +28,6 @@ namespace alica
         void getBallPath(double translation, double angle, double rotation, double& velX, double& velY);
         void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback);
 
-        int sign(double x);
-
 //        int testBehaviour;
 //        int testSpeed;
 //        double testRot;
