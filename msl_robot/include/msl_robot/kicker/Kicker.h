@@ -41,7 +41,7 @@ class Kicker
     int getKickPower(double dist, double height, double velo);
     bool mayShoot();
     shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
-    double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
+    static double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
     double getPassKickpower(double dist, double arrivalTime);
     double getPassVelocity(double kickpower);
     double getKickPowerForLobShot(double dist, double height, double heightTolerance = 30.0);
@@ -81,7 +81,7 @@ class Kicker
     vector<shared_ptr<geometry::CNPoint2D>> validGoalPoints;
 
     RingBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
-    int mod(int x, int y);
+    static int mod(int x, int y);
 };
 
 } /* namespace msl */

@@ -77,7 +77,7 @@ namespace alica
     void PositionAlternativeReceiver::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462978634990) ENABLED START*/ //Add additional options here
-    	this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+        this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1462978634990) ENABLED START*/ //Add additional methods here

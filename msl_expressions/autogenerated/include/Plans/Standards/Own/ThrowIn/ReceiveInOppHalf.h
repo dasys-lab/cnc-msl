@@ -27,7 +27,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1462370340143) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPoint2D> alloTarget;
         shared_ptr<msl::MovementQuery> mQuery;
-        string taskName;
         double securityReceiver;
         double oppFarAwayDist;
         double snapDist;

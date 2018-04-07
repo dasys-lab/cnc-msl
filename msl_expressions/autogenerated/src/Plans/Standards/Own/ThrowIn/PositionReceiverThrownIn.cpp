@@ -41,8 +41,6 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-
-
         alloTarget->y = alloBall->y;
         alloTarget->x = alloBall->x - ballDistRec;
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
@@ -68,7 +66,7 @@ namespace alica
     void PositionReceiverThrownIn::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1461584204507) ENABLED START*/ //Add additional options here
-    	this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+        this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);

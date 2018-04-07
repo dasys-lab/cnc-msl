@@ -43,7 +43,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1462363134771" name="ReceiveAlternative" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
     <inTransitions>#1462368267461</inTransitions>
     <outTransitions>#1462368201420</outTransitions>
   </states>
@@ -51,8 +51,8 @@
     <inTransitions>#1462368130262</inTransitions>
   </states>
   <states id="1462368095616" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
     <inTransitions>#1462368266008</inTransitions>
     <outTransitions>#1462368130262</outTransitions>
   </states>

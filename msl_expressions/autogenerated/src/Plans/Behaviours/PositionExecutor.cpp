@@ -23,7 +23,7 @@ namespace alica
             DomainBehaviour("PositionExecutor")
     {
         /*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -52,9 +52,8 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-
         // get entry point of task name to locate robot with task name
-        if (receiverEp != nullptr)
+        if (this->receiverEp != nullptr)
         {
             // get the plan in which the behavior is running
             auto parent = this->runningPlan->getParent().lock();
@@ -71,7 +70,7 @@ namespace alica
             if (id != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(id);
+                auto pos = this->wm->robots->teammates.getTeamMatePosition(id);
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
             msl_actuator_msgs::MotionControl mc;
@@ -91,26 +90,25 @@ namespace alica
                 egoAlignPoint = egoBallPos;
             }
 
-            msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-            if (wm->game->getSituation() == msl::Situation::Start)
+            if (this->wm->game->getSituation() == msl::Situation::Start)
             { // they already pressed start and we are still positioning, so speed up!
-                query->snapDistance = fastCatchRadius;
-                query->velocityMode = msl::VelocityMode::FAST;
+                this->query->snapDistance = fastCatchRadius;
+                this->query->velocityMode = msl::VelocityMode::FAST;
             }
             else
             { // still enough time to position ...
-                query->snapDistance = slowCatchRadius;
-                query->velocityMode = msl::VelocityMode::DEFAULT;
+                this->query->snapDistance = slowCatchRadius;
+                this->query->velocityMode = msl::VelocityMode::DEFAULT;
             }
 
-            query->additionalPoints = additionalPoints;
-            query->egoDestinationPoint = egoTarget;
-            query->egoAlignPoint = egoAlignPoint;
-
+            this->query->additionalPoints = additionalPoints;
+            this->query->egoDestinationPoint = egoTarget;
+            this->query->egoAlignPoint = egoAlignPoint;
 
             mc = this->robot->robotMovement->moveToPoint(query);
             // if we reached the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 120 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+            if (egoTarget->length() < 120
+                    && fabs(egoAlignPoint->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);
             }
@@ -170,11 +168,10 @@ namespace alica
     /*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
     void PositionExecutor::readConfigParameters()
     {
-        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-        fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
-        slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
-        alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
-        ballDistanceEx = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistEx", NULL);
+        fastCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+        slowCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+        alignTolerance = (*this->sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
+        ballDistanceEx = (*this->sc)["Drive"]->get<double>("Drive.KickOff.BallDistEx", NULL);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

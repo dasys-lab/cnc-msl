@@ -3,8 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1462370340143) ENABLED START*/ // Add additional includes here
 #include <Ball.h>
-#include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <SystemConfig.h>
@@ -17,132 +17,92 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-/*PROTECTED REGION ID(staticVars1462370340143) ENABLED START*/ // initialise static variables here
-/*PROTECTED REGION END*/
-ReceiveInOppHalf::ReceiveInOppHalf()
-    : DomainBehaviour("ReceiveInOppHalf")
-{
-    /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ // Add additional options here
-    this->mQuery = make_shared<msl::MovementQuery>();
+    /*PROTECTED REGION ID(staticVars1462370340143) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
-}
-ReceiveInOppHalf::~ReceiveInOppHalf()
-{
-    /*PROTECTED REGION ID(dcon1462370340143) ENABLED START*/ // Add additional options here
-    /*PROTECTED REGION END*/
-}
-void ReceiveInOppHalf::run(void *msg)
-{
-    /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ // Add additional options here
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    auto alloBallPos = wm->ball->getAlloBallPosition();
-    if (!ownPos || !alloBallPos)
-        return;
-
-    // Create additional points for path planning
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-    // add alloBall to path planning
-    additionalPoints->push_back(alloBallPos);
-
-    double yCordOfReceiver = 0.0;
-    double securityReceiver = 40.0;
-    if (alloBallPos->y < 0.0) // right side line
+    ReceiveInOppHalf::ReceiveInOppHalf() :
+            DomainBehaviour("ReceiveInOppHalf")
     {
-        // place the receiver 1m outside the sideline
-        //            if (wm->field->getSurrounding() > 1300)
-        //            {
-        //                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
-        //            }
-        //            else
-        //            {
-        //                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - wm->field->getSurrounding()
-        //                        + wm->pathPlanner->getRobotRadius() + securityReceiver;
-        //            }
-
-        // ^ forbidden with rule changes 2017. place robot on side line instead
-        yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 + securityReceiver;
+        /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ // Add additional options here
+        this->mQuery = make_shared<msl::MovementQuery>();
+        /*PROTECTED REGION END*/
     }
-    else // left side line
+    ReceiveInOppHalf::~ReceiveInOppHalf()
     {
-        // place the receiver 1m outside the sideline
-        //			if (wm->field->getSurrounding() > 1300)
-        //			{
-        //				yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
-        //			}
-        //			else
-        //			{
-        //				yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + wm->field->getSurrounding()
-        //						- wm->pathPlanner->getRobotRadius() - securityReceiver;
-        //			}
-
-        // ^ forbidden with rule changes 2017. place robot on side line instead
-
-        yCordOfReceiver = wm->field->getFieldWidth() / 2.0 - securityReceiver;
+        /*PROTECTED REGION ID(dcon1462370340143) ENABLED START*/ // Add additional options here
+        /*PROTECTED REGION END*/
     }
-
-    double lowestX = wm->field->getFieldLength() / 2;
-    auto opps = wm->robots->opponents.getOpponentsAlloClustered();
-    for (auto opp : *opps)
+    void ReceiveInOppHalf::run(void* msg)
     {
-        double distToLine =
-            geometry::distancePointToLineSegment(opp->x, opp->y, 2000, yCordOfReceiver, wm->field->getFieldLength() / 2 - 2000, yCordOfReceiver);
-        if (distToLine > 3000)
+        /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ // Add additional options here
+        auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
+        auto alloBallPos = this->wm->ball->getAlloBallPosition();
+        if (!ownPos || !alloBallPos)
         {
-            continue;
+            return;
         }
 
-        if (lowestX > opp->x)
+        // Create additional points for path planning
+        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+                vector<shared_ptr<geometry::CNPoint2D>>>();
+        // add alloBall to path planning
+        additionalPoints->push_back(alloBallPos);
+
+        double yCordOfReceiver = 0.0;
+        if (alloBallPos->y < 0.0) // right side line
         {
-            lowestX = opp->x;
+            yCordOfReceiver = -this->wm->field->getFieldWidth() / 2.0 + this->securityReceiver;
         }
-    }
-
-    alloTarget = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 4, yCordOfReceiver);
-
-    if (lowestX < wm->field->getFieldLength() / 2 - 2000)
-    { // opponent close to pass line
-        alloTarget->x = min(alloTarget->x, max(lowestX - 2000, 2000.0));
-    }
-
-    mQuery->egoDestinationPoint = alloTarget->alloToEgo(*ownPos);
-    mQuery->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
-    mQuery->snapDistance = this->snapDist;
-    mQuery->additionalPoints = additionalPoints;
-    msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(mQuery);
-
-    if (!std::isnan(mc.motion.translation))
-    {
-        send(mc);
-    }
-    /*PROTECTED REGION END*/
-}
-void ReceiveInOppHalf::initialiseParameters()
-{
-    /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ // Add additional options here
-    this->securityReceiver = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "securityReceiver", NULL);
-    this->snapDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "snapDist", NULL);
-    this->oppFarAwayDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "oppFarAwayDist", NULL);
-    string tmp;
-    bool success = true;
-    alloTarget = make_shared<geometry::CNPoint2D>(0, 0);
-    try
-    {
-        success &= getParameter("TeamMateTaskName", tmp);
-        if (success)
+        else // left side line
         {
-            taskName = tmp;
+            yCordOfReceiver = this->wm->field->getFieldWidth() / 2.0 - this->securityReceiver;
         }
+
+        double lowestX = this->wm->field->getFieldLength() / 2;
+        auto opps = this->wm->robots->opponents.getOpponentsAlloClustered();
+        for (auto opp : *opps)
+        {
+            double distToLine = geometry::distancePointToLineSegment(opp->x, opp->y, 2000, yCordOfReceiver,
+                                                                     this->wm->field->getFieldLength() / 2 - 2000,
+                                                                     yCordOfReceiver);
+            if (distToLine > 3000)
+            {
+                continue;
+            }
+
+            if (lowestX > opp->x)
+            {
+                lowestX = opp->x;
+            }
+        }
+
+        this->alloTarget = make_shared < geometry::CNPoint2D > (this->wm->field->getFieldLength() / 4, yCordOfReceiver);
+
+        if (lowestX < this->wm->field->getFieldLength() / 2 - 2000)
+        { // opponent close to pass line
+            alloTarget->x = min(alloTarget->x, max(lowestX - 2000, 2000.0));
+        }
+
+        this->mQuery->egoDestinationPoint = this->alloTarget->alloToEgo(*ownPos);
+        this->mQuery->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
+        this->mQuery->snapDistance = this->snapDist;
+        this->mQuery->additionalPoints = additionalPoints;
+        msl_actuator_msgs::MotionControl mc = this->robot->robotMovement->moveToPoint(this->mQuery);
+
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        /*PROTECTED REGION END*/
     }
-    catch (exception &e)
+    void ReceiveInOppHalf::initialiseParameters()
     {
-        cerr << "Could not cast the parameter properly" << endl;
+        /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ // Add additional options here
+        this->securityReceiver = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "securityReceiver", NULL);
+        this->snapDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "snapDist", NULL);
+        this->oppFarAwayDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "oppFarAwayDist", NULL);
+        this->alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
+        /*PROTECTED REGION END*/
     }
-    if (!success)
-    {
-        cerr << "PRT: Parameter does not exist" << endl;
-    }
-    /*PROTECTED REGION END*/
-}
 /*PROTECTED REGION ID(methods1462370340143) ENABLED START*/ // Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

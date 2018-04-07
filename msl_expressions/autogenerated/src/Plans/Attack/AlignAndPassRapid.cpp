@@ -48,7 +48,6 @@ namespace alica
         this->minRot = 0.1;
         this->maxRot = M_PI * 4;
         this->accel = 2000;
-        this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
         this->pathProxy = msl::PathProxy::getInstance();
         this->alloBall = nullptr;
@@ -258,7 +257,7 @@ namespace alica
         auto dstscan = this->wm->rawSensorData->getDistanceScan();
         if (dstscan != nullptr && dstscan->size() != 0)
         {
-            double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
+            double distBeforeBall = msl::Kicker::minFree(egoBallPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 250)
                 this->setFailure(true);
         }
@@ -473,7 +472,7 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
             auto obsPositions = vNet->getObstaclePositions();
             if (!geometry::outsideTriangle(alloBall, right, left, ballRadius, obsPositions)
-                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obsPositions))
+                    && !geometry::outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obsPositions))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.6 * 255.0;
@@ -526,20 +525,6 @@ namespace alica
         }
     }
 
-    bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
-                                             shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        for (int i = 0; i < points->size(); i++)
-        {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     bool AlignAndPassRapid::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
                                                       shared_ptr<geometry::CNPoint2D> passPoint,
                                                       double passCorridorWidth,
@@ -556,38 +541,5 @@ namespace alica
         return true;
     }
 
-    double AlignAndPassRapid::minFree(double angle, double width, shared_ptr<vector<double> > dstscan)
-    {
-        double sectorWidth = 2.0 * M_PI / dstscan->size();
-        int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());
-        double minfree = dstscan->at(startSector);
-        double dist, dangle;
-        for (int i = 1; i < dstscan->size() / 4; i++)
-        {
-            dist = dstscan->at(mod((startSector + i), dstscan->size()));
-            dangle = sectorWidth * i;
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-            dist = dstscan->at(mod((startSector - i), dstscan->size()));
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-        }
-        return minfree;
-    }
-
-    int AlignAndPassRapid::mod(int x, int y)
-    {
-        int z = x % y;
-        if (z < 0)
-            return y + z;
-        else
-            return z;
-    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

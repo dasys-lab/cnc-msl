@@ -46,8 +46,7 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-
-        EntryPoint* ep = getParentEntryPoint(taskName);
+        EntryPoint* ep = getParentEntryPoint(this->taskName);
         if (ep != nullptr)
         {
             // get the plan in which the behavior is running
@@ -64,7 +63,7 @@ namespace alica
             if (ids->size() > 0 && ids->at(0) != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
                 if (pos != nullptr)
                 {
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);

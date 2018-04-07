@@ -5,6 +5,7 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Game.h>
 #include <Robots.h>
 #include <GeometryCalculator.h>
 #include <msl_robot/MSLRobot.h>
@@ -23,8 +24,7 @@ namespace alica
         this->tol = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignTolerance", NULL);
         this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);
-
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     StandardAlignAndGrab::~StandardAlignAndGrab()
@@ -164,12 +164,12 @@ namespace alica
             }
         }
 
-        angleIntErr += dangle;
+        this->angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
         mc.motion.rotation = fac * rot * (2 * fabs(0.8 * dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
-        oldAngleErr = dangle;
-        if (haveBall)
+        this->oldAngleErr = dangle;
+        if (this->haveBall)
         {
             haveBallCounter++;
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
@@ -207,7 +207,7 @@ namespace alica
         haveBallCounter = 0;
         delayKickCounter = 0;
         oldMatePos.reset();
-        startTime = wm->getTime();
+        startTime = wm->game->getTimeSinceStart();
 
         bool success = true;
         try
