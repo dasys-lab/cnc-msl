@@ -67,6 +67,7 @@ void ThrowInPass::run(void *msg)
 
     if (this->sentPm && !this->wm->ball->haveBall())
     {
+    	cout << "TIP SUCCESS " << endl;
         this->setSuccess(true);
     }
 
@@ -97,7 +98,6 @@ void ThrowInPass::run(void *msg)
      }
      */
 
-    shared_ptr<geometry::CNPoint2D> prefPassPoint = nullptr;
 
     // check becomes obsolete with receiver placed on sideline
     //    if (!this->wm->field->isInsidePenalty(passPoint, 0.0))
@@ -125,14 +125,14 @@ void ThrowInPass::run(void *msg)
     shared_ptr<geometry::CNPoint2D> left = this->recPos + ball2PassPointOrth;
     shared_ptr<geometry::CNPoint2D> right = this->recPos - ball2PassPointOrth;
     if (this->longPassPossible && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
-        !geometry::outsideCorridore(alloBall, prefPassPoint, this->passCorridorWidth, obs))
+        !geometry::outsideCorridore(alloBall, this->recPos, this->passCorridorWidth, obs))
     {
         this->longPassPossible = false;
     }
 
     // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
     auto matePoses = this->wm->robots->teammates.getTeammatesAlloClustered();
-    if (this->longPassPossible && matePoses != nullptr && !geometry::outsideCorridoreTeammates(alloBall, prefPassPoint, this->ballRadius * 4, matePoses))
+    if (this->longPassPossible && matePoses != nullptr && !geometry::outsideCorridoreTeammates(alloBall, this->recPos, this->ballRadius * 4, matePoses))
     {
         this->longPassPossible = false;
     }
@@ -174,7 +174,7 @@ void ThrowInPass::run(void *msg)
         pm.receiverID = bestReceiverId;
         msl_actuator_msgs::KickControl km;
         km.enabled = true;
-        km.kicker = 1; //(ushort)KickHelper.KickerToUseIndex(egoBallPos->angleTo());
+        km.kicker = 1;
 
         shared_ptr<geometry::CNPoint2D> goalReceiverVec = dest - make_shared<geometry::CNPoint2D>(alloTarget->x, alloTarget->y);
 
@@ -193,10 +193,11 @@ void ThrowInPass::run(void *msg)
          km.power = (ushort) this->robot->kicker->getPassKickpower(dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
          }
          */
-
+        cout << "TIP: KICK MSG SENT" << endl;
         send(km);
         if (this->robot->kicker->lowShovelSelected)
         {
+        	cout << "TIP: pass msg sent" << endl;
             send(pm);
             this->sentPm = true;
         }
@@ -208,6 +209,7 @@ void ThrowInPass::run(void *msg)
         double distBeforeBall = msl::Kicker::minFree(egoBallPos->angleTo(), 200, dstscan);
         if (distBeforeBall < 250.0)
             this->setFailure(true);
+        cout << "ThrowInPass: Failure!" << endl;
     }
 
     msl_actuator_msgs::MotionControl mc;
