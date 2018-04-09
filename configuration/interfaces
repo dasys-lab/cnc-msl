@@ -4,11 +4,14 @@ iface lo inet loopback
 iface enp4s0 inet static
 address 192.168.0.5
 netmask 255.255.255.0
+# 226.16.32.40 is the multicast address for the msl_snoopy_proxy
+# post-up route add 225.16.32.40 eno1
 auto enp4s0
 
 iface eno1 inet static
 address 10.0.0.1
 netmask 255.0.0.0
+# 225.16.32.40 is the multicast address for the BBBProxy
 post-up route add 225.16.32.40 eno1
 auto eno1
 
