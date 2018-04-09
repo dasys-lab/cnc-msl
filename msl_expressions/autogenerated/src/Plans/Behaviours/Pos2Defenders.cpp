@@ -6,6 +6,7 @@ using namespace std;
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
 #include <Ball.h>
 #include <Robots.h>

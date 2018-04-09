@@ -3,12 +3,12 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
-#include "MSLFootballField.h"
 
-using namespace msl;
-
+namespace geometry {
+	class CNPoint2D;
+	class CNPosition;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -34,8 +34,6 @@ namespace alica
         int iter;
         bool kicked;
         double goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle);
-        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
-        int mod(int x, int y);
         shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
         /*PROTECTED REGION END*/
     private:

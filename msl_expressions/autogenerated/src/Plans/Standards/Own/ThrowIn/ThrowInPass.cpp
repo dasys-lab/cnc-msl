@@ -27,21 +27,26 @@ ThrowInPass::ThrowInPass()
     : DomainBehaviour("ThrowInPass")
 {
     /*PROTECTED REGION ID(con1462363192018) ENABLED START*/ // Add additional options here
-    this->ratio = 0;
-    this->closerFactor = 0;
+    this->ratio = 0.0;
+    this->closerFactor = 0.0;
     this->ballRadius = msl::Rules::getInstance()->getBallRadius();
-    this->minOppDist = 0;
-    this->passCorridorWidth = 0;
-    this->maxTurnAngle = 0;
+    this->minOppDist = 0.0;
+    this->passCorridorWidth = 0.0;
+    this->maxTurnAngle = 0.0;
     this->longPassPossible = true;
-    this->maxVel = 2000;
+    this->maxVel = 2000.0;
     this->pRot = 2.1;
     this->dRot = 0.0;
-    this->lastRotError = 0;
+    this->lastRotError = 0.0;
     this->minRot = 0.1;
     this->maxRot = M_PI * 4;
     this->accel = 2000;
     this->arrivalTimeOffset = NAN;
+    this->recId = -1;
+    this->aRecId = -1;
+    this->sentPm = false;
+    this->recPos = nullptr;
+    this->aRecPos = nullptr;
     /*PROTECTED REGION END*/
 }
 ThrowInPass::~ThrowInPass()
@@ -74,13 +79,12 @@ void ThrowInPass::run(void *msg)
     this->recPos = recInf.second;
     this->aRecPos = aRecInf.second;
 
-    if (!recPos || !aRecPos)
+    if (!this->recPos && !this->aRecPos)
     {
         cout << "ThrowInPass: Could not get Receiver Positions from Task Names" << endl;
         return;
     }
     // make the passpoints closer to the receiver
-    shared_ptr<geometry::CNPoint2D> passPoint = nullptr;
 
     /* this didn't work in testing
      if (recPos->y < 0.0)
@@ -93,61 +97,63 @@ void ThrowInPass::run(void *msg)
      }
      */
 
-    if (!wm->field->isInsidePenalty(passPoint, 0.0))
+    shared_ptr<geometry::CNPoint2D> prefPassPoint = nullptr;
+
+    // check becomes obsolete with receiver placed on sideline
+    //    if (!this->wm->field->isInsidePenalty(passPoint, 0.0))
+    //    {
+
+    // min dist to opponent
+    auto obs = this->wm->robots->opponents.getOpponentsAlloClustered();
+    bool opponentTooClose = false;
+    for (int i = 0; i < obs->size(); i++)
     {
-
-        // min dist to opponent
-        auto obs = wm->robots->opponents.getOpponentsAlloClustered();
-        bool opponentTooClose = false;
-        for (int i = 0; i < obs->size(); i++)
+        if (obs->at(i)->distanceTo(this->recPos) < this->minOppDist)
         {
-            if (obs->at(i)->distanceTo(passPoint) < minOppDist)
-            {
-                opponentTooClose = true;
-                break;
-            }
-        }
-        if (longPassPossible && opponentTooClose)
-        {
-            longPassPossible = false;
-        }
-        // some calculation to check whether any opponent is inside the pass vector triangle
-        shared_ptr<geometry::CNPoint2D> ball2PassPoint = passPoint - alloBall;
-        shared_ptr<geometry::CNPoint2D> ball2PassPointOrth =
-            make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * ball2PassPoint->length();
-        shared_ptr<geometry::CNPoint2D> left = passPoint + ball2PassPointOrth;
-        shared_ptr<geometry::CNPoint2D> right = passPoint - ball2PassPointOrth;
-        if (longPassPossible && !geometry::outsideTriangle(alloBall, right, left, ballRadius, obs) &&
-            !geometry::outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
-        {
-            longPassPossible = false;
-        }
-
-        // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-        auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
-        if (longPassPossible && matePoses != nullptr && !outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
-        {
-            longPassPossible = false;
+            opponentTooClose = true;
+            break;
         }
     }
+    if (this->longPassPossible && opponentTooClose)
+    {
+        this->longPassPossible = false;
+    }
+    // some calculation to check whether any opponent is inside the pass vector triangle
+    shared_ptr<geometry::CNPoint2D> ball2PassPoint = this->recPos - alloBall;
+    shared_ptr<geometry::CNPoint2D> ball2PassPointOrth =
+        make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * this->ratio * ball2PassPoint->length();
+    shared_ptr<geometry::CNPoint2D> left = this->recPos + ball2PassPointOrth;
+    shared_ptr<geometry::CNPoint2D> right = this->recPos - ball2PassPointOrth;
+    if (this->longPassPossible && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
+        !geometry::outsideCorridore(alloBall, prefPassPoint, this->passCorridorWidth, obs))
+    {
+        this->longPassPossible = false;
+    }
+
+    // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
+    auto matePoses = this->wm->robots->teammates.getTeammatesAlloClustered();
+    if (this->longPassPossible && matePoses != nullptr && !geometry::outsideCorridoreTeammates(alloBall, prefPassPoint, this->ballRadius * 4, matePoses))
+    {
+        this->longPassPossible = false;
+    }
+    //    }
 
     int bestReceiverId = -1;
     shared_ptr<geometry::CNPoint2D> alloTarget = nullptr;
-    if (longPassPossible)
+    if (this->longPassPossible)
     {
-        alloTarget = recPos;
-        bestReceiverId = recId;
+        alloTarget = this->recPos;
+        bestReceiverId = this->recId;
     }
     else
     {
-        alloTarget = aRecPos;
-        bestReceiverId = aRecId;
+        alloTarget = this->aRecPos;
+        bestReceiverId = this->aRecId;
     }
 
-    shared_ptr<geometry::CNPoint2D> aimPoint = passPoint->alloToEgo(*ownPos);
-    double aimAngle = aimPoint->angleTo();
-    double ballAngle = egoBallPos->angleTo();
-    double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
+    shared_ptr<geometry::CNPoint2D> aimPoint = alloTarget->alloToEgo(*ownPos);
+    double deltaAngle = geometry::deltaAngle(egoBallPos->angleTo(), aimPoint->angleTo());
+
     // coimbra timeout hack, Stopfer said push it.
     if (abs(deltaAngle) < M_PI / 36 || this->wm->getTime() - this->wm->game->getTimeSinceStart() > 5e9)
     { // +/-5 degree
@@ -172,8 +178,7 @@ void ThrowInPass::run(void *msg)
 
         shared_ptr<geometry::CNPoint2D> goalReceiverVec = dest - make_shared<geometry::CNPoint2D>(alloTarget->x, alloTarget->y);
 
-        // wat?
-        double v0 = 0;
+        double v0 = 0.0;
         double distReceiver = goalReceiverVec->length();
         double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
         // considering network delay and reaction time 1s?:
@@ -212,7 +217,7 @@ void ThrowInPass::run(void *msg)
     double transBallOrth = egoBallPos->length() * mc.motion.rotation; // may be negative!
 
     auto ballVel = this->wm->ball->getVisionBallVelocity();
-    if (ballVel == nullptr)
+    if (!ballVel)
     {
         ballVel = make_shared<geometry::CNVelocity2D>(0, 0);
     }
@@ -232,6 +237,13 @@ void ThrowInPass::initialiseParameters()
 {
     /*PROTECTED REGION ID(initialiseParameters1462363192018) ENABLED START*/ // Add additional options here
     this->sentPm = false;
+    this->recId = -1;
+    this->aRecId = -1;
+    this->longPassPossible = true;
+
+    this->recPos = nullptr;
+    this->aRecPos = nullptr;
+
     this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
     this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
     this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
@@ -244,7 +256,6 @@ void ThrowInPass::initialiseParameters()
     this->maxRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MaxRotation", NULL);
     this->accel = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "ReceiverRobotAcceleration", NULL);
     this->arrivalTimeOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "ArrivalTimeOffset", NULL);
-    this->longPassPossible = true;
 
     string tmp;
     bool success = true;
@@ -303,24 +314,7 @@ pair<int, shared_ptr<geometry::CNPoint2D>> ThrowInPass::getTeammateIdAndPosFromT
         }
     }
 
-
     return make_pair(recId, recPos);
-}
-
-
-
-bool ThrowInPass::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-{
-    for (int i = 0; i < points->size(); i++)
-    {
-        if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth &&
-            ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
-        {
-            return false;
-        }
-    }
-    return true;
 }
 
 /*PROTECTED REGION END*/

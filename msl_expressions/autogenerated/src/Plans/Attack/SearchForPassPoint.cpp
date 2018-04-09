@@ -5,10 +5,10 @@ using namespace std;
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
 #include "msl_helper_msgs/PassMsg.h"
-#include "pathplanner/PathProxy.h"
 #include "pathplanner/VoronoiNet.h"
 #include <Ball.h>
 #include <GeometryCalculator.h>
+#include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
@@ -21,19 +21,18 @@ SearchForPassPoint::SearchForPassPoint()
     : DomainBehaviour("SearchForPassPoint")
 {
     /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ // Add additional options here
-    this->pathProxy = msl::PathProxy::getInstance();
-    maxPassDist = 0;
-    ratio = 0;
-    minPassDist = 0;
-    closerFactor = 0;
-    closerFactor2 = 0;
-    ballRadius = 0;
-    minOppDist = 0;
-    distToFieldBorder = 0;
-    minCloserOffset = 0;
-    passCorridorWidth = 0;
-    freeOppAngle = 0;
-    maxTurnAngle = 0;
+    this->maxPassDist = 0;
+    this->ratio = 0;
+    this->minPassDist = 0;
+    this->closerFactor = 0;
+    this->closerFactor2 = 0;
+    this->ballRadius = 0;
+    this->minOppDist = 0;
+    this->distToFieldBorder = 0;
+    this->minCloserOffset = 0;
+    this->passCorridorWidth = 0;
+    this->freeOppAngle = 0;
+    this->maxTurnAngle = 0;
     /*PROTECTED REGION END*/
 }
 SearchForPassPoint::~SearchForPassPoint()
@@ -44,21 +43,21 @@ SearchForPassPoint::~SearchForPassPoint()
 void SearchForPassPoint::run(void *msg)
 {
     /*PROTECTED REGION ID(run1436269017402) ENABLED START*/ // Add additional options here
-    if (eps.size() <= 0)
+    if (this->eps.size() <= 0)
     {
         //            cout << "S4PP: All EPs is null" << endl;
         return;
     }
 
-    alloBall = this->wm->ball->getAlloBallPosition();
-    if (alloBall == nullptr)
+    this->alloBall = this->wm->ball->getAlloBallPosition();
+    if (this->alloBall == nullptr)
     {
         cout << "S4PP: Ball is null" << endl;
         return;
     }
 
-    alloPos = this->wm->rawSensorData->getOwnPositionVision();
-    if (alloPos == nullptr)
+    this->alloPos = this->wm->rawSensorData->getOwnPositionVision();
+    if (this->alloPos == nullptr)
     {
         cout << "S4PP: OwnPos is null" << endl;
         return;
@@ -341,7 +340,7 @@ bool SearchForPassPoint::passPossible(double cf, shared_ptr<geometry::CNPoint2D>
         }
 
         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-        if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
+        if (!geometry::outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
         {
 #ifdef DBM_DEBUG
             dbm->points.at(dbm->points.size() - 1).red = 0.0 * 255.0;
@@ -364,18 +363,5 @@ bool SearchForPassPoint::passPossible(double cf, shared_ptr<geometry::CNPoint2D>
     return false;
 }
 
-bool SearchForPassPoint::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                                   shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-{
-    for (int i = 0; i < points->size(); i++)
-    {
-        if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth &&
-            ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
-        {
-            return false;
-        }
-    }
-    return true;
-}
 /*PROTECTED REGION END*/
 } /* namespace alica */

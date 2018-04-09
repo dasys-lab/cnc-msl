@@ -136,9 +136,9 @@ shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
     {
         return nullptr;
     }
-    validGoalPoints.clear();
+    vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
     double x = wm->field->getFieldLength() / 2;
-    double y = -1000 + preciseShotMaxTolerance;
+    double y = -1000 + this->preciseShotMaxTolerance;
     shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
     double samplePoints = 4;
 
@@ -170,6 +170,20 @@ shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
     else
     {
         return nullptr;
+    }
+}
+
+
+int Kicker::mod(int x, int y)
+{
+    int z = x % y;
+    if (z < 0)
+    {
+        return y + z;
+    }
+    else
+    {
+        return z;
     }
 }
 
@@ -320,18 +334,7 @@ int Kicker::getShortPassPower()
     return shortPassPower;
 }
 
-int Kicker::mod(int x, int y)
-{
-    int z = x % y;
-    if (z < 0)
-    {
-        return y + z;
-    }
-    else
-    {
-        return z;
-    }
-}
+
 
 void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl &km)
 {

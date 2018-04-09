@@ -78,10 +78,9 @@ class Kicker
     KickCurve *kick2GoalCurve;
     KickCurve *kickHighPass;
     KickCurve *kickLowPass;
-    vector<shared_ptr<geometry::CNPoint2D>> validGoalPoints;
 
     RingBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
-    static int mod(int x, int y);
+    static 	int mod(int x, int y);
 };
 
 } /* namespace msl */

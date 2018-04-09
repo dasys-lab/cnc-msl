@@ -7,6 +7,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/MSLRobot.h>
+#include <MSLFootballField.h>
 #include <msl_robot/kicker/Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -86,7 +87,7 @@ namespace alica
         double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)
         {
-            double distBeforeBall = minFree(ballAngle, 200, dstscan);
+            double distBeforeBall = msl::Kicker::minFree(ballAngle, 200, dstscan);
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
                 cout << "AlignToGoal: failure!" << endl;
@@ -165,40 +166,6 @@ namespace alica
         return ownPos->y + t * hitVector.y;
     }
 
-    double AlignToGoal::minFree(double angle, double width, shared_ptr<vector<double> > dstscan)
-    {
-        double sectorWidth = 2.0 * M_PI / dstscan->size();
-        int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());
-        double minfree = dstscan->at(startSector);
-        double dist, dangle;
-        for (int i = 1; i < dstscan->size() / 4; i++)
-        {
-            dist = dstscan->at(mod((startSector + i), dstscan->size()));
-            dangle = sectorWidth * i;
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-            dist = dstscan->at(mod((startSector - i), dstscan->size()));
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-        }
-        return minfree;
-    }
-
-    int AlignToGoal::mod(int x, int y)
-    {
-        int z = x % y;
-        if (z < 0)
-            return y + z;
-        else
-            return z;
-    }
-
     shared_ptr<geometry::CNPoint2D> AlignToGoal::getFreeGoalVector()
     {
 
@@ -219,7 +186,7 @@ namespace alica
         {
             shared_ptr < geometry::CNPoint2D > egoAim = aim->alloToEgo(*ownPos);
             double dist = egoAim->length();
-            double opDist = minFree(egoAim->angleTo(), 200, dstscan);
+            double opDist = msl::Kicker::minFree(egoAim->angleTo(), 200, dstscan);
             if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
             {
                 validGoalPoints.push_back(egoAim);

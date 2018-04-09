@@ -4,7 +4,6 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1436269063295) ENABLED START*/ // Add additional includes here
 #include "GameState.h"
-#include "pathplanner/PathProxy.h"
 #include <MSLFootballField.h>
 #include <vector>
 #define DBM_DEBUG 1
@@ -12,9 +11,8 @@ namespace geometry
 {
     class CNPoint2D;
 }
-namespace supplementary
-{
-    class SystemConfig;
+namespace msl {
+	class VoronoiNet;
 }
 /*PROTECTED REGION END*/
 namespace alica
@@ -68,11 +66,7 @@ namespace alica
     double maxRot;
     double accel;
 
-    supplementary::SystemConfig *sc;
     shared_ptr<geometry::CNPoint2D> alloAimPoint;
-    msl::PathProxy *pathProxy;
-    static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
     void findBestPassPoint(double cf, shared_ptr<geometry::CNPoint2D> passPoint, shared_ptr<geometry::CNPoint2D> receiver, shared_ptr<msl::VoronoiNet> vNet,
             shared_ptr<geometry::CNPosition> teamMatePos, int teamMateId);
     /*PROTECTED REGION END*/private:

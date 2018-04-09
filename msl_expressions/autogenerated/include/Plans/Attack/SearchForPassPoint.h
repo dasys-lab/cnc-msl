@@ -7,10 +7,13 @@
 #include "GameState.h"
 #include "MSLFootballField.h"
 #include "engine/model/EntryPoint.h"
-#include "pathplanner/PathProxy.h"
 #include <SystemConfig.h>
 #include <vector>
 #define DBM_DEBUG 1
+
+namespace msl {
+	class VoronoiNet;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,7 +45,6 @@ namespace alica
         double minCloserOffset;
         double closerFactor;
         double closerFactor2;
-        msl::PathProxy *pathProxy;
         shared_ptr<geometry::CNPoint2D> alloBall;
         shared_ptr<geometry::CNPosition> alloPos;
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> matePoses;

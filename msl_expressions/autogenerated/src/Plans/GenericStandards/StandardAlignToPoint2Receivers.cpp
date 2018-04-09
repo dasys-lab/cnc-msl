@@ -191,13 +191,13 @@ namespace alica
         if (this->canPassCounter > this->canPassThreshold)
         {
             this->canPassThreshold = -2;
-            cout << "SAAG2R: aiming to receiver" << endl;
+            cout << "SATP2R: aiming to receiver" << endl;
             receiverPos = this->recPos1;
         }
         else
         {
             this->canPassThreshold = 2;
-            cout << "SAAG2R: aiming to alternative receiver" << endl;
+            cout << "SATP2R: aiming to alternative receiver" << endl;
             receiverPos = this->recPos2;
         }
 

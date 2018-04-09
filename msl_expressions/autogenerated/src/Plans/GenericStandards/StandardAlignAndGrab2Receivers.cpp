@@ -16,7 +16,6 @@ using namespace std;
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <obstaclehandler/Obstacles.h>
-#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
