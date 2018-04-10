@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1479905178049) ENABLED START*/ //Add additional includes here
+#include <MSLEnums.h>
+#include <CubicSplineInterpolation/Spline.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -24,11 +26,9 @@ namespace alica
         double getBallAngle(double velX, double velY);
         double getLeftArmVelocity(double ballVelocity, double ballAngle);
         double getRightArmVelocity(double ballVelocity, double ballAngle);
-        double velToInput(double wheelVelocity);
-        void getBallPath(double translation, double angle, double rotation, double &velX, double &velY);
+        double velToInput(msl::ArmMotor arm, double wheelVelocity);
+        void getBallPath(double translation, double angle, double rotation, double& velX, double& velY);
         void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback);
-
-        int sign(double x);
 
 //        int testBehaviour;
 //        int testSpeed;
@@ -74,7 +74,9 @@ namespace alica
         double velXFactor;
         double powerOfRotation;
 
-        supplementary::SystemConfig* sc;
+        vector<double> armInputs;
+        vector<double> armLeftVels;
+        vector<double> armRightVels;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

@@ -101,6 +101,11 @@ enum VelocityMode
 {
     CAREFULLY, DEFAULT, FAST
 };
+
+enum ArmMotor
+{
+	LEFT, RIGHT
+};
 }
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_ */
