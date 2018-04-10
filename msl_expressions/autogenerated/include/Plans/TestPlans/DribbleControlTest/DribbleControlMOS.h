@@ -78,6 +78,9 @@ namespace alica
         vector<double> armLeftVels;
         vector<double> armRightVels;
 
+        splines::spline rightSpeedSpline;
+        splines::spline leftSpeedSpline;
+
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

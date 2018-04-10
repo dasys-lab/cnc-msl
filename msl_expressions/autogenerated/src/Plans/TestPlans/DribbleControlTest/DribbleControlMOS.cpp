@@ -176,9 +176,9 @@ void DribbleControlMOS::initialiseParameters()
 
     this->phi = M_PI / 6.0; // horizontal angle between y and arm
 
-    this->armInputs = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.InputList", NULL);
-    this->armLeftVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.RightVelList", NULL);
-    this->armRightVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.LeftVelList", NULL);
+//    this->armInputs = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.InputList", NULL);
+//    this->armLeftVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.RightVelList", NULL);
+//    this->armRightVels = (*this->sc)["Dribble"]->getList<double>("Dribble.ArmVelToInput.LeftVelList", NULL);
 
     // very static
     // forwConst => ~0.89907059794455198110
@@ -193,36 +193,59 @@ void DribbleControlMOS::initialiseParameters()
 
     this->wheelSpeedLeftOld = 0.0;
     this->wheelSpeedRightOld = 0.0;
+
+	// TODO SPLINE STUFF
+	shared_ptr < vector<string> > speedsSections = (*sc)["Dribble"]->getSections("ArmVelToInput", NULL);
+	vector<double> rightArmVel(speedsSections->size());
+	vector<double> leftArmVel(speedsSections->size());
+	vector<double> inputCurrent(speedsSections->size());
+	int i = 0;
+	for (string subsection : *speedsSections)
+	{
+	    rightArmVel[i] = (*sc)["Dribble"]->get<double>("ArmVelToInput", subsection.c_str(), "rightVel",
+	                                                            NULL);
+	    leftArmVel[i] = (*sc)["Dribble"]->get<double>("ArmVelToInput", subsection.c_str(), "leftVel",
+	                                                            NULL);
+	    inputCurrent[i] = (*sc)["Dribble"]->get<double>("ArmVelToInput", subsection.c_str(),
+	                                                               "input", NULL);
+	//            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+	    i++;
+	}
+	this->rightSpeedSpline.set_points(rightArmVel, inputCurrent, false);
+
+
+	this->leftSpeedSpline.set_points(leftArmVel, inputCurrent, false);
+
+
+
+
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1479905178049) ENABLED START*/ // Add additional methods here
 double DribbleControlMOS::velToInput(msl::ArmMotor arm, double wheelVelocity)
 {
-	// TODO SPLINE STUFF
-//	shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
-//	        vector<double> robotSpeed(speedsSections->size());
-//	        vector<double> actuatorSpeed(speedsSections->size());
-//	        int i = 0;
-//	        for (string subsection : *speedsSections)
-//	        {
-//	            robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed",
-//	                                                            NULL);
-//	            actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
-//	                                                               "actuatorSpeed", NULL);
-//	//            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
-//	            i++;
-//	        }
-//	        forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
+	double input = 0.0;
 
     if (wheelVelocity == 0.0)
     {
-        return 0.0;
+        return input;
     }
 
-    double gradient = (3500.0 - 2000.0) / (this->velAt3500 - this->velAt2000);
-    double input = gradient * (abs(wheelVelocity) - this->velAt2000) + 2000.0;
-    input *= geometry::sgn(wheelVelocity);
+    // model as straight line
+//    double gradient = (3500.0 - 2000.0) / (this->velAt3500 - this->velAt2000);
+//    double input = gradient * (abs(wheelVelocity) - this->velAt2000) + 2000.0;
+//    input *= geometry::sgn(wheelVelocity);
 
+    //model as spline
+    if (arm == msl::ArmMotor::LEFT)
+    {
+    	input = max(-10000.0, min(10000.0, leftSpeedSpline(wheelVelocity) + 0.5));
+    }
+    else if (arm == msl::ArmMotor::RIGHT)
+    {
+    	input = max(-10000.0, min(10000.0, rightSpeedSpline(wheelVelocity) + 0.5));
+    }
+    cout<<"DribbleControlMOS::velToInput::wheelVelocity "<<wheelVelocity<<" to Input: "<<input<<endl;
     return input;
 }
 
