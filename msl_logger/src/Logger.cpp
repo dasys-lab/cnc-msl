@@ -19,7 +19,7 @@ namespace msl
 		this->enabled = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableLogging", NULL);
 		this->enableConsole = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableConsole", NULL);
 		this->thresholdLvl = (*sc)["Behaviour"]->get<int>("BehaviourLogging.debugLevel", NULL);
-        this->robotName = sc->getHostname();
+        	this->robotName = sc->getHostname();
 
 		struct statvfs fs;
 		if(statvfs("/dev/sda1", &fs) != 0){
@@ -76,7 +76,11 @@ namespace msl
 		int day = nun->tm_mday;
 
 		filename << location << '/';
+<<<<<<< HEAD
 		filename << path << "-" << this->robotName << "-" << year << '_';
+=======
+		filename << path << this->robotName << year << '_';
+>>>>>>> f91c3d064a2b5be64c8b1bd5dd779d13325b9d43
 		filename << std::setfill('0') << std::setw(2) << month << '_';
 		filename << std::setfill('0') << std::setw(2) << day << '-';
 		filename << getTimeStamp(false);

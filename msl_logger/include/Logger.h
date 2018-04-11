@@ -117,6 +117,7 @@ namespace msl
 
 	  private:
 
+		std::string robotName;                                  // used in file name
 		int thresholdLvl;					// Threshold at which level console output starts
 		bool enabled;						// flag that shows if logging is active or not
 		bool enableConsole;
