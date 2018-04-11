@@ -11,7 +11,7 @@
     <parameters id="1440849496542" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="AttackPlay"/>
     <parameters id="1440849505103" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="AttackPlay"/>
     <parameters id="1440849514834" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
-    <parameters id="1440849527880" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="SupportAttack"/>
+    <parameters id="1440849527880" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="Block"/>
   </configurations>
   <configurations id="1441108023281" name="AlignAndPassRapidTest" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1441108074571" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>

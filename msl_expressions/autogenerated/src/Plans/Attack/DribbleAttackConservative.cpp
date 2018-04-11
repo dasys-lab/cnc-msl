@@ -32,17 +32,16 @@ namespace alica
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (ownPos == nullptr)
+        if (ownPos == nullptr )
         {
             return;
         }
-        auto tmp = make_shared < geometry::CNPoint2D
-                > (wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
-        auto tragetPoint = tmp->alloToEgo(*ownPos);
+        auto tmp = make_shared<geometry::CNPoint2D>(wm->field->posOppGoalMid()->x - wm->field->getPenaltyAreaLength(), wm->field->posOppGoalMid()->y);
+        auto targetPoint = tmp->alloToEgo(*ownPos);
         auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
-        query->egoDestinationPoint = tragetPoint;
-        query->egoAlignPoint = tragetPoint;
+        query->egoDestinationPoint = targetPoint;
+        query->egoAlignPoint = targetPoint;
 
         auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
@@ -53,13 +52,14 @@ namespace alica
         else
         {
             query->egoDestinationPoint = corner;
+            query->egoAlignPoint = corner;
 
             auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
             if (tmpMC.motion.translation != NAN)
             {
-                corner =
-                        (corner->egoToAllo(*ownPos) + make_shared < geometry::CNPoint2D > (-800, 0)->alloToEgo(*ownPos));
+            	//??? corner isn't used any further
+                corner = (corner->egoToAllo(*ownPos) + make_shared < geometry::CNPoint2D > (-800, 0)->alloToEgo(*ownPos));
                 bm = tmpMC;
             }
         }
