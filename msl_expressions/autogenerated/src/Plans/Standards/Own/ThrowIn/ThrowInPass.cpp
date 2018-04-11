@@ -10,7 +10,6 @@ using namespace std;
 #include <Ball.h>
 #include <Game.h>
 #include <GeometryCalculator.h>
-#include <MSLFootballField.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
@@ -67,7 +66,7 @@ void ThrowInPass::run(void *msg)
 
     if (this->sentPm && !this->wm->ball->haveBall())
     {
-    	cout << "TIP SUCCESS " << endl;
+        cout << "TIP SUCCESS " << endl;
         this->setSuccess(true);
     }
 
@@ -97,7 +96,6 @@ void ThrowInPass::run(void *msg)
      passPoint = make_shared<geometry::CNPoint2D>(recPos->x, wm->field->getFieldWidth() / 2 - 1000.0);
      }
      */
-
 
     // check becomes obsolete with receiver placed on sideline
     //    if (!this->wm->field->isInsidePenalty(passPoint, 0.0))
@@ -184,20 +182,20 @@ void ThrowInPass::run(void *msg)
         // considering network delay and reaction time 1s?:
         estimatedTimeForReceiverToArrive += 1.0;
         pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
-                                                                                                           // if (closerFactor < 0.01)
-        //{
-        km.power = (ushort) this->robot->kicker->getKickPowerPass(aimPoint->length());
-        /*}
-         else
-         {
-         km.power = (ushort) this->robot->kicker->getPassKickpower(dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
-         }
-         */
+        if (closerFactor < 0.01)
+        {
+            km.power = (ushort) this->robot->kicker->getKickPowerPass(aimPoint->length());
+        }
+        else
+        {
+            km.power = (ushort) this->robot->kicker->getPassKickpower(dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
+        }
+
         cout << "TIP: KICK MSG SENT" << endl;
         send(km);
         if (this->robot->kicker->lowShovelSelected)
         {
-        	cout << "TIP: pass msg sent" << endl;
+            cout << "TIP: pass msg sent" << endl;
             send(pm);
             this->sentPm = true;
         }

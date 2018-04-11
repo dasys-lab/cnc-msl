@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450176193656) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include "msl_robot/robotmovement/MovementQuery.h"
 #include <msl_robot/MSLRobot.h>
 #include <Robots.h>
 #include <RawSensorData.h>
@@ -19,12 +20,9 @@ namespace alica
         /*PROTECTED REGION ID(con1450176193656) ENABLED START*/ //Add additional options here
         maxVel = 2000;
         minDistToMate = 2000;
-        gotMessage = false;
-        this->sc = supplementary::SystemConfig::getInstance();
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;
-        shared_ptr < geometry::CNPosition > oldMatePos = nullptr;
         query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -83,8 +81,6 @@ namespace alica
 
         if (egoMatePos != nullptr)
         {
-            // replaced with new method
-//            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
             query->alloTeamMatePosition = egoMatePos->egoToAllo(*ownPos);
             this->robot->robotMovement->moveToFreeSpace(query);
             send(mc);

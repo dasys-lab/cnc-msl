@@ -25,7 +25,6 @@ namespace alica
         /*PROTECTED REGION ID(con1498664309837) ENABLED START*/ //Add additional options here
         alloTargetPoint = make_shared<geometry::CNPoint2D>();
         egoTargetPoint = make_shared<geometry::CNPoint2D>();
-        sc = nullptr;
         wheelSpeed = 0;
         lastClosesOpp = make_shared<geometry::CNPoint2D>();
         lastRotError = 0;
@@ -174,7 +173,6 @@ namespace alica
 
     void DribbleToAttackPointTest::readConfigParameters()
     {
-        this->sc = nullptr;
         this->maxVel = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxVel", NULL);
         this->maxOppDist = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxOppDist", NULL);
         this->oppVectorWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.oppVectorWeight", NULL);

@@ -23,7 +23,6 @@ Intercept::Intercept()
     : DomainBehaviour("Intercept")
 {
     /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ // Add additional options here
-    this->sc = supplementary::SystemConfig::getInstance();
     this->pp = msl::PathProxy::getInstance();
 
     this->lastDistErr = 0.0;
