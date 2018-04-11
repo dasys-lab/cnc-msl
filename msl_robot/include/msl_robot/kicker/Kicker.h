@@ -40,6 +40,7 @@ class Kicker
     int getKickerCount();
     int getKickPower(double dist, double height, double velo);
     bool mayShoot();
+    static shared_ptr<geometry::CNPoint2D> getFreeGoalVector(double yOffset);
     shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
     static double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
     double getPassKickpower(double dist, double arrivalTime);

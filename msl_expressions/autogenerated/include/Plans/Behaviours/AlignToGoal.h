@@ -28,11 +28,10 @@ namespace alica
         double maxRot;
         double minRot;
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
+        double yOffset;
         double maxYTolerance;
         double pRot;
         double dRot;
-        int iter;
-        bool kicked;
         double goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle);
         shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
         /*PROTECTED REGION END*/

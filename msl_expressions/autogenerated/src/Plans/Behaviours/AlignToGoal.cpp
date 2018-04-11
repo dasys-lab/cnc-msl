@@ -18,15 +18,14 @@ namespace alica
             DomainBehaviour("AlignToGoal")
     {
         /*PROTECTED REGION ID(con1415205272843) ENABLED START*/ //Add additional options here
-        maxVel = 2000;
-        maxRot = M_PI * 4;
-        minRot = 0.1;
-        maxYTolerance = 15;
-        pRot = 2.1;
-        dRot = 0.0;
-        iter = 0;
-        kicked = false;
-        lastRotError = 0;
+    	this->maxVel = 2000;
+    	this->maxRot = M_PI * 4;
+    	this->minRot = 0.1;
+    	this->maxYTolerance = 15;
+    	this->pRot = 2.1;
+    	this->dRot = 0.0;
+        this->yOffset = 150.0;
+        this->lastRotError = 0;
         /*PROTECTED REGION END*/
     }
     AlignToGoal::~AlignToGoal()
@@ -67,7 +66,7 @@ namespace alica
         }
         else
         {
-            aimPoint = getFreeGoalVector();
+            aimPoint = msl::Kicker::getFreeGoalVector(this->yOffset);
             if (aimPoint != nullptr)
             {
                 alloAimPoint = aimPoint->egoToAllo(*ownPos);
@@ -119,7 +118,7 @@ namespace alica
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = driveTo->length();
 
-        send(mc);
+        sendAndUpdatePT(mc);
 
         /*PROTECTED REGION END*/
     }
@@ -127,15 +126,14 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1415205272843) ENABLED START*/ //Add additional options here
         //TODO needs to be tested
-        maxVel = 2000;
-        maxRot = M_PI * 4;
-        minRot = 0.1;
-        maxYTolerance = 15;
-        pRot = 2.1;
-        dRot = 0.0;
-        iter = 0;
-        kicked = false;
-        lastRotError = 0;
+        this->maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
+        this->maxRot = M_PI * 4;
+        this->minRot = 0.1;
+        this->maxYTolerance = 15;
+        this->pRot = 2.1;
+        this->dRot = 0.0;
+        this->lastRotError = 0;
+        this->yOffset = (*this->sc)["Behaviour"]->get<double>("AlignToGoal", "MaxSpeed", NULL);
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
@@ -143,7 +141,7 @@ namespace alica
         }
         else
         {
-            shared_ptr < geometry::CNPoint2D > aimPoint = getFreeGoalVector();
+            shared_ptr < geometry::CNPoint2D > aimPoint = msl::Kicker::getFreeGoalVector(this->yOffset);
             if (aimPoint != nullptr)
             {
                 alloAimPoint = aimPoint->egoToAllo(*ownPos);
@@ -166,53 +164,5 @@ namespace alica
         return ownPos->y + t * hitVector.y;
     }
 
-    shared_ptr<geometry::CNPoint2D> AlignToGoal::getFreeGoalVector()
-    {
-
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
-        if (ownPos == nullptr || dstscan == nullptr)
-        {
-            return nullptr;
-        }
-        vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
-        double x = wm->field->getFieldLength() / 2;
-        //TODO add config param
-        double y = -1000 + 150;
-        shared_ptr < geometry::CNPoint2D > aim = make_shared < geometry::CNPoint2D > (x, y);
-        double samplePoints = 4;
-
-        for (double i = 0.0; i < samplePoints; i += 1.0)
-        {
-            shared_ptr < geometry::CNPoint2D > egoAim = aim->alloToEgo(*ownPos);
-            double dist = egoAim->length();
-            double opDist = msl::Kicker::minFree(egoAim->angleTo(), 200, dstscan);
-            if (opDist > 1000 && (opDist >= dist || abs(opDist - dist) > 1500))
-            {
-                validGoalPoints.push_back(egoAim);
-                //std::cout << " AlignPoint " << i << ":" << aim->x << ", " << aim->y << endl;
-            }
-            aim->y += 2 * abs(y) / samplePoints;
-        }
-
-        if (validGoalPoints.size() > 0)
-        {
-            shared_ptr < geometry::CNPoint2D > ret = nullptr;
-            double max = numeric_limits<double>::min();
-            for (int i = 0; i < validGoalPoints.size(); i++)
-            {
-                if (validGoalPoints[i]->length() > max)
-                {
-                    max = validGoalPoints[i]->length();
-                    ret = validGoalPoints[i];
-                }
-            }
-            return ret;
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

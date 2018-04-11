@@ -7,6 +7,7 @@ using namespace std;
 #include <Ball.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
 //#include "msl_msgs/PathPlanner.h"
 //#include "msl_msgs/VoronoiNetInfo.h"

@@ -128,8 +128,9 @@ bool Kicker::mayShoot()
     return true;
 }
 
-shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
+shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector(double yOffset)
 {
+	auto wm = msl::MSLWorldModel::get();
     auto ownPos = wm->rawSensorData->getOwnPositionVision();
     auto dstscan = wm->rawSensorData->getDistanceScan();
     if (ownPos == nullptr || dstscan == nullptr)
@@ -138,7 +139,7 @@ shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
     }
     vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
     double x = wm->field->getFieldLength() / 2;
-    double y = -1000 + this->preciseShotMaxTolerance;
+    double y = -1000 + yOffset;
     shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
     double samplePoints = 4;
 
@@ -171,6 +172,13 @@ shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
     {
         return nullptr;
     }
+}
+
+shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
+{
+
+	return getFreeGoalVector(this->preciseShotMaxTolerance);
+
 }
 
 
