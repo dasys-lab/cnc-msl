@@ -142,8 +142,8 @@ void DribbleControlMOS::run(void *msg)
     // cout << "DribbleControlMOS:: ballVel " << ballVel << " ballAngle "<< ballAngle << endl;
 
     // depends on hardware connection, left and right in this method are as seen from the robots point of view
-    msgback.leftMotor = this->getRightArmVelocity(ballVel, ballAngle);
-    msgback.rightMotor = this->getLeftArmVelocity(ballVel, ballAngle);
+    msgback.leftMotor = this->getLeftArmVelocity(ballVel, ballAngle);
+    msgback.rightMotor = this->getRightArmVelocity(ballVel, ballAngle);
     this->sendWheelSpeed(msgback);
 
     /*PROTECTED REGION END*/
@@ -382,6 +382,62 @@ double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAng
 
     if (ballAngle <= sec1)
     {
+        // rotate right
+        angleConst = -this->forwConst + (ballAngle - sec0) * (-this->diagConst + this->forwConst) / (sec1 - sec0);
+    }
+    else if (ballAngle <= sec2)
+    {
+        angleConst = -this->diagConst + (ballAngle - sec1) * (-this->sidewConst + this->diagConst) / (sec2 - sec1);
+    }
+    else if (ballAngle <= sec3)
+    {
+        angleConst = -this->sidewConst + (ballAngle - sec2) * (this->sidewConst) / (sec3 - sec2);
+    }
+    else if (ballAngle <= sec4)
+    {
+        angleConst = (ballAngle - sec3) * this->forwConst / (sec4 - sec3);
+    }
+    else if (ballAngle <= sec5)
+    {
+        angleConst = this->forwConst + (ballAngle - sec4) * (this->diagConst - this->forwConst) / (sec5 - sec4);
+    }
+    else if (ballAngle <= sec6)
+    {
+        angleConst = this->diagConst + (ballAngle - sec5) * (this->sidewConst - this->diagConst) / (sec6 - sec5);
+    }
+    else if (ballAngle <= sec7)
+    {
+        angleConst = this->sidewConst + (ballAngle - sec6) * (-this->sidewConst) / (sec7 - sec6);
+    }
+    else if (ballAngle >= sec7)
+    {
+        // rotate left
+        angleConst = (ballAngle - sec7) * (-this->forwConst) / (sec8 - sec7);
+    }
+
+
+    return velToInput(msl::ArmMotor::LEFT, ballVelocity * angleConst);
+}
+
+double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAngle)
+{
+
+    double sec0 = -M_PI;
+    double sec1 = -M_PI / 2.0 - this->phi;
+    double sec2 = -M_PI / 2.0;
+    double sec3 = -M_PI / 2.0 + this->phi;
+    double sec4 = 0.0;
+    double sec5 = M_PI / 2.0 - this->phi;
+    double sec6 = M_PI / 2.0;
+    double sec7 = M_PI / 2.0 + this->phi;
+    double sec8 = M_PI;
+
+    double angleConst = 0.0;
+
+    // linear interpolation of the constants in the 8 sectors
+
+    if (ballAngle <= sec1)
+    {
         // pull
         angleConst = (ballAngle - sec1) * this->forwConst / (sec1 - sec0);
     }
@@ -421,59 +477,6 @@ double DribbleControlMOS::getLeftArmVelocity(double ballVelocity, double ballAng
         angleConst = -this->diagConst + (ballAngle - sec7) * (-this->forwConst + this->diagConst) / (sec8 - sec7);
     }
 
-    return velToInput(msl::ArmMotor::LEFT, ballVelocity * angleConst);
-}
-
-double DribbleControlMOS::getRightArmVelocity(double ballVelocity, double ballAngle)
-{
-    double sec0 = -M_PI;
-    double sec1 = -M_PI / 2.0 - this->phi;
-    double sec2 = -M_PI / 2.0;
-    double sec3 = -M_PI / 2.0 + this->phi;
-    double sec4 = 0.0;
-    double sec5 = M_PI / 2.0 - this->phi;
-    double sec6 = M_PI / 2.0;
-    double sec7 = M_PI / 2.0 + this->phi;
-    double sec8 = M_PI;
-
-    double angleConst = 0.0;
-
-    // linear interpolation of the constants in the 8 sectors
-
-    if (ballAngle <= sec1)
-    {
-        // rotate right
-        angleConst = -this->forwConst + (ballAngle - sec0) * (-this->diagConst + this->forwConst) / (sec1 - sec0);
-    }
-    else if (ballAngle <= sec2)
-    {
-        angleConst = -this->diagConst + (ballAngle - sec1) * (-this->sidewConst + this->diagConst) / (sec2 - sec1);
-    }
-    else if (ballAngle <= sec3)
-    {
-        angleConst = -this->sidewConst + (ballAngle - sec2) * (this->sidewConst) / (sec3 - sec2);
-    }
-    else if (ballAngle <= sec4)
-    {
-        angleConst = (ballAngle - sec3) * this->forwConst / (sec4 - sec3);
-    }
-    else if (ballAngle <= sec5)
-    {
-        angleConst = this->forwConst + (ballAngle - sec4) * (this->diagConst - this->forwConst) / (sec5 - sec4);
-    }
-    else if (ballAngle <= sec6)
-    {
-        angleConst = this->diagConst + (ballAngle - sec5) * (this->sidewConst - this->diagConst) / (sec6 - sec5);
-    }
-    else if (ballAngle <= sec7)
-    {
-        angleConst = this->sidewConst + (ballAngle - sec6) * (-this->sidewConst) / (sec7 - sec6);
-    }
-    else if (ballAngle >= sec7)
-    {
-        // rotate left
-        angleConst = (ballAngle - sec7) * (-this->forwConst) / (sec8 - sec7);
-    }
 
     return velToInput(msl::ArmMotor::RIGHT, ballVelocity * angleConst);
 }
