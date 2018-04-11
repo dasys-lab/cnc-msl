@@ -192,7 +192,7 @@ void ThrowInPass::run(void *msg)
         }
 
         cout << "TIP: KICK MSG SENT" << endl;
-        send(km);
+//        send(km);
         if (this->robot->kicker->lowShovelSelected)
         {
             cout << "TIP: pass msg sent" << endl;
