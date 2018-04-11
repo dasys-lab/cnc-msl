@@ -1,5 +1,4 @@
-#ifndef logging_h
-#define logging_h 1
+#pragma once
 
 #include <stdio.h>
 #include <string>
@@ -17,5 +16,3 @@ void logging_init();
 void logData();
 
 
-
-#endif
