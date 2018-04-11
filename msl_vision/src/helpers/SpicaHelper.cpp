@@ -131,8 +131,8 @@ void SpicaHelper::send()
     if (supplementary::SystemConfig::getOwnRobotID() == 12)
     {
         auto angle = wm->odometry.position.angle;
-        wm->odometry.position.x = wm->odometry.position.x + (265 * cos(angle));
-        wm->odometry.position.y = wm->odometry.position.y + (265 * sin(angle));
+        wm->odometry.position.x = wm->odometry.position.x + (265.0 * cos(angle));
+        wm->odometry.position.y = wm->odometry.position.y + (265.0 * sin(angle));
     }
     womopub.publish(*wm);
     wm->distanceScan.sectors.clear();
