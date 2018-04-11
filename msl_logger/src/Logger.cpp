@@ -7,6 +7,7 @@
 #include <sstream>
 #include <time.h>
 #include <unistd.h>
+#include <sys/statvfs.h>
 
 namespace msl
 {
@@ -18,11 +19,31 @@ namespace msl
 		this->enabled = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableLogging", NULL);
 		this->enableConsole = (*sc)["Behaviour"]->get<bool>("BehaviourLogging.enableConsole", NULL);
 		this->thresholdLvl = (*sc)["Behaviour"]->get<int>("BehaviourLogging.debugLevel", NULL);
+        this->robotName = sc->getHostname();
+
+		struct statvfs fs;
+		if(statvfs("/dev/sda1", &fs) != 0){
+			std::cerr << "[ERROR] Could not get file system information!!!\n"
+					  << "[WARN] Logs will not be written to disk!!!\n";
+			this->thresholdLvl = LogLevels::console;
+
+		}
+
+		this->minFreeSpace = (*sc)["Behaviour"]->get<long>("BehaviourLogging.minDiskSpace", NULL);
+		if(this->getAvailableMemory("/dev/sda1") < this->minFreeSpace) // check if enough storage left
+		{
+			this->thresholdLvl = LogLevels::console;
+			std::cerr << "[ERROR] There is not enough space left!\n"
+					  << "[WARN] Logs will not be written to disk!!!\n";
+		}
+
 		if(this->thresholdLvl == LogLevels::console){
 			this->initConsole = true;
 		}else{
 			this->initConsole = false;
 			this->setFileName("BehaviourLog");
+			std::ofstream current (this->location + "current.txt");
+			current << this->path;
 		}
 	}
 
@@ -55,7 +76,7 @@ namespace msl
 		int day = nun->tm_mday;
 
 		filename << location << '/';
-		filename << path << year << '_';
+		filename << path << "-" << this->robotName << "-" << year << '_';
 		filename << std::setfill('0') << std::setw(2) << month << '_';
 		filename << std::setfill('0') << std::setw(2) << day << '-';
 		filename << getTimeStamp(false);
@@ -90,24 +111,29 @@ namespace msl
 
 			msg << '[' << getTimeStamp(false) << "] ";
 
-			msg << '[' << wm->getOwnId() << "] ";
+			msg << '[' << std::setfill('0') << std::setw(2) << wm->getOwnId() << "] ";
 
 			switch (level)
 			{
 			case LogLevels::console:
-				msg << "[CONSOLE]";
+				//msg << "[CONSOLE]";
+                msg << "[C]";
 				break;
 			case LogLevels::debug:
-				msg << "[DEBUG]";
+				//msg << "[DEBUG]";
+                msg << "[D]";
 				break;
 			case LogLevels::info:
-				msg << "[INFO ]";
+				//msg << "[INFO ]";
+				msg << "[I]";
 				break;
 			case LogLevels::warn:
-				msg << "[WARN ]";
+				//msg << "[WARN ]";
+				msg << "[W]";
 				break;
 			case LogLevels::error:
-				msg << "[ERROR]";
+				//msg << "[ERROR]";
+				msg << "[E]";
 				break;
 			}
 
@@ -121,7 +147,14 @@ namespace msl
 
 			if(this->thresholdLvl != LogLevels::console){
 				//cout << "DirtyDebug:: write messagee to file!\n";
-				this->outfile << msg.str() << std::flush;
+				if(this->getAvailableMemory("/dev/sda1") > this->minFreeSpace + msg.str().size()) // Check if message fits
+				{
+					this->outfile << msg.str() << std::flush;
+				}
+				else
+				{
+					std::cerr << "Log can not be written to disk, because there is no space left!!!\n";
+				}
 			}
 
 			if(this->enableConsole && level >= this->thresholdLvl || forceConsole && this->enableConsole){
@@ -167,6 +200,13 @@ namespace msl
 	void Logger::consoleState(bool state)
 	{
 		this->enableConsole = state;
+	}
+
+	long Logger::getAvailableMemory(std::string path)
+	{
+		struct statvfs fs;
+
+		return fs.f_bsize * fs.f_bavail; // return available space
 	}
 
 	/*void Logger::log2C(std::string message, LogLevels level)

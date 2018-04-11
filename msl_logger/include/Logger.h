@@ -2,9 +2,10 @@
 #include <fstream>
 #include <string>
 #include <mutex>
+#include <sys/statvfs.h>
 /** \file This file is supposed to create logger that can be used for debugging of every part of the framework uniformly?
  *	Logs haben folgende Form:
- *	[hh:mm:ss.uu][ROBOTID???][LEVEL]MESSAGE
+ *	[hh:mm:ss.uu][ROBOTID][LEVEL]MESSAGE
  *	h     == Stunde
  *	m     == Minute
  *	s     == Sekunde
@@ -120,18 +121,22 @@ namespace msl
 		bool enabled;						// flag that shows if logging is active or not
 		bool enableConsole;
 		bool initConsole;
+		long minFreeSpace;					// minimum amount of free diskspace to allow wtiting a logfile
 		std::string location;				// the path read from config file
 		std::string path;					// the path with generated file name
+		std::string robotName;                             // Used in filename
 		std::ofstream outfile;				// output where the logs are written to
 
 		MSLWorldModel* wm;					// Pointer to the worldmodel for meta informations
 											// The following things are used:
 											//     -> alicaTime ( wm->getTime()  )
 											//     -> robotId   ( wm->getOwnId() )
+
 		std::mutex logMutex;
 
 		std::string getTimeStamp(bool aTime);// otputs the current time based on the alicaTime
 		void setFileName(std::string path); /// unnoetig, da dateiname in config.
+		long getAvailableMemory(std::string path); // check for enough space for file
 		Logger(MSLWorldModel* wm);      	 // aus Referenzbuch  ---  private konstruktor
 
 		// Copyconstructor and assignment operator could be overwritten but apparently there's no need to...
