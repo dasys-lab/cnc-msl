@@ -32,7 +32,7 @@ class StandardAlignToPoint2Receivers : public DomainBehaviour
     string teamMateTaskName2;
     shared_ptr<geometry::CNPoint2D> recPos1;
     shared_ptr<geometry::CNPoint2D> recPos2;
-    bool canPass;
+    bool longPassPossible;
     double alignAngleTolerance;
     double positionDistanceTolerance;
     double executerDistanceToBall;
@@ -43,8 +43,8 @@ class StandardAlignToPoint2Receivers : public DomainBehaviour
     double ballRadius;
     double ratio;
     shared_ptr<msl::MovementQuery> m_Query;
-    int canPassCounter;
-    int canPassThreshold;
+    int longPassCounter;
+    int longPassThreshold;
                           /*PROTECTED REGION END*/};
                           }
                           /* namespace alica */
