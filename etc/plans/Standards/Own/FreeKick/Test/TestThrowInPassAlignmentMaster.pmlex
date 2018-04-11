@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="TestThrowInPassAlignmentMaster.pml#1523356610135"/>
-    <value xPos="555" yPos="290"/>
+    <value xPos="555" yPos="290" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestThrowInPassAlignmentMaster.pml#1523356617889"/>
@@ -28,6 +28,10 @@
   </extensions>
   <extensions>
     <key href="../../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestThrowInPassAlignment.pml#1523356831385"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

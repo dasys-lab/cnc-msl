@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="TestThrowInPassAlignment.pml#1523356831386"/>
-    <value xPos="77" yPos="3" width="82" height="67"/>
+    <value xPos="77" yPos="3" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestThrowInPassAlignment.pml#1523356831385"/>
@@ -22,7 +22,7 @@
   </extensions>
   <extensions>
     <key href="TestThrowInPassAlignment.pml#1523356936733"/>
-    <value xPos="273" yPos="117" width="82" height="67"/>
+    <value xPos="273" yPos="117" width="82" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestThrowInPassAlignment.pml#1523356978219"/>
@@ -33,11 +33,35 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="TestThrowInPassAlignment.pml#1523357593225"/>
-    <value xPos="339" yPos="7" width="65" height="67"/>
+    <key href="../../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494"/>
+    <value/>
   </extensions>
   <extensions>
-    <key href="TestThrowInPassAlignment.pml#1523357599178"/>
+    <key href="../../ThrowIn/ThrowInPass.beh#1462363309950"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestThrowInPassAlignment.pml#1523439276635"/>
+    <value xPos="470" yPos="30" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestThrowInPassAlignment.pml#1523439289588"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestThrowInPassAlignment.pml#1523439295878"/>
+    <value xPos="648" yPos="220" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestThrowInPassAlignment.pml#1523439300302"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

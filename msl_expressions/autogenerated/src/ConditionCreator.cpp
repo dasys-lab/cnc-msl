@@ -6,6 +6,8 @@
 
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
+#include  "Plans/Standards/Own/FreeKick/Test/TestThrowInPassAlignment1523356831385.h"
+
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
@@ -35,6 +37,8 @@
 #include  "Plans/CarpetCalibrator1435159127771.h"
 
 #include  "Plans/WM161413992564408.h"
+
+#include  "Plans/Standards/Own/FreeKick/Test/TestThrowInPassAlignmentMaster1523356580220.h"
 
 #include  "Plans/Attack/TestPlans/RobotMovementTestPlan1462969665131.h"
 
@@ -177,6 +181,18 @@ namespace alica
             case 1492620542706:
 
                 return make_shared<TransitionCondition1492620542706>();
+
+                break;
+
+            case 1523439290804:
+
+                return make_shared<TransitionCondition1523439290804>();
+
+                break;
+
+            case 1523439301601:
+
+                return make_shared<TransitionCondition1523439301601>();
 
                 break;
 
@@ -585,6 +601,18 @@ namespace alica
             case 1426692655810:
 
                 return make_shared<TransitionCondition1426692655810>();
+
+                break;
+
+            case 1523356618875:
+
+                return make_shared<TransitionCondition1523356618875>();
+
+                break;
+
+            case 1523356628773:
+
+                return make_shared<TransitionCondition1523356628773>();
 
                 break;
 
