@@ -239,13 +239,13 @@ double DribbleControlMOS::velToInput(msl::ArmMotor arm, double wheelVelocity)
     //model as spline
     if (arm == msl::ArmMotor::LEFT)
     {
-    	input = max(-10000.0, min(10000.0, leftSpeedSpline(wheelVelocity) + 0.5));
+    	input = max(-10000.0, min(10000.0, leftSpeedSpline(wheelVelocity)));
     }
     else if (arm == msl::ArmMotor::RIGHT)
     {
-    	input = max(-10000.0, min(10000.0, rightSpeedSpline(wheelVelocity) + 0.5));
+    	input = max(-10000.0, min(10000.0, rightSpeedSpline(wheelVelocity)));
     }
-    cout<<"DribbleControlMOS::velToInput::wheelVelocity "<<wheelVelocity<<" to Input: "<<input<<endl;
+    // cout<<"DribbleControlMOS::velToInput::wheelVelocity "<<wheelVelocity<<" to Input: "<<input<<endl;
     return input;
 }
 
