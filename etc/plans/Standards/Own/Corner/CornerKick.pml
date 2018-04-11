@@ -41,8 +41,8 @@
     <inTransitions>#1464788058735</inTransitions>
   </states>
   <states id="1464792231235" name="Recieve" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1464792274211</inTransitions>
     <outTransitions>#1464796134632</outTransitions>
   </states>
