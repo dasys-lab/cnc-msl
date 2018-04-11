@@ -11,9 +11,9 @@
     </quantifiers>
   </conditions>
   <states id="1464535161175" name="PositionExecutor" comment="" entryPoint="1464531946025">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
     <outTransitions>#1464778510115</outTransitions>
   </states>
   <states id="1464535169536" name="PositionReceiver" comment="" entryPoint="1464532126334">
@@ -37,18 +37,20 @@
   </states>
   <states id="1464535253598" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
     <inTransitions>#1464778513652</inTransitions>
+    <inTransitions>#1519832906025</inTransitions>
     <outTransitions>#1464778515443</outTransitions>
   </states>
   <states id="1464535263395" name="Shoot" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">AlignFreeGoalSpace.beh#1467039882734</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1467265292648</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
+    <outTransitions>#1519832906025</outTransitions>
   </states>
   <states id="1464535682818" name="PositionInsideOppPenalty" comment="" entryPoint="1464532128302">
     <plans xsi:type="alica:BehaviourConfiguration">Pos2Penalty.beh#1465474190742</plans>
@@ -96,6 +98,11 @@
     <preCondition id="1464785280406" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464535263395</inState>
     <outState>#1464785222776</outState>
+  </transitions>
+  <transitions id="1519832906025" name="MISSING_NAME" comment="yikes. for unfortunate ball-losses. maybe delete as soon as pass power is tuned nicely." msg="">
+    <preCondition id="1519832908120" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1464535263395</inState>
+    <outState>#1464535253598</outState>
   </transitions>
   <entryPoints id="1464531946025" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>

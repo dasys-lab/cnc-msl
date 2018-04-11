@@ -221,6 +221,8 @@ namespace alica
 
             case 1467436134025:
 
+            case 1513176284031:
+
                 return make_shared<StandardAlignAndGrab>();
                 break;
 
@@ -503,6 +505,12 @@ namespace alica
 
             case 1435766278023:
 
+            case 1518257136977:
+
+            case 1518257157495:
+
+            case 1518257626027:
+
                 return make_shared<StandardActuate>();
                 break;
 
@@ -512,6 +520,8 @@ namespace alica
                 break;
 
             case 1458757193843:
+
+            case 1521898536366:
 
                 return make_shared<Intercept>();
                 break;

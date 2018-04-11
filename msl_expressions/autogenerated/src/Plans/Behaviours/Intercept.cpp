@@ -232,15 +232,24 @@ namespace alica
 //        {
 //            this->setSuccess(true);
 //        }
-		if (this->wm->ball->haveBall())
-		{
-			this->setSuccess(true);
-		}
-		/*PROTECTED REGION END*/
-	}
-	void Intercept::initialiseParameters()
-	{
-		/*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
+        if (this->wm->ball->haveBall())
+        {
+            this->setSuccess(true);
+        }
+        /*PROTECTED REGION END*/
+    }
+    void Intercept::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1458757170147) ENABLED START*/ //Add additional options here
+        string tmp = "";
+        if (getParameter("StandardSituationReceiver", tmp))
+        {
+            if (tmp.find("true") != string::npos || tmp.find("True") != string::npos)
+            {
+                predictionHorizon = (*sc)["Drive"]->get<int>("Drive.Intercept.StandardSituation.predictionHorizon",
+                                                             NULL);
+            }
+        }
 
 		//only update when not in StandardAttack-Loop
 		auto gs = this->wm->game->getGameState();
@@ -249,11 +258,11 @@ namespace alica
 			lastDistErr = 0;
 			distIntErr = 0;
 
-			lastRotErr = 0;
-			rotIntErr = 0;
-		}
-		/*PROTECTED REGION END*/
-	}
+            lastRotErr = 0;
+            rotIntErr = 0;
+        }
+        /*PROTECTED REGION END*/
+    }
 /*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

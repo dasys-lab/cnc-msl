@@ -82,7 +82,7 @@ namespace alica
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
             cout << "SAAG: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
-            send(mc);
+            sendAndUpdatePT(mc);
             return;
         }
 
@@ -138,7 +138,7 @@ namespace alica
             mc.motion.rotation = fac * rot * 1.6;
             cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
                     << mc.motion.rotation << endl;
-            send(mc);
+            sendAndUpdatePT(mc);
             return;
         }
 
@@ -150,7 +150,7 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.translation = 100;
                 cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
-                send(mc);
+                sendAndUpdatePT(mc);
                 return;
             }
             else
@@ -159,7 +159,7 @@ namespace alica
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length() * 1.5;
                 cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
-                send(mc);
+                sendAndUpdatePT(mc);
                 return;
             }
         }
@@ -195,7 +195,7 @@ namespace alica
             }
         }
         cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;
-        send(mc);
+        sendAndUpdatePT(mc);
         /*PROTECTED REGION END*/
     }
     void StandardAlignAndGrab::initialiseParameters()
