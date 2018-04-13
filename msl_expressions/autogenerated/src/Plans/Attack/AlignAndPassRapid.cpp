@@ -249,7 +249,7 @@ void AlignAndPassRapid::run(void *msg)
     auto dstscan = this->wm->rawSensorData->getDistanceScan();
     if (dstscan != nullptr && dstscan->size() != 0)
     {
-        double distBeforeBall = msl::Kicker::minFree(egoBallPos->angleTo(), 200, dstscan);
+        double distBeforeBall = this->robot->kicker->minFree(egoBallPos->angleTo(), 200, dstscan);
         if (distBeforeBall < 250)
             this->setFailure(true);
     }

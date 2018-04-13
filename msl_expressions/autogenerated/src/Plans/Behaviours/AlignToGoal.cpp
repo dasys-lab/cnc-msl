@@ -66,7 +66,7 @@ namespace alica
         }
         else
         {
-            aimPoint = msl::Kicker::getFreeGoalVector(this->yOffset);
+            aimPoint = this->robot->kicker->getFreeGoalVector(this->yOffset);
             if (aimPoint != nullptr)
             {
                 alloAimPoint = aimPoint->egoToAllo(*ownPos);
@@ -86,7 +86,7 @@ namespace alica
         double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)
         {
-            double distBeforeBall = msl::Kicker::minFree(ballAngle, 200, dstscan);
+            double distBeforeBall = this->robot->kicker->minFree(ballAngle, 200, dstscan);
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
                 cout << "AlignToGoal: failure!" << endl;
@@ -141,7 +141,7 @@ namespace alica
         }
         else
         {
-            shared_ptr < geometry::CNPoint2D > aimPoint = msl::Kicker::getFreeGoalVector(this->yOffset);
+            shared_ptr < geometry::CNPoint2D > aimPoint = this->robot->kicker->getFreeGoalVector(this->yOffset);
             if (aimPoint != nullptr)
             {
                 alloAimPoint = aimPoint->egoToAllo(*ownPos);

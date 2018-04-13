@@ -11,13 +11,11 @@
 #include "KickCurve.h"
 
 #include <memory>
-
 #include <InformationElement.h>
 #include <RingBuffer.h>
 #include <SystemConfig.h>
 #include <msl_actuator_msgs/KickControl.h>
 
-using namespace std;
 
 namespace geometry
 {
@@ -40,9 +38,9 @@ class Kicker
     int getKickerCount();
     int getKickPower(double dist, double height, double velo);
     bool mayShoot();
-    static shared_ptr<geometry::CNPoint2D> getFreeGoalVector(double yOffset);
+    shared_ptr<geometry::CNPoint2D> getFreeGoalVector(double yOffset);
     shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
-    static double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
+    double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
     double getPassKickpower(double dist, double arrivalTime);
     double getPassVelocity(double kickpower);
     double getKickPowerForLobShot(double dist, double height, double heightTolerance = 30.0);
@@ -81,7 +79,7 @@ class Kicker
     KickCurve *kickLowPass;
 
     RingBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
-    static 	int mod(int x, int y);
+    int mod(int x, int y);
 };
 
 } /* namespace msl */

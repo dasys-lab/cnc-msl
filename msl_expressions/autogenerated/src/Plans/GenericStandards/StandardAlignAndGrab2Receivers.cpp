@@ -4,8 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1462368682104) ENABLED START*/ // Add additional includes here
 #include <Ball.h>
 #include <Game.h>
-#include <MSLWorldModel.h>
 #include <GeometryCalculator.h>
+#include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
 #include <engine/Assignment.h>
@@ -255,6 +255,7 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
     double balldangle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoBallPos->angleTo());
     if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
     {
+        cout << "saag2rec: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)" << endl;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length() * 1.6;
         mc.motion.rotation = -fac * rot * 1.6;
@@ -266,6 +267,7 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
     {
         if (fabs(balldangle) > 20.0 * M_PI / 180.0)
         {
+            cout << "saag2rec: !haveball && fabs(balldangle) > 20.0 * M_PI / 180.0)" << endl;
             mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
             mc.motion.angle = M_PI;
             mc.motion.translation = 100;
@@ -274,6 +276,7 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
         }
         else
         {
+            cout << "not have ball else if" << endl;
             mc.motion.rotation = balldangle * 0.5;
             mc.motion.angle = egoBallPos->angleTo();
             mc.motion.translation = egoBallPos->length() * 1.5;
@@ -296,6 +299,8 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
             (haveBallCounter > 3 && ((runningTimeMS <= 3000.0 && fabs(dangle) < this->minTol) ||
                                      fabs(dangle) < this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0))))))
         {
+            cout << "have ball timeout or angle requirements me t" << this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0)))
+                 << endl;
             mc.motion.angle = M_PI;
             mc.motion.rotation = 0.0;
             mc.motion.translation = 100.0;

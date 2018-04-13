@@ -163,7 +163,7 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         shared_ptr<geometry::CNPoint2D> ball2PassPoint = this->recPos1 - alloBall;
         double passLength = ball2PassPoint->length();
         shared_ptr<geometry::CNPoint2D> ball2PassPointOrth =
-            make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * this->ratio;
+            make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * this->ratio * passLength;
         shared_ptr<geometry::CNPoint2D> left = this->recPos1 + ball2PassPointOrth;
         shared_ptr<geometry::CNPoint2D> right = this->recPos1 - ball2PassPointOrth;
         if (this->longPassPossible && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
@@ -173,7 +173,7 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         }
     }
 
-    // Hack coimbra 17
+    // since coimbra 17
     if (this->longPassPossible)
     {
         this->longPassCounter = max(-4, min(this->longPassCounter + 1, 5));
@@ -186,13 +186,11 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     if (this->longPassCounter > this->longPassThreshold)
     {
         this->longPassThreshold = -2;
-        cout << "SATP2R: aiming to receiver" << endl;
         receiverPos = this->recPos1;
     }
     else
     {
         this->longPassThreshold = 2;
-        cout << "SATP2R: aiming to alternative receiver" << endl;
         receiverPos = this->recPos2;
     }
 
@@ -206,7 +204,9 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     mc = this->robot->robotMovement->moveToPoint(this->m_Query);
 
     // if we reach the point and are aligned, the behavior is successful
-    if (egoTarget->length() < this->positionDistanceTolerance && fabs(receiverPos->alloToEgo(*ownPos)->angleTo()) < this->alignAngleTolerance)
+    cout << egoTarget->length() << " < " << this->positionDistanceTolerance << endl;
+    cout << fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) << " < " << this->alignAngleTolerance << endl;
+    if (egoTarget->length() < this->positionDistanceTolerance && fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
     {
         this->setSuccess(true);
     }
