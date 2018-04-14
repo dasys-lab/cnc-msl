@@ -21,8 +21,8 @@ namespace alica
             DomainBehaviour("AlignFreeGoalSpace")
     {
         /*PROTECTED REGION ID(con1467039782450) ENABLED START*/ // Add additional options here
-        lastAlignment = 0;
-        lastRotError = 0;
+        this->lastAlignment = 0;
+        this->lastRotError = 0.0;
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -166,25 +166,24 @@ namespace alica
             driveTo = driveTo + egoBallPos->normalize() * 100;
 
             mc.motion.angle = driveTo->angleTo();
-            mc.motion.translation = min(alignMaxVel, driveTo->length());
+            mc.motion.translation = min(maxVel, driveTo->length());
         }
         return mc;
     }
     void AlignFreeGoalSpace::readConfigParameters()
     {
-        defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
-        alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
-        alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
-        alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
-        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
+        this->lastAlignment = 0;
+        this->lastRotError = 0.0;
+        this->defaultRotateP = (*this->sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+        this->alignToPointpRot = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
+        this->alignToPointMaxRotation = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+        this->alignToPointMinRotation = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
+        this->maxVel = (*this->sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         // Aiming/Rotation Stuff
-        angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
-        ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        goalLineLength = wm->field->getGoalWidth();
-        robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-        //		wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
-        kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+        this->angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
+        this->ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+        this->goalLineLength = wm->field->getGoalWidth();
+        this->robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

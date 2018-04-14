@@ -121,10 +121,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GoalKick.beh#1415205578139"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="CornerKick.pml#1464796134632"/>
     <value/>
   </extensions>
@@ -134,6 +130,14 @@
   </extensions>
   <extensions>
     <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
