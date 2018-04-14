@@ -30,8 +30,8 @@ class StandardAlignToPoint2Receivers : public DomainBehaviour
     /*PROTECTED REGION ID(prv1467228931063) ENABLED START*/ // Add additional private methods here
     string teamMateTaskName1;
     string teamMateTaskName2;
-    shared_ptr<geometry::CNPoint2D> recPos1;
-    shared_ptr<geometry::CNPoint2D> recPos2;
+    shared_ptr<geometry::CNPoint2D> recPos;
+    shared_ptr<geometry::CNPoint2D> aRecPos;
     bool longPassPossible;
     double alignAngleTolerance;
     double positionDistanceTolerance;
@@ -45,6 +45,10 @@ class StandardAlignToPoint2Receivers : public DomainBehaviour
     shared_ptr<msl::MovementQuery> m_Query;
     int longPassCounter;
     int longPassThreshold;
+
+    shared_ptr<geometry::CNPoint2D> getTeammatePosFromTaskName(string teamMateTaskName);
+
+
                           /*PROTECTED REGION END*/};
                           }
                           /* namespace alica */

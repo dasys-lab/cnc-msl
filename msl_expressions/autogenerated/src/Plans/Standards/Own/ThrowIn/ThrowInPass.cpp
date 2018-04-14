@@ -46,6 +46,8 @@ ThrowInPass::ThrowInPass()
     this->sentPm = false;
     this->recPos = nullptr;
     this->aRecPos = nullptr;
+    this->longPassCounter = 1;
+    this->longPassThreshold = 0;
     /*PROTECTED REGION END*/
 }
 ThrowInPass::~ThrowInPass()
@@ -84,22 +86,6 @@ void ThrowInPass::run(void *msg)
         cout << "ThrowInPass: Could not get Receiver Positions from Task Names" << endl;
         return;
     }
-    // make the passpoints closer to the receiver
-
-    /* this didn't work in testing
-     if (recPos->y < 0.0)
-     {
-     passPoint = make_shared<geometry::CNPoint2D>(recPos->x, -wm->field->getFieldWidth() / 2 + 1000.0);
-     }
-     else
-     {
-     passPoint = make_shared<geometry::CNPoint2D>(recPos->x, wm->field->getFieldWidth() / 2 - 1000.0);
-     }
-     */
-
-    // check becomes obsolete with receiver placed on sideline
-    //    if (!this->wm->field->isInsidePenalty(passPoint, 0.0))
-    //    {
 
     // min dist to opponent
     auto obs = this->wm->robots->opponents.getOpponentsAlloClustered();
@@ -112,7 +98,8 @@ void ThrowInPass::run(void *msg)
             break;
         }
     }
-    if (this->longPassPossible && opponentTooClose)
+    this->longPassPossible = true;
+    if (opponentTooClose)
     {
         this->longPassPossible = false;
     }
@@ -136,15 +123,30 @@ void ThrowInPass::run(void *msg)
     }
     //    }
 
+
+
     int bestReceiverId = -1;
     shared_ptr<geometry::CNPoint2D> alloTarget = nullptr;
+
+    // since coimbra 17
     if (this->longPassPossible)
     {
+        this->longPassCounter = max(-4, min(this->longPassCounter + 1, 5));
+    }
+    else
+    {
+        this->longPassCounter = max(-4, min(this->longPassCounter - 1, 5));
+    }
+    shared_ptr<geometry::CNPoint2D> receiverPos = nullptr;
+    if (this->longPassCounter > this->longPassThreshold)
+    {
+    	this->longPassThreshold = -2;
         alloTarget = this->recPos;
         bestReceiverId = this->recId;
     }
     else
     {
+        this->longPassThreshold = 2;
         alloTarget = this->aRecPos;
         bestReceiverId = this->aRecId;
     }
@@ -170,9 +172,7 @@ void ThrowInPass::run(void *msg)
         pinf.y = ownPos->y;
         pm.origin = pinf;
         pm.receiverID = bestReceiverId;
-        msl_actuator_msgs::KickControl km;
-        km.enabled = true;
-        km.kicker = 1;
+
 
         shared_ptr<geometry::CNPoint2D> goalReceiverVec = dest - make_shared<geometry::CNPoint2D>(alloTarget->x, alloTarget->y);
 
@@ -182,6 +182,10 @@ void ThrowInPass::run(void *msg)
         // considering network delay and reaction time 1s?:
         estimatedTimeForReceiverToArrive += 1.0;
         pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
+
+        msl_actuator_msgs::KickControl km;
+        km.enabled = true;
+        km.kicker = 1;
         if (closerFactor < 0.01)
         {
             km.power = (ushort) this->robot->kicker->getKickPowerPass(aimPoint->length());
@@ -240,6 +244,8 @@ void ThrowInPass::initialiseParameters()
     this->recId = -1;
     this->aRecId = -1;
     this->longPassPossible = true;
+    this->longPassCounter = 1;
+    this->longPassThreshold = 0;
 
     this->recPos = nullptr;
     this->aRecPos = nullptr;

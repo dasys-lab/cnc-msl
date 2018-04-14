@@ -299,7 +299,7 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
             (haveBallCounter > 3 && ((runningTimeMS <= 3000.0 && fabs(dangle) < this->minTol) ||
                                      fabs(dangle) < this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0))))))
         {
-            cout << "have ball timeout or angle requirements me t" << this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0)))
+            cout << "have ball timeout or angle requirements met" << dangle << " < " << this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0)))
                  << endl;
             mc.motion.angle = M_PI;
             mc.motion.rotation = 0.0;

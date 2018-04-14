@@ -67,80 +67,15 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     shared_ptr<geometry::CNPoint2D> egoTarget;
     MotionControl mc;
 
-    EntryPoint *ep = getParentEntryPoint(this->teamMateTaskName1);
-    if (ep != nullptr)
-    {
-        // get the plan in which the behavior is running
-        auto parent = this->runningPlan->getParent().lock();
-        if (parent == nullptr)
-        {
-            cout << "SATP2Rec: parent null" << endl;
-            return;
-        }
-        // get robot ids of robots in found entry point
-        shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-        // exactly one robot is receiver
-        if (ids->size() > 0 && ids->at(0) != -1)
-        {
-            // get receiver position by id
-            auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (pos != nullptr)
-            {
-                this->recPos1 = pos->getPoint();
-            }
-            else
-            {
-                this->recPos1 = nullptr;
-            }
-        }
-    }
+    this->recPos = this->getTeammatePosFromTaskName(teamMateTaskName1);
+    this->aRecPos = this->getTeammatePosFromTaskName(teamMateTaskName2);
 
-    EntryPoint *ep2 = getParentEntryPoint(this->teamMateTaskName2);
-    if (ep2 != nullptr)
-    {
-        // get the plan in which the behavior is running
-        auto parent = this->runningPlan->getParent().lock();
-        if (parent == nullptr)
-        {
-            cout << "SATP2Rec: parent null" << endl;
-            return;
-        }
-        // get robot ids of robots in found entry point
-        shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep2);
-        // exactly one robot is receiver
-        if (ids->size() > 0 && ids->at(0) != -1)
-        {
-            // get receiver position by id
-            auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (pos != nullptr)
-            {
-                this->recPos2 = pos->getPoint();
-            }
-            else
-            {
-                this->recPos2 = nullptr;
-            }
-        }
-    }
-    if (this->recPos1 == nullptr && this->recPos2 == nullptr)
+    if (this->recPos == nullptr && this->aRecPos == nullptr)
     {
         return;
     }
 
-    //        shared_ptr < geometry::CNPoint2D > passPoint = nullptr;
-    //        if (this->recPos1->y < 0.0)
-    //        {
-    //            passPoint = make_shared < geometry::CNPoint2D
-    //                    > (this->recPos1->x, -this->wm->field->getFieldWidth() / 2 + 1000.0);
-    //        }
-    //        else
-    //        {
-    //            passPoint = make_shared < geometry::CNPoint2D
-    //                    > (this->recPos1->x, this->wm->field->getFieldWidth() / 2 - 1000.0);
-    //        }
-    //
-
-    if (!this->wm->field->isInsidePenalty(this->recPos1, 0.0))
+    if (!this->wm->field->isInsidePenalty(this->recPos, 0.0))
     {
 
         // min dist to opponent
@@ -148,7 +83,7 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         bool opponentTooClose = false;
         for (int i = 0; i < obs->size(); i++)
         {
-            if (obs->at(i)->distanceTo(this->recPos1) < this->minOppDist)
+            if (obs->at(i)->distanceTo(this->recPos) < this->minOppDist)
             {
                 opponentTooClose = true;
                 break;
@@ -160,14 +95,14 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         }
 
         // some calculation to check whether any obstacle is inside the pass vector triangle
-        shared_ptr<geometry::CNPoint2D> ball2PassPoint = this->recPos1 - alloBall;
+        shared_ptr<geometry::CNPoint2D> ball2PassPoint = this->recPos - alloBall;
         double passLength = ball2PassPoint->length();
         shared_ptr<geometry::CNPoint2D> ball2PassPointOrth =
             make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * this->ratio * passLength;
-        shared_ptr<geometry::CNPoint2D> left = this->recPos1 + ball2PassPointOrth;
-        shared_ptr<geometry::CNPoint2D> right = this->recPos1 - ball2PassPointOrth;
+        shared_ptr<geometry::CNPoint2D> left = this->recPos + ball2PassPointOrth;
+        shared_ptr<geometry::CNPoint2D> right = this->recPos - ball2PassPointOrth;
         if (this->longPassPossible && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
-            !geometry::outsideCorridore(alloBall, this->recPos1, this->passCorridorWidth, obs))
+            !geometry::outsideCorridore(alloBall, this->recPos, this->passCorridorWidth, obs))
         {
             this->longPassPossible = false;
         }
@@ -186,12 +121,12 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     if (this->longPassCounter > this->longPassThreshold)
     {
         this->longPassThreshold = -2;
-        receiverPos = this->recPos1;
+        receiverPos = this->recPos;
     }
     else
     {
         this->longPassThreshold = 2;
-        receiverPos = this->recPos2;
+        receiverPos = this->aRecPos;
     }
 
     // calculate target executerDistanceToBall away from the ball and on a line with the receiver
@@ -206,9 +141,19 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     // if we reach the point and are aligned, the behavior is successful
     cout << egoTarget->length() << " < " << this->positionDistanceTolerance << endl;
     cout << fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) << " < " << this->alignAngleTolerance << endl;
+
+
+
     if (egoTarget->length() < this->positionDistanceTolerance && fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
     {
         this->setSuccess(true);
+    }
+
+    if(fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < 6 * this->alignAngleTolerance)
+    {
+    	//weird hack to reach target alignment in simulator. relevant for real game?
+    	mc.motion.rotation *= 1.05;
+    	sendAndUpdatePT(mc);
     }
 
     send(mc);
@@ -249,6 +194,35 @@ void StandardAlignToPoint2Receivers::initialiseParameters()
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1467228931063) ENABLED START*/ // Add additional methods here
+
+shared_ptr<geometry::CNPoint2D> StandardAlignToPoint2Receivers::getTeammatePosFromTaskName(string teamMateTaskName)
+{
+    shared_ptr<geometry::CNPoint2D> recPos = nullptr;
+
+    EntryPoint *ep = getParentEntryPoint(teamMateTaskName);
+    if (ep != nullptr)
+    {
+        // get the plan in which the behavior is running
+        auto parent = this->runningPlan->getParent().lock();
+        if (parent != nullptr)
+        {
+            // get robot ids of robots in found entry point
+            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+            // exactly one robot is receiver
+            if (ids->size() > 0 && ids->at(0) != -1)
+            {
+                // get receiver position by id
+                auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                if (pos != nullptr)
+                {
+                    recPos = pos->getPoint();
+                }
+            }
+        }
+    }
+
+    return recPos;
+}
 
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -45,6 +45,8 @@ namespace alica
         double arrivalTimeOffset;
         int recId;
         int aRecId;
+        int longPassCounter;
+        int longPassThreshold;
         bool sentPm;
         pair<int, shared_ptr<geometry::CNPoint2D>> getTeammateIdAndPosFromTaskName(string teamMateTaskName);
         bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
