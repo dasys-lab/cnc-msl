@@ -533,4 +533,18 @@
     <parameters id="1521283389522" name="MISSING_NAME" comment="" key="OriY" value="0"/>
     <parameters id="1521283394974" name="MISSING_NAME" comment="" key="R" value="250"/>
   </configurations>
+  <configurations id="1523718438212" name="DriveAndAlignTo[-4000,0,-8000,0,250]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1523718500827" name="MISSING_NAME" comment="" key="X" value="-4000"/>
+    <parameters id="1523718504818" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1523718509087" name="MISSING_NAME" comment="" key="OriX" value="-8000"/>
+    <parameters id="1523718513139" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+    <parameters id="1523718516842" name="MISSING_NAME" comment="" key="R" value="250"/>
+  </configurations>
+  <configurations id="1523718464367" name="DriveAndAlignTo[4000,0,8000,0,250]" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1523718660513" name="MISSING_NAME" comment="" key="X" value="4000"/>
+    <parameters id="1523718664417" name="MISSING_NAME" comment="" key="Y" value="0"/>
+    <parameters id="1523718671006" name="MISSING_NAME" comment="" key="R" value="250"/>
+    <parameters id="1523718673197" name="MISSING_NAME" comment="" key="OriX" value="8000"/>
+    <parameters id="1523718677624" name="MISSING_NAME" comment="" key="OriY" value="0"/>
+  </configurations>
 </alica:Behaviour>

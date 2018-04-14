@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1521283132783" name="DriveAndTurnToOppositeSite" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/TestPlans/DribbleTestMOS" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1521283132784" name="InitialPos" comment="" entryPoint="1521283132785">
-    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1521281255214</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1523718438212</plans>
     <outTransitions>#1521283235652</outTransitions>
   </states>
   <states id="1521283171226" name="WaitShortly" comment="">
@@ -9,7 +9,7 @@
     <outTransitions>#1521283238079</outTransitions>
   </states>
   <states id="1521283172827" name="DriveToSite" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1521283343854</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/DriveAndAlignToPoint.beh#1523718464367</plans>
     <inTransitions>#1521283238079</inTransitions>
     <outTransitions>#1521283248282</outTransitions>
   </states>
