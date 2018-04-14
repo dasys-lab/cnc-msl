@@ -40,8 +40,6 @@ namespace alica
         this->rotTolerance = 0.0;
         this->angleTolerance = 0.0;
 
-        this->velAt2000 = 0.0;
-        this->velAt3500 = 0.0;
 
         this->staticUpperBound = 0.0;
         this->staticMiddleBound = 0.0;
@@ -152,8 +150,6 @@ namespace alica
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ // Add additional options her
-        this->velAt2000 = (*this->sc)["DribbleAlround"]->get<double>("DribbleAlround.velAt2000", NULL);
-        this->velAt3500 = (*this->sc)["DribbleAlround"]->get<double>("DribbleAlround.velAt3500", NULL);
         this->staticUpperBound = (*this->sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound", NULL);
         this->staticMiddleBound = (*this->sc)["DribbleAlround"]->get<double>("DribbleAlround.staticMiddleBound", NULL);
         this->staticLowerBound = (*this->sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound", NULL);

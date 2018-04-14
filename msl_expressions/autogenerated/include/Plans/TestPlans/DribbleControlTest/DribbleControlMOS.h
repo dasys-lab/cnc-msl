@@ -55,8 +55,7 @@ namespace alica
 
         bool testingMode;
 
-        double velAt2000;
-        double velAt3500;
+
         double staticUpperBound;
         double staticMiddleBound;
         double staticLowerBound;
