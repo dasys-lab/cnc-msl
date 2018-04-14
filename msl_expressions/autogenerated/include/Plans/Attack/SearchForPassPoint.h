@@ -28,7 +28,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1436269017402) ENABLED START*/ // Add additional protected methods here
-        supplementary::SystemConfig *sc;
         vector<string> teamMateTaskName;
         vector<string> teamMatePlanName;
         vector<EntryPoint *> eps;
