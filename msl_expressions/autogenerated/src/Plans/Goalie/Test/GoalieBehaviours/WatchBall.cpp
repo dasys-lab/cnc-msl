@@ -67,6 +67,7 @@ namespace alica
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
         ownPos = wm->rawSensorData->getOwnPositionVision();
 
+		// Stop Robot if own position is unknown
         if (ownPos == nullptr)
         {
             mc.motion.translation = 0;
@@ -80,7 +81,8 @@ namespace alica
         updateGoalPosition();
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball->getAlloBallPosition();
 
-        // TODO: Keep?
+		// If ball is seen in the opponent half, stop the robot but rotate towards the opponents half.
+        // TODO: Keep. What would be the alternative?
         if (alloBall != nullptr && alloBall->x > -250)
         {
             mc.motion.translation = 0;
@@ -90,8 +92,9 @@ namespace alica
             cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
             return;
         }
-        // TODO: Keep?
 
+		// If ball is not seen or the ball is further away than the goal mid point is.
+        // TODO: Keep?
         if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
         {
 
@@ -110,12 +113,11 @@ namespace alica
             return;
         }
 
+		// Add ball position to ring buffer.
         this->ballPositions->add(alloBall);
 
-        /*
-         * Calculate target position on goal line
-         */
-
+         // Calculate target position on goal line
+		 // TODO: Make it a testable function
         shared_ptr < geometry::CNPoint2D > alloTarget;
         double targetY;
         if (ballPositions->getSize() > 0)
@@ -131,13 +133,13 @@ namespace alica
             targetY = alloTarget->y;
         }
 
-        auto egoBall = alloBall->alloToEgo(*ownPos);
-        auto egoTarget = alloTarget->alloToEgo(*ownPos);
-
         /*
          * Goalie drives to target
          */
 
+		// TODO: think about replacing the code with existing drive config
+        auto egoBall = alloBall->alloToEgo(*ownPos);
+        auto egoTarget = alloTarget->alloToEgo(*ownPos);
         mc.motion.angle = egoTarget->angleTo();
         rotate (alloBall);
 
@@ -374,7 +376,7 @@ namespace alica
         mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
         lastRotErr = angleErr;
 
-//		double angleAlignPoint = ownPos->getPoint()->angleToPoint(alignPoint) / M_PI * 180;
+//		double angleAlignPoint = ownPos->getPoint()->angleToPognt(alignPoint) / M_PI * 180;
 //		cout << "[WatchBall] alignPAngle: " << angleAlignPoint << endl;
 //		cout << "[WatchBall] ballAngle  : " << ballAngle << endl;
 //		cout << "[WatchBall] rotationLim: " << rotationLimit << endl;
