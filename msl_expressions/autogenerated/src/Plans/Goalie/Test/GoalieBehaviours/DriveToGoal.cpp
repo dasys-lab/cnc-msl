@@ -19,7 +19,11 @@ namespace alica
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
         goalInitPos = (*this->sc)["Behaviour"]->get < string > ("Goalie.GoalInitPosition", NULL);
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
+	cout << "HALLO? CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
         alloGoalMid = wm->field->posOwnGoalMid();
+	if (wm->field->posOwnGoalMid() == nullptr) {
+		cout << "SOMETHING IS REALLY WRONG" << endl;
+	}
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
@@ -36,6 +40,11 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
+
+	if (wm->field->posOwnGoalMid() == nullptr) {
+		cout << "SOMETHING IS REALLY WRONG; WORLDMODEL SUCKS" << endl;
+	}
+
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
@@ -53,7 +62,11 @@ namespace alica
         }
         else
         {
-        	updateGoalPosition();
+        	//updateGoalPosition();
+		if (alloGoalMid == nullptr)  {
+			cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
+			return;
+		}
 
             if (goalInitPos.compare("Left") == 0)
             {
@@ -126,6 +139,10 @@ namespace alica
         {
         	alloGoalMid = wm->field->posOwnGoalMid();
         }
+	if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
+		cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
+		return;
+	}
     	alloGoalLeft = make_shared < geometry::CNPoint2D
     	                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     	alloGoalRight = make_shared < geometry::CNPoint2D

@@ -6,6 +6,8 @@ using namespace std;
 #include <RawSensorData.h>
 #include <cmath>
 #include <obstaclehandler/Obstacles.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/MSLRobot.h>
 #include <vector>
 /*PROTECTED REGION END*/
 namespace alica
@@ -43,13 +45,13 @@ WatchBall::WatchBall()
     lastRotErr = 0;
     prevTargetDist = 0;
 
+     query = make_shared<msl::MovementQuery>();
+
     snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
     alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
     ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
     auto tempMid = wm->field->posOwnGoalMid();
     alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
-    //        alloGoalLeft = make_shared < geometry::CNPoint2D
-    //                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
     /*PROTECTED REGION END*/
@@ -76,7 +78,8 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    updateGoalPosition();
+    // TODO: Fix and uncomment
+    // updateGoalPosition();
 
 	// Special cases that depend on the ball position are following:
     shared_ptr<geometry::CNPoint2D> alloBall = wm->ball->getAlloBallPosition();
@@ -87,11 +90,16 @@ void WatchBall::run(void *msg)
     {
         // Goalie drives to last known target and rotates towards mirrored own position
 
-        cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-        mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
-        rotate(make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y));
-        mc.motion.translation =
-            std::min(alignMaxVel, (prevTarget->alloToEgo(*ownPos)->length() * pTrans) + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
+        cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
+
+	query->egoDestinationPoint = alloGoalMid->alloToEgo(*ownPos);
+	if (alloBall != nullptr)
+		query->egoAlignPoint = egoBall->alloToEgo(*ownPos);
+	else
+	oquery->egoAlignPoint = egoBall->alloToEgo(*ownPos);
+
+        mc = robot->robotMovement->moveToPoint(query);
+
         send(mc);
         return;
     }
@@ -126,16 +134,16 @@ void WatchBall::run(void *msg)
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
 		const double targetX = alloGoalMid->x + 200;
+		std::cout << "targetY: " << targetY << std::endl;
 
-        return make_shared<geometry::CNPoint2D>(targetX, targetY);
+	        return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
 
 	auto alloTarget = calculateTarget();
 	// If alloTarget was not calculated, stop robot?
 	// TODO: Eventually return prevTarget or midGoal to be ready when ball is coming.
 	if (alloTarget == nullptr) {
-		send(mc);
-		return;
+		alloTarget = alloGoalMid;
 	}
 
 	// Finaly if a goal impact can be calculated drive to the calculated impact:
@@ -152,17 +160,12 @@ void WatchBall::run(void *msg)
 
 	// Rotate towards the ball?
 	// TODO: Re-evaluate if thats good or not.
-    mc.motion.angle = egoTarget->angleTo();
-    rotate(alloBall);
 
-	auto tempPFactor = pTrans;
-	if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
-	{
-		tempPFactor = pTrans / 2;
-	}
+	query->egoDestinationPoint = egoTarget;
+	query->egoAlignPoint = egoBall;
+        mc = robot->robotMovement->moveToPoint(query);
 
-	double translation = (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dTrans);
-	mc.motion.translation = std::min(alignMaxVel, translation);
+	mc.motion.translation *= 2; // Foxy, move faster!
 
     send(mc);
 
@@ -254,7 +257,7 @@ double WatchBall::calcGoalImpactY()
         /*
          * Ball is moving, so that its variance is greater than maxVariance
          */
-        cout << "[WatchBall] -LinearRegression- Variance   : " << variance << endl;
+        // cout << "[WatchBall] -LinearRegression- Variance   : " << variance << endl;
         for (int i = 0; i < nPoints; i++)
         {
             auto curBall = ballPositions->getLast(i);
@@ -273,49 +276,8 @@ double WatchBall::calcGoalImpactY()
     }
     else
     {
-        // TODO: use this when Goalie Vision detects Obstacles better?!
-        //            auto obstacles = wm->obstacles->getAlloObstaclePoints();
-        //            shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
-        //            double minDistBallObs = 20000;
-        //            for (auto currentObs : *obstacles)
-        //            {
-        //                double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
-        //                if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
-        //                        || currentDistBallObs > 1000)
-        //                {
-        //                    continue;
-        //                }
-        //                if (currentDistBallObs < minDistBallObs)
-        //                {
-        //                    closestObstacle = currentObs;
-        //                    minDistBallObs = currentDistBallObs;
-        //                }
-        //            }
-        //
-        //            if (closestObstacle != nullptr)
-        //            {
-        //
-        //			/*
-        //			 * Goalie drives to calculated Impact point by using obstacle in front of ball and ball position itself
-        //			 */
-
-        //				cout << "[WatchBall] -Obstacle- Variance " << variance << endl;
-        //                _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
-        //                        / (closestObstacle->x - ballPositions->getLast(0)->x);
-        //                _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
-        //                calcTargetY = _slope * alloGoalMid->x + _yInt;
-        //				cout << "[WatchBall] -Obstacle- calcTargetY : " << calcTargetY << endl;
-        //            }
-        //            else
-        //            {
-        //
-        //			/*
-        //			 * Goalie drives to ball x position, meaning he just follows the ball
-        //			 */
-
         cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
         calcTargetY = ballPositions->getLast(0)->y;
-        // cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
     }
     return calcTargetY;
 }
@@ -392,6 +354,10 @@ void WatchBall::updateGoalPosition()
     else
     {
         alloGoalMid = wm->field->posOwnGoalMid();
+    }
+    if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
+        cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
+        return;
     }
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);

@@ -9,7 +9,9 @@
 #include <MSLWorldModel.h>
 #include <RingBuffer.h>
 #include <msl_actuator_msgs/MotionControl.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <string>
+
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -47,6 +49,8 @@ class WatchBall : public DomainBehaviour
     double calcGoalImpactY();
     void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
     void updateGoalPosition();
+    shared_ptr<msl::MovementQuery> query;
+
     /*PROTECTED REGION END*/
   private:
     /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ // Add additional private methods here
