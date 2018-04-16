@@ -32,6 +32,10 @@ namespace alica
         double securityReceiver;
         double oppFarAwayDist;
         double snapDist;
+        double yCoordOfReceiver;
+        int maxIterations;
+        int posSignCounter;
+        int itCounter;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

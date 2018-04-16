@@ -7,7 +7,6 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
-#include <SystemConfig.h>
 #include <engine/Assignment.h>
 #include <engine/RunningPlan.h>
 #include <engine/model/EntryPoint.h>
@@ -25,6 +24,11 @@ ReceiveInOppHalf::ReceiveInOppHalf()
 {
     /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ // Add additional options here
     this->mQuery = make_shared<msl::MovementQuery>();
+    this->yCoordOfReceiver = 0.0;
+    this->maxIterations = 0;
+    this->snapDist = 0.0;
+    this->posSignCounter = 0;
+    this->itCounter = 0;
     /*PROTECTED REGION END*/
 }
 ReceiveInOppHalf::~ReceiveInOppHalf()
@@ -47,22 +51,31 @@ void ReceiveInOppHalf::run(void *msg)
     // add alloBall to path planning
     additionalPoints->push_back(alloBallPos);
 
-    double yCordOfReceiver = 0.0;
-    if (alloBallPos->y < 0.0) // right side line
+    if (this->itCounter < this->maxIterations)
     {
-        yCordOfReceiver = -this->wm->field->getFieldWidth() / 2.0 + this->securityReceiver;
+        if (alloBallPos->y >= 0.0)
+        {
+            ++this->posSignCounter;
+        }
+        ++this->itCounter;
+        return;
+    }
+
+    if (this->posSignCounter >= this->maxIterations / 2) // right side line
+    {
+        this->yCoordOfReceiver = this->wm->field->getFieldWidth() / 2.0 - this->securityReceiver;
     }
     else // left side line
     {
-        yCordOfReceiver = this->wm->field->getFieldWidth() / 2.0 - this->securityReceiver;
+        this->yCoordOfReceiver = -this->wm->field->getFieldWidth() / 2.0 + this->securityReceiver;
     }
 
     double lowestX = this->wm->field->getFieldLength() / 2;
     auto opps = this->wm->robots->opponents.getOpponentsAlloClustered();
     for (auto opp : *opps)
     {
-        double distToLine =
-            geometry::distancePointToLineSegment(opp->x, opp->y, 2000, yCordOfReceiver, this->wm->field->getFieldLength() / 2 - 2000, yCordOfReceiver);
+        double distToLine = geometry::distancePointToLineSegment(opp->x, opp->y, 2000, this->yCoordOfReceiver, this->wm->field->getFieldLength() / 2 - 2000,
+                                                                 this->yCoordOfReceiver);
         if (distToLine > 3000)
         {
             continue;
@@ -74,7 +87,7 @@ void ReceiveInOppHalf::run(void *msg)
         }
     }
 
-    this->alloTarget = make_shared<geometry::CNPoint2D>(this->wm->field->getFieldLength() / 4, yCordOfReceiver);
+    this->alloTarget = make_shared<geometry::CNPoint2D>(this->wm->field->getFieldLength() / 4, this->yCoordOfReceiver);
 
     if (lowestX < this->wm->field->getFieldLength() / 2 - 2000)
     { // opponent close to pass line
@@ -99,7 +112,11 @@ void ReceiveInOppHalf::initialiseParameters()
     this->securityReceiver = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "securityReceiver", NULL);
     this->snapDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "snapDist", NULL);
     this->oppFarAwayDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "oppFarAwayDist", NULL);
+    this->maxIterations = (*this->sc)["Behaviour"]->get<double>("ReceiveInOppHalf", "maxIterations", NULL);
     this->alloTarget = make_shared<geometry::CNPoint2D>(0, 0);
+    this->yCoordOfReceiver = 0.0;
+    this->posSignCounter = 0;
+    this->itCounter = 0;
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1462370340143) ENABLED START*/ // Add additional methods here

@@ -70,7 +70,8 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     this->recPos = this->getTeammatePosFromTaskName(teamMateTaskName1);
     this->aRecPos = this->getTeammatePosFromTaskName(teamMateTaskName2);
 
-    if (this->recPos == nullptr && this->aRecPos == nullptr)
+    // LMA: changed from && to || because the plan requires 3 robots as min cardinality. if one base crashes within the plan we get segfaults..
+    if (this->recPos == nullptr || this->aRecPos == nullptr)
     {
         return;
     }
@@ -142,18 +143,16 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     cout << egoTarget->length() << " < " << this->positionDistanceTolerance << endl;
     cout << fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) << " < " << this->alignAngleTolerance << endl;
 
-
-
     if (egoTarget->length() < this->positionDistanceTolerance && fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
     {
         this->setSuccess(true);
     }
 
-    if(fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < 6 * this->alignAngleTolerance)
+    if (fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < 6 * this->alignAngleTolerance)
     {
-    	//weird hack to reach target alignment in simulator. relevant for real game?
-    	mc.motion.rotation *= 1.05;
-    	sendAndUpdatePT(mc);
+        // weird hack to reach target alignment in simulator. relevant for real game?
+        mc.motion.rotation *= 1.05;
+        sendAndUpdatePT(mc);
     }
 
     send(mc);
