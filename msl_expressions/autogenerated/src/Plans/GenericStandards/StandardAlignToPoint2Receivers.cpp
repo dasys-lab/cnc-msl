@@ -70,7 +70,7 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     this->recPos = this->getTeammatePosFromTaskName(teamMateTaskName1);
     this->aRecPos = this->getTeammatePosFromTaskName(teamMateTaskName2);
 
-    // LMA: changed from && to || because the plan requires 3 robots as min cardinality. if one base crashes within the plan we get segfaults..
+    // LMA: changed from && to || because all plans with this beh require 3 robots as min cardinality. if one base crashes within the plan we get segfaults..
     if (this->recPos == nullptr || this->aRecPos == nullptr)
     {
         return;
