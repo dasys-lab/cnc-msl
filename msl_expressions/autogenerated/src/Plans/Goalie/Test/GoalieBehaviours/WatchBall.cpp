@@ -378,7 +378,6 @@ void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
     //		cout << "[WatchBall] rotation   : " << mc.motion.rotation << endl;
     //		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
 }
-/*PROTECTED REGION END*/
 void WatchBall::updateGoalPosition()
 {
     shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
@@ -394,4 +393,5 @@ void WatchBall::updateGoalPosition()
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 }
+/*PROTECTED REGION END*/
 } /* namespace alica */
