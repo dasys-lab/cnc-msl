@@ -1,40 +1,39 @@
 using namespace std;
 #include "Plans/Standards/Own/FreeKick/AlignFreeGoalSpace.h"
 
-/*PROTECTED REGION ID(inccpp1467039782450) ENABLED START*/ //Add additional includes here
+/*PROTECTED REGION ID(inccpp1467039782450) ENABLED START*/ // Add additional includes here
 //#include <msl_robot/robotmovement/MovementQuery.h>
-#include "msl_robot/robotmovement/RobotMovement.h"
-#include "SystemConfig.h"
+#include <SystemConfig.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <Ball.h>
+#include <MSLFootballField.h>
+#include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Robots.h>
-#include <Ball.h>
-#include <MSLWorldModel.h>
-#include <MSLFootballField.h>
-#include <obstaclehandler/Obstacles.h>
 #include <msl_robot/MSLRobot.h>
-#include <msl_robot/kicker/Kicker.h>
+#include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1467039782450) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION ID(staticVars1467039782450) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
     AlignFreeGoalSpace::AlignFreeGoalSpace() :
             DomainBehaviour("AlignFreeGoalSpace")
     {
-        /*PROTECTED REGION ID(con1467039782450) ENABLED START*/ //Add additional options here
-        lastAlignment = 0;
-        // for alignToPointWithBall
-        lastRotError = 0;
+        /*PROTECTED REGION ID(con1467039782450) ENABLED START*/ // Add additional options here
+        this->lastAlignment = 0;
+        this->lastRotError = 0.0;
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     AlignFreeGoalSpace::~AlignFreeGoalSpace()
     {
-        /*PROTECTED REGION ID(dcon1467039782450) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(dcon1467039782450) ENABLED START*/ // Add additional options here
         /*PROTECTED REGION END*/
     }
     void AlignFreeGoalSpace::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1467039782450) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(run1467039782450) ENABLED START*/ // Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -44,25 +43,8 @@ namespace alica
             return;
         }
 
-        //Constant ball handle wheel speed
-//		BallHandleCmd bhc;
-//		bhc.leftMotor = (int8_t)this->wheelSpeed;
-//		bhc.rightMotor = (int8_t)this->wheelSpeed;
-//		send(bhc);
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
-        // Create target point next to left/right opp goal post
-        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 + ballDiameter, goalLineLength / 2 - ballDiameter);
-        shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 + ballDiameter, -goalLineLength / 2 + ballDiameter);
-
-        // Create points for rectangle check
-        shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D
-                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, goalLineLength / 2);
-        shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D
-                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, -goalLineLength / 2);
-
         // Create back point according to last alignment
         shared_ptr < geometry::CNPoint2D > back = nullptr;
 
@@ -81,12 +63,11 @@ namespace alica
         }
 
         int counter = 0;
-
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D> > > alloOpps = nullptr;
+        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> alloOpps = nullptr;
 
         for (int i = 0; i < wm->getRingBufferLength(); i++)
         {
-            alloOpps = wm->robots->opponents.getOpponentsAlloClustered();
+            alloOpps = wm->robots->opponents.getOpponentsAlloClustered(i);
             if (alloOpps != nullptr)
             {
                 // weighted analysis of past and current obstacles
@@ -106,7 +87,7 @@ namespace alica
             }
             else
             {
-                cout << "PenaltyBeh: no obstacles!" << endl;
+                cout << "AFGS: no obstacles!" << endl;
             }
         }
 
@@ -124,21 +105,31 @@ namespace alica
             cout << "AFGS: right!" << endl;
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
-        // calculate angle difference between robot and target and ball and target
-        double egoTargetAngle = egoTarget->angleTo();
-        double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // Create Motion Command for aiming
-        MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+        msl_actuator_msgs::MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+
+        cout << "AFGS MC: " << mc.motion.angle << ", " << mc.motion.rotation << ", " << mc.motion.translation << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
     void AlignFreeGoalSpace::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1467039782450) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(initialiseParameters1467039782450) ENABLED START*/ // Add additional options here
         lastAlignment = 0;
+
+        alloLeftAimPoint = make_shared < geometry::CNPoint2D
+                > (wm->field->getFieldLength() / 2 + ballDiameter, goalLineLength / 2 - ballDiameter);
+        alloRightAimPoint = make_shared < geometry::CNPoint2D
+                > (wm->field->getFieldLength() / 2 + ballDiameter, -goalLineLength / 2 + ballDiameter);
+
+        // Create points for rectangle check
+        frontLeft = make_shared < geometry::CNPoint2D
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, goalLineLength / 2);
+        frontRight = make_shared < geometry::CNPoint2D
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, -goalLineLength / 2);
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1467039782450) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1467039782450) ENABLED START*/ // Add additional methods here
     msl_actuator_msgs::MotionControl AlignFreeGoalSpace::alignToPointWithBall(
             shared_ptr<geometry::CNPoint2D> egoAlignPoint, shared_ptr<geometry::CNPoint2D> egoBallPos,
             double angleTolerance, double ballAngleTolerance)
@@ -157,8 +148,10 @@ namespace alica
         }
         else
         {
+
             mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
                     + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+
             mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
                     * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 
@@ -169,28 +162,27 @@ namespace alica
             driveTo = driveTo * mc.motion.rotation;
 
             // add the motion towards the ball
-            driveTo = driveTo + egoBallPos->normalize() * 10;
+            driveTo = driveTo + egoBallPos->normalize() * 100;
 
             mc.motion.angle = driveTo->angleTo();
-            mc.motion.translation = min(alignMaxVel, driveTo->length());
+            mc.motion.translation = min(maxVel, driveTo->length());
         }
         return mc;
     }
     void AlignFreeGoalSpace::readConfigParameters()
     {
-        defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
-        alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
-        alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
-        alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
-        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
+        this->lastAlignment = 0;
+        this->lastRotError = 0.0;
+        this->defaultRotateP = (*this->sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+        this->alignToPointpRot = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
+        this->alignToPointMaxRotation = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+        this->alignToPointMinRotation = (*this->sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
+        this->maxVel = (*this->sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         // Aiming/Rotation Stuff
-        angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
-        ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        goalLineLength = wm->field->getGoalWidth();
-        robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-//		wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
-        kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+        this->angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
+        this->ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+        this->goalLineLength = wm->field->getGoalWidth();
+        this->robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */
