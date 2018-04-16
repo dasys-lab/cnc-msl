@@ -77,9 +77,26 @@ void WatchBall::run(void *msg)
     }
 
     updateGoalPosition();
+
+	// Special cases that depend on the ball position are following:
     shared_ptr<geometry::CNPoint2D> alloBall = wm->ball->getAlloBallPosition();
 
-    // If ball is seen in the opponent half, stop the robot but rotate towards the opponents half.
+    // If ball is not seen or the ball is further away than the goal mid point is.
+    // TODO: Keep?
+    if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
+    {
+        // Goalie drives to last known target and rotates towards mirrored own position
+
+        cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
+        mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
+        rotate(make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y));
+        mc.motion.translation =
+            std::min(alignMaxVel, (prevTarget->alloToEgo(*ownPos)->length() * pTrans) + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
+        send(mc);
+        return;
+    }
+
+	// If ball is seen in the opponent half, stop the robot but rotate towards the opponents half.
     // TODO: Keep. What would be the alternative?
     if (alloBall != nullptr && alloBall->x > -250)
     {
@@ -91,75 +108,61 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    // If ball is not seen or the ball is further away than the goal mid point is.
-    // TODO: Keep?
-    if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
-    {
-
-        /*
-         * Goalie drives to last known target and rotates towards mirrored own position
-         */
-
-        cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-        mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
-        rotate(make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y));
-        mc.motion.translation =
-            std::min(alignMaxVel, (prevTarget->alloToEgo(*ownPos)->length() * pTrans) + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
-        send(mc);
-        return;
-    }
-
+	// From now on the balls postion alloBall is valid and in our half, so act accordingly.
     // Add ball position to ring buffer.
     this->ballPositions->add(alloBall);
 
-    // Calculate target position on goal line
-    // TODO: Make it a testable function
-    shared_ptr<geometry::CNPoint2D> alloTarget;
-    double targetY;
-    if (ballPositions->getSize() > 0)
-    {
-        targetY = calcGoalImpactY();
-        targetY = fitTargetY(targetY);
-        alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 200, targetY);
-        prevTarget = alloTarget;
-    }
-    else
-    {
-        alloTarget = prevTarget;
-        targetY = alloTarget->y;
-    }
+    // Calculate target position on goal line.
+	
+	// Lambda that returns one prediction of the goal impact or nullptr if
+	// a prediction is not possible.
+	auto calculateTarget = [&]() -> shared_ptr<geometry::CNPoint2D> {
+		// Not enough valid ball positions to predict goal impact
+		if (ballPositions->getSize() < 0) {
+			return nullptr;
+		}
 
-    /*
-     * Goalie drives to target
-     */
+		double targetY = calcGoalImpactY(); // TODO: Parameterize
+		// Limit or clamp targetY to goal area
+		targetY = fitTargetY(targetY);
+		const double targetX = alloGoalMid->x + 200;
 
-    // TODO: think about replacing the code with existing drive config
-    auto egoBall = alloBall->alloToEgo(*ownPos);
+        return make_shared<geometry::CNPoint2D>(targetX, targetY);
+	};
+
+	auto alloTarget = calculateTarget();
+	// If alloTarget was not calculated, stop robot?
+	// TODO: Eventually return prevTarget or midGoal to be ready when ball is coming.
+	if (alloTarget == nullptr) {
+		send(mc);
+		return;
+	}
+
+	// Finaly if a goal impact can be calculated drive to the calculated impact:
+    // TODO: Think about replacing the code with existing drive config.
+	auto egoBall = alloBall->alloToEgo(*ownPos);
     auto egoTarget = alloTarget->alloToEgo(*ownPos);
+
+	// Stop translation if already at target.
+	if (egoTarget->length() <= snapDistance) {
+		mc.motion.translation = 0;
+		send(mc);
+		return;
+	}
+
+	// Rotate towards the ball?
+	// TODO: Re-evaluate if thats good or not.
     mc.motion.angle = egoTarget->angleTo();
     rotate(alloBall);
 
-    if (egoTarget->length() > snapDistance)
-    {
-        auto tempPFactor = pTrans;
-        if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
-        {
-            // todo: remove
-            //				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
-            tempPFactor = pTrans / 2;
-        }
+	auto tempPFactor = pTrans;
+	if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
+	{
+		tempPFactor = pTrans / 2;
+	}
 
-        double translation = (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dTrans);
-        mc.motion.translation = std::min(alignMaxVel, translation);
-    }
-    else
-    {
-        /*
-         * Goalie arrived at target!
-         */
-
-        mc.motion.translation = 0;
-    }
+	double translation = (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dTrans);
+	mc.motion.translation = std::min(alignMaxVel, translation);
 
     send(mc);
 
