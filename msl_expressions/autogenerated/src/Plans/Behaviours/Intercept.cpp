@@ -144,36 +144,36 @@ namespace alica
 			return;
 		}
 //		}
-        // PID controller for minimizing the distance between ball and me
-        double distErr = max(predBall->length(), minDistErr);
-        double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
+		// PID controller for minimizing the distance between ball and me
+		double distErr = max(egoPredBall->length(), minDistErr);
+		double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
 		distIntErr += distErr - 1000.0; // reduce I part of the controller, when you are closer than 1 m to the ball
 		distIntErr = max(0.0, min(800.0, distIntErr)); // never drive away from the ball, cause of the I part
 		lastDistErr = distErr;
 
-        shared_ptr < geometry::CNPoint2D > ballVelocity;
-        auto currentGameState = this->wm->game->getGameState();
-        if (currentGameState == msl::GameState::OppBallPossession)
-        {
-            ballVelocity = make_shared < geometry::CNPoint2D > (0, 0);
-        }
-        else
-        {
-            ballVelocity = egoBallVel->getPoint();
-        }
+        	shared_ptr < geometry::CNPoint2D > egoVelocity;
+        	auto currentGameState = this->wm->game->getGameState();
+        	if (currentGameState == msl::GameState::OppBallPossession)
+        	{
+            		egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
+        	}
+        	else
+        	{
+            		egoVelocity = egoBallVel->getPoint();
+        	}
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
-        ballVelocity->x += controlDist * cos(predBall->angleTo());
-        ballVelocity->y += controlDist * sin(predBall->angleTo());
+        	egoVelocity->x += controlDist * cos(egoPredBall->angleTo());
+        	egoVelocity->y += controlDist * sin(egoPredBall->angleTo());
 //		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
-        auto pathPlanningPoint = ballVelocity->normalize() * min(ballVelocity->length(), predBall->length());
-        auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-        if (this->wm->field->isInsideField(alloBall, -mapInFieldOffset) && !this->wm->field->isInsideField(alloDest))
-        {
-            //pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
-            pathPlanningPoint = this->wm->field->mapInsideField(alloDest, alloBall - alloDest)->alloToEgo(*ownPos);
-        }
+		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoPredBall->length());
+		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
+		if (this->wm->field->isInsideField(alloBall, -mapInFieldOffset) && !this->wm->field->isInsideField(alloDest))
+		{
+			//pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
+			pathPlanningPoint = this->wm->field->mapInsideField(alloDest, alloBall - alloDest)->alloToEgo(*ownPos);
+		}
 
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
 		shared_ptr<msl::PathPlannerQuery> query = make_shared<msl::PathPlannerQuery>();
@@ -189,7 +189,7 @@ namespace alica
 			mc.motion.angle = pathPlanningResult->angleTo();
 		}
 
-        mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), ballVelocity->length()));
+		mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
 
 // PID controller for minimizing the kicker angle to ball
 		double angleGoal = msl::Kicker::kickerAngle;

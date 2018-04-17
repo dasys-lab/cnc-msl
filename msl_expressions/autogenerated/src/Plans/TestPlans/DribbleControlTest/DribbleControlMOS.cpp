@@ -325,12 +325,14 @@ void DribbleControlMOS::getBallPath(double translation, double angle, double rot
     this->angleOld = angle;
 
     // if we start moving forward, we don't want to push directly
+    // x between staticMiddle and staticUpper don't push forward
     if (velXTemp <= this->staticUpperBound && velXTemp >= this->staticMiddleBound && velYTemp <= this->staticUpperBound && velYTemp >= staticLowerBound &&
         rotation <= 0.1 && rotation >= -0.1)
     {
         // results in 0 arm wheel movement
         velX = 0.0;
     }
+    // x between staticLower and staticMiddle already pull
     else if (velXTemp <= this->staticMiddleBound && velXTemp >= this->staticLowerBound && velYTemp <= this->staticUpperBound && velYTemp >= staticLowerBound &&
              rotation <= 0.1 && rotation >= -0.1)
     {

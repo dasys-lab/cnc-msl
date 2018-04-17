@@ -195,13 +195,11 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
         if (path->size() < 3)
         {
             retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
-//    		cout << "PathProxy: getEgoDirection returns no shortcut " << retPoint->alloToEgo(*ownPos)->toString() << endl;
         }
         else
         {
             path = applyShortcut(path, ownPos, net);
             retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
-//    		cout << "PathProxy: getEgoDirection returns with shortcut" << retPoint->alloToEgo(*ownPos)->toString() << endl;
         }
         // send debug msgs
         if (pathPlannerDebug)
@@ -217,7 +215,6 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
         return nullptr;
     }
 
-//    		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
     return retPoint->alloToEgo(*ownPos);
 }
 

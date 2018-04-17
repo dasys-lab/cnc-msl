@@ -91,7 +91,6 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
         egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, query->pathEval, query->getPathPlannerQuery());
     }
 
-//    cout << "RobotMovement::moveToPoint:: egoTarget "<<egoTarget->toString() <<endl;
 
     // ROTATION
     if (query->egoAlignPoint != nullptr)
@@ -614,7 +613,6 @@ void RobotMovement::initializePTControllerParameters()
  */
 void RobotMovement::stopTranslation()
 {
-//	std::cout << "stopTranslation called" << std::endl;
     if (this->pastControlInput.empty() || this->pastControlledValues.empty())
     {
         initializePTControllerParameters();
