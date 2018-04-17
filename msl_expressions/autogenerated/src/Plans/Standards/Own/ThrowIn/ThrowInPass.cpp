@@ -131,22 +131,22 @@ void ThrowInPass::run(void *msg)
     // since coimbra 17
     if (this->longPassPossible)
     {
-        this->longPassCounter = max(-4, min(this->longPassCounter + 1, 5));
+        this->longPassCounter = max(-40, min(this->longPassCounter + 1, 50));
     }
     else
     {
-        this->longPassCounter = max(-4, min(this->longPassCounter - 1, 5));
+        this->longPassCounter = max(-40, min(this->longPassCounter - 1, 50));
     }
     shared_ptr<geometry::CNPoint2D> receiverPos = nullptr;
     if (this->longPassCounter > this->longPassThreshold)
     {
-    	this->longPassThreshold = -2;
+    	this->longPassThreshold = -20;
         alloTarget = this->recPos;
         bestReceiverId = this->recId;
     }
     else
     {
-        this->longPassThreshold = 2;
+        this->longPassThreshold = 20;
         alloTarget = this->aRecPos;
         bestReceiverId = this->aRecId;
     }
