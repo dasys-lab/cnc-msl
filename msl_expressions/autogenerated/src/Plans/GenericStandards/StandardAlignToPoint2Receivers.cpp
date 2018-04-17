@@ -148,13 +148,6 @@ void StandardAlignToPoint2Receivers::run(void *msg)
         this->setSuccess(true);
     }
 
-    if (fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < 6 * this->alignAngleTolerance)
-    {
-        // weird hack to reach target alignment in simulator. relevant for real game?
-        mc.motion.rotation *= 1.05;
-        sendAndUpdatePT(mc);
-    }
-
     send(mc);
 
     /*PROTECTED REGION END*/
