@@ -19,11 +19,8 @@ namespace alica
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
         goalInitPos = (*this->sc)["Behaviour"]->get < string > ("Goalie.GoalInitPosition", NULL);
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
-	cout << "HALLO? CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
         alloGoalMid = wm->field->posOwnGoalMid();
-	if (wm->field->posOwnGoalMid() == nullptr) {
-		cout << "SOMETHING IS REALLY WRONG" << endl;
-	}
+
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
@@ -95,7 +92,25 @@ namespace alica
             query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
             query->snapDistance = 100;
 
+
+			// Add goal posts as obstacles
+			auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			additionalPoints->push_back(alloGoalLeft);
+			additionalPoints->push_back(alloGoalRight);
+
+			// Add ball as obstacle
+			auto alloBall = wm->ball->getAlloBallPosition();
+			if (alloBall != nullptr)
+				additionalPoints->push_back(alloBall);
+
+			query->additionalPoints = additionalPoints;
+
             mc = this->robot->robotMovement->moveToPoint(query);
+			// TODO: Probably remove as soon as motion is fixed
+			// Clamp translation because of motion failure
+			if (mc.motion.translation > 1500) {
+				mc.motion.translation = 1500;
+			}
 
             if (me->distanceTo(alloTarget) <= 100)
             {

@@ -93,10 +93,9 @@ void WatchBall::run(void *msg)
         cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
 
 	query->egoDestinationPoint = alloGoalMid->alloToEgo(*ownPos);
-	if (alloBall != nullptr)
-		query->egoAlignPoint = egoBall->alloToEgo(*ownPos);
-	else
-	oquery->egoAlignPoint = egoBall->alloToEgo(*ownPos);
+		if (alloBall != nullptr) {
+			query->egoAlignPoint = alloBall->alloToEgo(*ownPos);
+		}
 
         mc = robot->robotMovement->moveToPoint(query);
 
@@ -158,14 +157,25 @@ void WatchBall::run(void *msg)
 		return;
 	}
 
-	// Rotate towards the ball?
-	// TODO: Re-evaluate if thats good or not.
-
 	query->egoDestinationPoint = egoTarget;
 	query->egoAlignPoint = egoBall;
-        mc = robot->robotMovement->moveToPoint(query);
+	mc = robot->robotMovement->moveToPoint(query);
+
+	// Add goal posts as obstacles
+	auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+	additionalPoints->push_back(alloGoalLeft);
+	additionalPoints->push_back(alloGoalRight);
+	query->additionalPoints = additionalPoints;
+	// TODO: Test if good
+	query->blockOwnPenaltyArea = true;
+
 
 	mc.motion.translation *= 2; // Foxy, move faster!
+	// TODO: Probably remove as soon as motion is fixed
+	// Clamp translation because of motion failure
+	if (mc.motion.translation > 1500) {
+		mc.motion.translation = 1500;
+	}
 
     send(mc);
 
