@@ -42,7 +42,7 @@ namespace msl
 		}else{
 			this->initConsole = false;
 			this->setFileName("BehaviourLog");
-			std::ofstream current (this->location + "current.txt");
+			std::ofstream current (this->location + "/current.txt", std::ios::trunc);
 			current << this->path;
 		}
 	}
@@ -76,11 +76,11 @@ namespace msl
 		int day = nun->tm_mday;
 
 		filename << location << '/';
-<<<<<<< HEAD
+//<<<<<<< HEAD
 		filename << path << "-" << this->robotName << "-" << year << '_';
-=======
+//=======
 		filename << path << this->robotName << year << '_';
->>>>>>> f91c3d064a2b5be64c8b1bd5dd779d13325b9d43
+//>>>>>>> f91c3d064a2b5be64c8b1bd5dd779d13325b9d43
 		filename << std::setfill('0') << std::setw(2) << month << '_';
 		filename << std::setfill('0') << std::setw(2) << day << '-';
 		filename << getTimeStamp(false);

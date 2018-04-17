@@ -116,8 +116,6 @@ namespace msl
 		~Logger();							// Destruktor schließt ausgabestream und giebt eventuelle resourcen frei.
 
 	  private:
-
-		std::string robotName;                                  // used in file name
 		int thresholdLvl;					// Threshold at which level console output starts
 		bool enabled;						// flag that shows if logging is active or not
 		bool enableConsole;
@@ -125,7 +123,7 @@ namespace msl
 		long minFreeSpace;					// minimum amount of free diskspace to allow wtiting a logfile
 		std::string location;				// the path read from config file
 		std::string path;					// the path with generated file name
-		std::string robotName;                             // Used in filename
+		std::string robotName;              // Used in filename
 		std::ofstream outfile;				// output where the logs are written to
 
 		MSLWorldModel* wm;					// Pointer to the worldmodel for meta informations
