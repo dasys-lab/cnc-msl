@@ -91,6 +91,7 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
         egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, query->pathEval, query->getPathPlannerQuery());
     }
 
+
     // ROTATION
     if (query->egoAlignPoint != nullptr)
     {

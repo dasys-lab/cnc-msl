@@ -5,11 +5,15 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveStraightViewZigZag1518628181064.h"
+
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/InitialForwardBackward1519032290449.h"
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
 
@@ -45,6 +49,8 @@
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/CircleSeeForwards1520679916966.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -53,7 +59,11 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveToOppsiteSite1521280800018.h"
+
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
 
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
 
@@ -91,6 +101,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveAndTurnToOppositeSite1521283132783.h"
+
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
@@ -98,6 +110,8 @@
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/AfterGamePenalty1466934340668.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewZigZag1518623186077.h"
 
 #include  "Plans/Standards/Own/Corner/CornerKick1462373376006.h"
 
@@ -107,11 +121,15 @@
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewStraight1518623233217.h"
+
 #include  "Plans/Standards/Own/KickOff/OwnKickOff1438785376159.h"
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/CircleCenter1518624635783.h"
 
 #include  "Plans/Defence/MidfieldDefense1458033329973.h"
 
@@ -126,6 +144,8 @@
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DribbleTestMaster1518866346673.h"
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -167,6 +187,10 @@ namespace alica
                 return make_shared<UtilityFunction1467383326416>();
                 break;
 
+            case 1518628181064:
+                return make_shared<UtilityFunction1518628181064>();
+                break;
+
             case 1492620432380:
                 return make_shared<UtilityFunction1492620432380>();
                 break;
@@ -177,6 +201,10 @@ namespace alica
 
             case 1479905043165:
                 return make_shared<UtilityFunction1479905043165>();
+                break;
+
+            case 1519032290449:
+                return make_shared<UtilityFunction1519032290449>();
                 break;
 
             case 1482163489121:
@@ -247,6 +275,10 @@ namespace alica
                 return make_shared<UtilityFunction1442919721161>();
                 break;
 
+            case 1520679916966:
+                return make_shared<UtilityFunction1520679916966>();
+                break;
+
             case 1434046634656:
                 return make_shared<UtilityFunction1434046634656>();
                 break;
@@ -263,8 +295,16 @@ namespace alica
                 return make_shared<UtilityFunction1441106995954>();
                 break;
 
+            case 1521280800018:
+                return make_shared<UtilityFunction1521280800018>();
+                break;
+
             case 1426696586622:
                 return make_shared<UtilityFunction1426696586622>();
+                break;
+
+            case 1518622787399:
+                return make_shared<UtilityFunction1518622787399>();
                 break;
 
             case 1459361887233:
@@ -339,6 +379,10 @@ namespace alica
                 return make_shared<UtilityFunction1434049476066>();
                 break;
 
+            case 1521283132783:
+                return make_shared<UtilityFunction1521283132783>();
+                break;
+
             case 1449076138236:
                 return make_shared<UtilityFunction1449076138236>();
                 break;
@@ -353,6 +397,10 @@ namespace alica
 
             case 1466934340668:
                 return make_shared<UtilityFunction1466934340668>();
+                break;
+
+            case 1518623186077:
+                return make_shared<UtilityFunction1518623186077>();
                 break;
 
             case 1462373376006:
@@ -371,6 +419,10 @@ namespace alica
                 return make_shared<UtilityFunction1430924951132>();
                 break;
 
+            case 1518623233217:
+                return make_shared<UtilityFunction1518623233217>();
+                break;
+
             case 1438785376159:
                 return make_shared<UtilityFunction1438785376159>();
                 break;
@@ -381,6 +433,10 @@ namespace alica
 
             case 1462360503828:
                 return make_shared<UtilityFunction1462360503828>();
+                break;
+
+            case 1518624635783:
+                return make_shared<UtilityFunction1518624635783>();
                 break;
 
             case 1458033329973:
@@ -409,6 +465,10 @@ namespace alica
 
             case 1457015643757:
                 return make_shared<UtilityFunction1457015643757>();
+                break;
+
+            case 1518866346673:
+                return make_shared<UtilityFunction1518866346673>();
                 break;
 
             case 1417621468963:
