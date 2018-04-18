@@ -112,21 +112,21 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     // since coimbra 17
     if (this->longPassPossible)
     {
-        this->longPassCounter = max(-4, min(this->longPassCounter + 1, 5));
+        this->longPassCounter = max(-40, min(this->longPassCounter + 1, 50));
     }
     else
     {
-        this->longPassCounter = max(-4, min(this->longPassCounter - 1, 5));
+        this->longPassCounter = max(-40, min(this->longPassCounter - 1, 50));
     }
     shared_ptr<geometry::CNPoint2D> receiverPos = nullptr;
     if (this->longPassCounter > this->longPassThreshold)
     {
-        this->longPassThreshold = -2;
+        this->longPassThreshold = -20;
         receiverPos = this->recPos;
     }
     else
     {
-        this->longPassThreshold = 2;
+        this->longPassThreshold = 20;
         receiverPos = this->aRecPos;
     }
 
@@ -146,13 +146,6 @@ void StandardAlignToPoint2Receivers::run(void *msg)
     if (egoTarget->length() < this->positionDistanceTolerance && fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
     {
         this->setSuccess(true);
-    }
-
-    if (fabs(receiverPos->alloToEgo(*ownPos)->rotate(M_PI)->angleTo()) < 6 * this->alignAngleTolerance)
-    {
-        // weird hack to reach target alignment in simulator. relevant for real game?
-        mc.motion.rotation *= 1.05;
-        sendAndUpdatePT(mc);
     }
 
     send(mc);
