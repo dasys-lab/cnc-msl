@@ -22,7 +22,8 @@ namespace msl
         	this->robotName = sc->getHostname();
 
 		struct statvfs fs;
-		if(statvfs("/dev/sda1", &fs) != 0){
+		std::string tmp = this->location + "/current.txt";
+		if(statvfs(tmp.c_str(), &fs) != 0){
 			std::cerr << "[ERROR] Could not get file system information!!!\n"
 					  << "[WARN] Logs will not be written to disk!!!\n";
 			this->thresholdLvl = LogLevels::console;
@@ -30,7 +31,7 @@ namespace msl
 		}
 
 		this->minFreeSpace = (*sc)["Behaviour"]->get<long>("BehaviourLogging.minDiskSpace", NULL);
-		if(this->getAvailableMemory("/dev/sda1") < this->minFreeSpace) // check if enough storage left
+		if(this->getAvailableMemory(tmp) < this->minFreeSpace) // check if enough storage left
 		{
 			this->thresholdLvl = LogLevels::console;
 			std::cerr << "[ERROR] There is not enough space left!\n"
