@@ -3,11 +3,13 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1461584204507) ENABLED START*/ //Add additional includes here
-#include <msl_robot/robotmovement/MovementQuery.h>
 namespace geometry
 {
     class CNPoint2D;
 }
+namespace msl {
+	class MovementQuery;
+};
 /*PROTECTED REGION END*/
 namespace alica
 {

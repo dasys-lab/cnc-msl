@@ -3,8 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
-#include "container/CNPosition.h"
-
 namespace geometry {
 	class CNPoint2D;
 	class CNPosition;

@@ -3,8 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1461584204507) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
-#include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -18,6 +18,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1461584204507) ENABLED START*/ //Add additional options here
         this->mQuery = make_shared<msl::MovementQuery>();
+        this->ballDistRec = 0.0;
         /*PROTECTED REGION END*/
     }
     PositionReceiverThrownIn::~PositionReceiverThrownIn()
@@ -67,8 +68,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1461584204507) ENABLED START*/ //Add additional options here
         this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
-        string tmp;
-        bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
         /*PROTECTED REGION END*/
     }

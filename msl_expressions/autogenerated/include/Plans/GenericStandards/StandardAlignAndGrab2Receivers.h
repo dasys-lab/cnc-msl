@@ -3,7 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1462368682104) ENABLED START*/ // Add additional includes here
-#include <msl_robot/robotmovement/MovementQuery.h>
 namespace geometry
 {
     class CNPoint2D;
@@ -11,6 +10,7 @@ namespace geometry
 namespace msl {
 	class MovementQuery;
 }
+#include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,15 +31,15 @@ namespace alica
         shared_ptr<msl::MovementQuery> query;
         string teamMateTaskName1;
         string teamMateTaskName2;
-        shared_ptr<geometry::CNPoint2D> recPos1;
-        shared_ptr<geometry::CNPoint2D> recPos2;
+        shared_ptr<geometry::CNPoint2D> recPos;
+        shared_ptr<geometry::CNPoint2D> aRecPos;
         double ratio;
         double ballRadius;
         double passCorridorWidth;
         double maxTurnAngle;
         double minOppDist;
         double minCloserOffset;
-        bool canPass;
+        bool longPassPossible;
         int haveBallCounter;
         double trans;
         double angleIntErr;
@@ -49,6 +49,8 @@ namespace alica
         msl::InfoTime startTime;
         int canPassCounter;
         int canPassThreshold;
+
+        shared_ptr<geometry::CNPoint2D> getTeammatePosFromTaskName(string teamMateTaskName);
 
                           /*PROTECTED REGION END*/};
                   }

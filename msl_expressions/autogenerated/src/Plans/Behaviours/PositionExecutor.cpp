@@ -8,6 +8,7 @@ using namespace std;
 #include <engine/model/Plan.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>

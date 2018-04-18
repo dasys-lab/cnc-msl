@@ -14,6 +14,7 @@ using namespace std;
 #include <engine/model/Plan.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
@@ -25,19 +26,19 @@ StandardAlignAndGrab2Receivers::StandardAlignAndGrab2Receivers()
     : DomainBehaviour("StandardAlignAndGrab2Receivers")
 {
     /*PROTECTED REGION ID(con1462368682104) ENABLED START*/ // Add additional options here
-    this->ratio = 0;
-    this->ballRadius = 0;
-    this->minOppDist = 0;
-    this->minCloserOffset = 0;
-    this->passCorridorWidth = 0;
-    this->maxTurnAngle = 0;
-    this->canPass = true;
+    this->ratio = 0.0;
+    this->ballRadius = 0.0;
+    this->minOppDist = 0.0;
+    this->minCloserOffset = 0.0;
+    this->passCorridorWidth = 0.0;
+    this->maxTurnAngle = 0.0;
+    this->longPassPossible = true;
     this->startTime = 0;
-    this->tol = 0;
-    this->minTol = 0;
-    this->oldAngleErr = 0;
-    this->angleIntErr = 0;
-    this->trans = 0;
+    this->tol = 0.0;
+    this->minTol = 0.0;
+    this->oldAngleErr = 0.0;
+    this->angleIntErr = 0.0;
+    this->trans = 0.0;
     this->haveBallCounter = 0;
     this->canPassCounter = 1;
     this->canPassThreshold = 1;
@@ -60,75 +61,29 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
         return;
     }
 
-    this->canPass = true;
+    this->longPassPossible = true;
+    this->recPos = this->getTeammatePosFromTaskName(this->teamMateTaskName1);
+    this->aRecPos = this->getTeammatePosFromTaskName(this->teamMateTaskName2);
 
-    EntryPoint *ep = getParentEntryPoint(this->teamMateTaskName1);
-    if (ep != nullptr)
-    {
-        // get the plan in which the behavior is running
-        auto parent = this->runningPlan->getParent().lock();
-        if (parent == nullptr)
-        {
-            return;
-        }
-        // get robot ids of robots in found entry point
-        shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-        // exactly one robot is receiver
-        if (ids->size() > 0 && ids->at(0) != -1)
-        {
-            // get receiver position by id
-            auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (pos != nullptr)
-            {
-                this->recPos1 = pos->getPoint();
-            }
-            else
-            {
-                this->recPos1 = nullptr;
-            }
-        }
-    }
 
-    EntryPoint *ep2 = getParentEntryPoint(this->teamMateTaskName2);
-    if (ep2 != nullptr)
-    {
-        // get the plan in which the behavior is running
-        auto parent = this->runningPlan->getParent().lock();
-        if (parent == nullptr)
-        {
-            return;
-        }
-        // get robot ids of robots in found entry point
-        shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep2);
-        // exactly one robot is receiver
-        if (ids->size() > 0 && ids->at(0) != -1)
-        {
-            // get receiver position by id
-            auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (pos != nullptr)
-            {
-                this->recPos2 = pos->getPoint();
-            }
-            else
-            {
-                this->recPos2 = nullptr;
-            }
-        }
-    }
-    if (this->recPos1 == nullptr && this->recPos2 == nullptr)
+    if (this->recPos == nullptr || this->aRecPos == nullptr)
     {
         return;
     }
+
+
     // make the passpoints closer to the receiver
     shared_ptr<geometry::CNPoint2D> passPoint = nullptr;
-    if (this->recPos1->y < 0.0)
+    if (this->recPos->y < 0.0)
     {
-        passPoint = make_shared<geometry::CNPoint2D>(this->recPos1->x, -this->wm->field->getFieldWidth() / 2.0 + 1000.0);
+        passPoint = make_shared<geometry::CNPoint2D>(this->recPos->x, -this->wm->field->getFieldWidth() / 2.0 + 1000.0);
     }
     else
     {
-        passPoint = make_shared<geometry::CNPoint2D>(this->recPos1->x, this->wm->field->getFieldWidth() / 2.0 - 1000.0);
+        passPoint = make_shared<geometry::CNPoint2D>(this->recPos->x, this->wm->field->getFieldWidth() / 2.0 - 1000.0);
     }
+
+
     if (!this->wm->field->isInsidePenalty(passPoint, 0.0))
     {
 
@@ -143,9 +98,9 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
                 break;
             }
         }
-        if (opponentTooClose && this->canPass)
+        if (opponentTooClose && this->longPassPossible)
         {
-            this->canPass = false;
+        	this->longPassPossible = false;
         }
 
         shared_ptr<geometry::CNPoint2D> alloBall = egoBallPos->egoToAllo(*ownPos);
@@ -156,14 +111,14 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
             make_shared<geometry::CNPoint2D>(-ball2PassPoint->y, ball2PassPoint->x)->normalize() * this->ratio * passLength;
         shared_ptr<geometry::CNPoint2D> left = passPoint + ball2PassPointOrth;
         shared_ptr<geometry::CNPoint2D> right = passPoint - ball2PassPointOrth;
-        if (this->canPass && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
+        if (this->longPassPossible && !geometry::outsideTriangle(alloBall, right, left, this->ballRadius, obs) &&
             !geometry::outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
         {
-            this->canPass = false;
+        	this->longPassPossible = false;
         }
     }
-    // Hack coimbra 17
-    if (this->canPass)
+    // Since coimbra 17
+    if (this->longPassPossible)
     {
         this->canPassCounter = max(-4, min(this->canPassCounter + 1, 5));
     }
@@ -177,13 +132,13 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
     {
         this->canPassThreshold = -2;
         cout << "SAAG2R: aiming to receiver" << endl;
-        alloTarget = this->recPos1;
+        alloTarget = this->recPos;
     }
     else
     {
         this->canPassThreshold = 2;
         cout << "SAAG2R: aiming to alternative receiver" << endl;
-        alloTarget = this->recPos2;
+        alloTarget = this->aRecPos;
     }
 
     msl_actuator_msgs::MotionControl mc;
@@ -299,8 +254,8 @@ void StandardAlignAndGrab2Receivers::run(void *msg)
             (haveBallCounter > 3 && ((runningTimeMS <= 3000.0 && fabs(dangle) < this->minTol) ||
                                      fabs(dangle) < this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0))))))
         {
-            cout << "have ball timeout or angle requirements met" << dangle << " < " << this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0)))
-                 << endl;
+            cout << "have ball timeout or angle requirements met" << dangle << " < "
+                 << this->minTol + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0))) << endl;
             mc.motion.angle = M_PI;
             mc.motion.rotation = 0.0;
             mc.motion.translation = 100.0;
@@ -330,7 +285,7 @@ void StandardAlignAndGrab2Receivers::initialiseParameters()
     this->trans = (*this->sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
     string tmp;
     bool success = true;
-    this->canPass = true;
+    this->longPassPossible = true;
     this->canPassCounter = 1;
     this->canPassThreshold = 1;
     try
@@ -359,6 +314,33 @@ void StandardAlignAndGrab2Receivers::initialiseParameters()
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1462368682104) ENABLED START*/ // Add additional methods here
+shared_ptr<geometry::CNPoint2D> StandardAlignAndGrab2Receivers::getTeammatePosFromTaskName(string teamMateTaskName)
+{
+    shared_ptr<geometry::CNPoint2D> recPos = nullptr;
 
+    EntryPoint *ep = getParentEntryPoint(teamMateTaskName);
+    if (ep != nullptr)
+    {
+        // get the plan in which the behavior is running
+        auto parent = this->runningPlan->getParent().lock();
+        if (parent != nullptr)
+        {
+            // get robot ids of robots in found entry point
+            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+            // exactly one robot is receiver
+            if (ids->size() > 0 && ids->at(0) != -1)
+            {
+                // get receiver position by id
+                auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                if (pos != nullptr)
+                {
+                    recPos = pos->getPoint();
+                }
+            }
+        }
+    }
+
+    return recPos;
+}
 /*PROTECTED REGION END*/
 } /* namespace alica */

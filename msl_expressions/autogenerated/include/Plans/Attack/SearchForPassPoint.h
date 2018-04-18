@@ -5,14 +5,15 @@
 /*PROTECTED REGION ID(inc1436269017402) ENABLED START*/ // Add additional includes here
 #define BEH_DEBUG
 #include "GameState.h"
-#include "MSLFootballField.h"
 #include "engine/model/EntryPoint.h"
-#include <SystemConfig.h>
-#include <vector>
 #define DBM_DEBUG 1
 
 namespace msl {
 	class VoronoiNet;
+}
+namespace geometry {
+	class CNPoint2D;
+	class CNPosition;
 }
 /*PROTECTED REGION END*/
 namespace alica
@@ -50,8 +51,6 @@ namespace alica
 #ifdef DBM_DEBUG
     shared_ptr<msl_helper_msgs::DebugMsg> dbm;
 #endif
-    static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
     bool passPossible(double cf, shared_ptr<geometry::CNPoint2D> passPoint, shared_ptr<geometry::CNPoint2D> receiver, shared_ptr<msl::VoronoiNet> vNet);
 
     /*PROTECTED REGION END*/private:

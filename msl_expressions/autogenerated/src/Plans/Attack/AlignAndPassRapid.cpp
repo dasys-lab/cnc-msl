@@ -10,12 +10,12 @@ using namespace std;
 #include <GeometryCalculator.h>
 #include <RawSensorData.h>
 #include <Robots.h>
-#include <SystemConfig.h>
 #include <engine/Assignment.h>
 #include <engine/model/EntryPoint.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <pathplanner/PathPlanner.h>
+#include <GameState.h>
 #include <MSLWorldModel.h>
 
 /*PROTECTED REGION END*/

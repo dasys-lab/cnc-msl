@@ -3,13 +3,11 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1436269063295) ENABLED START*/ // Add additional includes here
-#include "GameState.h"
-#include <MSLFootballField.h>
-#include <vector>
 #define DBM_DEBUG 1
 namespace geometry
 {
     class CNPoint2D;
+    class CNPosition;
 }
 namespace msl {
 	class VoronoiNet;

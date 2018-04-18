@@ -4,7 +4,6 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1462978634990) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
-#include <SystemConfig.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
@@ -17,7 +16,8 @@ namespace alica
             DomainBehaviour("PositionAlternativeReceiver")
     {
         /*PROTECTED REGION ID(con1462978634990) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
+        this->ballDistRec = 0.0;
         /*PROTECTED REGION END*/
     }
     PositionAlternativeReceiver::~PositionAlternativeReceiver()

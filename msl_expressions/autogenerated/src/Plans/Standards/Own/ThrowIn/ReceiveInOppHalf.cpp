@@ -27,6 +27,8 @@ ReceiveInOppHalf::ReceiveInOppHalf()
     this->yCoordOfReceiver = 0.0;
     this->maxIterations = 0;
     this->snapDist = 0.0;
+    this->oppFarAwayDist = 0.0;
+    this->securityReceiver = 0.0;
     this->posSignCounter = 0;
     this->itCounter = 0;
     /*PROTECTED REGION END*/

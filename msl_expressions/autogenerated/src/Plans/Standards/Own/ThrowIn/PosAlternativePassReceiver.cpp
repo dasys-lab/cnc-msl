@@ -5,7 +5,6 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
-#include <SystemConfig.h>
 #include <engine/model/EntryPoint.h>
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
