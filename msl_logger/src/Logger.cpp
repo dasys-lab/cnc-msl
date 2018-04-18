@@ -122,11 +122,11 @@ namespace msl
 			{
 			case LogLevels::console:
 				//msg << "[CONSOLE]";
-                msg << "[C]";
+                		msg << "[C]";
 				break;
 			case LogLevels::debug:
 				//msg << "[DEBUG]";
-                msg << "[D]";
+                		msg << "[D]";
 				break;
 			case LogLevels::info:
 				//msg << "[INFO ]";
