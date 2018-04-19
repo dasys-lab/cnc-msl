@@ -23,6 +23,7 @@
   <states id="1462360919387" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">ThrowInPass.beh#1462363309950</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1462360958905</inTransitions>
     <outTransitions>#1462360960031</outTransitions>
     <outTransitions>#1462369226508</outTransitions>
@@ -44,6 +45,7 @@
   </states>
   <states id="1462363134771" name="ReceiveAlternative" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1462368267461</inTransitions>
     <outTransitions>#1462368201420</outTransitions>
   </states>
@@ -53,6 +55,7 @@
   <states id="1462368095616" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1462368266008</inTransitions>
     <outTransitions>#1462368130262</outTransitions>
   </states>
