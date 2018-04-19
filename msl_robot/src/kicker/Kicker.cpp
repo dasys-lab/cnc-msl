@@ -130,15 +130,14 @@ bool Kicker::mayShoot()
 
 shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector(double yOffset)
 {
-	auto wm = msl::MSLWorldModel::get();
-    auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    auto dstscan = wm->rawSensorData->getDistanceScan();
+    auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
+    auto dstscan = this->wm->rawSensorData->getDistanceScan();
     if (ownPos == nullptr || dstscan == nullptr)
     {
         return nullptr;
     }
     vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
-    double x = wm->field->getFieldLength() / 2;
+    double x = this->wm->field->getFieldLength() / 2;
     double y = -1000 + yOffset;
     shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
     double samplePoints = 4;

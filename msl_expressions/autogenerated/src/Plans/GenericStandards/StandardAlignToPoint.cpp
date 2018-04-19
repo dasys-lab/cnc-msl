@@ -148,8 +148,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
         this->m_Query = make_shared<MovementQuery>();
-        this->alloReceiverTarget = nullptr;
-        this->oldBallPos = nullptr;
+        this->alloReceiverTarget.reset();
+        this->oldBallPos.reset();
 
         string tmp = "";
         if (getParameter("TaskName", tmp))

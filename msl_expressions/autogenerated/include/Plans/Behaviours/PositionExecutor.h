@@ -3,9 +3,9 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1438790362133) ENABLED START*/ // Add additional includes here
-#include "MSLFootballField.h"
 namespace msl {
 	class MovementQuery;
+	class MSLFootballField;
 }
 namespace geometry {
 	class CNPoint2D;
@@ -28,14 +28,12 @@ class PositionExecutor : public DomainBehaviour
     /*PROTECTED REGION END*/
   private:
     /*PROTECTED REGION ID(prv1438790362133) ENABLED START*/ // Add additional private methods here
-    static msl_actuator_msgs::MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-                                                            double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
-
     void readConfigParameters();
     double fastCatchRadius;
     double slowCatchRadius;
     double alignTolerance;
     double ballDistanceEx;
+    double positionDistanceTolerance;
     EntryPoint *receiverEp;
     shared_ptr<geometry::CNPoint2D> alloTarget;
     shared_ptr<msl::MovementQuery> query;

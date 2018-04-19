@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
@@ -17,7 +18,9 @@ namespace alica
             DomainBehaviour("PositionReceiver")
     {
         /*PROTECTED REGION ID(con1439379316897) ENABLED START*/ // Add additional options here
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
+        this->positionDistanceTolerance = 0.0;
+        this->positionDistanceTolerance = 0.0;
         /*PROTECTED REGION END*/
     }
     PositionReceiver::~PositionReceiver()
@@ -68,7 +71,7 @@ namespace alica
         mc = this->robot->robotMovement->moveToPoint(query);
 
         // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < 120 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+        if (egoTarget->length() < this->positionDistanceTolerance && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
         {
             this->setSuccess(true);
         }
@@ -85,11 +88,13 @@ namespace alica
     void PositionReceiver::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1439379316897) ENABLED START*/ // Add additional options here
-        supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
-        fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
-        slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
-        alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
-        ballDistanceRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+        this->fastCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+        this->slowCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+        this->alignTolerance = (*this->sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
+        this->ballDistanceRec = (*this->sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+        this->positionDistanceTolerance = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                        "positionDistanceTolerance",
+                                                                                        NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1439379316897) ENABLED START*/ // Add additional methods here

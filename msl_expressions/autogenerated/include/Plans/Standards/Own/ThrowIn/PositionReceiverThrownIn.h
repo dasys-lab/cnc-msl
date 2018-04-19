@@ -29,6 +29,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1461584204507) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPoint2D> alloTarget;
+        double positionDistanceTolerance;
         double ballDistRec;
         /*PROTECTED REGION END*/};
 } /* namespace alica */

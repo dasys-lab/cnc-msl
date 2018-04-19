@@ -25,6 +25,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
         this->query = make_shared<msl::MovementQuery>();
+        this->positionDistanceTolerance = 0.0;
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -108,7 +109,7 @@ namespace alica
 
             mc = this->robot->robotMovement->moveToPoint(query);
             // if we reached the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 120
+            if (egoTarget->length() < this->positionDistanceTolerance
                     && fabs(egoAlignPoint->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
                 this->setSuccess(true);
@@ -169,10 +170,13 @@ namespace alica
     /*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
     void PositionExecutor::readConfigParameters()
     {
-        fastCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
-        slowCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
-        alignTolerance = (*this->sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
-        ballDistanceEx = (*this->sc)["Drive"]->get<double>("Drive.KickOff.BallDistEx", NULL);
+        this->fastCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+        this->slowCatchRadius = (*this->sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+        this->alignTolerance = (*this->sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
+        this->ballDistanceEx = (*this->sc)["Drive"]->get<double>("Drive.KickOff.BallDistEx", NULL);
+        this->positionDistanceTolerance = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                        "positionDistanceTolerance",
+                                                                                        NULL);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */
