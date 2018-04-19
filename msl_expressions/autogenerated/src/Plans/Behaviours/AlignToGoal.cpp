@@ -133,7 +133,7 @@ namespace alica
         this->pRot = 2.1;
         this->dRot = 0.0;
         this->lastRotError = 0;
-        this->yOffset = (*this->sc)["Behaviour"]->get<double>("AlignToGoal", "MaxSpeed", NULL);
+        this->yOffset = (*this->sc)["Behaviour"]->get<double>("AlignToGoal", "yOffset", NULL);
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {

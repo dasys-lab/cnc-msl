@@ -104,9 +104,13 @@ void Intercept::run(void *msg)
         if (egoTarget->length() < this->catchRadius)
         {
             mc.motion.translation = 0;
+            sendAndUpdatePT(mc);
+        }
+        else
+        {
+            send(mc);
         }
 
-        send(mc);
         return;
     }
 
@@ -217,12 +221,11 @@ void Intercept::run(void *msg)
     if (!std::isnan(tmpMC.motion.translation))
     {
         send(tmpMC);
-        cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
     }
     else
     {
         sendAndUpdatePT(mc);
-        cout << "Intercept: Normal: " << mc.motion.translation << endl;
+        //        cout << "Intercept: Normal: " << mc.msotion.translation << endl;
     }
 
     //        if (this->wm->ball->haveBallDribble(false))

@@ -49,8 +49,6 @@ namespace alica
         int longPassThreshold;
         bool sentPm;
         pair<int, shared_ptr<geometry::CNPoint2D>> getTeammateIdAndPosFromTaskName(string teamMateTaskName);
-        bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-                                       double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
         /*PROTECTED REGION END*/			};
 		} /* namespace alica */
 

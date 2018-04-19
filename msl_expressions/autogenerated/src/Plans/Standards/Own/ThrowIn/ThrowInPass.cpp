@@ -68,7 +68,6 @@ void ThrowInPass::run(void *msg)
 
     if (this->sentPm && !this->wm->ball->haveBall())
     {
-        cout << "TIP SUCCESS " << endl;
         this->setSuccess(true);
     }
 
@@ -121,7 +120,6 @@ void ThrowInPass::run(void *msg)
     {
         this->longPassPossible = false;
     }
-    //    }
 
 
 
@@ -171,6 +169,7 @@ void ThrowInPass::run(void *msg)
         pinf.x = ownPos->x;
         pinf.y = ownPos->y;
         pm.origin = pinf;
+        pm.senderID = this->robot->wm->getOwnId();
         pm.receiverID = bestReceiverId;
 
 
@@ -194,25 +193,24 @@ void ThrowInPass::run(void *msg)
         {
             km.power = (ushort) this->robot->kicker->getPassKickpower(dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
         }
-
-        cout << "TIP: KICK MSG SENT" << endl;
-//        send(km);
+        send(km);
         if (this->robot->kicker->lowShovelSelected)
         {
-            cout << "TIP: pass msg sent" << endl;
             send(pm);
             this->sentPm = true;
         }
     }
 
+    /*
     auto dstscan = this->wm->rawSensorData->getDistanceScan();
     if (dstscan != nullptr && dstscan->size() != 0)
     {
         double distBeforeBall = this->robot->kicker->minFree(egoBallPos->angleTo(), 200, dstscan);
         if (distBeforeBall < 250.0)
             this->setFailure(true);
-        cout << "ThrowInPass: Failure!" << endl;
     }
+
+    */
 
     msl_actuator_msgs::MotionControl mc;
     mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
