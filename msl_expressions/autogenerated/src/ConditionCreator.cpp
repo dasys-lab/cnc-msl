@@ -4,11 +4,15 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveStraightViewZigZag1518628181064.h"
+
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/InitialForwardBackward1519032290449.h"
 
 #include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
 
@@ -44,6 +48,8 @@
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/CircleSeeForwards1520679916966.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -52,7 +58,11 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveToOppsiteSite1521280800018.h"
+
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
 
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
 
@@ -90,6 +100,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveAndTurnToOppositeSite1521283132783.h"
+
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
@@ -97,6 +109,8 @@
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/AfterGamePenalty1466934340668.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewZigZag1518623186077.h"
 
 #include  "Plans/Standards/Own/Corner/CornerKick1462373376006.h"
 
@@ -106,11 +120,15 @@
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
+#include  "Plans/TestPlans/DribbleTestMOS/DriveZigZagViewStraight1518623233217.h"
+
 #include  "Plans/Standards/Own/KickOff/OwnKickOff1438785376159.h"
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/CircleCenter1518624635783.h"
 
 #include  "Plans/Defence/MidfieldDefense1458033329973.h"
 
@@ -125,6 +143,8 @@
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
+
+#include  "Plans/TestPlans/DribbleTestMOS/DribbleTestMaster1518866346673.h"
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -243,6 +263,150 @@ namespace alica
             case 1479905468245:
 
                 return make_shared<TransitionCondition1479905468245>();
+
+                break;
+
+            case 1519033636553:
+
+                return make_shared<TransitionCondition1519033636553>();
+
+                break;
+
+            case 1519033637686:
+
+                return make_shared<TransitionCondition1519033637686>();
+
+                break;
+
+            case 1519033638861:
+
+                return make_shared<TransitionCondition1519033638861>();
+
+                break;
+
+            case 1519033798908:
+
+                return make_shared<TransitionCondition1519033798908>();
+
+                break;
+
+            case 1519033800013:
+
+                return make_shared<TransitionCondition1519033800013>();
+
+                break;
+
+            case 1519033800793:
+
+                return make_shared<TransitionCondition1519033800793>();
+
+                break;
+
+            case 1519033801788:
+
+                return make_shared<TransitionCondition1519033801788>();
+
+                break;
+
+            case 1519033802879:
+
+                return make_shared<TransitionCondition1519033802879>();
+
+                break;
+
+            case 1519033803756:
+
+                return make_shared<TransitionCondition1519033803756>();
+
+                break;
+
+            case 1519033804822:
+
+                return make_shared<TransitionCondition1519033804822>();
+
+                break;
+
+            case 1519033806168:
+
+                return make_shared<TransitionCondition1519033806168>();
+
+                break;
+
+            case 1519033807440:
+
+                return make_shared<TransitionCondition1519033807440>();
+
+                break;
+
+            case 1519033808463:
+
+                return make_shared<TransitionCondition1519033808463>();
+
+                break;
+
+            case 1519033809424:
+
+                return make_shared<TransitionCondition1519033809424>();
+
+                break;
+
+            case 1519033810484:
+
+                return make_shared<TransitionCondition1519033810484>();
+
+                break;
+
+            case 1519033811584:
+
+                return make_shared<TransitionCondition1519033811584>();
+
+                break;
+
+            case 1519033812683:
+
+                return make_shared<TransitionCondition1519033812683>();
+
+                break;
+
+            case 1519033813705:
+
+                return make_shared<TransitionCondition1519033813705>();
+
+                break;
+
+            case 1519033814809:
+
+                return make_shared<TransitionCondition1519033814809>();
+
+                break;
+
+            case 1519033816018:
+
+                return make_shared<TransitionCondition1519033816018>();
+
+                break;
+
+            case 1519033817036:
+
+                return make_shared<TransitionCondition1519033817036>();
+
+                break;
+
+            case 1519033817980:
+
+                return make_shared<TransitionCondition1519033817980>();
+
+                break;
+
+            case 1519033819335:
+
+                return make_shared<TransitionCondition1519033819335>();
+
+                break;
+
+            case 1519033820671:
+
+                return make_shared<TransitionCondition1519033820671>();
 
                 break;
 
@@ -678,6 +842,84 @@ namespace alica
 
                 break;
 
+            case 1520682661242:
+
+                return make_shared<TransitionCondition1520682661242>();
+
+                break;
+
+            case 1520682664300:
+
+                return make_shared<TransitionCondition1520682664300>();
+
+                break;
+
+            case 1520682666211:
+
+                return make_shared<TransitionCondition1520682666211>();
+
+                break;
+
+            case 1520682667668:
+
+                return make_shared<TransitionCondition1520682667668>();
+
+                break;
+
+            case 1520682669615:
+
+                return make_shared<TransitionCondition1520682669615>();
+
+                break;
+
+            case 1520682671176:
+
+                return make_shared<TransitionCondition1520682671176>();
+
+                break;
+
+            case 1520682672669:
+
+                return make_shared<TransitionCondition1520682672669>();
+
+                break;
+
+            case 1520682674019:
+
+                return make_shared<TransitionCondition1520682674019>();
+
+                break;
+
+            case 1520682675912:
+
+                return make_shared<TransitionCondition1520682675912>();
+
+                break;
+
+            case 1520682677336:
+
+                return make_shared<TransitionCondition1520682677336>();
+
+                break;
+
+            case 1520682678705:
+
+                return make_shared<TransitionCondition1520682678705>();
+
+                break;
+
+            case 1520682680343:
+
+                return make_shared<TransitionCondition1520682680343>();
+
+                break;
+
+            case 1520682683152:
+
+                return make_shared<TransitionCondition1520682683152>();
+
+                break;
+
             case 1434048722207:
 
                 return make_shared<TransitionCondition1434048722207>();
@@ -816,6 +1058,30 @@ namespace alica
 
                 break;
 
+            case 1521280931730:
+
+                return make_shared<TransitionCondition1521280931730>();
+
+                break;
+
+            case 1521280987477:
+
+                return make_shared<TransitionCondition1521280987477>();
+
+                break;
+
+            case 1521280994181:
+
+                return make_shared<TransitionCondition1521280994181>();
+
+                break;
+
+            case 1521281060067:
+
+                return make_shared<TransitionCondition1521281060067>();
+
+                break;
+
             case 1426696641527:
 
                 return make_shared<TransitionCondition1426696641527>();
@@ -843,6 +1109,66 @@ namespace alica
             case 1458562147436:
 
                 return make_shared<TransitionCondition1458562147436>();
+
+                break;
+
+            case 1518622828944:
+
+                return make_shared<TransitionCondition1518622828944>();
+
+                break;
+
+            case 1518622830640:
+
+                return make_shared<TransitionCondition1518622830640>();
+
+                break;
+
+            case 1518622834399:
+
+                return make_shared<TransitionCondition1518622834399>();
+
+                break;
+
+            case 1518622835957:
+
+                return make_shared<TransitionCondition1518622835957>();
+
+                break;
+
+            case 1518622837786:
+
+                return make_shared<TransitionCondition1518622837786>();
+
+                break;
+
+            case 1518622839323:
+
+                return make_shared<TransitionCondition1518622839323>();
+
+                break;
+
+            case 1518622846035:
+
+                return make_shared<TransitionCondition1518622846035>();
+
+                break;
+
+            case 1518622847338:
+
+                return make_shared<TransitionCondition1518622847338>();
+
+                break;
+
+            case 1518623968811:
+
+                return make_shared<TransitionCondition1518623968811>();
+
+                break;
+
+            case 1518623970678:
+
+                return make_shared<TransitionCondition1518623970678>();
 
                 break;
 
@@ -1200,6 +1526,30 @@ namespace alica
 
                 break;
 
+            case 1521283236610:
+
+                return make_shared<TransitionCondition1521283236610>();
+
+                break;
+
+            case 1521283237926:
+
+                return make_shared<TransitionCondition1521283237926>();
+
+                break;
+
+            case 1521283239559:
+
+                return make_shared<TransitionCondition1521283239559>();
+
+                break;
+
+            case 1521283249550:
+
+                return make_shared<TransitionCondition1521283249550>();
+
+                break;
+
             case 1449076203800:
 
                 return make_shared<TransitionCondition1449076203800>();
@@ -1335,6 +1685,156 @@ namespace alica
             case 1466973020291:
 
                 return make_shared<TransitionCondition1466973020291>();
+
+                break;
+
+            case 1518625926563:
+
+                return make_shared<TransitionCondition1518625926563>();
+
+                break;
+
+            case 1518625927967:
+
+                return make_shared<TransitionCondition1518625927967>();
+
+                break;
+
+            case 1518625929607:
+
+                return make_shared<TransitionCondition1518625929607>();
+
+                break;
+
+            case 1518625931710:
+
+                return make_shared<TransitionCondition1518625931710>();
+
+                break;
+
+            case 1518625933379:
+
+                return make_shared<TransitionCondition1518625933379>();
+
+                break;
+
+            case 1518625934916:
+
+                return make_shared<TransitionCondition1518625934916>();
+
+                break;
+
+            case 1518625936267:
+
+                return make_shared<TransitionCondition1518625936267>();
+
+                break;
+
+            case 1518625938386:
+
+                return make_shared<TransitionCondition1518625938386>();
+
+                break;
+
+            case 1518625939622:
+
+                return make_shared<TransitionCondition1518625939622>();
+
+                break;
+
+            case 1518625941030:
+
+                return make_shared<TransitionCondition1518625941030>();
+
+                break;
+
+            case 1518625942849:
+
+                return make_shared<TransitionCondition1518625942849>();
+
+                break;
+
+            case 1518625944363:
+
+                return make_shared<TransitionCondition1518625944363>();
+
+                break;
+
+            case 1518625947022:
+
+                return make_shared<TransitionCondition1518625947022>();
+
+                break;
+
+            case 1518625962322:
+
+                return make_shared<TransitionCondition1518625962322>();
+
+                break;
+
+            case 1518625964162:
+
+                return make_shared<TransitionCondition1518625964162>();
+
+                break;
+
+            case 1518625965631:
+
+                return make_shared<TransitionCondition1518625965631>();
+
+                break;
+
+            case 1518625978714:
+
+                return make_shared<TransitionCondition1518625978714>();
+
+                break;
+
+            case 1518625979903:
+
+                return make_shared<TransitionCondition1518625979903>();
+
+                break;
+
+            case 1518625985243:
+
+                return make_shared<TransitionCondition1518625985243>();
+
+                break;
+
+            case 1518625986946:
+
+                return make_shared<TransitionCondition1518625986946>();
+
+                break;
+
+            case 1518625988962:
+
+                return make_shared<TransitionCondition1518625988962>();
+
+                break;
+
+            case 1518625990399:
+
+                return make_shared<TransitionCondition1518625990399>();
+
+                break;
+
+            case 1518625992739:
+
+                return make_shared<TransitionCondition1518625992739>();
+
+                break;
+
+            case 1518625993923:
+
+                return make_shared<TransitionCondition1518625993923>();
+
+                break;
+
+            case 1518869293795:
+
+                return make_shared<TransitionCondition1518869293795>();
 
                 break;
 
@@ -1566,6 +2066,156 @@ namespace alica
 
                 break;
 
+            case 1518862114467:
+
+                return make_shared<TransitionCondition1518862114467>();
+
+                break;
+
+            case 1518862115739:
+
+                return make_shared<TransitionCondition1518862115739>();
+
+                break;
+
+            case 1518862116884:
+
+                return make_shared<TransitionCondition1518862116884>();
+
+                break;
+
+            case 1518862118075:
+
+                return make_shared<TransitionCondition1518862118075>();
+
+                break;
+
+            case 1518862119588:
+
+                return make_shared<TransitionCondition1518862119588>();
+
+                break;
+
+            case 1518862121592:
+
+                return make_shared<TransitionCondition1518862121592>();
+
+                break;
+
+            case 1518862123708:
+
+                return make_shared<TransitionCondition1518862123708>();
+
+                break;
+
+            case 1518862126807:
+
+                return make_shared<TransitionCondition1518862126807>();
+
+                break;
+
+            case 1518862129037:
+
+                return make_shared<TransitionCondition1518862129037>();
+
+                break;
+
+            case 1518862130944:
+
+                return make_shared<TransitionCondition1518862130944>();
+
+                break;
+
+            case 1518862132763:
+
+                return make_shared<TransitionCondition1518862132763>();
+
+                break;
+
+            case 1518862135489:
+
+                return make_shared<TransitionCondition1518862135489>();
+
+                break;
+
+            case 1518862140627:
+
+                return make_shared<TransitionCondition1518862140627>();
+
+                break;
+
+            case 1518862142552:
+
+                return make_shared<TransitionCondition1518862142552>();
+
+                break;
+
+            case 1518862143987:
+
+                return make_shared<TransitionCondition1518862143987>();
+
+                break;
+
+            case 1518862148362:
+
+                return make_shared<TransitionCondition1518862148362>();
+
+                break;
+
+            case 1518862151625:
+
+                return make_shared<TransitionCondition1518862151625>();
+
+                break;
+
+            case 1518862153164:
+
+                return make_shared<TransitionCondition1518862153164>();
+
+                break;
+
+            case 1518862154788:
+
+                return make_shared<TransitionCondition1518862154788>();
+
+                break;
+
+            case 1518862156091:
+
+                return make_shared<TransitionCondition1518862156091>();
+
+                break;
+
+            case 1518862157639:
+
+                return make_shared<TransitionCondition1518862157639>();
+
+                break;
+
+            case 1518862159584:
+
+                return make_shared<TransitionCondition1518862159584>();
+
+                break;
+
+            case 1518862162949:
+
+                return make_shared<TransitionCondition1518862162949>();
+
+                break;
+
+            case 1518862164476:
+
+                return make_shared<TransitionCondition1518862164476>();
+
+                break;
+
+            case 1518869323662:
+
+                return make_shared<TransitionCondition1518869323662>();
+
+                break;
+
             case 1469455112199:
 
                 return make_shared<RunTimeCondition1469455112199>();
@@ -1722,6 +2372,84 @@ namespace alica
 
                 break;
 
+            case 1518624922421:
+
+                return make_shared<TransitionCondition1518624922421>();
+
+                break;
+
+            case 1518624923528:
+
+                return make_shared<TransitionCondition1518624923528>();
+
+                break;
+
+            case 1518624924742:
+
+                return make_shared<TransitionCondition1518624924742>();
+
+                break;
+
+            case 1518624925908:
+
+                return make_shared<TransitionCondition1518624925908>();
+
+                break;
+
+            case 1518624927095:
+
+                return make_shared<TransitionCondition1518624927095>();
+
+                break;
+
+            case 1518624928426:
+
+                return make_shared<TransitionCondition1518624928426>();
+
+                break;
+
+            case 1518624929829:
+
+                return make_shared<TransitionCondition1518624929829>();
+
+                break;
+
+            case 1518624930978:
+
+                return make_shared<TransitionCondition1518624930978>();
+
+                break;
+
+            case 1518624932238:
+
+                return make_shared<TransitionCondition1518624932238>();
+
+                break;
+
+            case 1518624933146:
+
+                return make_shared<TransitionCondition1518624933146>();
+
+                break;
+
+            case 1518624934271:
+
+                return make_shared<TransitionCondition1518624934271>();
+
+                break;
+
+            case 1518624935190:
+
+                return make_shared<TransitionCondition1518624935190>();
+
+                break;
+
+            case 1518624970684:
+
+                return make_shared<TransitionCondition1518624970684>();
+
+                break;
+
             case 1458033411271:
 
                 return make_shared<TransitionCondition1458033411271>();
@@ -1803,6 +2531,18 @@ namespace alica
             case 1508951693560:
 
                 return make_shared<RunTimeCondition1508951693560>();
+
+                break;
+
+            case 1518866390521:
+
+                return make_shared<TransitionCondition1518866390521>();
+
+                break;
+
+            case 1518866391883:
+
+                return make_shared<TransitionCondition1518866391883>();
 
                 break;
 

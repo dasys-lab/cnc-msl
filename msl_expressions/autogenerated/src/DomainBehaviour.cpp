@@ -89,12 +89,13 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)
 {
     bh.enabled = true;
     bh.senderID = ownID;
-    // this is only for nase and his new left motor
-    if (bh.rightMotor != 0 && bh.leftMotor != 0)
-    {
-        bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * (bh.rightMotor >= 0 ? 1 : -1);
-        bh.leftMotor = (int)(max(this->minRotationLeft, (abs(bh.leftMotor)) / this->dribbleFactorLeft)) * (bh.leftMotor >= 0 ? 1 : -1);
-    }
+    // this was written for nase and his new left motor
+    //this should not be necessary anymore, because we collected the current->velocity splines for each motor separately
+//    if (bh.rightMotor != 0 && bh.leftMotor != 0)
+//    {
+//        bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * (bh.rightMotor >= 0 ? 1 : -1);
+//        bh.leftMotor = (int)(max(this->minRotationLeft, (abs(bh.leftMotor)) / this->dribbleFactorLeft)) * (bh.leftMotor >= 0 ? 1 : -1);
+//    }
     this->ballHandlePub.publish(bh);
 }
 
