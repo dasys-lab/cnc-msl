@@ -55,7 +55,7 @@ namespace alica
         mc = this->robot->robotMovement->moveToPoint(mQuery);
 
         // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < 150 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
+        if (egoTarget->length() < this->positionDistanceTolerance && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
         {
             this->setSuccess(true);
         }
