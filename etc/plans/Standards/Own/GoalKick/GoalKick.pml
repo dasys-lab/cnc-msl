@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1469521732930" name="GoalKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/GoalKick" priority="0.0" minCardinality="0" maxCardinality="4">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1469521732930" name="GoalKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/GoalKick" priority="0.0" minCardinality="3" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1469522753378" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1469522849862" name="MISSING_NAME" comment="" scope="1469522047745">
       <sorts>x</sorts>
@@ -25,6 +25,8 @@
   </states>
   <states id="1469522370067" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../ThrowIn/ThrowInPass.beh#1462363309950</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1469522459411</inTransitions>
     <outTransitions>#1469522460547</outTransitions>
     <outTransitions>#1469522461468</outTransitions>
@@ -39,8 +41,9 @@
     <outTransitions>#1469522683853</outTransitions>
   </states>
   <states id="1469522492956" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1469522683853</inTransitions>
     <outTransitions>#1469522685570</outTransitions>
   </states>
@@ -49,7 +52,8 @@
     <outTransitions>#1469522690355</outTransitions>
   </states>
   <states id="1469522496824" name="ReceiveAlternative" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1469522690355</inTransitions>
     <outTransitions>#1469522688609</outTransitions>
   </states>
@@ -99,15 +103,15 @@
     <inState>#1469522494669</inState>
     <outState>#1469522496824</outState>
   </transitions>
-  <entryPoints id="1469521732932" name="ExecuteStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1469521732932" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1469521732931</state>
   </entryPoints>
-  <entryPoints id="1469522042827" name="ReceiveStandard" comment="" successRequired="true" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1469522042827" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1469522490708</state>
   </entryPoints>
-  <entryPoints id="1469522045842" name="AlternativeReceive" comment="" successRequired="true" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1469522045842" name="AlternativeReceive" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1462360858945</task>
     <state>#1469522494669</state>
   </entryPoints>
