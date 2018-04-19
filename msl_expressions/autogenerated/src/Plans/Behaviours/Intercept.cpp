@@ -5,7 +5,6 @@ using namespace std;
 #include <Ball.h>
 #include <Game.h>
 #include <RawSensorData.h>
-#include <container/CNVelocity2D.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
@@ -13,7 +12,6 @@ using namespace std;
 #include <pathplanner/PathPlanner.h>
 #include <pathplanner/PathPlannerQuery.h>
 #include <pathplanner/PathProxy.h>
-#include <stdio.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
