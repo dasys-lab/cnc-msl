@@ -3,9 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
-namespace geometry {
-	class CNPoint2D;
-	class CNPosition;
+namespace geometry
+{
+    class CNPoint2D;
+    class CNPosition;
 }
 /*PROTECTED REGION END*/
 namespace alica

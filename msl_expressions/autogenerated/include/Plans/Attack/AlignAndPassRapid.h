@@ -9,8 +9,9 @@ namespace geometry
     class CNPoint2D;
     class CNPosition;
 }
-namespace msl {
-	class VoronoiNet;
+namespace msl
+{
+    class VoronoiNet;
 }
 /*PROTECTED REGION END*/
 namespace alica

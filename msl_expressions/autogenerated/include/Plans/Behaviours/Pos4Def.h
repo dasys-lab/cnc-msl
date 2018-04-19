@@ -3,11 +3,13 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1445438142979) ENABLED START*/ //Add additional includes here
-namespace alica {
-	class Query;
+namespace alica
+{
+    class Query;
 }
-namespace msl {
-	class MovementQuery;
+namespace msl
+{
+    class MovementQuery;
 }
 /*PROTECTED REGION END*/
 namespace alica

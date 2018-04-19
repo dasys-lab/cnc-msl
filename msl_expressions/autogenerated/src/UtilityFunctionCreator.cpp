@@ -7,8 +7,6 @@
 
 #include  "Plans/Calibration/TestRotation1492620432380.h"
 
-#include  "Plans/Standards/Own/FreeKick/Test/TestThrowInPassAlignment1523356831385.h"
-
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
@@ -38,8 +36,6 @@
 #include  "Plans/CarpetCalibrator1435159127771.h"
 
 #include  "Plans/WM161413992564408.h"
-
-#include  "Plans/Standards/Own/FreeKick/Test/TestThrowInPassAlignmentMaster1523356580220.h"
 
 #include  "Plans/Attack/TestPlans/RobotMovementTestPlan1462969665131.h"
 
@@ -175,10 +171,6 @@ namespace alica
                 return make_shared<UtilityFunction1492620432380>();
                 break;
 
-            case 1523356831385:
-                return make_shared<UtilityFunction1523356831385>();
-                break;
-
             case 1434045709191:
                 return make_shared<UtilityFunction1434045709191>();
                 break;
@@ -237,10 +229,6 @@ namespace alica
 
             case 1413992564408:
                 return make_shared<UtilityFunction1413992564408>();
-                break;
-
-            case 1523356580220:
-                return make_shared<UtilityFunction1523356580220>();
                 break;
 
             case 1462969665131:

@@ -18,12 +18,12 @@ namespace alica
             DomainBehaviour("AlignToGoal")
     {
         /*PROTECTED REGION ID(con1415205272843) ENABLED START*/ //Add additional options here
-    	this->maxVel = 2000;
-    	this->maxRot = M_PI * 4;
-    	this->minRot = 0.1;
-    	this->maxYTolerance = 15;
-    	this->pRot = 2.1;
-    	this->dRot = 0.0;
+        this->maxVel = 2000;
+        this->maxRot = M_PI * 4;
+        this->minRot = 0.1;
+        this->maxYTolerance = 15;
+        this->pRot = 2.1;
+        this->dRot = 0.0;
         this->yOffset = 150.0;
         this->lastRotError = 0;
         /*PROTECTED REGION END*/

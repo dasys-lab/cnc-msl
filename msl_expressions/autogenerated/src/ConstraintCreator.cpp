@@ -7,8 +7,6 @@
 
 #include  "Plans/Calibration/constraints/TestRotation1492620432380Constraints.h"
 
-#include  "Plans/Standards/Own/FreeKick/Test/constraints/TestThrowInPassAlignment1523356831385Constraints.h"
-
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleControlMaster1479905043165Constraints.h"
@@ -38,8 +36,6 @@
 #include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"
-
-#include  "Plans/Standards/Own/FreeKick/Test/constraints/TestThrowInPassAlignmentMaster1523356580220Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/RobotMovementTestPlan1462969665131Constraints.h"
 

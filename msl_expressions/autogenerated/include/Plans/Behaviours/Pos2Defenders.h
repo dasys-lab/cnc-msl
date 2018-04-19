@@ -3,8 +3,9 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1444834678756) ENABLED START*/ //Add additional includes here
-namespace msl {
-	class MovementQuery;
+namespace msl
+{
+    class MovementQuery;
 }
 namespace geometry
 {

@@ -49,7 +49,7 @@ namespace alica
         int longPassThreshold;
         bool sentPm;
         pair<int, shared_ptr<geometry::CNPoint2D>> getTeammateIdAndPosFromTaskName(string teamMateTaskName);
-        /*PROTECTED REGION END*/			};
-		} /* namespace alica */
+        /*PROTECTED REGION END*/};
+} /* namespace alica */
 
 #endif /* ThrowInPass_H_ */

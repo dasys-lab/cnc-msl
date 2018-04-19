@@ -7,8 +7,9 @@ namespace geometry
 {
     class CNPoint2D;
 }
-namespace msl {
-	class MovementQuery;
+namespace msl
+{
+    class MovementQuery;
 }
 #include <InformationElement.h>
 /*PROTECTED REGION END*/
@@ -52,8 +53,7 @@ namespace alica
 
         shared_ptr<geometry::CNPoint2D> getTeammatePosFromTaskName(string teamMateTaskName);
 
-                          /*PROTECTED REGION END*/};
-                  }
-                  /* namespace alica */
+        /*PROTECTED REGION END*/};
+} /* namespace alica */
 
 #endif /* StandardAlignAndGrab2Receivers_H_ */

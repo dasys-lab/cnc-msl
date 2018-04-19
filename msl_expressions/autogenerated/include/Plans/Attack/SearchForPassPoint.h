@@ -8,12 +8,14 @@
 #include "engine/model/EntryPoint.h"
 #define DBM_DEBUG 1
 
-namespace msl {
-	class VoronoiNet;
+namespace msl
+{
+    class VoronoiNet;
 }
-namespace geometry {
-	class CNPoint2D;
-	class CNPosition;
+namespace geometry
+{
+    class CNPoint2D;
+    class CNPosition;
 }
 /*PROTECTED REGION END*/
 namespace alica
