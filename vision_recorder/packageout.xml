@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>vision_recorder</name>
+  <version>0.0.1</version>
+  <description>Vision Recorder.</description>
+
+  <maintainer email="l.martmann@gmx.de">Lisa Martmann</maintainer>
+
+  <license>MIT</license>
+
+  <author email="l.martmann@gmx.de">Lisa Martmann</author>
+
+  <build_depend>system_config</build_depend>
+
+
+  <run_depend>system_config</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>
