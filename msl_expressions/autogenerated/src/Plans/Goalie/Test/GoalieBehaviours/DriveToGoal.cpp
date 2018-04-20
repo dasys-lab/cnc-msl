@@ -146,7 +146,7 @@ namespace alica
     {
     	shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid =  wm->rawSensorData->getEgoGoalMid();
 
-        if (!laserDetectedEgoGoalMid)
+        if (laserDetectedEgoGoalMid)
         {
         	alloGoalMid = laserDetectedEgoGoalMid;
         }
