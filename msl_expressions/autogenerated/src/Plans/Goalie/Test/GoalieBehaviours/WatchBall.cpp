@@ -12,7 +12,7 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-/*PROTECTED REGION ID(staticVars1447863466691) ENABLED START*/ // initialise static variables here
+/*PROTECTED REGION ID(staticVars1447863466691) ENABLED START*/
                                                                /*
                                                                 *
                                                                 *			 _______________________________
@@ -32,25 +32,16 @@ WatchBall::WatchBall()
     : DomainBehaviour("WatchBall")
 {
     /*PROTECTED REGION ID(con1447863466691) ENABLED START*/ // Add additional options here
-    alignTowardsBall = (*this->sc)["Behaviour"]->get<bool>("Goalie.AlignTowardsBall", NULL);
-    rotationLimit = (*this->sc)["Behaviour"]->get<double>("Goalie.RotationLimit", NULL);
-    maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
     goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
-    nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-
-    pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
-    dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
-    pRot = (*this->sc)["Behaviour"]->get<double>("Goalie.pRot", NULL);
-    dRot = (*this->sc)["Behaviour"]->get<double>("Goalie.dRot", NULL);
-    lastRotErr = 0;
-    prevTargetDist = 0;
+    snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
+    maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
 
      query = make_shared<msl::MovementQuery>();
 
-    snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
-    alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+    const auto nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
     ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-    auto tempMid = wm->field->posOwnGoalMid();
+
+    const auto tempMid = wm->field->posOwnGoalMid();
     alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
@@ -66,6 +57,7 @@ void WatchBall::run(void *msg)
 {
     /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ // Add additional options here
     ownPos = wm->rawSensorData->getOwnPositionVision();
+    msl_actuator_msgs::MotionControl mc;
 
     // Stop Robot if own position is unknown
     if (ownPos == nullptr)
@@ -140,7 +132,7 @@ void WatchBall::run(void *msg)
 
 	auto alloTarget = calculateTarget();
 	// If alloTarget was not calculated, stop robot?
-	// TODO: Eventually return prevTarget or midGoal to be ready when ball is coming.
+	// TODO: Eventually return prevTarget or alloGoalMid to be ready when ball is coming.
 	if (alloTarget == nullptr) {
 		alloTarget = alloGoalMid;
 	}
@@ -168,7 +160,6 @@ void WatchBall::run(void *msg)
 	query->additionalPoints = additionalPoints;
 	// TODO: Test if good
 	query->blockOwnPenaltyArea = true;
-
 
 	mc.motion.translation *= 2; // Foxy, move faster!
 	// TODO: Probably remove as soon as motion is fixed
@@ -312,47 +303,6 @@ double WatchBall::fitTargetY(double targetY)
     }
 }
 
-void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
-{
-    shared_ptr<geometry::CNPoint2D> alignPoint;
-    double ballAngle = ownPos->getPoint()->angleToPoint(alloTarget) / M_PI * 180;
-
-    if (alignTowardsBall == true)
-    {
-        double radRotLim = rotationLimit * M_PI / 180.0;
-        // todo: only allow smaller rotationLimit when close to posts?
-        if (ballAngle <= -rotationLimit)
-        {
-            alignPoint = make_shared<geometry::CNPoint2D>(ownPos->x + 1000, -((tan(radRotLim) * 1000) - ownPos->y));
-        }
-        else if (ballAngle >= rotationLimit)
-        {
-            alignPoint = make_shared<geometry::CNPoint2D>(ownPos->x + 1000, (tan(radRotLim) * 1000) + ownPos->y);
-        }
-        else
-        {
-            alignPoint = alloTarget;
-        }
-    }
-    else
-    {
-        alignPoint = alloFieldCntr;
-    }
-
-    double angleErr = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
-    mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
-    lastRotErr = angleErr;
-
-    //		double angleAlignPoint = ownPos->getPoint()->angleToPognt(alignPoint) / M_PI * 180;
-    //		cout << "[WatchBall] alignPAngle: " << angleAlignPoint << endl;
-    //		cout << "[WatchBall] ballAngle  : " << ballAngle << endl;
-    //		cout << "[WatchBall] rotationLim: " << rotationLimit << endl;
-    //		cout << "[WatchBall] alloBall   : " << alloBall->x << " " << alloBall->y << endl;
-    //		cout << "[WatchBall] alloAPoint : " << alignPoint->x << " " << alignPoint->y << endl;
-    //		cout << "[WatchBall] alloOwnPos : " << ownPos->x << " " << ownPos->y << endl;
-    //		cout << "[WatchBall] rotation   : " << mc.motion.rotation << endl;
-    //		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
-}
 void WatchBall::updateGoalPosition()
 {
     shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();

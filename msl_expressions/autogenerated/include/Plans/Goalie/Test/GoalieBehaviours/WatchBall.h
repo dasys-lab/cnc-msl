@@ -28,27 +28,31 @@ class WatchBall : public DomainBehaviour
   protected:
     virtual void initialiseParameters();
     /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ // Add additional protected methods here
-    msl_actuator_msgs::MotionControl mc;
-    shared_ptr<geometry::CNPosition> ownPos;
-    shared_ptr<geometry::CNPoint2D> alloGoalLeft;
+
+	// Values used by methods and behaviour
+	shared_ptr<geometry::CNPosition> ownPos;
+	shared_ptr<geometry::CNPoint2D> alloGoalLeft;
     shared_ptr<geometry::CNPoint2D> alloGoalRight;
     shared_ptr<geometry::CNPoint2D> alloGoalMid;
     shared_ptr<geometry::CNPoint2D> prevTarget;
-    shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field->posCenterMarker();
-    shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
-    bool alignTowardsBall;
+
+	// Config parameters
     int maxVariance;
     int goalieSize;
-    int nrOfPositions;
     int snapDistance;
-    double alignMaxVel;
-    double pTrans, dTrans, pRot, dRot;
-    double prevTargetDist, lastRotErr;
-    double rotationLimit;
+
+	// ballPositions is a RingBuffer used to predict the impact point.
     msl::RingBuffer<geometry::CNPoint2D> *ballPositions;
+
+	// calcGoalImpactY uses the RingBuffer to calculate the Y impact of
+	// the ball at the goal line.
     double calcGoalImpactY();
-    void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
+
+	// updateGoalPosition uses the laser scanner to update the goals mid
+	// position.
     void updateGoalPosition();
+
+	// query is the MovementQuery for the robot to drive to the goal.
     shared_ptr<msl::MovementQuery> query;
 
     /*PROTECTED REGION END*/
