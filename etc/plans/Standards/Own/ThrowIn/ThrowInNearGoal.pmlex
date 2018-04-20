@@ -21,10 +21,6 @@
     <value xPos="310" yPos="45" width="270" height="134" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="ThrowInNearGoal.pml#1461237656318"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="ThrowInNearGoal.pml#1461237666032"/>
     <value xPos="580" yPos="33" width="225" height="134" collapsed="false"/>
   </extensions>
@@ -141,11 +137,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="ThrowInNearGoal.pml#1493506037250"/>
-    <value xPos="182" yPos="6" width="119" height="67" collapsed="false"/>
+    <key href="ThrowInNearGoal.pml#1523091130609"/>
+    <value/>
   </extensions>
   <extensions>
-    <key href="ThrowInNearGoal.pml#1493506054296"/>
+    <key href="../../../Behaviours/Intercept.beh#1521898536366"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

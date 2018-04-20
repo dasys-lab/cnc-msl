@@ -1,65 +1,63 @@
 using namespace std;
 #include "Plans/Attack/SearchForPassPoint.h"
 
-/*PROTECTED REGION ID(inccpp1436269017402) ENABLED START*/ //Add additional includes here
-#include <GeometryCalculator.h>
-#include "pathplanner/VoronoiNet.h"
-#include "pathplanner/PathProxy.h"
-#include "msl_helper_msgs/PassMsg.h"
+/*PROTECTED REGION ID(inccpp1436269017402) ENABLED START*/ // Add additional includes here
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
-#include <Robots.h>
-#include <RawSensorData.h>
+#include "msl_helper_msgs/PassMsg.h"
+#include "pathplanner/VoronoiNet.h"
 #include <Ball.h>
+#include <GeometryCalculator.h>
+#include <MSLWorldModel.h>
+#include <RawSensorData.h>
+#include <Robots.h>
 #include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1436269017402) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION ID(staticVars1436269017402) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
     SearchForPassPoint::SearchForPassPoint() :
             DomainBehaviour("SearchForPassPoint")
     {
-        /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ //Add additional options here
-        this->pathProxy = msl::PathProxy::getInstance();
-        maxPassDist = 0;
-        ratio = 0;
-        minPassDist = 0;
-        closerFactor = 0;
-        closerFactor2 = 0;
-        ballRadius = 0;
-        minOppDist = 0;
-        distToFieldBorder = 0;
-        sc = nullptr;
-        minCloserOffset = 0;
-        passCorridorWidth = 0;
-        freeOppAngle = 0;
-        maxTurnAngle = 0;
+        /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ // Add additional options here
+        this->maxPassDist = 0;
+        this->ratio = 0;
+        this->minPassDist = 0;
+        this->closerFactor = 0;
+        this->closerFactor2 = 0;
+        this->ballRadius = 0;
+        this->minOppDist = 0;
+        this->distToFieldBorder = 0;
+        this->minCloserOffset = 0;
+        this->passCorridorWidth = 0;
+        this->freeOppAngle = 0;
+        this->maxTurnAngle = 0;
         /*PROTECTED REGION END*/
     }
     SearchForPassPoint::~SearchForPassPoint()
     {
-        /*PROTECTED REGION ID(dcon1436269017402) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(dcon1436269017402) ENABLED START*/ // Add additional options here
         /*PROTECTED REGION END*/
     }
     void SearchForPassPoint::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1436269017402) ENABLED START*/ //Add additional options here
-        if (eps.size() <= 0)
+        /*PROTECTED REGION ID(run1436269017402) ENABLED START*/ // Add additional options here
+        if (this->eps.size() <= 0)
         {
-//            cout << "S4PP: All EPs is null" << endl;
+            //            cout << "S4PP: All EPs is null" << endl;
             return;
         }
 
-        alloBall = this->wm->ball->getAlloBallPosition();
-        if (alloBall == nullptr)
+        this->alloBall = this->wm->ball->getAlloBallPosition();
+        if (this->alloBall == nullptr)
         {
             cout << "S4PP: Ball is null" << endl;
             return;
         }
 
-        alloPos = this->wm->rawSensorData->getOwnPositionVision();
-        if (alloPos == nullptr)
+        this->alloPos = this->wm->rawSensorData->getOwnPositionVision();
+        if (this->alloPos == nullptr)
         {
             cout << "S4PP: OwnPos is null" << endl;
             return;
@@ -67,7 +65,7 @@ namespace alica
 
         // the only teammate in the corresponding task/ entrypoint
         this->teamMateIds.clear();
-        for (EntryPoint* ep : eps)
+        for (EntryPoint *ep : eps)
         {
             auto teammates = robotsInEntryPointOfHigherPlan(ep);
 
@@ -143,7 +141,6 @@ namespace alica
                     {
                         this->setSuccess(true);
                     }
-
                 }
                 if (passPossible(0.0, teamMatePos->getPoint(), teamMatePos->getPoint(), vNet))
                 {
@@ -155,7 +152,7 @@ namespace alica
             dbm = nullptr;
 #endif
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             throw e;
         }
@@ -164,10 +161,9 @@ namespace alica
     }
     void SearchForPassPoint::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1436269017402) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(initialiseParameters1436269017402) ENABLED START*/ // Add additional options here
         teamMatePlanName.clear();
         teamMateTaskName.clear();
-        sc = supplementary::SystemConfig::getInstance();
         this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
         this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
         this->closerFactor2 = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor2", NULL);
@@ -239,7 +235,7 @@ namespace alica
             {
                 for (int i = 0; i < teamMatePlanName.size(); i++)
                 {
-                    EntryPoint* ep = getHigherEntryPoint(teamMatePlanName[i], teamMateTaskName[i]);
+                    EntryPoint *ep = getHigherEntryPoint(teamMatePlanName[i], teamMateTaskName[i]);
                     if (ep != nullptr)
                     {
                         eps.push_back(ep);
@@ -247,7 +243,7 @@ namespace alica
                 }
             }
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             cerr << "S4PP: Could not cast the parameter properly" << endl;
         }
@@ -257,7 +253,7 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1436269017402) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1436269017402) ENABLED START*/ // Add additional methods here
     bool SearchForPassPoint::passPossible(double cf, shared_ptr<geometry::CNPoint2D> passPoint,
                                           shared_ptr<geometry::CNPoint2D> receiver, shared_ptr<msl::VoronoiNet> vNet)
     {
@@ -315,7 +311,7 @@ namespace alica
 #endif
                 return false;
             }
-            //small angle to turn to pass point
+            // small angle to turn to pass point
             if (geometry::absDeltaAngle(
                     alloPos->theta + M_PI,
                     (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
@@ -336,8 +332,9 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, vNet->getObstaclePositions()))
+            auto obsPositions = vNet->getObstaclePositions();
+            if (!geometry::outsideTriangle(alloBall, right, left, ballRadius, obsPositions)
+                    && !geometry::outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obsPositions))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.6 * 255.0;
@@ -348,7 +345,7 @@ namespace alica
             }
 
             // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-            if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
+            if (!geometry::outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.0 * 255.0;
@@ -371,64 +368,5 @@ namespace alica
         return false;
     }
 
-    bool SearchForPassPoint::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
-                                              shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        for (int i = 0; i < points->size(); i++)
-        {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool SearchForPassPoint::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                                                       shared_ptr<geometry::CNPoint2D> passPoint,
-                                                       double passCorridorWidth,
-                                                       shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        for (int i = 0; i < points->size(); i++)
-        {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool SearchForPassPoint::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-                                         {
-                                             shared_ptr<geometry::CNPoint2D> a2b = b - a;
-                                             shared_ptr<geometry::CNPoint2D> b2c = c - b;
-                                             shared_ptr<geometry::CNPoint2D> c2a = a - c;
-                                             shared_ptr<geometry::CNPoint2D> a2p;
-                                             shared_ptr<geometry::CNPoint2D> b2p;
-                                             shared_ptr<geometry::CNPoint2D> c2p;
-                                             shared_ptr<geometry::CNPoint2D> p;
-                                             for (int i = 0; i < points->size(); i++)
-                                             {
-                                                 p = points->at(i);
-                                                 a2p = p - a;
-                                                 b2p = p - b;
-                                                 c2p = p - c;
-
-                                                 if ((a2p->x * a2b->y - a2p->y * a2b->x) / a2p->normalize()->length()< tolerance
-					&& (b2p->x * b2c->y - b2p->y * b2c->x) / b2p->normalize()->length() < tolerance
-					&& (c2p->x * c2a->y - c2p->y * c2a->x) / c2p->normalize()->length() < tolerance)
-			{
-				return false;
-			}
-
-		}
-		return true;
-	}
-	/*PROTECTED REGION END*/			
-		} /* namespace alica */
+/*PROTECTED REGION END*/
+} /* namespace alica */

@@ -130,7 +130,7 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
 
     mc.motion.rotation = controlledValues[1]; // for PT
 
-    // angle correction to respect anlge change through rotation
+    // angle correction to respect angle change through rotation
     mc.motion.angle = egoTarget->angleTo() - mc.motion.rotation * this->sampleTime; // 1/30 s= time step , time step * omega = phi
 
 #ifdef RM_DEBUG

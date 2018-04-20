@@ -4,11 +4,6 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1462978634990) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
-#include <SystemConfig.h>
-#include <engine/model/EntryPoint.h>
-#include <engine/RunningPlan.h>
-#include <engine/Assignment.h>
-#include <engine/model/Plan.h>
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
@@ -21,7 +16,8 @@ namespace alica
             DomainBehaviour("PositionAlternativeReceiver")
     {
         /*PROTECTED REGION ID(con1462978634990) ENABLED START*/ //Add additional options here
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
+        this->ballDistRec = 0.0;
         /*PROTECTED REGION END*/
     }
     PositionAlternativeReceiver::~PositionAlternativeReceiver()
@@ -47,25 +43,24 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
-        shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
         if (alloBall->y < 0)
         {
-            alloTarget->y = alloBall->y + 2300.0;
+            alloTarget->y = alloBall->y + ballDistRec;
         }
         else
         {
-            alloTarget->y = alloBall->y - 2300.0;
+            alloTarget->y = alloBall->y - ballDistRec;
         }
 
         alloTarget->x = alloBall->x;
 
-        egoTarget = alloTarget->alloToEgo(*ownPos);
+        auto egoTarget = alloTarget->alloToEgo(*ownPos);
 
-//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoBallPos;
         query->additionalPoints = additionalPoints;
+
         mc = this->robot->robotMovement->moveToPoint(query);
 
         if (!std::isnan(mc.motion.translation))
@@ -82,6 +77,7 @@ namespace alica
     void PositionAlternativeReceiver::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462978634990) ENABLED START*/ //Add additional options here
+        this->ballDistRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1462978634990) ENABLED START*/ //Add additional methods here

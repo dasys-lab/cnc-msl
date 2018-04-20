@@ -3,8 +3,14 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1498664309837) ENABLED START*/ //Add additional includes here
-#include <container/CNPoint2D.h>
-#include <msl_robot/robotmovement/MovementQuery.h>
+namespace geometry
+{
+    class CNPoint2D;
+}
+namespace msl
+{
+    class MovementQuery;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,7 +32,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1498664309837) ENABLED START*/ //Add additional private methods here
         std::shared_ptr<geometry::CNPoint2D> alloTargetPoint;
         std::shared_ptr<geometry::CNPoint2D> egoTargetPoint;
-        supplementary::SystemConfig* sc;
 
         // old variables -> some of them need to be removed when finished
         int wheelSpeed;

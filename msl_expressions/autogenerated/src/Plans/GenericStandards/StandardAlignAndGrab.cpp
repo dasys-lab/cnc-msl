@@ -1,40 +1,40 @@
 using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab.h"
 
-/*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
-#include <msl_robot/robotmovement/RobotMovement.h>
-#include <RawSensorData.h>
+/*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ // Add additional includes here
 #include <Ball.h>
-#include <Robots.h>
+#include <Game.h>
 #include <GeometryCalculator.h>
+#include <MSLWorldModel.h>
+#include <RawSensorData.h>
+#include <Robots.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
-#include <MSLWorldModel.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1455888574532) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION ID(staticVars1455888574532) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
     StandardAlignAndGrab::StandardAlignAndGrab() :
             DomainBehaviour("StandardAlignAndGrab")
     {
-        /*PROTECTED REGION ID(con1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(con1455888574532) ENABLED START*/ // Add additional options here
         this->maxTranslation = (*sc)["Behaviour"]->get<double>("StandardAlign.StandardSituationSpeed", NULL);
         this->tol = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignTolerance", NULL);
         this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);
-
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     StandardAlignAndGrab::~StandardAlignAndGrab()
     {
-        /*PROTECTED REGION ID(dcon1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(dcon1455888574532) ENABLED START*/ // Add additional options here
         /*PROTECTED REGION END*/
     }
     void StandardAlignAndGrab::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ // Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         // return if necessary information is missing
@@ -54,7 +54,7 @@ namespace alica
         {
             // Drive close to the ball, until dist < 900
             // replaced with new moveToPointMethod
-//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
             mc = this->robot->robotMovement->moveToPoint(query);
@@ -74,7 +74,7 @@ namespace alica
         {
             // Drive closer to the ball, but don't rotate
             // replaced with new moveToPoint method
-//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             query->egoDestinationPoint = egoBallPos;
             query->egoAlignPoint = egoBallPos;
             mc = this->robot->robotMovement->moveToPoint(query);
@@ -164,12 +164,12 @@ namespace alica
             }
         }
 
-        angleIntErr += dangle;
+        this->angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
         mc.motion.rotation = fac * rot * (2 * fabs(0.8 * dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
-        oldAngleErr = dangle;
-        if (haveBall)
+        this->oldAngleErr = dangle;
+        if (this->haveBall)
         {
             haveBallCounter++;
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
@@ -178,7 +178,7 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-//                cout << "SAAG: haveBall" << endl;
+                cout << "SAAG: haveBall timeout" << endl;
                 this->setSuccess(true);
             }
             else if (haveBallCounter > 6
@@ -190,7 +190,9 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-//                cout << "SAAG: haveBall esle if" << endl;
+                cout << "SAAG: haveBall else if" << endl;
+                cout << this->minTol + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))
+                        << endl;
                 this->setSuccess(true);
             }
         }
@@ -200,14 +202,14 @@ namespace alica
     }
     void StandardAlignAndGrab::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1455888574532) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(initialiseParameters1455888574532) ENABLED START*/ // Add additional options here
         angleIntErr = 0;
         oldAngleErr = 0;
         haveBall = false;
         haveBallCounter = 0;
         delayKickCounter = 0;
         oldMatePos.reset();
-        startTime = wm->getTime();
+        startTime = wm->game->getTimeSinceStart();
 
         bool success = true;
         try
@@ -215,7 +217,7 @@ namespace alica
             success &= getParameter("planName", planName);
             success &= getParameter("teamMateTaskName", teamMateTaskName);
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             cerr << "Could not cast the parameter properly" << endl;
         }
@@ -231,6 +233,6 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ // Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

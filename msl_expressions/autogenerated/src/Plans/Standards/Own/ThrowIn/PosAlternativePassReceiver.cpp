@@ -3,8 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1461674942156) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
-#include <SystemConfig.h>
 #include <engine/model/EntryPoint.h>
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
@@ -45,11 +45,8 @@ namespace alica
                 vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        if (oldBallPos == nullptr)
-        {
-            oldBallPos = alloBall;
-        }
-        EntryPoint* ep = getParentEntryPoint(taskName);
+
+        EntryPoint* ep = getParentEntryPoint(this->taskName);
         if (ep != nullptr)
         {
             // get the plan in which the behavior is running
@@ -66,7 +63,7 @@ namespace alica
             if (ids->size() > 0 && ids->at(0) != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                auto pos = this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
                 if (pos != nullptr)
                 {
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
@@ -96,8 +93,6 @@ namespace alica
                 egoTarget = alloTarget->alloToEgo(*ownPos);
             }
             // ask the path planner how to get there
-//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-//                                                          additionalPoints);
             query->egoDestinationPoint = egoTarget;
             query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             query->additionalPoints = additionalPoints;
@@ -125,8 +120,6 @@ namespace alica
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
-        oldBallPos.reset();
-        oldAlloTarget.reset();
         try
         {
             success &= getParameter("TeamMateTaskName", tmp);
