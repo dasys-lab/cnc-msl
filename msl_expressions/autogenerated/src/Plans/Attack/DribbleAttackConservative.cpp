@@ -52,7 +52,6 @@ namespace alica
         else
         {
             query->egoDestinationPoint = corner;
-            query->egoAlignPoint = corner;
 
             auto tmpMC = this->robot->robotMovement->moveToPoint(query);
 
