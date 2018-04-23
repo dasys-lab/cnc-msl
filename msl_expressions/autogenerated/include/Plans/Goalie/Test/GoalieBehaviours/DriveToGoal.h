@@ -24,6 +24,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863424939) ENABLED START*/ //Add additional private methods here
+        void updateGoalPosition();
         msl_actuator_msgs::MotionControl mc;
         shared_ptr<geometry::CNPoint2D> alloFieldCenterAlignPoint;
         shared_ptr<geometry::CNPoint2D> alloTarget;

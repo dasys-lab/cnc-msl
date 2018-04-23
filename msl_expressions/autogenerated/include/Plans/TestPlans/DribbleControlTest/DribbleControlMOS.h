@@ -2,7 +2,9 @@
 #define DribbleControlMOS_H_
 
 #include "DomainBehaviour.h"
-/*PROTECTED REGION ID(inc1479905178049) ENABLED START*/ //Add additional includes here
+/*PROTECTED REGION ID(inc1479905178049) ENABLED START*/ // Add additional includes here
+#include <CubicSplineInterpolation/Spline.h>
+#include <MSLEnums.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -12,29 +14,28 @@ namespace alica
         DribbleControlMOS();
         virtual ~DribbleControlMOS();
         virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1479905178049) ENABLED START*/ //Add additional public methods here
+        /*PROTECTED REGION ID(pub1479905178049) ENABLED START*/ // Add additional public methods here
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
-        /*PROTECTED REGION ID(pro1479905178049) ENABLED START*/ //Add additional protected methods here
+        /*PROTECTED REGION ID(pro1479905178049) ENABLED START*/ // Add additional protected methods here
         /*PROTECTED REGION END*/
     private:
-        /*PROTECTED REGION ID(prv1479905178049) ENABLED START*/ //Add additional private methods here
+        /*PROTECTED REGION ID(prv1479905178049) ENABLED START*/ // Add additional private methods here
         double getBallVelocity(double velX, double velY);
         double getBallAngle(double velX, double velY);
         double getLeftArmVelocity(double ballVelocity, double ballAngle);
         double getRightArmVelocity(double ballVelocity, double ballAngle);
+        double velToInput(msl::ArmMotor arm, double wheelVelocity);
         void getBallPath(double translation, double angle, double rotation, double &velX, double &velY);
-        void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd& msgback);
+        void sendWheelSpeed(msl_actuator_msgs::BallHandleCmd &msgback);
 
-        int sign(double x);
-
-//        int testBehaviour;
-//        int testSpeed;
-//        double testRot;
-//        double testAngle;
-//        int testCount;
-//        int testCount2;
+        //        int testBehaviour;
+        //        int testSpeed;
+        //        double testRot;
+        //        double testAngle;
+        //        int testCount;
+        //        int testCount2;
 
         double speedNoBall;
         double wheelSpeedLeftOld;
@@ -54,12 +55,12 @@ namespace alica
 
         bool testingMode;
 
-        double velToInput;
         double staticUpperBound;
         double staticMiddleBound;
         double staticLowerBound;
         double staticNegVelX;
-        double epsilonT;
+        double epsilonTForward;
+        double epsilonTBackward;
         double epsilonY;
         double epsilonRot;
         double rBallRobot;
@@ -71,7 +72,12 @@ namespace alica
         double velXFactor;
         double powerOfRotation;
 
-        supplementary::SystemConfig* sc;
+        vector<double> armInputs;
+        vector<double> armLeftVels;
+        vector<double> armRightVels;
+
+        splines::spline rightSpeedSpline;
+        splines::spline leftSpeedSpline;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

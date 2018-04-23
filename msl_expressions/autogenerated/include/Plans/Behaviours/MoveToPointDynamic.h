@@ -3,11 +3,13 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1456997073100) ENABLED START*/ //Add additional includes here
-#include "engine/constraintmodul/Query.h"
-#include "msl_robot/robotmovement/MovementQuery.h"
+namespace msl {
+	class MovementQuery;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
+	class Query;
     class MoveToPointDynamic : public DomainBehaviour
     {
     public:

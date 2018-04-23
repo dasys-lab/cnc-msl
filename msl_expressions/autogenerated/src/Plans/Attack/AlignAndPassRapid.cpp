@@ -1,32 +1,32 @@
 using namespace std;
 #include "Plans/Attack/AlignAndPassRapid.h"
 
-/*PROTECTED REGION ID(inccpp1436269063295) ENABLED START*/ //Add additional includes here
-#include "msl_helper_msgs/PassMsg.h"
-#include "pathplanner/VoronoiNet.h"
-#include "pathplanner/PathProxy.h"
+/*PROTECTED REGION ID(inccpp1436269063295) ENABLED START*/ // Add additional includes here
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
-#include <engine/model/EntryPoint.h>
-#include <SystemConfig.h>
-#include <RawSensorData.h>
-#include <msl_robot/kicker/Kicker.h>
-#include <Robots.h>
-#include <pathplanner/PathPlanner.h>
+#include "msl_helper_msgs/PassMsg.h"
+#include "pathplanner/VoronoiNet.h"
 #include <Ball.h>
-#include <engine/model/EntryPoint.h>
+#include <GeometryCalculator.h>
+#include <RawSensorData.h>
+#include <Robots.h>
 #include <engine/Assignment.h>
+#include <engine/model/EntryPoint.h>
 #include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <pathplanner/PathPlanner.h>
+#include <GameState.h>
+#include <MSLWorldModel.h>
 
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1436269063295) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION ID(staticVars1436269063295) ENABLED START*/ // initialise static variables here
     /*PROTECTED REGION END*/
     AlignAndPassRapid::AlignAndPassRapid() :
             DomainBehaviour("AlignAndPassRapid")
     {
-        /*PROTECTED REGION ID(con1436269063295) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(con1436269063295) ENABLED START*/ // Add additional options here
         this->freeOppAngle = NAN;
         this->ratio = NAN;
         this->ballRadius = NAN;
@@ -47,9 +47,7 @@ namespace alica
         this->minRot = 0.1;
         this->maxRot = M_PI * 4;
         this->accel = 2000;
-        this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
-        this->pathProxy = msl::PathProxy::getInstance();
         this->alloBall = nullptr;
         this->alloPos = nullptr;
         this->bestAoc = nullptr;
@@ -61,18 +59,18 @@ namespace alica
     }
     AlignAndPassRapid::~AlignAndPassRapid()
     {
-        /*PROTECTED REGION ID(dcon1436269063295) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(dcon1436269063295) ENABLED START*/ // Add additional options here
         /*PROTECTED REGION END*/
     }
     void AlignAndPassRapid::run(void* msg)
     {
-        /*PROTECTED REGION ID(run1436269063295) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(run1436269063295) ENABLED START*/ // Add additional options here
         msl_actuator_msgs::MotionControl mc;
         alloPos = this->wm->rawSensorData->getOwnPositionVision();
         if (alloPos == nullptr)
         {
-//			mc = DriveHelper.DriveRandomly(500,WM);
-//			Send(mc);
+            //			mc = DriveHelper.DriveRandomly(500,WM);
+            //			Send(mc);
             cout << "AAPR: OwnPos is null" << endl;
             ;
             return;
@@ -99,7 +97,7 @@ namespace alica
         }
         // the only teammate in the corresponding task/ entrypoint
         teamMateIds.clear();
-        for (EntryPoint* ep : eps)
+        for (EntryPoint *ep : eps)
         {
             auto teammates = robotsInEntryPointOfHigherPlan(ep);
 
@@ -171,7 +169,6 @@ namespace alica
                 findBestPassPoint(this->closerFactor, passPoint, receiver, vNet, teamMatePos, teamMateId);
                 findBestPassPoint(this->closerFactor2, passPoint, receiver, vNet, teamMatePos, teamMateId);
                 findBestPassPoint(0.0, receiver, receiver, vNet, teamMatePos, teamMateId);
-
             }
         }
 #ifdef DBM_DEBUG
@@ -188,7 +185,7 @@ namespace alica
             cout << "AAPR: No valid pass point found! SuccessStatus: " << this->isSuccess() << endl;
             return;
         }
-        //Turn to goal...
+        // Turn to goal...
         shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball->getVisionBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
         if (ballVel == nullptr)
@@ -210,7 +207,7 @@ namespace alica
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         if (abs(deltaAngle) < M_PI / 36)
         { // +/-5 degree
-          //Kick && PassMsg
+          // Kick && PassMsg
             msl_helper_msgs::PassMsg pm;
             msl_msgs::Point2dInfo pinf;
             // Distance to aim point * direction of our kicker = actual pass point destination
@@ -234,7 +231,7 @@ namespace alica
             double v0 = 0;
             double distReceiver = goalReceiverVec->length();
             double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
-            //considering network delay and reaction time 1s?:
+            // considering network delay and reaction time 1s?:
             estimatedTimeForReceiverToArrive += 1.0;
             pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
@@ -252,12 +249,11 @@ namespace alica
             {
                 send(pm);
             }
-
         }
         auto dstscan = this->wm->rawSensorData->getDistanceScan();
         if (dstscan != nullptr && dstscan->size() != 0)
         {
-            double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
+            double distBeforeBall = this->robot->kicker->minFree(egoBallPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 250)
                 this->setFailure(true);
         }
@@ -266,8 +262,8 @@ namespace alica
         double sign = geometry::sgn(mc.motion.rotation);
         mc.motion.rotation = sign * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
         lastRotError = deltaAngle;
-        double transBallOrth = egoBallPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = min(1000.0, ballVel2->length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
+        double transBallOrth = egoBallPos->length() * mc.motion.rotation; // may be negative!
+        double transBallTo = min(1000.0, ballVel2->length()); // Math.Max(ballPos.Distance(),ballVel2.Distance());
         shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
         driveTo = driveTo->normalize() * transBallOrth;
         driveTo = driveTo + egoBallPos->normalize() * transBallTo;
@@ -284,7 +280,7 @@ namespace alica
     }
     void AlignAndPassRapid::initialiseParameters()
     {
-        /*PROTECTED REGION ID(initialiseParameters1436269063295) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION ID(initialiseParameters1436269063295) ENABLED START*/ // Add additional options here
         teamMatePlanName.clear();
         teamMateTaskName.clear();
 
@@ -318,7 +314,7 @@ namespace alica
             {
                 for (int i = 0; i < teamMatePlanName.size(); i++)
                 {
-                    EntryPoint* ep = getHigherEntryPoint(teamMatePlanName[i], teamMateTaskName[i]);
+                    EntryPoint *ep = getHigherEntryPoint(teamMatePlanName[i], teamMateTaskName[i]);
                     if (ep != nullptr)
                     {
                         eps.push_back(ep);
@@ -367,7 +363,7 @@ namespace alica
             this->closerFactor2 = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor2", NULL);
             this->arrivalTimeOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "ArrivalTimeOffset", NULL);
 
-            //Align Params
+            // Align Params
             this->maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
             this->pRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "RotationP", NULL);
             this->dRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "RotationD", NULL);
@@ -377,7 +373,7 @@ namespace alica
             this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
             lastRotError = 0;
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             cerr << "Could not cast the parameter properly" << endl;
         }
@@ -387,7 +383,7 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ // Add additional methods here
     void AlignAndPassRapid::findBestPassPoint(double cf, shared_ptr<geometry::CNPoint2D> passPoint,
                                               shared_ptr<geometry::CNPoint2D> receiver,
                                               shared_ptr<msl::VoronoiNet> vNet,
@@ -450,7 +446,7 @@ namespace alica
 #endif
                 return;
             }
-            //small angle to turn to pass point
+            // small angle to turn to pass point
             if (geometry::absDeltaAngle(
                     alloPos->theta + M_PI,
                     (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
@@ -470,8 +466,9 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, vNet->getObstaclePositions()))
+            auto obsPositions = vNet->getObstaclePositions();
+            if (!geometry::outsideTriangle(alloBall, right, left, ballRadius, obsPositions)
+                    && !geometry::outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obsPositions))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.6 * 255.0;
@@ -482,7 +479,7 @@ namespace alica
             }
 
             // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-            if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
+            if (!geometry::outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
             {
 #ifdef DBM_DEBUG
                 dbm->points.at(dbm->points.size() - 1).red = 0.8 * 255.0;
@@ -501,8 +498,8 @@ namespace alica
                 dbm->points.at(dbm->points.size() - 1).blue = 255;
 #endif
 
-                //this.SuccessStatus = true;
-                //Here we have to pick the best one...
+                // this.SuccessStatus = true;
+                // Here we have to pick the best one...
                 currPassUtility = 0;
 
                 currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field->getFieldWidth();
@@ -519,102 +516,9 @@ namespace alica
                     bestAoc = make_shared < geometry::CNPoint2D > (teamMatePos->x, teamMatePos->y);
                     bestTeamMateId = teamMateId;
                 }
-
             }
         }
     }
 
-    bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
-                                             shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        for (int i = 0; i < points->size(); i++)
-        {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool AlignAndPassRapid::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                                                      shared_ptr<geometry::CNPoint2D> passPoint,
-                                                      double passCorridorWidth,
-                                                      shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        for (int i = 0; i < points->size(); i++)
-        {
-            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-            < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool AlignAndPassRapid::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
-                                            shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
-    {
-        shared_ptr<geometry::CNPoint2D> a2b = b - a;
-        shared_ptr<geometry::CNPoint2D> b2c = c - b;
-        shared_ptr<geometry::CNPoint2D> c2a = a - c;
-        shared_ptr<geometry::CNPoint2D> a2p;
-        shared_ptr<geometry::CNPoint2D> b2p;
-        shared_ptr<geometry::CNPoint2D> c2p;
-        shared_ptr<geometry::CNPoint2D> p;
-        for (int i = 0; i < points->size(); i++)
-        {
-            p = points->at(i);
-            a2p = p - a;
-            b2p = p - b;
-            c2p = p - c;
-
-            if ((a2p->x * a2b->y - a2p->y * a2b->x) / a2p->normalize()->length() < tolerance
-            && (b2p->x * b2c->y - b2p->y * b2c->x) / b2p->normalize()->length() < tolerance
-            && (c2p->x * c2a->y - c2p->y * c2a->x) / c2p->normalize()->length() < tolerance)
-            {
-                return false;
-            }
-
-        }
-        return true;
-    }
-
-    double AlignAndPassRapid::minFree(double angle, double width, shared_ptr<vector<double> > dstscan)
-    {
-        double sectorWidth = 2.0 * M_PI / dstscan->size();
-        int startSector = mod((int)floor(angle / sectorWidth), dstscan->size());
-        double minfree = dstscan->at(startSector);
-        double dist, dangle;
-        for (int i = 1; i < dstscan->size() / 4; i++)
-        {
-            dist = dstscan->at(mod((startSector + i), dstscan->size()));
-            dangle = sectorWidth * i;
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-            dist = dstscan->at(mod((startSector - i), dstscan->size()));
-            if (abs(dist * sin(dangle)) < width)
-            {
-                minfree = min(minfree, abs(dist * cos(dangle)));
-            }
-
-        }
-        return minfree;
-    }
-
-    int AlignAndPassRapid::mod(int x, int y)
-    {
-        int z = x % y;
-        if (z < 0)
-            return y + z;
-        else
-            return z;
-    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

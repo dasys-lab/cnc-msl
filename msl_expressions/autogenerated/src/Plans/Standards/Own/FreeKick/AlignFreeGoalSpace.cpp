@@ -106,7 +106,8 @@ namespace alica
             egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
         // Create Motion Command for aiming
-        msl_actuator_msgs::MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
+        msl_actuator_msgs::MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance,
+                                                                   this->angleTolerance);
 
         cout << "AFGS MC: " << mc.motion.angle << ", " << mc.motion.rotation << ", " << mc.motion.translation << endl;
         send(mc);

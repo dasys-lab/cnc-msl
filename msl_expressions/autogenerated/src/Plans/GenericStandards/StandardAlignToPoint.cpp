@@ -45,8 +45,8 @@ namespace alica
     void StandardAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = this->wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -63,11 +63,11 @@ namespace alica
         additionalPoints->push_back(alloBall);
         shared_ptr < geometry::CNPoint2D > egoTarget;
         MotionControl mc;
-        if (!isReceiver)
+        if (!this->isReceiver)
         { // robot is executor
 
             // get entry point of task name to locate robot with task name
-            EntryPoint* ep = getParentEntryPoint(taskName);
+            EntryPoint* ep = getParentEntryPoint(this->taskName);
             if (ep == nullptr)
             {
                 return;
@@ -102,7 +102,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
-            mc = this->robot->robotMovement->moveToPoint(m_Query);
+            mc = this->robot->robotMovement->moveToPoint(this->m_Query);
         }
         else
         { // robot is receiver
@@ -112,21 +112,22 @@ namespace alica
              * we don't need the default positioning anymore.
              * -- Greetings Stopfer :P
              */
-            if (oldBallPos == nullptr)
+            if (this->oldBallPos == nullptr)
             {
-                oldBallPos = alloBall;
+                this->oldBallPos = alloBall;
             }
-            if (alloReceiverTarget == nullptr || oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
+            if (this->alloReceiverTarget == nullptr
+                    || this->oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
             { // recalculate alloReceiverTarget if the ball moved more than "receiverBallMovedThreshold" mm
 
-                oldBallPos = alloBall;
+                this->oldBallPos = alloBall;
 
                 //calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
-                alloReceiverTarget = (alloBall + (alloBall->normalize() * -this->receiverDistanceToBall));
+                this->alloReceiverTarget = (alloBall + (alloBall->normalize() * -this->receiverDistanceToBall));
             }
 
             // ask the path planner how to get there
-            egoTarget = alloReceiverTarget->alloToEgo(*ownPos);
+            egoTarget = this->alloReceiverTarget->alloToEgo(*ownPos);
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
@@ -153,18 +154,18 @@ namespace alica
         string tmp = "";
         if (getParameter("TaskName", tmp))
         {
-            taskName = tmp;
+            this->taskName = tmp;
         }
 
         if (getParameter("Receiver", tmp))
         {
             if (tmp.find("true") != string::npos)
             {
-                isReceiver = true;
+                this->isReceiver = true;
             }
             else
             {
-                isReceiver = false;
+                this->isReceiver = false;
             }
         }
         /*PROTECTED REGION END*/

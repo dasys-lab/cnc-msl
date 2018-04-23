@@ -71,7 +71,7 @@
     <inState>#1464779892294</inState>
     <outState>#1464780991973</outState>
   </transitions>
-  <transitions id="1464781042853" name="MISSING_NAME" comment="haveball" msg="">
+  <transitions id="1464781042853" name="MISSING_NAME" comment="alignandgrab success" msg="">
     <preCondition id="1464781044511" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464780991973</inState>
     <outState>#1464780997998</outState>

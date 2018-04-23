@@ -138,4 +138,20 @@
     <key href="../ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1521898536366"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../ThrowIn/ThrowInPass.beh#1462363309950"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

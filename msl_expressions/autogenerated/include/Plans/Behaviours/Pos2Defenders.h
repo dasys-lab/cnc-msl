@@ -3,7 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1444834678756) ENABLED START*/ //Add additional includes here
-#include <msl_robot/robotmovement/MovementQuery.h>
+namespace msl
+{
+    class MovementQuery;
+}
 namespace geometry
 {
     class CNPosition;

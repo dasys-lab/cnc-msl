@@ -215,7 +215,6 @@ shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::
         return nullptr;
     }
 
-    //		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
     return retPoint->alloToEgo(*ownPos);
 }
 

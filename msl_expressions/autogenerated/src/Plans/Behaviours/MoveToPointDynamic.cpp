@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1456997073100) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <engine/constraintmodul/Query.h>
 #include <msl_robot/MSLRobot.h>
 #include <MSLEnums.h>
 #include <SolverType.h>
