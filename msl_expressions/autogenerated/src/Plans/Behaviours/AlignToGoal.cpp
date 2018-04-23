@@ -9,6 +9,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <MSLFootballField.h>
 #include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -118,7 +119,13 @@ namespace alica
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = driveTo->length();
 
-        sendAndUpdatePT(mc);
+
+        auto ruleMC = this->robot->robotMovement->ruleActionForBallGetter();
+        if(!std::isnan(ruleMC.motion.translation)) {
+        	send(ruleMC);
+        } else {
+        	sendAndUpdatePT(mc);
+        }
 
         /*PROTECTED REGION END*/
     }

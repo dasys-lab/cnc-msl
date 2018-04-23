@@ -4,7 +4,7 @@
     <parameters id="1436279735883" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="AttackPlay"/>
     <parameters id="1436279744894" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="AttackPlay"/>
     <parameters id="1436279752616" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
-    <parameters id="1436279760630" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="SupportAttack"/>
+    <parameters id="1436279760630" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="Block"/>
     <parameters id="1436280277731" name="MISSING_NAME" comment="" key="DistToFieldBorder" value="-500"/>
     <parameters id="1436280478107" name="MISSING_NAME" comment="" key="FreeOppAngle" value="1.5"/>
     <parameters id="1436280524228" name="MISSING_NAME" comment="" key="MaxPassDist" value="14000"/>
