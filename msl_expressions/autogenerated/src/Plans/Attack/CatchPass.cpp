@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1440754525537) ENABLED START*/ //Add additional includes here
 #include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
@@ -18,11 +19,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1440754525537) ENABLED START*/ //Add additional options here
         this->maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
-        field = nullptr;
-//        maxVel = 0;
-        sc = nullptr;
-
-        query = make_shared<msl::MovementQuery>();
+        this->query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     CatchPass::~CatchPass()
@@ -62,8 +59,6 @@ namespace alica
                 trans = maxVel;
             }
             trans = min(maxVel, trans);
-            // replaced with new moveToPoint method
-//            mc = msl::RobotMovement::moveToPointCarefully(egoDest, ballPos, 100);
             query->egoDestinationPoint = egoDest;
             query->egoAlignPoint = ballPos;
             query->snapDistance = 100;

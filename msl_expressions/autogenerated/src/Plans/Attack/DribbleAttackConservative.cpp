@@ -58,7 +58,6 @@ namespace alica
 
             if (tmpMC.motion.translation != NAN)
             {
-            	//??? corner isn't used any further
                 corner = (corner->egoToAllo(*ownPos) + make_shared < geometry::CNPoint2D > (-800, 0)->alloToEgo(*ownPos));
                 bm = tmpMC;
             }
