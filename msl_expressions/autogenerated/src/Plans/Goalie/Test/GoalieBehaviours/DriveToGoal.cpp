@@ -38,11 +38,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
 
-	if (wm->field->posOwnGoalMid() == nullptr) {
-		cout << "SOMETHING IS REALLY WRONG; WORLDMODEL SUCKS" << endl;
-	}
-
-        cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
 
@@ -65,33 +60,11 @@ namespace alica
 			return;
 		}
 
-            if (goalInitPos.compare("Left") == 0)
-            {
-                alloTargetX = alloGoalLeft->x - 100;
-                alloTargetY = alloGoalLeft->y;
-            }
-            else if (goalInitPos.compare("Right") == 0)
-            {
-                alloTargetX = alloGoalRight->x - 100;
-                alloTargetY = alloGoalRight->y;
-            }
-            else
-            {
-                alloTargetX = alloGoalMid->x - 100;
-                alloTargetY = alloGoalMid->y;
-            }
+            alloTarget = alloGoalMid;
 
-            alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
-            alloFieldCenterAlignPoint = wm->field->posCenterMarker();
-
-            cout << " Driving to goal" << endl;
-            // replaced with new moveToPoint method
-//            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-//                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
             query->egoDestinationPoint = alloTarget->alloToEgo(*me);
-            query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
+            query->egoAlignPoint = alloTarget->alloToEgo(*me);
             query->snapDistance = 100;
-
 
 			// Add goal posts as obstacles
 			auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
