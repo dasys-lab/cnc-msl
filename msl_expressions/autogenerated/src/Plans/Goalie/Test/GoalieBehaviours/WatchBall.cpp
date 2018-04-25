@@ -35,8 +35,7 @@ WatchBall::WatchBall()
     goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
     snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
     maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
-
-     query = make_shared<msl::MovementQuery>();
+    goalWidth = this->wm->field->getGoalWidth();
 
     const auto nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
     ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
@@ -45,6 +44,11 @@ WatchBall::WatchBall()
     alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+
+    const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
+    maxRotationRad = maxRotationDeg * (M_PI/180.0);
+
+    query = make_shared<msl::MovementQuery>();
     /*PROTECTED REGION END*/
 }
 WatchBall::~WatchBall()
@@ -70,40 +74,20 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    // TODO: Fix and uncomment
-    // updateGoalPosition();
+    updateGoalPosition();
 
 	// Special cases that depend on the ball position are following:
-    shared_ptr<geometry::CNPoint2D> alloBall = wm->ball->getAlloBallPosition();
+    alloBall = wm->ball->getAlloBallPosition();
 
     // If ball is not seen or the ball is further away than the goal mid point is.
-    // TODO: Keep?
-    if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
+    if (alloBall == nullptr // Ball is not seen
+		|| abs(alloBall->x) > abs(alloGoalMid->x) + 50 // Ball is behind goal
+		|| alloBall->x > -250) // Ball is in opponent half
     {
         // Goalie drives to last known target and rotates towards mirrored own position
-
-        cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
-
-	query->egoDestinationPoint = alloGoalMid->alloToEgo(*ownPos);
-		if (alloBall != nullptr) {
-			query->egoAlignPoint = alloBall->alloToEgo(*ownPos);
-		}
-
-        mc = robot->robotMovement->moveToPoint(query);
-
+        cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
+        mc = driveAndAlignTo(alloGoalMid, mirroredOwnPos());
         send(mc);
-        return;
-    }
-
-	// If ball is seen in the opponent half, stop the robot but rotate towards the opponents half.
-    // TODO: Keep. What would be the alternative?
-    if (alloBall != nullptr && alloBall->x > -250)
-    {
-        mc.motion.translation = 0;
-        shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
-        mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
-        send(mc);
-        cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
         return;
     }
 
@@ -127,46 +111,24 @@ void WatchBall::run(void *msg)
 		const double targetX = alloGoalMid->x + 200;
 		std::cout << "targetY: " << targetY << std::endl;
 
-	        return make_shared<geometry::CNPoint2D>(targetX, targetY);
+		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
 
 	auto alloTarget = calculateTarget();
-	// If alloTarget was not calculated, stop robot?
-	// TODO: Eventually return prevTarget or alloGoalMid to be ready when ball is coming.
+
+	// If alloTarget was not calculated, move to the goal mid.
 	if (alloTarget == nullptr) {
 		alloTarget = alloGoalMid;
 	}
 
-	// Finaly if a goal impact can be calculated drive to the calculated impact:
-    // TODO: Think about replacing the code with existing drive config.
-	auto egoBall = alloBall->alloToEgo(*ownPos);
-    auto egoTarget = alloTarget->alloToEgo(*ownPos);
+	auto offset = std::make_shared<geometry::CNPoint2D>(200, 0);
 
-	// Stop translation if already at target.
-	if (egoTarget->length() <= snapDistance) {
-		mc.motion.translation = 0;
-		send(mc);
-		return;
-	}
+	// Finaly if a goal impact can be calculated drive to the calculated impact
+	mc = faster(driveAndAlignTo(alloTarget + offset, alloBall));
 
-	query->egoDestinationPoint = egoTarget;
-	query->egoAlignPoint = egoBall;
-	mc = robot->robotMovement->moveToPoint(query);
-
-	// Add goal posts as obstacles
-	auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-	additionalPoints->push_back(alloGoalLeft);
-	additionalPoints->push_back(alloGoalRight);
-	query->additionalPoints = additionalPoints;
-	// TODO: Test if good
-	query->blockOwnPenaltyArea = true;
-
-	mc.motion.translation *= 2; // Foxy, move faster!
-	// TODO: Probably remove as soon as motion is fixed
-	// Clamp translation because of motion failure
-	if (mc.motion.translation > 1500) {
-		mc.motion.translation = 1500;
-	}
+	// Clamp rotation to 45°
+	mc.motion.translation = clampRotation(
+			mc.motion.translation, ownPos->theta, maxRotationRad);
 
     send(mc);
 
@@ -307,20 +269,80 @@ void WatchBall::updateGoalPosition()
 {
     shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
 
-    if (laserDetectedEgoGoalMid)
-    {
-        alloGoalMid = laserDetectedEgoGoalMid;
-    }
-    else
+    if (!laserDetectedEgoGoalMid)
     {
         alloGoalMid = wm->field->posOwnGoalMid();
+    	return;
     }
+
+    alloGoalMid = laserDetectedEgoGoalMid;
+
     if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
         cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
         return;
     }
-    alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-    alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+
+    alloGoalLeft = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+    alloGoalRight = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 }
+
+double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)
+{
+	if (ownTheta > maxRot && mcRotation > 0) {
+		return 0;
+	}
+
+	if (ownTheta < -(maxRot) && mcRotation < 0) {
+		return 0;
+	}
+
+	return mcRotation;
+}
+
+msl_actuator_msgs::MotionControl WatchBall::driveAndAlignTo(
+	shared_ptr<geometry::CNPoint2D> targetAllo,
+	shared_ptr<geometry::CNPoint2D> alloAlginPoint
+	)
+{
+	msl_actuator_msgs::MotionControl mc;
+
+	auto egoAlignPoint = alloAlginPoint->alloToEgo(*ownPos);
+	auto egoTarget = targetAllo->alloToEgo(*ownPos);
+
+	// Build Query
+	query->egoDestinationPoint = egoTarget;
+	query->egoAlignPoint = egoAlignPoint;
+	query->snapDistance = snapDistance; // TODO: Test if rotation still works
+	// Add goal posts as obstacles
+	auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+	additionalPoints->push_back(alloGoalLeft);
+	additionalPoints->push_back(alloGoalRight);
+	query->additionalPoints = additionalPoints;
+	// TODO: Test if good
+	query->blockOwnPenaltyArea = true;
+	mc = robot->robotMovement->moveToPoint(query);
+
+	return mc;
+}
+
+MotionControl WatchBall::faster(MotionControl in)
+{
+	in.motion.translation *= 2; // Foxy, move faster!
+	// TODO: Probably remove as soon as motion is fixed
+	// Clamp translation because of motion failure
+	if (in.motion.translation > 1500) {
+		in.motion.translation = 1500;
+	}
+	return in;
+}
+
+shared_ptr<geometry::CNPoint2D> WatchBall::mirroredOwnPos() {
+	auto mirrored = std::make_shared<geometry::CNPoint2D>(
+			ownPos->x+1000, ownPos->y);
+	return mirrored;
+}
+
 /*PROTECTED REGION END*/
 } /* namespace alica */
