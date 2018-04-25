@@ -15,6 +15,7 @@ change_interfaces()
 	filename="${configpath}${1}"
 	rm -f /etc/network/interfaces.d/*
 	cp "$filename" /etc/network/interfaces.d/
+	sed -i "s/ROBOT_ADDRESS/$robotip/g" $filename
 	ifdown "$interface" || echo "$interface already down"
 	sleep 1
 	ifup "$interface"
