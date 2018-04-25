@@ -39,6 +39,7 @@ namespace alica
         this->transTolerance = 0.0;
         this->rotTolerance = 0.0;
         this->angleTolerance = 0.0;
+        this->jumpPlanned = false;
 
         this->staticUpperBound = 0.0;
         this->staticMiddleBound = 0.0;
@@ -95,6 +96,8 @@ namespace alica
         double robotVel = odom->translation;
         double robotRot = odom->rotation;
 
+        this->jumpPlanned = false;
+
         // get motion command
         // check if backwards movement is planned
         shared_ptr < msl_actuator_msgs::MotionControl > plannedMotion = this->wm->rawSensorData->getLastMotionCommand();
@@ -113,6 +116,7 @@ namespace alica
                 robotAngle = plannedMotion->motion.angle;
                 robotVel = plannedMotion->motion.translation;
                 robotRot = plannedMotion->motion.rotation;
+                this->jumpPlanned = true;
 
                 // cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
             }
@@ -309,7 +313,7 @@ namespace alica
         if (velXTemp < 0.0)
         {
             // detect jump in odometry values
-            if (this->transTolerance <= fabs(translation - this->translationOld)
+            if (this->jumpPlanned || this->transTolerance <= fabs(translation - this->translationOld)
                     || this->rotTolerance <= fabs(rotation - this->rotationOld))
             // || angleTolerance <= fabs(angle - angleOld))
             {

@@ -52,6 +52,7 @@ namespace alica
         double transTolerance;
         double rotTolerance;
         double angleTolerance;
+        bool jumpPlanned;
 
         bool testingMode;
 
