@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+
+if [ "$(id -u)" != "0" ]; then
+   echo "no permissions: use sudo!" 1>&2
+   exit 1
+fi
+
+change_interfaces()
+{
+	configpath="$HOME/cnws/src/cnc-msl/configuration/"
+	filename="${configpath}${1}"
+	rm -f /etc/network/interfaces.d/*
+	cp "$filename" /etc/network/interfaces.d/
+	ifdown "$interface"
+	ifup "$interface"
+}
+
+add_source()
+{
+	echo "Adding 'source /etc/network/interfaces.d/*' ..."
+	echo 'source /etc/network/interfaces.d/*' >>/etc/network/interfaces
+}
+
+grep -q 'source /etc/network/interfaces.d/*' /etc/network/interfaces || add_source
+
+option="$1"
+interface="$(ifconfig | grep 'wl' | cut -d ' ' -f 1)"
+
+case "${option}" in
+field)
+	echo  "Chaning to field"
+	change_interfaces field.interface
+		;;
+git)
+	echo  "Chaning to git"
+	change_interfaces git.interface
+		;; *)
+		echo "usage: ${0} [field|git]"
+esac
