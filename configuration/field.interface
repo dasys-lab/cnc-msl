@@ -1,1 +1,9 @@
+#for tournament
+iface wlp5s0 inet static
+address ROBOT_ADDRESS
+netmask 255.255.255.0
+gateway 172.16.40.1
+broadcast 172.16.40.255
 wireless-essid MSL_FIELD_A_a
+
+auto wlp5s0
