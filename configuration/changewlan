@@ -1,25 +1,25 @@
 #!/bin/bash
 set -e
+home="/home/cn"
 
 if [ "$(id -u)" != "0" ]; then
    echo "no permissions: use sudo!" 1>&2
    exit 1
 fi
 
-hostfile="$HOME/cnws/src/cnc-msl/configuration/hosts"
+hostfile="$home/cnws/src/cnc-msl/configuration/hosts"
 robotip="$(grep $(hostname) $hostfile | tail -1 | cut -f 1 | tr -d ' ')"
 
 interface="wlp5s0"
 change_interfaces()
 {
-	configpath="$HOME/cnws/src/cnc-msl/configuration/"
+	configpath="$home/cnws/src/cnc-msl/configuration/"
 	filename="${configpath}${1}"
-	echo "'$robotip'"
+	test -f $filename || (echo "$filename does not exist" ; exit 1)
+	echo $configpath
 	rm -f /etc/network/interfaces.d/*
 	sed "s/ROBOT_ADDRESS/$robotip/g" $filename>/etc/network/interfaces.d/conf.interface
-	ifdown "$interface" || echo "$interface already down"
-	sleep 1
-	ifup "$interface"
+	sleep 3 && ifdown "$interface" && sleep 1 && ifup "$interface" &
 }
 
 add_source()
@@ -34,7 +34,7 @@ option="$1"
 
 case "${option}" in
 field)
-	echo  "ChanginChanging to field"
+	echo  "Changing to field"
 	change_interfaces field.interface
 		;;
 git)
