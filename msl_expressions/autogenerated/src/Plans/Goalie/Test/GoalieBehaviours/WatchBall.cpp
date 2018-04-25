@@ -286,7 +286,7 @@ void WatchBall::updateGoalPosition()
     		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + midPostDistance);
 }
 
-double clampRotation(double mcRotation, double ownTheta, double maxRot)
+double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)
 {
 	if (ownTheta > maxRot && mcRotation > 0) {
 		return 0;
