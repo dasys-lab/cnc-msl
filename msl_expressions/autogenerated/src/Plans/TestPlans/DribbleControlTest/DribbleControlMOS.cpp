@@ -107,7 +107,7 @@ namespace alica
             // cout << "DribbleControlMOS::run: planned Motion Angle:" << plannedMotion->motion.angle << endl;
 
             // if we are not moving at the moment and plan to move backwards
-            if (robotVel < 200.0
+            if (robotVel < 100.0
                     && ((plannedMotion->motion.angle < M_PI / 4.0 && plannedMotion->motion.angle > -M_PI / 4.0)
                             || plannedMotion->motion.angle > M_PI * 7.0 / 4.0)
                     && plannedMotion->motion.translation > 100.0)
