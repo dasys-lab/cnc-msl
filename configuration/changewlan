@@ -6,16 +6,17 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-robotip="$(grep $(hostname) /etc/hosts | tail -1)"
+hostfile="$HOME/cnws/src/cnc-msl/configuration/hosts"
+robotip="$(grep $(hostname) $hostfile | tail -1 | cut -f 1 | tr -d ' ')"
 
 interface="wlp5s0"
 change_interfaces()
 {
 	configpath="$HOME/cnws/src/cnc-msl/configuration/"
 	filename="${configpath}${1}"
+	echo "'$robotip'"
 	rm -f /etc/network/interfaces.d/*
-	cp "$filename" /etc/network/interfaces.d/
-	sed -i "s/ROBOT_ADDRESS/$robotip/g" $filename
+	sed "s/ROBOT_ADDRESS/$robotip/g" $filename>/etc/network/interfaces.d/conf.interface
 	ifdown "$interface" || echo "$interface already down"
 	sleep 1
 	ifup "$interface"

@@ -1,8 +1,10 @@
 #for CNC
-iface wlan0 inet static
+iface wlp5s0 inet static
 address ROBOT_ADDRESS
 netmask 255.255.255.0
 gateway 172.16.40.1
 broadcast 172.16.40.255
 dns-nameservers 8.8.8.8 # this is useful for our lab
 wireless-essid CNC
+
+auto wlp5s0
