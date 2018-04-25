@@ -96,6 +96,11 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd &bh)
 //        bh.rightMotor = (int)(max(this->minRotationRight, (abs(bh.rightMotor)) / this->dribbleFactorRight)) * (bh.rightMotor >= 0 ? 1 : -1);
 //        bh.leftMotor = (int)(max(this->minRotationLeft, (abs(bh.leftMotor)) / this->dribbleFactorLeft)) * (bh.leftMotor >= 0 ? 1 : -1);
 //    }
+        if (bh.rightMotor != 0 && bh.leftMotor != 0)
+        {
+            bh.rightMotor = (int)(max(this->minRotationRight, (double)(abs(bh.rightMotor)))) * (bh.rightMotor >= 0 ? 1 : -1);
+            bh.leftMotor = (int)(max(this->minRotationLeft, (double)(abs(bh.leftMotor)))) * (bh.leftMotor >= 0 ? 1 : -1);
+        }
     this->ballHandlePub.publish(bh);
 }
 
