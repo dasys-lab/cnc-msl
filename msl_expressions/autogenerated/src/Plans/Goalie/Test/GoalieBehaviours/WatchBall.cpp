@@ -115,13 +115,16 @@ void WatchBall::run(void *msg)
 	};
 
 	auto alloTarget = calculateTarget();
+
 	// If alloTarget was not calculated, move to the goal mid.
 	if (alloTarget == nullptr) {
 		alloTarget = alloGoalMid;
 	}
 
+	auto offset = std::make_shared<geometry::CNPoint2D>(200, 0);
+
 	// Finaly if a goal impact can be calculated drive to the calculated impact
-	mc = faster(driveAndAlignTo(alloTarget, alloBall));
+	mc = faster(driveAndAlignTo(alloTarget + offset, alloBall));
 
 	// Clamp rotation to 45°
 	mc.motion.translation = clampRotation(
@@ -279,11 +282,10 @@ void WatchBall::updateGoalPosition()
         return;
     }
 
-    const auto midPostDistance = goalWidth / 2;
     alloGoalLeft = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - midPostDistance);
+    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + midPostDistance);
+    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 }
 
 double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)
