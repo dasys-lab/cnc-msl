@@ -6,13 +6,17 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+robotip="$(grep $(hostname) /etc/hosts | tail -1)"
+
+interface="wlp5s0"
 change_interfaces()
 {
 	configpath="$HOME/cnws/src/cnc-msl/configuration/"
 	filename="${configpath}${1}"
 	rm -f /etc/network/interfaces.d/*
 	cp "$filename" /etc/network/interfaces.d/
-	ifdown "$interface"
+	ifdown "$interface" || echo "$interface already down"
+	sleep 1
 	ifup "$interface"
 }
 
@@ -25,7 +29,6 @@ add_source()
 grep -q 'source /etc/network/interfaces.d/*' /etc/network/interfaces || add_source
 
 option="$1"
-interface="$(ifconfig | grep 'wl' | cut -d ' ' -f 1)"
 
 case "${option}" in
 field)
