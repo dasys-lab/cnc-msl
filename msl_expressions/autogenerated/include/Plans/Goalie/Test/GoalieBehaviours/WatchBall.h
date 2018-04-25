@@ -12,6 +12,7 @@
 #include <msl_robot/robotmovement/MovementQuery.h>
 #include <string>
 
+using msl_actuator_msgs::MotionControl;
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -35,11 +36,14 @@ class WatchBall : public DomainBehaviour
     shared_ptr<geometry::CNPoint2D> alloGoalRight;
     shared_ptr<geometry::CNPoint2D> alloGoalMid;
     shared_ptr<geometry::CNPoint2D> prevTarget;
+    shared_ptr<geometry::CNPoint2D> alloBall;
 
 	// Config parameters
     int maxVariance;
     int goalieSize;
     int snapDistance;
+    double maxRotationRad;
+    double goalWidth;
 
 	// ballPositions is a RingBuffer used to predict the impact point.
     msl::RingBuffer<geometry::CNPoint2D> *ballPositions;
@@ -54,6 +58,25 @@ class WatchBall : public DomainBehaviour
 
 	// query is the MovementQuery for the robot to drive to the goal.
     shared_ptr<msl::MovementQuery> query;
+
+	// Helper functions
+	
+	// clampRotations clamps or limits the rotation to maxRot.
+	// Given the robots rotation ownTheta and the demanded mcRotation, don't rotate
+	// if the the robot would exceed the max rotation given maxRot.
+	double clampRotation(double mcRotation, double ownTheta, double maxRot);
+
+	// driveTo drives to the given target but respects the goal area
+	MotionControl driveAndAlignTo(
+			shared_ptr<geometry::CNPoint2D> target,
+			shared_ptr<geometry::CNPoint2D> alloAlginPoint
+			);
+
+	// Make foxy move faster, but not too fast xD
+	MotionControl faster(const MotionControl in);
+
+	// Return the mirrored ownPos for alignment.
+	shared_ptr<geometry::CNPoint2D> mirroredOwnPos();
 
     /*PROTECTED REGION END*/
   private:
