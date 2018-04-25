@@ -118,7 +118,7 @@ namespace alica
                 robotRot = plannedMotion->motion.rotation;
                 this->jumpPlanned = true;
 
-                // cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
+                cout << "DribbleControlMOS::run: planned Motion Translation:" << robotVel << endl;
             }
         }
 
