@@ -103,10 +103,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="StandardReceive.beh#1428509534191"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="StandardPass.beh#1435760175843"/>
     <value/>
   </extensions>
@@ -126,14 +122,6 @@
   </extensions>
   <extensions>
     <key href="StandardAlignAndGrab.beh#1455888617961"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="StandardShieldBall.beh#1455888715611"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>

@@ -12,7 +12,6 @@
   </conditions>
   <states id="1464535161175" name="PositionExecutor" comment="" entryPoint="1464531946025">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
     <outTransitions>#1464778510115</outTransitions>
   </states>
@@ -23,7 +22,6 @@
   </states>
   <states id="1464535201681" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1466861369486</plans>
     <inTransitions>#1464778510115</inTransitions>
     <inTransitions>#1464783504464</inTransitions>
@@ -37,7 +35,6 @@
   </states>
   <states id="1464535253598" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
     <inTransitions>#1464778513652</inTransitions>
     <inTransitions>#1519832906025</inTransitions>
@@ -47,7 +44,6 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">AlignFreeGoalSpace.beh#1467039882734</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
     <outTransitions>#1519832906025</outTransitions>

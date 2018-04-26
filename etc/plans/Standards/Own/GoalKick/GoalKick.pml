@@ -7,7 +7,6 @@
     </quantifiers>
   </conditions>
   <states id="1469521732931" name="AlignExec" comment="" entryPoint="1469521732932">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1469522458021</outTransitions>
@@ -17,7 +16,6 @@
   </states>
   <states id="1469522367640" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899</plans>
     <inTransitions>#1469522458021</inTransitions>
     <inTransitions>#1469522461468</inTransitions>
@@ -26,7 +24,6 @@
   <states id="1469522370067" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../ThrowIn/ThrowInPass.beh#1462363309950</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1469522459411</inTransitions>
     <outTransitions>#1469522460547</outTransitions>
     <outTransitions>#1469522461468</outTransitions>
@@ -43,7 +40,6 @@
   <states id="1469522492956" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1469522683853</inTransitions>
     <outTransitions>#1469522685570</outTransitions>
   </states>
@@ -53,7 +49,6 @@
   </states>
   <states id="1469522496824" name="ReceiveAlternative" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1469522690355</inTransitions>
     <outTransitions>#1469522688609</outTransitions>
   </states>
