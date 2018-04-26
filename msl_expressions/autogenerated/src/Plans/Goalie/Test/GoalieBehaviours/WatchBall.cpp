@@ -32,29 +32,28 @@ WatchBall::WatchBall()
     : DomainBehaviour("WatchBall")
 {
     /*PROTECTED REGION ID(con1447863466691) ENABLED START*/ // Add additional options here
+
+	// Read in config values.
     goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
     snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
-    maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
+    ballMovingThreshold = (*this->sc)["Behaviour"]->get<double>("Goalie.BallMovingThreshold", NULL);
+    const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
+    maxRotationRad = maxRotationDeg * (M_PI/180.0);
+
+	// Read required goal dimensions.
     goalWidth = this->wm->field->getGoalWidth();
-
-    const auto nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-    ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-
     const auto tempMid = wm->field->posOwnGoalMid();
     alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
     alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 
-    const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
-    maxRotationRad = maxRotationDeg * (M_PI/180.0);
-
+	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
     /*PROTECTED REGION END*/
 }
 WatchBall::~WatchBall()
 {
     /*PROTECTED REGION ID(dcon1447863466691) ENABLED START*/ // Add additional options here
-    delete ballPositions;
     /*PROTECTED REGION END*/
 }
 void WatchBall::run(void *msg)
@@ -91,21 +90,20 @@ void WatchBall::run(void *msg)
         return;
     }
 
-	// From now on the balls postion alloBall is valid and in our half, so act accordingly.
-    // Add ball position to ring buffer.
-    this->ballPositions->add(alloBall);
-
     // Calculate target position on goal line.
 	
 	// Lambda that returns one prediction of the goal impact or nullptr if
 	// a prediction is not possible.
 	auto calculateTarget = [&]() -> shared_ptr<geometry::CNPoint2D> {
-		// Not enough valid ball positions to predict goal impact
-		if (ballPositions->getSize() < 0) {
-			return nullptr;
+		double targetY = 0;
+
+		if (ballIsMoving()) {
+			targetY = calcGoalImpactY();
+		} else {
+			// if ball is not moving, do stuff
+			targetY = alloBall->y;
 		}
 
-		double targetY = calcGoalImpactY(); // TODO: Parameterize
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
 		const double targetX = alloGoalMid->x + 200;
@@ -115,6 +113,7 @@ void WatchBall::run(void *msg)
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
+
 
 	auto alloTarget = calculateTarget();
 
@@ -129,7 +128,7 @@ void WatchBall::run(void *msg)
 	mc = faster(driveAndAlignTo(alloTarget + offset, alloBall));
 
 	// Clamp rotation to 45°
-	mc.motion.translation = clampRotation(
+	mc.motion.rotation = clampRotation(
 			mc.motion.translation, ownPos->theta, maxRotationRad);
 
     send(mc);
@@ -152,7 +151,6 @@ double WatchBall::calcGoalImpactY()
 	}
 
 	auto ballSpeed = ballVec->length();
-	// auto alloBallVec = ballVec->egoToAllo(*alloBall);
 
 	// Calculation itself
 	const auto bvx = -ballVec->x; // ball velocity x
@@ -189,6 +187,17 @@ double WatchBall::calcGoalImpactY()
 
 
 	return y;
+}
+
+bool WatchBall::ballIsMoving()
+{
+	// Retrieve ball velocity vector
+	auto ballVec = wm->ball->getEgoBallVelocity();
+	if (ballVec == nullptr) {
+		return 0; // TODO: Indicate error
+	}
+	auto ballSpeed = ballVec->length();
+	return ballSpeed >= ballMovingThreshold;
 }
 
 double WatchBall::fitTargetY(double targetY)

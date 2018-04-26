@@ -44,9 +44,7 @@ class WatchBall : public DomainBehaviour
     int snapDistance;
     double maxRotationRad;
     double goalWidth;
-
-	// ballPositions is a RingBuffer used to predict the impact point.
-    msl::RingBuffer<geometry::CNPoint2D> *ballPositions;
+	double ballMovingThreshold;
 
 	// calcGoalImpactY uses the RingBuffer to calculate the Y impact of
 	// the ball at the goal line.
@@ -77,6 +75,9 @@ class WatchBall : public DomainBehaviour
 
 	// Return the mirrored ownPos for alignment.
 	shared_ptr<geometry::CNPoint2D> mirroredOwnPos();
+
+	// ballIsMoving returns true if the ball speed exceeds ballMovingThreshold.
+	bool ballIsMoving();
 
     /*PROTECTED REGION END*/
   private:
