@@ -19,8 +19,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1439379316897) ENABLED START*/ // Add additional options here
         this->query = make_shared<msl::MovementQuery>();
+        this->ballDistanceRec = 0.0;
+        this->alignTolerance = 0.0;
         this->positionDistanceTolerance = 0.0;
-        this->positionDistanceTolerance = 0.0;
+        this->slowCatchRadius = 0.0;
+        this->fastCatchRadius = 0.0;
         /*PROTECTED REGION END*/
     }
     PositionReceiver::~PositionReceiver()
