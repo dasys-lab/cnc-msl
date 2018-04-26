@@ -30,7 +30,6 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloTarget;
         shared_ptr<geometry::CNPoint2D> alloGoalMid, alloGoalRight, alloGoalLeft;
         int goalieSize;
-        string goalInitPos;
         shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
