@@ -76,7 +76,7 @@ void Robot::handleKickerStatInfo(
     std::pair<std::chrono::system_clock::time_point, msl_actuator_msgs::KickerStatInfoPtr> timeKSIpair)
 {
     this->timeLastMsgReceived = timeKSIpair.first;
-    this->uiMSLRobot->BallPossValue->setText(QString::number(timeKSIpair.second->capVoltage));
+    this->uiMSLRobot->KickVolValue->setText(QString::number(timeKSIpair.second->capVoltage));
 }
 
 void Robot::handleSharedWorldInfo(

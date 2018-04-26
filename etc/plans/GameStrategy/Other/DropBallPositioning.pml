@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1455537014534" name="DropBallPositioning" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.075" destinationPath="Plans/GameStrategy/Other" priority="0.0" minCardinality="1" maxCardinality="3">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1455537014534" name="DropBallPositioning" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.075" destinationPath="Plans/GameStrategy/Other" priority="0.0" minCardinality="1" maxCardinality="4">
   <states id="1455537014535" name="AttackerPos" comment="" entryPoint="1455537014536">
     <plans xsi:type="alica:BehaviourConfiguration">DropBallAttackerPos.beh#1455537879822</plans>
   </states>
@@ -24,7 +24,7 @@
     <task>../../../Misc/taskrepository.tsk#1225116131298</task>
     <state>#1455537281002</state>
   </entryPoints>
-  <entryPoints id="1455537253704" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="0">
+  <entryPoints id="1455537253704" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1455537283938</state>
   </entryPoints>
