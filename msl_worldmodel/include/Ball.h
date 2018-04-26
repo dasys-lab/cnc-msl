@@ -106,6 +106,9 @@ class Ball
     double oppDistWithBallBefore;
     int oppBallPossessionHystersis;
     int oppHasBallCounter;
+    int lightbarrierTriggeredCounter;
+    int visionHaveBallCounter;
+    bool ballInKicker;
 
     /**
      * The minimum amount of ALICA cycles (the 30 Hz frequency) the ball has to be seen.
