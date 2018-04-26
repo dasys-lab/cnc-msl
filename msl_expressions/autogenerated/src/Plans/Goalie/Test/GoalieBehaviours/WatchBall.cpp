@@ -13,20 +13,6 @@ using namespace std;
 namespace alica
 {
 /*PROTECTED REGION ID(staticVars1447863466691) ENABLED START*/
-                                                               /*
-                                                                *
-                                                                *			 _______________________________
-                                                                *			|								|
-                                                                *			| <---------- 2000mm ---------> |
-                                                                *			|   ._.		   ._.		  ._.	|
-                                                                *			| \/   \/	 \/   \/    \/   \/ |
-                                                                *	 _______| |__0__| _ _|__1__|_ _ |__2__| |__________
-                                                                *				pos		   pos		  pos
-                                                                *			  \__ __/
-                                                                *				 V
-                                                                *			110+720+110
-                                                                *			   920mm
-                                                                */
 /*PROTECTED REGION END*/
 WatchBall::WatchBall()
     : DomainBehaviour("WatchBall")
@@ -75,13 +61,13 @@ void WatchBall::run(void *msg)
 
     updateGoalPosition();
 
-	// Special cases that depend on the ball position are following:
     alloBall = wm->ball->getAlloBallPosition();
 
+	// Special case that depend on the ball presence and position.
     // If ball is not seen or the ball is further away than the goal mid point is.
     if (alloBall == nullptr // Ball is not seen
 		|| abs(alloBall->x) > abs(alloGoalMid->x) + 50 // Ball is behind goal
-		|| alloBall->x > -250) // Ball is in opponent half
+		|| alloBall->x > 1000) // Ball is in opponent half, TODO: Probably make configurable
     {
         // Goalie drives to last known target and rotates towards mirrored own position
         cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
@@ -111,12 +97,11 @@ void WatchBall::run(void *msg)
 			// if ball is not moving or would not hit goal, then
 			// do drive to ball height.
 			targetY = alloBall->y;
-		}
+		} // TODO: Try out speculative keeping
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
 		const double targetX = alloGoalMid->x + 200;
-		//std::cout << "targetY: " << targetY << std::endl;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
@@ -166,18 +151,6 @@ pair<bool, double> WatchBall::calcGoalImpactY(
 	}
 
 	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
-
-	/* static int c = 0; */
-	/* if (c++ == 5) { */
-	/* 	printf("ballVec: %f %f, ballSpeed: %f, y: %f\n", */
-	/* 			ballVec->x, ballVec->y, ballSpeed, y); */
-	/* 	c = 0; */
-	/* 	if (ballSpeed >= threshold) { */
-	/* 		puts("Ball IS moving!"); */
-	/* 	} else { */
-	/* 		puts("Ball NOT moving!"); */
-	/* 	} */
-	/* } */
 
 	return std::make_pair(true, y);
 }
