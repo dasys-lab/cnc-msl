@@ -133,10 +133,6 @@ void WatchBall::run(void *msg)
 	// Finaly if a goal impact can be calculated drive to the calculated impact
 	mc = faster(driveAndAlignTo(alloTarget + offset, mirroredOwnPos()));
 
-	// Clamp rotation to 45°
-	mc.motion.rotation = clampRotation(
-			mc.motion.translation, ownPos->theta, maxRotationRad);
-
     send(mc);
 
     /*PROTECTED REGION END*/
