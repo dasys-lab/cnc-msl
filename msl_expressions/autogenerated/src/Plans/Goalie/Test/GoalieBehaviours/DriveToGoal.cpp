@@ -60,7 +60,8 @@ namespace alica
 			return;
 		}
 
-            alloTarget = alloGoalMid;
+			auto offset = std::make_shared<geometry::CNPoint2D>(200, 0);
+            alloTarget = alloGoalMid + offset;
 
             query->egoDestinationPoint = alloTarget->alloToEgo(*me);
             query->egoAlignPoint = alloTarget->alloToEgo(*me);
