@@ -109,7 +109,9 @@ void WatchBall::run(void *msg)
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
 		const double targetX = alloGoalMid->x + 200;
-		std::cout << "targetY: " << targetY << std::endl;
+		if (targetY != 0) {
+			std::cout << "targetY: " << targetY << std::endl;
+		}
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
@@ -153,8 +155,8 @@ double WatchBall::calcGoalImpactY()
 	// auto alloBallVec = ballVec->egoToAllo(*alloBall);
 
 	// Calculation itself
-	const auto bvx = ballVec->x; // ball velocity x
-	const auto bvy = ballVec->y;
+	const auto bvx = -ballVec->x; // ball velocity x
+	const auto bvy = -ballVec->y;
 	const auto bpx = alloBall->x; // ball position x
 	const auto bpy = alloBall->y;
 	const auto glx = alloGoalMid->x;
@@ -166,17 +168,25 @@ double WatchBall::calcGoalImpactY()
 
 	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
 
+	const double threshold = 1000.0;
+
 	static int c = 0;
 	if (c++ == 5) {
 		printf("ballVec: %f %f, ballSpeed: %f, y: %f\n",
 				ballVec->x, ballVec->y, ballSpeed, y);
 		c = 0;
+		if (ballSpeed >= threshold) {
+			puts("Ball IS moving!");
+		} else {
+			puts("Ball NOT moving!");
+		}
 	}
 
-	const double threshold = 500.0;
-	if (ballSpeed > threshold) {
-		puts("Ball is moving!");
+	if (ballSpeed < threshold)
+	{
+		return 0;
 	}
+
 
 	return y;
 }
