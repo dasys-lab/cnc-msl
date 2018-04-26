@@ -264,7 +264,7 @@ namespace camera
         return isFeature(DC1394_FEATURE_GAMMA);
     }
 
-    void ImagingSource::setGamma(unsigned char value)
+    void ImagingSource::setGamma(unsigned short value)
     {
         setFeatureValue(DC1394_FEATURE_GAMMA, value);
     }
