@@ -159,6 +159,11 @@ double WatchBall::calcGoalImpactY()
 	const auto bpy = alloBall->y;
 	const auto glx = alloGoalMid->x;
 
+	if (bvx >= 0) {
+		puts("Ball not moving to our direction");
+		return 0;
+	}
+
 	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
 
 	static int c = 0;
