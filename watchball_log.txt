@@ -1,0 +1,3668 @@
+SC: Root:           "/home/cn/cnws/src/cnc-msl"
+SC: ConfigRoot:     "/home/cn/cnws/src/cnc-msl/etc/"
+SC: Hostname:       "foxy"
+SC: Logging Folder: "/home/cn/cnws/src/cnc-msl//log/temp"
+Initialising ROS
+Parsing command line parameters:
+	Masterplan is:       "WM16"
+	Rolset Directory is: "."
+	Rolset is:           "Default"
+
+Constructing Base ...
+AE: Constructor finished!
+MSLFootballField::currentField = Lab
+MSLFootballField::FieldLength = 8900
+MSLFootballField::FieldWidth = 5580
+MSLFootballField::PenaltyAreaLength = 1290
+MSLFootballField::PenaltyAreaWidth = 3600
+MSLFootballField::MiddleCircleRadius = 1000
+MSLFootballField::GoalAreaLength = 400
+MSLFootballField::GoalAreaWidth = 2800
+MSLFootballField::CornerCircleRadius = 350
+MSLFootballField::LineWidth = 122.3
+MSLFootballField::GoalInnerAreaExists = 1
+MSLFootballField::CornerCircleExists = 1
+MSL-WM::Game: Own team color is MAGENTA
+MSL-WM::Game: OwnGoal is BLUE
+Mon: Stop WM to send messages.
+HALLO? CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+TO: Initing Robot foxy
+RA: Available robots: 1
+RA: Robot Ids: 12 
+PB: Engine loop time is 33ms, broadcast interval is 66ms - 66ms
+
+Starting Base ...
+AE: Engine started
+Mon: Start WM to send messages.
+Game::updateGameState(): State changed: OppBallPossession state
+Game::updateGameState(): State changed: NobodyInBallPossession state
+### DriveToGoal ###
+ Driving to goal
+clear called
+Distance left: 156.229
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 156.229
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 156.229
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.13
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.13
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.13
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.13
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 191.503
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 191.503
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 191.503
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 192.483
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 192.483
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 192.483
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 192.483
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 181.736
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 181.736
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 181.736
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.612
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.612
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.612
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+Distance left: 151.612
+### DriveToGoal ###
+
+### DriveToGoal ###
+ Driving to goal
+RobotMovement::stopTranslation called
+### DriveToGoal ###
+
+--- DriveToGoal finished ---
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+Trans: 1449.14
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+Trans: 1449.14
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+Trans: 1449.14
+[WatchBall] -BallY- Variance   : 711.142
+targetY: -413
+Trans: 1406.65
+[WatchBall] -BallY- Variance   : 910.262
+targetY: -413
+Trans: 1406.65
+[WatchBall] -BallY- Variance   : 910.262
+targetY: -413
+Trans: 1406.65
+targetY: -413
+Trans: 1104.94
+targetY: -413
+Trans: 1104.94
+targetY: -413
+Trans: 1104.94
+targetY: -413
+Trans: 1104.94
+[WatchBall] -BallY- Variance   : 778.296
+targetY: -413
+Trans: 1106.87
+[WatchBall] -BallY- Variance   : 1167.44
+targetY: -413
+Trans: 1106.87
+[WatchBall] -BallY- Variance   : 1167.44
+targetY: -413
+Trans: 1106.87
+[WatchBall] -BallY- Variance   : 1387.35
+targetY: -413
+Trans: 1056.66
+[WatchBall] -BallY- Variance   : 827.932
+targetY: -413
+Trans: 1056.66
+[WatchBall] -BallY- Variance   : 827.932
+targetY: -413
+Trans: 1056.66
+[WatchBall] -BallY- Variance   : 551.955
+targetY: -413
+Trans: 1056.66
+[WatchBall] -BallY- Variance   : 577.184
+targetY: -413
+Trans: 806.249
+[WatchBall] -BallY- Variance   : 865.776
+targetY: -413
+Trans: 806.249
+[WatchBall] -BallY- Variance   : 865.776
+targetY: -413
+Trans: 806.249
+[WatchBall] -BallY- Variance   : 1293.44
+targetY: -413
+Trans: 814.672
+[WatchBall] -BallY- Variance   : 712.055
+targetY: -413
+Trans: 814.672
+[WatchBall] -BallY- Variance   : 712.055
+targetY: -413
+Trans: 814.672
+[WatchBall] -BallY- Variance   : 474.703
+targetY: -413
+Trans: 814.672
+[WatchBall] -BallY- Variance   : 294.348
+targetY: -413
+Trans: 636.237
+[WatchBall] -BallY- Variance   : 441.522
+targetY: -413
+Trans: 636.237
+[WatchBall] -BallY- Variance   : 441.522
+targetY: -413
+Trans: 636.237
+[WatchBall] -BallY- Variance   : 290.659
+targetY: -413
+Trans: 396.391
+[WatchBall] -BallY- Variance   : 75.5491
+targetY: -413
+Trans: 396.391
+[WatchBall] -BallY- Variance   : 75.5491
+targetY: -413
+Trans: 396.391
+[WatchBall] -BallY- Variance   : 50.366
+targetY: -413
+Trans: 396.391
+[WatchBall] -BallY- Variance   : 10.2426
+targetY: -413
+[WatchBall] -BallY- Variance   : 15.3639
+targetY: -413
+[WatchBall] -BallY- Variance   : 15.3639
+targetY: -413
+[WatchBall] -BallY- Variance   : 111.482
+targetY: -413
+Trans: 271.602
+[WatchBall] -BallY- Variance   : 174.787
+targetY: -413
+Trans: 271.602
+[WatchBall] -BallY- Variance   : 174.787
+targetY: -413
+Trans: 271.602
+[WatchBall] -BallY- Variance   : 819.248
+targetY: -413
+Trans: 253.691
+[WatchBall] -BallY- Variance   : 1291.59
+targetY: -413
+Trans: 253.691
+[WatchBall] -BallY- Variance   : 1291.59
+targetY: -413
+Trans: 253.691
+[WatchBall] -BallY- Variance   : 861.058
+targetY: -413
+Trans: 253.691
+[WatchBall] -BallY- Variance   : 260.964
+targetY: -413
+[WatchBall] -BallY- Variance   : 391.445
+targetY: -413
+[WatchBall] -BallY- Variance   : 391.445
+targetY: -413
+[WatchBall] -BallY- Variance   : 436.477
+targetY: -413
+[WatchBall] -BallY- Variance   : 151.874
+targetY: -413
+[WatchBall] -BallY- Variance   : 151.874
+targetY: -413
+[WatchBall] -BallY- Variance   : 101.249
+targetY: -413
+[WatchBall] -BallY- Variance   : 96.3244
+targetY: -413
+[WatchBall] -BallY- Variance   : 144.487
+targetY: -413
+[WatchBall] -BallY- Variance   : 144.487
+targetY: -413
+[WatchBall] -BallY- Variance   : 821.236
+targetY: -413
+[WatchBall] -BallY- Variance   : 999.295
+targetY: -413
+[WatchBall] -BallY- Variance   : 999.295
+targetY: -413
+[WatchBall] -BallY- Variance   : 666.197
+targetY: -413
+[WatchBall] -BallY- Variance   : 556.634
+targetY: -413
+[WatchBall] -BallY- Variance   : 834.951
+targetY: -413
+[WatchBall] -BallY- Variance   : 834.951
+targetY: -413
+[WatchBall] -BallY- Variance   : 684.62
+targetY: -413
+[WatchBall] -BallY- Variance   : 96.5988
+targetY: -413
+[WatchBall] -BallY- Variance   : 96.5988
+targetY: -413
+[WatchBall] -BallY- Variance   : 64.3992
+targetY: -413
+[WatchBall] -BallY- Variance   : 669.144
+targetY: -413
+[WatchBall] -BallY- Variance   : 1003.72
+targetY: -413
+[WatchBall] -BallY- Variance   : 1003.72
+targetY: -413
+[WatchBall] -BallY- Variance   : 635.148
+targetY: -413
+[WatchBall] -BallY- Variance   : 128.698
+targetY: -413
+[WatchBall] -BallY- Variance   : 128.698
+targetY: -413
+[WatchBall] -BallY- Variance   : 85.799
+targetY: -413
+[WatchBall] -BallY- Variance   : 293.159
+targetY: -413
+[WatchBall] -BallY- Variance   : 439.738
+targetY: -413
+[WatchBall] -BallY- Variance   : 439.738
+targetY: -413
+[WatchBall] -BallY- Variance   : 505.587
+targetY: -413
+[WatchBall] -BallY- Variance   : 178.921
+targetY: -413
+[WatchBall] -BallY- Variance   : 178.921
+targetY: -413
+[WatchBall] -BallY- Variance   : 119.281
+targetY: -413
+[WatchBall] -BallY- Variance   : 414.865
+targetY: -413
+[WatchBall] -BallY- Variance   : 622.298
+targetY: -413
+[WatchBall] -BallY- Variance   : 622.298
+targetY: -413
+targetY: -408.97
+targetY: 256.583
+Trans: 1796.73
+targetY: 256.583
+Trans: 1796.73
+targetY: 256.583
+Trans: 1796.73
+targetY: 413
+Trans: 2278.62
+targetY: 413
+Trans: 2278.62
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+[WatchBall] alloBallVelX: -1560.36
+targetY: 0
+Trans: 867.075
+[WatchBall] alloBallVelX: -1560.36
+targetY: 0
+Trans: 867.075
+[WatchBall] alloBallVelX: -1560.36
+targetY: 0
+Trans: 867.075
+[WatchBall] alloBallVelX: -1560.36
+targetY: 0
+Trans: 867.075
+[WatchBall] alloBallVelX: -1802.21
+targetY: 0
+Trans: 862.569
+[WatchBall] alloBallVelX: -1802.21
+targetY: 0
+Trans: 862.569
+[WatchBall] alloBallVelX: -1802.21
+targetY: 0
+Trans: 862.569
+[WatchBall] alloBallVelX: -1820.06
+targetY: 0
+Trans: 310.631
+[WatchBall] alloBallVelX: -1820.06
+targetY: 0
+Trans: 310.631
+[WatchBall] alloBallVelX: -1820.06
+targetY: 0
+Trans: 310.631
+[WatchBall] alloBallVelX: -1820.06
+targetY: 0
+Trans: 310.631
+[WatchBall] alloBallVelX: -1603.28
+targetY: 0
+Trans: 472.782
+[WatchBall] alloBallVelX: -1603.28
+targetY: 0
+Trans: 472.782
+[WatchBall] alloBallVelX: -1603.28
+targetY: 0
+Trans: 472.782
+[WatchBall] alloBallVelX: -1698.04
+targetY: 0
+Trans: 631.025
+[WatchBall] alloBallVelX: -1698.04
+targetY: 0
+Trans: 631.025
+[WatchBall] alloBallVelX: -1698.04
+targetY: 0
+Trans: 631.025
+[WatchBall] alloBallVelX: -1877.93
+targetY: 0
+[WatchBall] alloBallVelX: -1877.93
+targetY: 0
+[WatchBall] alloBallVelX: -1877.93
+targetY: 0
+[WatchBall] alloBallVelX: -1877.93
+targetY: 0
+[WatchBall] alloBallVelX: -1711.3
+targetY: 0
+[WatchBall] alloBallVelX: -1711.3
+targetY: 0
+[WatchBall] alloBallVelX: -1711.3
+targetY: 0
+[WatchBall] alloBallVelX: -1621.71
+targetY: 0
+[WatchBall] alloBallVelX: -1621.71
+targetY: 0
+[WatchBall] alloBallVelX: -1621.71
+targetY: 0
+[WatchBall] alloBallVelX: -1621.71
+targetY: 0
+[WatchBall] -BallY- Variance   : 167.506
+targetY: 19.8232
+Trans: 244.02
+[WatchBall] -BallY- Variance   : 251.259
+targetY: 19.8232
+Trans: 244.02
+[WatchBall] -BallY- Variance   : 251.259
+targetY: 19.8232
+Trans: 244.02
+targetY: 413
+Trans: 1180.6
+targetY: 413
+Trans: 1180.6
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 274.874
+Trans: 767.881
+[WatchBall] -BallY- Variance   : 0
+targetY: 274.874
+Trans: 767.881
+targetY: 413
+Trans: 1064.71
+targetY: 413
+Trans: 1064.71
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1064.71
+targetY: -413
+Trans: 1498.39
+targetY: -413
+Trans: 1498.39
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 413
+Trans: 1002.55
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1002.55
+targetY: -227.347
+Trans: 1016.24
+targetY: -227.347
+Trans: 1016.24
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 931.205
+targetY: -385.175
+Trans: 1659.23
+targetY: -385.175
+Trans: 1659.23
+[WatchBall] -BallY- Variance   : 4.96705e-09
+targetY: 413
+Trans: 741.528
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 741.528
+[WatchBall] -BallY- Variance   : 145.21
+targetY: 413
+Trans: 1206.05
+[WatchBall] -BallY- Variance   : 217.815
+targetY: 413
+Trans: 1206.05
+[WatchBall] -BallY- Variance   : 217.815
+targetY: 413
+Trans: 1206.05
+[WatchBall] -BallY- Variance   : 1907.83
+targetY: 413
+Trans: 947.893
+targetY: -413
+Trans: 1557.54
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 947.893
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 947.893
+[WatchBall] -BallY- Variance   : 1909.16
+targetY: 413
+Trans: 1074.86
+targetY: -413
+Trans: 1422.72
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1074.86
+targetY: -413
+Trans: 1314.6
+targetY: -413
+Trans: 1314.6
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 413
+Trans: 1207.67
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1207.67
+[WatchBall] -BallY- Variance   : 18.8044
+targetY: 413
+Trans: 1002.78
+[WatchBall] -BallY- Variance   : 28.2066
+targetY: 413
+Trans: 1002.78
+[WatchBall] -BallY- Variance   : 28.2066
+targetY: 413
+Trans: 1002.78
+targetY: -413
+Trans: 1795.61
+targetY: -413
+Trans: 1795.61
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 413
+Trans: 741.948
+targetY: -413
+Trans: 1731.01
+targetY: -413
+Trans: 1731.01
+targetY: -413
+Trans: 1731.01
+[WatchBall] -BallY- Variance   : 1724.49
+targetY: 413
+Trans: 787.751
+[WatchBall] -BallY- Variance   : 984.843
+targetY: 413
+Trans: 782.115
+[WatchBall] -BallY- Variance   : 1477.26
+targetY: 413
+Trans: 782.115
+[WatchBall] -BallY- Variance   : 1477.26
+targetY: 413
+Trans: 782.115
+[WatchBall] -BallY- Variance   : 984.843
+targetY: 413
+Trans: 782.115
+[WatchBall] -BallY- Variance   : 822.398
+targetY: 413
+Trans: 814.625
+[WatchBall] -BallY- Variance   : 1233.6
+targetY: 413
+Trans: 814.625
+[WatchBall] -BallY- Variance   : 1233.6
+targetY: 413
+Trans: 814.625
+[WatchBall] -BallY- Variance   : 1147.12
+targetY: 413
+Trans: 632.2
+[WatchBall] -BallY- Variance   : 228.189
+targetY: 413
+Trans: 632.2
+[WatchBall] -BallY- Variance   : 228.189
+targetY: 413
+Trans: 632.2
+targetY: 14.0146
+Trans: 707.887
+targetY: 74.22
+Trans: 535.858
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 413
+Trans: 547.436
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 547.436
+targetY: -413
+Trans: 1985.37
+targetY: -413
+Trans: 1985.37
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 528.654
+[WatchBall] -BallY- Variance   : 1690.9
+targetY: 413
+Trans: 325.478
+targetY: -413
+Trans: 2168.83
+targetY: -413
+Trans: 2168.83
+[WatchBall] -BallY- Variance   : 1442.9
+targetY: 413
+Trans: 325.478
+targetY: 138.018
+Trans: 436.957
+targetY: 138.018
+Trans: 436.957
+[WatchBall] -BallY- Variance   : 4.96705e-09
+targetY: 413
+Trans: 405.847
+[WatchBall] -BallY- Variance   : 699.308
+targetY: 413
+Trans: 398.643
+[WatchBall] -BallY- Variance   : 895.114
+targetY: 413
+Trans: 398.643
+[WatchBall] -BallY- Variance   : 895.114
+targetY: 413
+Trans: 398.643
+[WatchBall] -BallY- Variance   : 596.743
+targetY: 413
+Trans: 398.643
+[WatchBall] -BallY- Variance   : 228.809
+targetY: 413
+[WatchBall] -BallY- Variance   : 343.213
+targetY: 413
+[WatchBall] -BallY- Variance   : 343.213
+targetY: 413
+[WatchBall] -BallY- Variance   : 245.944
+targetY: 413
+[WatchBall] -BallY- Variance   : 5.31305
+targetY: 413
+[WatchBall] -BallY- Variance   : 5.31305
+targetY: 413
+[WatchBall] -BallY- Variance   : 3.54204
+targetY: 413
+[WatchBall] -BallY- Variance   : 4.78646
+targetY: 413
+Trans: 339.446
+[WatchBall] -BallY- Variance   : 7.17969
+targetY: 413
+Trans: 339.446
+[WatchBall] -BallY- Variance   : 7.17969
+targetY: 413
+Trans: 339.446
+[WatchBall] -BallY- Variance   : 213.013
+targetY: 413
+[WatchBall] -BallY- Variance   : 310.457
+targetY: 413
+[WatchBall] -BallY- Variance   : 310.457
+targetY: 413
+[WatchBall] -BallY- Variance   : 206.972
+targetY: 413
+targetY: -2.18745
+Trans: 1241.9
+targetY: -2.18745
+Trans: 1241.9
+targetY: -2.18745
+Trans: 1241.9
+targetY: -18.6133
+Trans: 1109.26
+[WatchBall] -BallY- Variance   : 890.935
+targetY: 350.478
+[WatchBall] -BallY- Variance   : 890.935
+targetY: 350.478
+[WatchBall] -BallY- Variance   : 593.957
+targetY: 350.478
+[WatchBall] -BallY- Variance   : 631.669
+targetY: 287.832
+[WatchBall] -BallY- Variance   : 947.503
+targetY: 287.832
+[WatchBall] -BallY- Variance   : 947.503
+targetY: 287.832
+[WatchBall] -BallY- Variance   : 1167.5
+targetY: 363.196
+[WatchBall] -BallY- Variance   : 1374.25
+targetY: 363.196
+[WatchBall] -BallY- Variance   : 1374.25
+targetY: 363.196
+[WatchBall] -BallY- Variance   : 1853.57
+targetY: 265.536
+targetY: -413
+Trans: 2036.93
+targetY: -413
+Trans: 2036.93
+[WatchBall] -BallY- Variance   : 1526.02
+targetY: 265.536
+[WatchBall] -BallY- Variance   : 508.57
+targetY: 209.537
+[WatchBall] -BallY- Variance   : 762.854
+targetY: 209.537
+[WatchBall] -BallY- Variance   : 762.854
+targetY: 209.537
+[WatchBall] -BallY- Variance   : 595.274
+targetY: 196.614
+[WatchBall] -BallY- Variance   : 41.3869
+targetY: 196.614
+[WatchBall] -BallY- Variance   : 41.3869
+targetY: 196.614
+[WatchBall] -BallY- Variance   : 27.5913
+targetY: 196.614
+[WatchBall] -BallY- Variance   : 103.278
+targetY: 222.014
+[WatchBall] -BallY- Variance   : 154.917
+targetY: 222.014
+[WatchBall] -BallY- Variance   : 154.917
+targetY: 222.014
+[WatchBall] -BallY- Variance   : 255.255
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 342.781
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 342.781
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 228.521
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall] -BallY- Variance   : 0
+targetY: 184.296
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+targetY: -46.0025
+Trans: 589.622
+targetY: -46.0025
+Trans: 589.622
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1401.39
+[WatchBall] -BallY- Variance   : 1032.42
+targetY: 413
+Trans: 1427.19
+[WatchBall] -BallY- Variance   : 1321.49
+targetY: 413
+Trans: 1427.19
+[WatchBall] -BallY- Variance   : 1321.49
+targetY: 413
+Trans: 1427.19
+[WatchBall] -BallY- Variance   : 1299.62
+targetY: 413
+Trans: 1023.89
+[WatchBall] -BallY- Variance   : 310.778
+targetY: 413
+Trans: 1023.89
+[WatchBall] -BallY- Variance   : 310.778
+targetY: 413
+Trans: 1023.89
+[WatchBall] -BallY- Variance   : 207.186
+targetY: 413
+Trans: 1023.89
+targetY: 413
+Trans: 1182.48
+targetY: 413
+Trans: 1182.48
+targetY: 413
+Trans: 1182.48
+targetY: 413
+Trans: 1079.82
+targetY: 413
+Trans: 1079.82
+targetY: 413
+Trans: 1079.82
+targetY: 413
+Trans: 1079.82
+targetY: -413
+Trans: 1895.63
+targetY: -413
+Trans: 1895.63
+targetY: -413
+Trans: 1895.63
+targetY: -413
+Trans: 2177.42
+[WatchBall] -BallY- Variance   : 1168.83
+targetY: 413
+Trans: 561.797
+[WatchBall] -BallY- Variance   : 1168.83
+targetY: 413
+Trans: 561.797
+[WatchBall] -BallY- Variance   : 779.219
+targetY: 413
+Trans: 561.797
+targetY: -413
+Trans: 2229.23
+targetY: -413
+Trans: 2229.23
+targetY: -413
+Trans: 2229.23
+targetY: -413
+Trans: 2552.52
+targetY: -413
+Trans: 2552.52
+targetY: -413
+Trans: 2552.52
+targetY: -413
+Trans: 2552.52
+targetY: -413
+Trans: 2334.79
+targetY: -413
+Trans: 2334.79
+targetY: -413
+Trans: 2334.79
+targetY: 413
+Trans: 277.556
+targetY: 413
+Trans: 277.556
+targetY: 413
+Trans: 277.556
+targetY: 413
+Trans: 277.556
+targetY: -413
+Trans: 2189.37
+targetY: -413
+Trans: 2189.37
+targetY: -413
+Trans: 2189.37
+targetY: 413
+Trans: 522.685
+targetY: 413
+Trans: 522.685
+targetY: 413
+Trans: 522.685
+targetY: 413
+Trans: 522.685
+targetY: 413
+Trans: 888.486
+targetY: 413
+Trans: 888.486
+targetY: 413
+Trans: 888.486
+targetY: 413
+Trans: 304.671
+[WatchBall] -BallY- Variance   : 1560.69
+targetY: 413
+Trans: 304.671
+[WatchBall] -BallY- Variance   : 1560.69
+targetY: 413
+Trans: 304.671
+targetY: 413
+Trans: 768.804
+targetY: -413
+Trans: 1767.37
+targetY: -413
+Trans: 1767.37
+targetY: -413
+Trans: 1767.37
+targetY: -413
+Trans: 1692.33
+targetY: -413
+Trans: 1692.33
+targetY: -413
+Trans: 1692.33
+targetY: 413
+Trans: 1353.08
+targetY: 413
+Trans: 1353.08
+targetY: 413
+Trans: 1353.08
+targetY: 413
+Trans: 1353.08
+[WatchBall] -BallY- Variance   : 1898.74
+targetY: -139.697
+Trans: 834.485
+targetY: -413
+Trans: 1651.07
+targetY: -413
+Trans: 1651.07
+targetY: 413
+Trans: 854.654
+targetY: 413
+Trans: 854.654
+targetY: 413
+Trans: 854.654
+targetY: 413
+Trans: 854.654
+targetY: -413
+Trans: 1264.17
+targetY: -413
+Trans: 1264.17
+targetY: -413
+Trans: 1264.17
+[WatchBall] alloBallVelX: -1592.51
+targetY: 0
+Trans: 422.055
+[WatchBall] alloBallVelX: -1592.51
+targetY: 0
+Trans: 422.055
+[WatchBall] alloBallVelX: -1592.51
+targetY: 0
+Trans: 422.055
+[WatchBall] alloBallVelX: -1592.51
+targetY: 0
+Trans: 422.055
+[WatchBall] alloBallVelX: -3485.69
+targetY: 0
+[WatchBall] alloBallVelX: -3485.69
+targetY: 0
+[WatchBall] alloBallVelX: -3485.69
+targetY: 0
+[WatchBall] alloBallVelX: -3224.61
+targetY: 0
+Trans: 246.15
+[WatchBall] alloBallVelX: -3224.61
+targetY: 0
+Trans: 246.15
+[WatchBall] alloBallVelX: -3224.61
+targetY: 0
+Trans: 246.15
+[WatchBall] alloBallVelX: -3224.61
+targetY: 0
+Trans: 246.15
+[WatchBall] alloBallVelX: -2504.66
+targetY: 0
+Trans: 347.621
+[WatchBall] alloBallVelX: -2504.66
+targetY: 0
+Trans: 347.621
+[WatchBall] alloBallVelX: -2504.66
+targetY: 0
+Trans: 347.621
+[WatchBall] alloBallVelX: -2357.79
+targetY: 0
+[WatchBall] alloBallVelX: -2357.79
+targetY: 0
+[WatchBall] alloBallVelX: -2357.79
+targetY: 0
+[WatchBall] alloBallVelX: -2357.79
+targetY: 0
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+targetY: -413
+Trans: 1354.23
+targetY: -413
+Trans: 1354.23
+targetY: -413
+Trans: 1354.23
+targetY: -413
+Trans: 1364.59
+targetY: -413
+Trans: 1364.59
+targetY: -413
+Trans: 1364.59
+[WatchBall] -BallY- Variance   : 1810.84
+targetY: -413
+Trans: 1364.59
+[WatchBall] -BallY- Variance   : 504.36
+targetY: -413
+Trans: 1264.32
+[WatchBall] -BallY- Variance   : 756.54
+targetY: -413
+Trans: 1264.32
+[WatchBall] -BallY- Variance   : 756.54
+targetY: -413
+Trans: 1264.32
+targetY: -413
+Trans: 1153.43
+targetY: -413
+Trans: 1153.43
+targetY: -413
+Trans: 1153.43
+[WatchBall] -BallY- Variance   : 1334.46
+targetY: -413
+Trans: 1153.43
+targetY: -413
+Trans: 1036.24
+targetY: -413
+Trans: 1036.24
+targetY: -413
+Trans: 1036.24
+targetY: -413
+Trans: 850.578
+[WatchBall] -BallY- Variance   : 681.377
+targetY: -413
+Trans: 850.578
+[WatchBall] -BallY- Variance   : 681.377
+targetY: -413
+Trans: 850.578
+[WatchBall] -BallY- Variance   : 454.251
+targetY: -413
+Trans: 850.578
+[WatchBall] -BallY- Variance   : 1781.42
+targetY: -413
+Trans: 780.534
+targetY: -413
+Trans: 780.534
+targetY: -413
+Trans: 780.534
+targetY: -413
+Trans: 794.658
+[WatchBall] -BallY- Variance   : 1993.84
+targetY: -413
+Trans: 794.658
+[WatchBall] -BallY- Variance   : 1993.84
+targetY: -413
+Trans: 794.658
+[WatchBall] -BallY- Variance   : 1329.23
+targetY: -413
+Trans: 794.658
+[WatchBall] -BallY- Variance   : 323.792
+targetY: -413
+Trans: 484.924
+[WatchBall] -BallY- Variance   : 485.688
+targetY: -413
+Trans: 484.924
+[WatchBall] -BallY- Variance   : 485.688
+targetY: -413
+Trans: 484.924
+[WatchBall] -BallY- Variance   : 1608.5
+targetY: -413
+Trans: 285.464
+[WatchBall] -BallY- Variance   : 1500.44
+targetY: -413
+Trans: 285.464
+[WatchBall] -BallY- Variance   : 1500.44
+targetY: -413
+Trans: 285.464
+[WatchBall] -BallY- Variance   : 1000.3
+targetY: -413
+Trans: 285.464
+[WatchBall] -BallY- Variance   : 287.936
+targetY: -413
+[WatchBall] -BallY- Variance   : 431.904
+targetY: -413
+[WatchBall] -BallY- Variance   : 431.904
+targetY: -413
+[WatchBall] -BallY- Variance   : 1480.15
+targetY: -413
+[WatchBall] -BallY- Variance   : 1462.29
+targetY: -413
+[WatchBall] -BallY- Variance   : 1462.29
+targetY: -413
+[WatchBall] -BallY- Variance   : 1674.41
+targetY: -413
+[WatchBall] -BallY- Variance   : 854.617
+targetY: -413
+[WatchBall] -BallY- Variance   : 854.617
+targetY: -413
+[WatchBall] -BallY- Variance   : 569.744
+targetY: -413
+[WatchBall] -BallY- Variance   : 1167.76
+targetY: -413
+Trans: 267.737
+[WatchBall] -BallY- Variance   : 1751.64
+targetY: -413
+Trans: 267.737
+[WatchBall] -BallY- Variance   : 1751.64
+targetY: -413
+Trans: 267.737
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1934.85
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1833.61
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1339.52
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 455.524
+targetY: -413
+[WatchBall] -BallY- Variance   : 455.524
+targetY: -413
+[WatchBall] -BallY- Variance   : 303.683
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1156.67
+targetY: -413
+[WatchBall] -BallY- Variance   : 1735.01
+targetY: -413
+[WatchBall] -BallY- Variance   : 1735.01
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1054.04
+targetY: -413
+[WatchBall] -BallY- Variance   : 1054.04
+targetY: -413
+[WatchBall] -BallY- Variance   : 702.696
+targetY: -413
+[WatchBall] -BallY- Variance   : 390.903
+targetY: -413
+[WatchBall] -BallY- Variance   : 586.355
+targetY: -413
+[WatchBall] -BallY- Variance   : 586.355
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1599.47
+targetY: -413
+[WatchBall] -BallY- Variance   : 1112.66
+targetY: -413
+[WatchBall] -BallY- Variance   : 1668.99
+targetY: -413
+[WatchBall] -BallY- Variance   : 1668.99
+targetY: -413
+targetY: -413
+Trans: 247.549
+[WatchBall] -BallY- Variance   : 874.707
+targetY: -413
+Trans: 247.549
+[WatchBall] -BallY- Variance   : 874.707
+targetY: -413
+Trans: 247.549
+[WatchBall] -BallY- Variance   : 583.138
+targetY: -413
+Trans: 247.549
+[WatchBall] -BallY- Variance   : 1509.68
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1635.22
+targetY: -413
+[WatchBall] -BallY- Variance   : 1635.22
+targetY: -413
+[WatchBall] -BallY- Variance   : 1090.15
+targetY: -413
+[WatchBall] -BallY- Variance   : 1025.66
+targetY: -413
+[WatchBall] -BallY- Variance   : 1538.49
+targetY: -413
+[WatchBall] -BallY- Variance   : 1538.49
+targetY: -413
+[WatchBall] -BallY- Variance   : 1815.26
+targetY: -413
+[WatchBall] -BallY- Variance   : 690.36
+targetY: -413
+[WatchBall] -BallY- Variance   : 690.36
+targetY: -413
+[WatchBall] -BallY- Variance   : 460.24
+targetY: -413
+[WatchBall] -BallY- Variance   : 422.258
+targetY: -413
+[WatchBall] -BallY- Variance   : 633.387
+targetY: -413
+[WatchBall] -BallY- Variance   : 633.387
+targetY: -413
+[WatchBall] -BallY- Variance   : 1247.74
+targetY: -371.659
+[WatchBall] -BallY- Variance   : 911.011
+targetY: -371.659
+[WatchBall] -BallY- Variance   : 911.011
+targetY: -371.659
+[WatchBall] -BallY- Variance   : 607.341
+targetY: -371.659
+[WatchBall] -BallY- Variance   : 1080.73
+targetY: -315.825
+[WatchBall] -BallY- Variance   : 1621.1
+targetY: -315.825
+[WatchBall] -BallY- Variance   : 1621.1
+targetY: -315.825
+targetY: -413
+[WatchBall] -BallY- Variance   : 1421.9
+targetY: -242.985
+Trans: 431.545
+[WatchBall] -BallY- Variance   : 1421.9
+targetY: -242.985
+Trans: 431.545
+[WatchBall] -BallY- Variance   : 947.935
+targetY: -242.985
+Trans: 431.545
+[WatchBall] -BallY- Variance   : 721.052
+targetY: -212.031
+Trans: 591.107
+[WatchBall] -BallY- Variance   : 1081.58
+targetY: -212.031
+Trans: 591.107
+[WatchBall] -BallY- Variance   : 1081.58
+targetY: -212.031
+Trans: 591.107
+[WatchBall] -BallY- Variance   : 1924.66
+targetY: -186.843
+Trans: 557.475
+Game::updateGameState(): State changed: OppBallPossession state
+[WatchBall] -BallY- Variance   : 1232.32
+targetY: -186.843
+Trans: 557.475
+[WatchBall] -BallY- Variance   : 1232.32
+targetY: -186.843
+Trans: 557.475
+[WatchBall] -BallY- Variance   : 1507.55
+targetY: -189.031
+Trans: 363.31
+[WatchBall] -BallY- Variance   : 625.14
+targetY: -189.031
+Trans: 363.31
+[WatchBall] -BallY- Variance   : 625.14
+targetY: -189.031
+Trans: 363.31
+[WatchBall] -BallY- Variance   : 416.76
+targetY: -189.031
+Trans: 363.31
+[WatchBall] -BallY- Variance   : 63.3201
+targetY: -190.103
+Trans: 274.272
+[WatchBall] -BallY- Variance   : 94.9801
+targetY: -190.103
+Trans: 274.272
+[WatchBall] -BallY- Variance   : 94.9801
+targetY: -190.103
+Trans: 274.272
+[WatchBall] -BallY- Variance   : 133.948
+targetY: -174.262
+[WatchBall] -BallY- Variance   : 84.1707
+targetY: -174.262
+[WatchBall] -BallY- Variance   : 84.1707
+targetY: -174.262
+[WatchBall] -BallY- Variance   : 56.1138
+targetY: -174.262
+[WatchBall] -BallY- Variance   : 6.3665
+targetY: -171.24
+[WatchBall] -BallY- Variance   : 9.54975
+targetY: -171.24
+[WatchBall] -BallY- Variance   : 9.54975
+targetY: -171.24
+[WatchBall] -BallY- Variance   : 248.255
+targetY: -163.475
+[WatchBall] -BallY- Variance   : 335.707
+targetY: -163.475
+[WatchBall] -BallY- Variance   : 335.707
+targetY: -163.475
+[WatchBall] -BallY- Variance   : 223.805
+targetY: -163.475
+[WatchBall] -BallY- Variance   : 31.5054
+targetY: -162.267
+[WatchBall] -BallY- Variance   : 47.258
+targetY: -162.267
+[WatchBall] -BallY- Variance   : 47.258
+targetY: -162.267
+[WatchBall] -BallY- Variance   : 34.2957
+targetY: -164.697
+[WatchBall] -BallY- Variance   : 1.97673
+targetY: -164.697
+[WatchBall] -BallY- Variance   : 1.97673
+targetY: -164.697
+[WatchBall] -BallY- Variance   : 1.31782
+targetY: -164.697
+[WatchBall] -BallY- Variance   : 13.3888
+targetY: -171.898
+[WatchBall] -BallY- Variance   : 20.0832
+targetY: -171.898
+[WatchBall] -BallY- Variance   : 20.0832
+targetY: -171.898
+[WatchBall] -BallY- Variance   : 220.054
+targetY: -180.584
+[WatchBall] -BallY- Variance   : 326.771
+targetY: -180.584
+[WatchBall] -BallY- Variance   : 326.771
+targetY: -180.584
+[WatchBall] -BallY- Variance   : 217.847
+targetY: -180.584
+[WatchBall] -BallY- Variance   : 428.956
+targetY: -172.26
+[WatchBall] -BallY- Variance   : 643.434
+targetY: -172.26
+[WatchBall] -BallY- Variance   : 643.434
+targetY: -172.26
+[WatchBall] -BallY- Variance   : 434.175
+targetY: -184.561
+[WatchBall] -BallY- Variance   : 38.458
+targetY: -184.561
+[WatchBall] -BallY- Variance   : 38.458
+targetY: -184.561
+[WatchBall] -BallY- Variance   : 25.6387
+targetY: -184.561
+[WatchBall] -BallY- Variance   : 64.0783
+targetY: -198.372
+[WatchBall] -BallY- Variance   : 96.1174
+targetY: -198.372
+[WatchBall] -BallY- Variance   : 96.1174
+targetY: -198.372
+[WatchBall] -BallY- Variance   : 113.873
+targetY: -191.976
+[WatchBall] -BallY- Variance   : 60.1325
+targetY: -191.976
+[WatchBall] -BallY- Variance   : 60.1325
+targetY: -191.976
+[WatchBall] -BallY- Variance   : 40.0884
+targetY: -191.976
+[WatchBall] -BallY- Variance   : 235.159
+targetY: -184.322
+[WatchBall] -BallY- Variance   : 352.739
+targetY: -184.322
+[WatchBall] -BallY- Variance   : 352.739
+targetY: -184.322
+[WatchBall] -BallY- Variance   : 420.369
+targetY: -178.623
+[WatchBall] -BallY- Variance   : 159.315
+targetY: -178.623
+[WatchBall] -BallY- Variance   : 159.315
+targetY: -178.623
+[WatchBall] -BallY- Variance   : 146.288
+targetY: -168.719
+[WatchBall] -BallY- Variance   : 110.853
+targetY: -168.719
+[WatchBall] -BallY- Variance   : 110.853
+targetY: -168.719
+[WatchBall] -BallY- Variance   : 73.9021
+targetY: -168.719
+[WatchBall] -BallY- Variance   : 94.7033
+targetY: -160.181
+[WatchBall] -BallY- Variance   : 142.055
+targetY: -160.181
+[WatchBall] -BallY- Variance   : 142.055
+targetY: -160.181
+[WatchBall] -BallY- Variance   : 203.714
+targetY: -144.481
+[WatchBall] -BallY- Variance   : 217.692
+targetY: -144.481
+[WatchBall] -BallY- Variance   : 217.692
+targetY: -144.481
+[WatchBall] -BallY- Variance   : 145.128
+targetY: -144.481
+[WatchBall] -BallY- Variance   : 183.486
+targetY: -132.848
+[WatchBall] -BallY- Variance   : 275.229
+targetY: -132.848
+[WatchBall] -BallY- Variance   : 275.229
+targetY: -132.848
+[WatchBall] -BallY- Variance   : 199.102
+targetY: -132.601
+[WatchBall] -BallY- Variance   : 5.2521
+targetY: -132.601
+[WatchBall] -BallY- Variance   : 5.2521
+targetY: -132.601
+[WatchBall] -BallY- Variance   : 3.5014
+targetY: -132.601
+[WatchBall] -BallY- Variance   : 23.1272
+targetY: -128.653
+Trans: 252.335
+[WatchBall] -BallY- Variance   : 34.6908
+targetY: -128.653
+Trans: 252.335
+[WatchBall] -BallY- Variance   : 34.6908
+targetY: -128.653
+Trans: 252.335
+[WatchBall] -BallY- Variance   : 45.4956
+targetY: -121.538
+[WatchBall] -BallY- Variance   : 21.6217
+targetY: -121.538
+[WatchBall] -BallY- Variance   : 21.6217
+targetY: -121.538
+[WatchBall] -BallY- Variance   : 14.4145
+targetY: -121.538
+Game::updateGameState(): State changed: NobodyInBallPossession state
+targetY: -165.186
+targetY: -165.186
+targetY: -165.186
+targetY: -165.949
+[WatchBall] -BallY- Variance   : 7.67048
+targetY: -165.546
+[WatchBall] -BallY- Variance   : 7.67048
+targetY: -165.546
+[WatchBall] -BallY- Variance   : 5.11365
+targetY: -165.546
+[WatchBall] -BallY- Variance   : 340.696
+targetY: -119.455
+[WatchBall] -BallY- Variance   : 511.044
+targetY: -119.455
+[WatchBall] -BallY- Variance   : 511.044
+targetY: -119.455
+[WatchBall] -BallY- Variance   : 675.584
+targetY: -177.585
+[WatchBall] -BallY- Variance   : 822.028
+targetY: -177.585
+[WatchBall] -BallY- Variance   : 822.028
+targetY: -177.585
+[WatchBall] -BallY- Variance   : 548.018
+targetY: -177.585
+[WatchBall] -BallY- Variance   : 53.7565
+targetY: -160.535
+[WatchBall] -BallY- Variance   : 80.6348
+targetY: -160.535
+[WatchBall] -BallY- Variance   : 80.6348
+targetY: -160.535
+[WatchBall] -BallY- Variance   : 51.7767
+targetY: -162.606
+[WatchBall] -BallY- Variance   : 4.20359
+targetY: -162.606
+[WatchBall] -BallY- Variance   : 4.20359
+targetY: -162.606
+[WatchBall] -BallY- Variance   : 2.80239
+targetY: -162.606
+[WatchBall] -BallY- Variance   : 17.0054
+targetY: -157.995
+[WatchBall] -BallY- Variance   : 25.5081
+targetY: -157.995
+[WatchBall] -BallY- Variance   : 25.5081
+targetY: -157.995
+[WatchBall] -BallY- Variance   : 83.6111
+targetY: -140.541
+[WatchBall] -BallY- Variance   : 102.492
+targetY: -140.541
+[WatchBall] -BallY- Variance   : 102.492
+targetY: -140.541
+[WatchBall] -BallY- Variance   : 68.328
+targetY: -140.541
+[WatchBall] -BallY- Variance   : 43.416
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 65.1241
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 65.1241
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 43.416
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall] -BallY- Variance   : 0
+targetY: -150.743
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+targetY: 413
+Trans: 1507.19
+targetY: 413
+Trans: 1507.19
+[WatchBall] -BallY- Variance   : -9.93411e-09
+targetY: 413
+Trans: 1507.19
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1507.19
+targetY: 413
+Trans: 1509.3
+targetY: 413
+Trans: 1509.3
+targetY: 413
+Trans: 1509.3
+targetY: 413
+Trans: 1411.69
+targetY: 413
+Trans: 1411.69
+targetY: 413
+Trans: 1411.69
+[WatchBall] -BallY- Variance   : 1635.44
+targetY: 413
+Trans: 1411.69
+[WatchBall] -BallY- Variance   : 1273.13
+targetY: 413
+Trans: 1272.02
+[WatchBall] -BallY- Variance   : 1909.7
+targetY: 413
+Trans: 1272.02
+[WatchBall] -BallY- Variance   : 1909.7
+targetY: 413
+Trans: 1272.02
+targetY: 413
+Trans: 1228.57
+targetY: 413
+Trans: 1228.57
+targetY: 413
+Trans: 1228.57
+targetY: 413
+Trans: 1228.57
+[WatchBall] -BallY- Variance   : 1086.77
+targetY: 413
+Trans: 916.615
+[WatchBall] -BallY- Variance   : 1630.15
+targetY: 413
+Trans: 916.615
+[WatchBall] -BallY- Variance   : 1630.15
+targetY: 413
+Trans: 916.615
+[WatchBall] -BallY- Variance   : 1888.03
+targetY: 413
+Trans: 668.851
+[WatchBall] -BallY- Variance   : 719.247
+targetY: 413
+Trans: 668.851
+[WatchBall] -BallY- Variance   : 719.247
+targetY: 413
+Trans: 668.851
+[WatchBall] -BallY- Variance   : 478.059
+targetY: 413
+Trans: 573.623
+[WatchBall] -BallY- Variance   : 174.062
+targetY: 413
+Trans: 573.623
+[WatchBall] -BallY- Variance   : 174.062
+targetY: 413
+Trans: 573.623
+[WatchBall] -BallY- Variance   : 116.042
+targetY: 413
+Trans: 573.623
+targetY: 413
+Trans: 539.481
+targetY: 413
+Trans: 539.481
+targetY: 413
+Trans: 539.481
+targetY: 413
+Trans: 520.257
+targetY: 413
+Trans: 520.257
+targetY: 413
+Trans: 520.257
+targetY: 413
+Trans: 520.257
+[WatchBall] -BallY- Variance   : 174.541
+targetY: 413
+Trans: 380.608
+[WatchBall] -BallY- Variance   : 261.812
+targetY: 413
+Trans: 380.608
+[WatchBall] -BallY- Variance   : 261.812
+targetY: 413
+Trans: 380.608
+[WatchBall] -BallY- Variance   : 334.975
+targetY: 413
+Trans: 243.814
+[WatchBall] -BallY- Variance   : 159.291
+targetY: 413
+Trans: 243.814
+[WatchBall] -BallY- Variance   : 159.291
+targetY: 413
+Trans: 243.814
+[WatchBall] -BallY- Variance   : 106.194
+targetY: 413
+Trans: 243.814
+[WatchBall] -BallY- Variance   : 924.803
+targetY: 413
+[WatchBall] -BallY- Variance   : 1387.2
+targetY: 413
+[WatchBall] -BallY- Variance   : 1387.2
+targetY: 413
+[WatchBall] -BallY- Variance   : 972.873
+targetY: 413
+[WatchBall] -BallY- Variance   : 15.6424
+targetY: 413
+[WatchBall] -BallY- Variance   : 15.6424
+targetY: 413
+[WatchBall] -BallY- Variance   : 10.4282
+targetY: 413
+targetY: 413
+targetY: 413
+targetY: 413
+targetY: 413
+[WatchBall] -BallY- Variance   : 41.4703
+targetY: 413
+[WatchBall] -BallY- Variance   : 41.4703
+targetY: 413
+[WatchBall] -BallY- Variance   : 27.6469
+targetY: 413
+[WatchBall] -BallY- Variance   : 608.688
+targetY: 413
+[WatchBall] -BallY- Variance   : 913.032
+targetY: 413
+[WatchBall] -BallY- Variance   : 913.032
+targetY: 413
+[WatchBall] -BallY- Variance   : 619.491
+targetY: 413
+[WatchBall] -BallY- Variance   : 9.25025
+targetY: 413
+[WatchBall] -BallY- Variance   : 9.25025
+targetY: 413
+[WatchBall] -BallY- Variance   : 6.16683
+targetY: 413
+targetY: -10.8759
+Trans: 1068
+targetY: -10.8759
+Trans: 1068
+targetY: -10.8759
+Trans: 1068
+targetY: -16.3472
+Trans: 1051.99
+[WatchBall] -BallY- Variance   : 30.684
+targetY: 333.994
+[WatchBall] -BallY- Variance   : 30.684
+targetY: 333.994
+[WatchBall] -BallY- Variance   : 20.456
+targetY: 333.994
+[WatchBall] -BallY- Variance   : 581.018
+targetY: 273.788
+[WatchBall] -BallY- Variance   : 871.527
+targetY: 273.788
+[WatchBall] -BallY- Variance   : 871.527
+targetY: 273.788
+targetY: 80.0305
+Trans: 781.633
+targetY: 63.5763
+Trans: 830.776
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+[WatchBall] -BallY- Variance   : 826.567
+targetY: 413
+Trans: 478.218
+[WatchBall] -BallY- Variance   : 1239.85
+targetY: 413
+Trans: 478.218
+[WatchBall] -BallY- Variance   : 1239.85
+targetY: 413
+Trans: 478.218
+targetY: 413
+Trans: 631.08
+targetY: 413
+Trans: 631.08
+targetY: 413
+Trans: 631.08
+targetY: 413
+Trans: 457.765
+targetY: 413
+Trans: 457.765
+targetY: 413
+Trans: 457.765
+targetY: 413
+Trans: 457.765
+targetY: -413
+Trans: 2174.85
+targetY: -413
+Trans: 2174.85
+targetY: -413
+Trans: 2174.85
+targetY: -413
+Trans: 2062.88
+[WatchBall] -BallY- Variance   : 1506.43
+targetY: 413
+Trans: 415.318
+[WatchBall] -BallY- Variance   : 1506.43
+targetY: 413
+Trans: 415.318
+[WatchBall] -BallY- Variance   : 1004.29
+targetY: 413
+Trans: 415.318
+targetY: 413
+Trans: 573.76
+targetY: 413
+Trans: 573.76
+targetY: 413
+Trans: 573.76
+targetY: 413
+targetY: 413
+targetY: 413
+targetY: 413
+targetY: -413
+Trans: 2311.53
+targetY: -413
+Trans: 2311.53
+targetY: -413
+Trans: 2311.53
+targetY: -413
+Trans: 2160.19
+targetY: -413
+Trans: 2160.19
+targetY: -413
+Trans: 2160.19
+targetY: -413
+Trans: 2160.19
+targetY: -413
+Trans: 2114.37
+targetY: -413
+Trans: 2114.37
+targetY: -413
+Trans: 2114.37
+targetY: -413
+Trans: 1909.11
+targetY: -413
+Trans: 1909.11
+targetY: -413
+Trans: 1909.11
+targetY: -413
+Trans: 1909.11
+[WatchBall] alloBallVelX: -1370.77
+targetY: 0
+Trans: 330.753
+[WatchBall] alloBallVelX: -1370.77
+targetY: 0
+Trans: 330.753
+[WatchBall] alloBallVelX: -1370.77
+targetY: 0
+Trans: 330.753
+[WatchBall] alloBallVelX: -2045.36
+targetY: 0
+Trans: 328.348
+[WatchBall] alloBallVelX: -2045.36
+targetY: 0
+Trans: 328.348
+[WatchBall] alloBallVelX: -2045.36
+targetY: 0
+Trans: 328.348
+[WatchBall] alloBallVelX: -2045.36
+targetY: 0
+Trans: 328.348
+[WatchBall] alloBallVelX: -2395.36
+targetY: 0
+Trans: 678.469
+[WatchBall] alloBallVelX: -2395.36
+targetY: 0
+Trans: 678.469
+[WatchBall] alloBallVelX: -2395.36
+targetY: 0
+Trans: 678.469
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+[WatchBall]: Goalie can't see ball! Moving to prevTarget
+targetY: -413
+Trans: 1283.08
+targetY: -413
+Trans: 1283.08
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+Trans: 1283.08
+[WatchBall] -BallY- Variance   : 0
+targetY: -413
+Trans: 1283.08
+targetY: -413
+Trans: 1011.36
+targetY: -413
+Trans: 1011.36
+[WatchBall] -BallY- Variance   : 4.96705e-09
+targetY: -413
+Trans: 1011.36
+[WatchBall] -BallY- Variance   : 1133.06
+targetY: -413
+Trans: 773.305
+[WatchBall] -BallY- Variance   : 1450.32
+targetY: -413
+Trans: 773.305
+[WatchBall] -BallY- Variance   : 1450.32
+targetY: -413
+Trans: 773.305
+[WatchBall] -BallY- Variance   : 966.88
+targetY: -413
+Trans: 773.305
+targetY: -413
+Trans: 577.08
+targetY: -413
+Trans: 577.08
+[WatchBall] -BallY- Variance   : 0
+targetY: -285.444
+Trans: 341.901
+targetY: -413
+Trans: 527.949
+targetY: -413
+Trans: 527.949
+[WatchBall] -BallY- Variance   : 0
+targetY: -176.793
+Trans: 449.208
+targetY: -413
+Trans: 676.994
+targetY: -413
+Trans: 676.994
+[WatchBall] -BallY- Variance   : 0
+targetY: 94.6849
+Trans: 967.961
+[WatchBall] -BallY- Variance   : 0
+targetY: 94.6849
+Trans: 967.961
+[WatchBall] -BallY- Variance   : 1825.13
+targetY: 185.977
+Trans: 1475.36
+targetY: -413
+Trans: 430.635
+targetY: -413
+Trans: 430.635
+targetY: -413
+Trans: 1107.01
+targetY: -413
+Trans: 1107.01
+[WatchBall] -BallY- Variance   : 0
+targetY: 412.419
+Trans: 1402.66
+[WatchBall] -BallY- Variance   : 0
+targetY: 412.419
+Trans: 1402.66
+targetY: -413
+Trans: 581.689
+targetY: -413
+Trans: 581.689
+targetY: -413
+Trans: 581.689
+targetY: -413
+Trans: 1194.15
+targetY: -413
+Trans: 1194.15
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1300.96
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1300.96
+[WatchBall] -BallY- Variance   : 1594.43
+targetY: 413
+Trans: 2033.67
+targetY: 413
+Trans: 2033.67
+targetY: 413
+Trans: 2033.67
+targetY: 413
+Trans: 1382.53
+targetY: -413
+Trans: 1111.1
+[WatchBall] -BallY- Variance   : 2.48353e-09
+targetY: 413
+Trans: 1382.53
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1382.53
+[WatchBall] -BallY- Variance   : 1422.3
+targetY: 413
+Trans: 1632.66
+targetY: -269.808
+Trans: 443.416
+targetY: -269.808
+Trans: 443.416
+targetY: -413
+Trans: 852.775
+targetY: -413
+Trans: 852.775
+[WatchBall] -BallY- Variance   : 2.48353e-09
+targetY: 413
+Trans: 1629.76
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1629.76
+targetY: 413
+Trans: 2625.58
+targetY: 413
+Trans: 2625.58
+targetY: 413
+Trans: 2625.58
+targetY: 413
+Trans: 2006.49
+[WatchBall] -BallY- Variance   : 1170.03
+targetY: 413
+Trans: 2006.49
+[WatchBall] -BallY- Variance   : 1170.03
+targetY: 413
+Trans: 2006.49
+[WatchBall] -BallY- Variance   : 780.023
+targetY: 413
+Trans: 2006.49
+[WatchBall] -BallY- Variance   : 301.685
+targetY: 413
+Trans: 1571.37
+[WatchBall] -BallY- Variance   : 452.527
+targetY: 413
+Trans: 1571.37
+[WatchBall] -BallY- Variance   : 452.527
+targetY: 413
+Trans: 1571.37
+targetY: -413
+Trans: 1081.59
+targetY: -413
+Trans: 1081.59
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1396.52
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1396.52
+targetY: -281.915
+Trans: 621.034
+targetY: -281.915
+Trans: 621.034
+targetY: -281.915
+Trans: 621.034
+targetY: -413
+Trans: 1109.56
+targetY: -413
+Trans: 1109.56
+targetY: -413
+Trans: 1109.56
+targetY: -181.372
+Trans: 486.697
+[WatchBall] -BallY- Variance   : 1693.54
+targetY: 413
+Trans: 1302.67
+[WatchBall] -BallY- Variance   : 1693.54
+targetY: 413
+Trans: 1302.67
+[WatchBall] -BallY- Variance   : 1129.03
+targetY: 413
+Trans: 1302.67
+targetY: -413
+Trans: 1119.91
+targetY: -413
+Trans: 1119.91
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1358.2
+[WatchBall] -BallY- Variance   : 915.612
+targetY: 413
+Trans: 1474.21
+[WatchBall] -BallY- Variance   : 1171.98
+targetY: 413
+Trans: 1474.21
+[WatchBall] -BallY- Variance   : 1171.98
+targetY: 413
+Trans: 1474.21
+[WatchBall] -BallY- Variance   : 781.322
+targetY: 413
+Trans: 1474.21
+[WatchBall] -BallY- Variance   : 1972.13
+targetY: 413
+Trans: 1613.65
+targetY: -413
+Trans: 865.444
+targetY: -413
+Trans: 865.444
+targetY: -413
+Trans: 862.536
+[WatchBall] -BallY- Variance   : 1180.05
+targetY: 413
+Trans: 1615.98
+[WatchBall] -BallY- Variance   : 1180.05
+targetY: 413
+Trans: 1615.98
+[WatchBall] -BallY- Variance   : 786.698
+targetY: 413
+Trans: 1615.98
+[WatchBall] -BallY- Variance   : 242.429
+targetY: 413
+Trans: 1639.9
+[WatchBall] -BallY- Variance   : 363.643
+targetY: 413
+Trans: 1639.9
+[WatchBall] -BallY- Variance   : 363.643
+targetY: 413
+Trans: 1639.9
+Mon: Stop ALICA Engine to send messages.
+Mon: Stop WM to send messages.
+targetY: -413
+Trans: 846.995
+targetY: -413
+Trans: 846.995
+[WatchBall] -BallY- Variance   : 4.96705e-09
+targetY: 413
+Trans: 1631.32
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 1631.32
+[WatchBall] -BallY- Variance   : 1487.17
+targetY: 413
+Trans: 1610.64
+targetY: -413
+Trans: 867.399
+targetY: -413
+Trans: 867.399
+targetY: -413
+Trans: 896.069
+[WatchBall] -BallY- Variance   : 662.908
+targetY: 413
+Trans: 1581.99
+[WatchBall] -BallY- Variance   : 662.908
+targetY: 413
+Trans: 1581.99
+[WatchBall] -BallY- Variance   : 441.939
+targetY: 413
+Trans: 1581.99
+[WatchBall] -BallY- Variance   : 786.851
+targetY: 413
+Trans: 1595.08
+[WatchBall] -BallY- Variance   : 1180.28
+targetY: 413
+Trans: 1595.08
+[WatchBall] -BallY- Variance   : 1180.28
+targetY: 413
+Trans: 1595.08
+targetY: -413
+Trans: 907.458
+[WatchBall] -BallY- Variance   : 1750.43
+targetY: 413
+Trans: 1570.55
+[WatchBall] -BallY- Variance   : 1750.43
+targetY: 413
+Trans: 1570.55
+[WatchBall] -BallY- Variance   : 1166.95
+targetY: 413
+Trans: 1570.55
+[WatchBall] -BallY- Variance   : 10.9725
+targetY: 413
+Trans: 1634.18
+[WatchBall] -BallY- Variance   : 16.4587
+targetY: 413
+Trans: 1634.18
+[WatchBall] -BallY- Variance   : 16.4587
+targetY: 413
+Trans: 1634.18
+[WatchBall] -BallY- Variance   : 76.0035
+targetY: 413
+Trans: 1615.43
+[WatchBall] -BallY- Variance   : 79.8046
+targetY: 413
+Trans: 1615.43
+[WatchBall] -BallY- Variance   : 79.8046
+targetY: 413
+Trans: 1615.43
+[WatchBall] -BallY- Variance   : 53.2031
+targetY: 413
+Trans: 1615.43
+[WatchBall] -BallY- Variance   : 509.086
+targetY: 413
+Trans: 1594.09
+[WatchBall] -BallY- Variance   : 763.629
+targetY: 413
+Trans: 1594.09
+[WatchBall] -BallY- Variance   : 763.629
+targetY: 413
+Trans: 1594.09
+targetY: -347.138
+Trans: 668.837
+targetY: -347.475
+Trans: 669.847
+targetY: -347.475
+Trans: 669.847
+targetY: -344.597
+Trans: 695.912
+[WatchBall] -BallY- Variance   : 32.27
+targetY: -112.655
+[WatchBall] -BallY- Variance   : 32.27
+targetY: -112.655
+[WatchBall] -BallY- Variance   : 21.5133
+targetY: -112.655
+[WatchBall] -BallY- Variance   : 1.32579
+targetY: -113.2
+[WatchBall] -BallY- Variance   : 1.98869
+targetY: -113.2
+[WatchBall] -BallY- Variance   : 1.98869
+targetY: -113.2
+[WatchBall] -BallY- Variance   : 4.66466
+targetY: -108.947
+[WatchBall] -BallY- Variance   : 6.24098
+targetY: -108.947
+[WatchBall] -BallY- Variance   : 6.24098
+targetY: -108.947
+[WatchBall] -BallY- Variance   : 4.16065
+targetY: -108.947
+[WatchBall] -BallY- Variance   : 26.6818
+targetY: -109.902
+[WatchBall] -BallY- Variance   : 40.0227
+targetY: -109.902
+[WatchBall] -BallY- Variance   : 40.0227
+targetY: -109.902
+[WatchBall] -BallY- Variance   : 1373.26
+targetY: -18.5322
+Mon: Start ALICA Engine to send messages.
+Mon: Start WM to send messages.
+targetY: 413
+Trans: 1294.61
+targetY: 413
+Trans: 1294.61
+[WatchBall] -BallY- Variance   : 1368.23
+targetY: -18.5322
+targetY: 343.771
+Trans: 797.994
+targetY: 343.771
+Trans: 797.994
+[WatchBall] -BallY- Variance   : -4.96705e-09
+targetY: 83.4471
+targetY: 383.652
+Trans: 667.472
+targetY: 383.652
+Trans: 667.472
+[WatchBall] -BallY- Variance   : 0
+targetY: 187.515
+Trans: 315.107
+[WatchBall] -BallY- Variance   : 0
+targetY: 187.515
+Trans: 315.107
+targetY: 413
+Trans: 1101.05
+targetY: 413
+Trans: 1101.05
+targetY: 413
+Trans: 1101.05
+targetY: 413
+Trans: 772.017
+[WatchBall] -BallY- Variance   : 5.96046e-09
+targetY: 56.7653
+Trans: 541.662
+[WatchBall] -BallY- Variance   : 5.96046e-09
+targetY: 56.7653
+Trans: 541.662
+[WatchBall] -BallY- Variance   : 5.96046e-09
+targetY: 56.7653
+Trans: 541.662
+Game::updateGameState(): State changed: OppBallPossession state
+targetY: -52.5507
+Trans: 1206.06
+targetY: -52.5507
+Trans: 1206.06
+[WatchBall] -BallY- Variance   : 2.48353e-09
+targetY: 413
+Trans: 545.64
+[WatchBall] -BallY- Variance   : 293.95
+targetY: 413
+Trans: 446.908
+[WatchBall] -BallY- Variance   : 376.256
+targetY: 413
+Trans: 446.908
+[WatchBall] -BallY- Variance   : 376.256
+targetY: 413
+Trans: 446.908
+[WatchBall] -BallY- Variance   : 250.837
+targetY: 413
+Trans: 446.908
+[WatchBall] -BallY- Variance   : 376.44
+targetY: 413
+Trans: 353.816
+[WatchBall] -BallY- Variance   : 564.66
+targetY: 413
+Trans: 353.816
+[WatchBall] -BallY- Variance   : 564.66
+targetY: 413
+Trans: 353.816
+[WatchBall] -BallY- Variance   : 368.646
+targetY: 413
+Trans: 313.909
+[WatchBall] -BallY- Variance   : 2.31373
+targetY: 413
+Trans: 313.909
+Game::updateGameState(): State changed: NobodyInBallPossession state
+[WatchBall] -BallY- Variance   : 2.31373
+targetY: 413
+Trans: 313.909
+[WatchBall] -BallY- Variance   : 1.54249
+targetY: 413
+Trans: 313.909
+[WatchBall] -BallY- Variance   : 9.90761
+targetY: 413
+Trans: 323.472
+[WatchBall] -BallY- Variance   : 14.8614
+targetY: 413
+Trans: 323.472
+[WatchBall] -BallY- Variance   : 14.8614
+targetY: 413
+Trans: 323.472
+[WatchBall] -BallY- Variance   : 43.2396
+targetY: 413
+Trans: 544.405
+[WatchBall] -BallY- Variance   : 47.2927
+targetY: 413
+Trans: 544.405
+[WatchBall] -BallY- Variance   : 47.2927
+targetY: 413
+Trans: 544.405
+targetY: 118.089
+Trans: 499.043
+targetY: 117.806
+Trans: 499.89
+targetY: 117.806
+Trans: 499.89
+targetY: 117.806
+Trans: 499.89
+[WatchBall] -BallY- Variance   : -5.96046e-09
+targetY: 284.185
+[WatchBall] -BallY- Variance   : -5.96046e-09
+targetY: 284.185
+[WatchBall] -BallY- Variance   : -5.96046e-09
+targetY: 284.185
+targetY: 111.139
+Trans: 488.427
+targetY: 111.139
+Trans: 488.427
+[WatchBall] -BallY- Variance   : 2.48353e-09
+targetY: 413
+Trans: 417.414
+Game::updateGameState(): State changed: OppBallPossession state
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 417.414
+[WatchBall] -BallY- Variance   : 2.98023e-09
+targetY: 413
+Trans: 478.43
+[WatchBall] -BallY- Variance   : 2.98023e-09
+targetY: 413
+Trans: 478.43
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 478.43
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 389.402
+[WatchBall] -BallY- Variance   : -2.98023e-09
+targetY: 413
+Trans: 389.402
+[WatchBall] -BallY- Variance   : -2.98023e-09
+targetY: 413
+Trans: 389.402
+[WatchBall] -BallY- Variance   : 0
+targetY: 413
+Trans: 389.402
+[WatchBall] -BallY- Variance   : 2.98023e-09
+targetY: 413
+Trans: 543.716
+[WatchBall] -BallY- Variance   : 2.98023e-09
+targetY: 413
+Trans: 543.716
+[WatchBall] -BallY- Variance   : 2.98023e-09
+targetY: 413
+Trans: 543.716
+targetY: -413
+Trans: 1939.43
+targetY: -413
+Trans: 1939.43
+targetY: -413
+Trans: 1939.43
+targetY: -413
+Trans: 1939.43
+Game::updateGameState(): State changed: NobodyInBallPossession state
+[WatchBall] -BallY- Variance   : 75.3636
+targetY: 413
+Trans: 331.63
+[WatchBall] -BallY- Variance   : 113.045
+targetY: 413
+Trans: 331.63
+[WatchBall] -BallY- Variance   : 113.045
+targetY: 413
+Trans: 331.63
+[WatchBall] -BallY- Variance   : 621.519
+targetY: 413
+Trans: 515.223
+[WatchBall] -BallY- Variance   : 886.251
+targetY: 413
+Trans: 515.223
+[WatchBall] -BallY- Variance   : 886.251
+targetY: 413
+Trans: 515.223
+[WatchBall] -BallY- Variance   : 590.834
+targetY: 413
+Trans: 515.223
+[WatchBall] -BallY- Variance   : 201.909
+targetY: 413
+[WatchBall] -BallY- Variance   : 302.863
+targetY: 413
+[WatchBall] -BallY- Variance   : 302.863
+targetY: 413
+Game::updateGameState(): State changed: OppBallPossession state
+[WatchBall] -BallY- Variance   : 409.487
+targetY: 413
+[WatchBall] -BallY- Variance   : 310.007
+targetY: 413
+[WatchBall] -BallY- Variance   : 310.007
+targetY: 413
+[WatchBall] -BallY- Variance   : 206.671
+targetY: 413
+targetY: 413
+Trans: 353.484
+targetY: 413
+Trans: 353.484
+targetY: 413
+Trans: 353.484
+targetY: 413
+[WatchBall] -BallY- Variance   : 1812.99
+targetY: 413
+[WatchBall] -BallY- Variance   : 1812.99
+targetY: 413
+[WatchBall] -BallY- Variance   : 1208.66
+targetY: 413
+[WatchBall] -BallY- Variance   : 444.048
+targetY: 413
+Game::updateGameState(): State changed: NobodyInBallPossession state
+[WatchBall] -BallY- Variance   : 666.072
+targetY: 413
+[WatchBall] -BallY- Variance   : 666.072
+targetY: 413
+[WatchBall] -BallY- Variance   : 1776.97
+targetY: 413
+targetY: -217.641
+Trans: 1809.83
+targetY: -217.641
+Trans: 1809.83
+[WatchBall] -BallY- Variance   : 1567.22
+targetY: 413
+[WatchBall] -BallY- Variance   : 1548.68
+targetY: 413
+targetY: 413
+targetY: 413
+targetY: -150.165
+Trans: 1440.75
+targetY: 413
+Trans: 267.952
+targetY: 413
+Trans: 267.952
+targetY: -413
+Trans: 2527.04
+targetY: -413
+Trans: 2527.04
+targetY: -413
+Trans: 2527.04
+[WatchBall] -BallY- Variance   : 1722.66
+targetY: 413
+targetY: 413
+Trans: 322.926
+targetY: 413
+Trans: 322.926
+targetY: 413
+Trans: 322.926
+targetY: 413
+Trans: 646.014
+targetY: -413
+Trans: 1832.1
+targetY: -413
+Trans: 1832.1
+targetY: -413
+Trans: 1832.1
+targetY: -413
+Trans: 2055.07
+targetY: -413
+Trans: 2055.07
+targetY: -413
+Trans: 2055.07
+targetY: 413
+Trans: 1026.84
+targetY: 413
+Trans: 1026.84
+targetY: 413
+Trans: 1026.84
+targetY: 413
+Trans: 1026.84
+[WatchBall] -BallY- Variance   : 1844.83
+targetY: 413
+Trans: 807.04
+targetY: -413
+Trans: 1676.54
+targetY: -413
+Trans: 1676.54
+targetY: -268.316
+Trans: 1674.52
+[WatchBall] -BallY- Variance   : 1286.26
+targetY: 413
+Trans: 409.351
+[WatchBall] -BallY- Variance   : 1286.26
+targetY: 413
+Trans: 409.351
+[WatchBall] -BallY- Variance   : 857.506
+targetY: 413
+Trans: 409.351
+targetY: -413
+Trans: 1217.04
+targetY: -413
+Trans: 1217.04
+targetY: -413
+Trans: 1217.04
+targetY: -413
+Trans: 1693.2
+[WatchBall] -BallY- Variance   : 586.864
+targetY: 297.906
+Trans: 476.904
+[WatchBall] -BallY- Variance   : 586.864
+targetY: 297.906
+Trans: 476.904
+[WatchBall] -BallY- Variance   : 391.242
+targetY: 297.906
+Trans: 476.904
+targetY: 413
+Trans: 1733.7
+targetY: 413
+Trans: 1733.7
+targetY: 413
+Trans: 1733.7
+targetY: 413
+Trans: 818.731
+[WatchBall] -BallY- Variance   : 653.65
+targetY: -48.169
+Trans: 600.948
+[WatchBall] -BallY- Variance   : 653.65
+targetY: -48.169
+Trans: 600.948
+[WatchBall] -BallY- Variance   : 435.767
+targetY: -48.169
+Trans: 600.948
+targetY: -413
+Trans: 908.178
+targetY: -413
+Trans: 908.178
+targetY: -413
+Trans: 908.178
+targetY: -413
+Trans: 1085.86
+[WatchBall] -BallY- Variance   : 1234.59
+targetY: -336.403
+Trans: 858.95
+[WatchBall] -BallY- Variance   : 1234.59
+targetY: -336.403
+Trans: 858.95
+[WatchBall] -BallY- Variance   : 823.06
+targetY: -336.403
+Trans: 858.95
+targetY: -413
+Trans: 1078.73
+targetY: -413
+Trans: 1078.73
+targetY: -413
+Trans: 1078.73
+targetY: -413
+Trans: 1073.08
+targetY: -413
+Trans: 1073.08
+targetY: -413
+Trans: 1073.08
+targetY: -413
+Trans: 1073.08
+targetY: -413
+Trans: 1069.47
+targetY: -413
+Trans: 1069.47
+targetY: -413
+Trans: 1069.47
+targetY: 413
+Trans: 1446.2
+targetY: 413
+Trans: 1446.2
+targetY: 413
+Trans: 1446.2
+targetY: -413
+Trans: 1084.75
+targetY: -413
+Trans: 1084.75
+targetY: -413
+Trans: 1084.75
+targetY: -413
+Trans: 1084.75
+[WatchBall] -BallY- Variance   : 1888.08
+targetY: -413
+Trans: 1036.74
+targetY: -413
+Trans: 1036.74
+targetY: -413
+Trans: 1036.74
+targetY: -413
+Trans: 1040.55
+[WatchBall] -BallY- Variance   : 338.482
+targetY: -413
+Trans: 1040.55
+[WatchBall] -BallY- Variance   : 338.482
+targetY: -413
+Trans: 1040.55
+[WatchBall] -BallY- Variance   : 225.655
+targetY: -413
+Trans: 1040.55
+targetY: 413
+Trans: 1486.62
+targetY: 413
+Trans: 1486.62
+targetY: 413
+Trans: 1486.62
+targetY: 413
+Trans: 1368.77
+[WatchBall] -BallY- Variance   : 1074.67
+targetY: -413
+Trans: 1131.86
+[WatchBall] -BallY- Variance   : 1074.67
+targetY: -413
+Trans: 1131.86
+[WatchBall] -BallY- Variance   : 716.446
+targetY: -413
+Trans: 1131.86
+[WatchBall] -BallY- Variance   : 1072.83
+targetY: -413
+Trans: 959.207
+[WatchBall] -BallY- Variance   : 1609.24
+targetY: -413
+Trans: 959.207
+[WatchBall] -BallY- Variance   : 1609.24
+targetY: -413
+Trans: 959.207
+[WatchBall] -BallY- Variance   : 1144.47
+targetY: -413
+Trans: 897.656
+[WatchBall] -BallY- Variance   : 289.26
+targetY: -413
+Trans: 897.656
+[WatchBall] -BallY- Variance   : 289.26
+targetY: -413
+Trans: 897.656
+[WatchBall] -BallY- Variance   : 192.84
+targetY: -413
+Trans: 897.656
+[WatchBall] -BallY- Variance   : 332.448
+targetY: -413
+Trans: 779.694
+[WatchBall] -BallY- Variance   : 498.672
+targetY: -413
+Trans: 779.694
+[WatchBall] -BallY- Variance   : 498.672
+targetY: -413
+Trans: 779.694
+[WatchBall] -BallY- Variance   : 1162.58
+targetY: -413
+Trans: 943.953
+[WatchBall] -BallY- Variance   : 1568.55
+targetY: -413
+Trans: 943.953
+[WatchBall] -BallY- Variance   : 1568.55
+targetY: -413
+Trans: 943.953
+[WatchBall] -BallY- Variance   : 1045.7
+targetY: -413
+Trans: 943.953
+[WatchBall] -BallY- Variance   : 471.901
+targetY: -413
+Trans: 902.404
+[WatchBall] -BallY- Variance   : 707.851
+targetY: -413
+Trans: 902.404
+[WatchBall] -BallY- Variance   : 707.851
+targetY: -413
+Trans: 902.404
+[WatchBall] -BallY- Variance   : 1633.18
+targetY: -413
+Trans: 601.07
+[WatchBall] -BallY- Variance   : 1437.51
+targetY: -413
+Trans: 601.07
+[WatchBall] -BallY- Variance   : 1437.51
+targetY: -413
+Trans: 601.07
+[WatchBall] -BallY- Variance   : 958.338
+targetY: -413
+Trans: 601.07
+[WatchBall] -BallY- Variance   : 760.35
+targetY: -413
+Trans: 587.545
+[WatchBall] -BallY- Variance   : 1140.53
+targetY: -413
+Trans: 587.545
+[WatchBall] -BallY- Variance   : 1140.53
+targetY: -413
+Trans: 587.545
+[WatchBall] -BallY- Variance   : 1146.91
+targetY: -413
+Trans: 759.857
+[WatchBall] -BallY- Variance   : 311.905
+targetY: -413
+Trans: 759.857
+[WatchBall] -BallY- Variance   : 311.905
+targetY: -413
+Trans: 759.857
+[WatchBall] -BallY- Variance   : 1706.76
+targetY: -413
+Trans: 435.385
+[WatchBall] -BallY- Variance   : 1973.67
+targetY: -413
+Trans: 435.385
+[WatchBall] -BallY- Variance   : 1973.67
+targetY: -413
+Trans: 435.385
+[WatchBall] -BallY- Variance   : 1315.78
+targetY: -413
+Trans: 435.385
+[WatchBall] -BallY- Variance   : 292.812
+targetY: -413
+Trans: 283.958
+[WatchBall] -BallY- Variance   : 439.218
+targetY: -413
+Trans: 283.958
+[WatchBall] -BallY- Variance   : 439.218
+targetY: -413
+Trans: 283.958
+[WatchBall] -BallY- Variance   : 1448.27
+targetY: -413
+[WatchBall] -BallY- Variance   : 1406.08
+targetY: -413
+[WatchBall] -BallY- Variance   : 1406.08
+targetY: -413
+[WatchBall] -BallY- Variance   : 937.385
+targetY: -413
+[WatchBall] -BallY- Variance   : 471.782
+targetY: -413
+[WatchBall] -BallY- Variance   : 707.672
+targetY: -413
+[WatchBall] -BallY- Variance   : 707.672
+targetY: -413
+[WatchBall] -BallY- Variance   : 990.79
+targetY: -413
+[WatchBall] -BallY- Variance   : 494.529
+targetY: -413
+[WatchBall] -BallY- Variance   : 494.529
+targetY: -413
+[WatchBall] -BallY- Variance   : 329.686
+targetY: -413
+[WatchBall] -BallY- Variance   : 406.952
+targetY: -413
+Trans: 241.107
+[WatchBall] -BallY- Variance   : 610.427
+targetY: -413
+Trans: 241.107
+[WatchBall] -BallY- Variance   : 610.427
+targetY: -413
+Trans: 241.107
+[WatchBall] -BallY- Variance   : 973.027
+targetY: -413
+[WatchBall] -BallY- Variance   : 576.773
+targetY: -413
+[WatchBall] -BallY- Variance   : 576.773
+targetY: -413
+[WatchBall] -BallY- Variance   : 384.515
+targetY: -413
+[WatchBall] -BallY- Variance   : 180.071
+targetY: -413
+[WatchBall] -BallY- Variance   : 270.107
+targetY: -413
+[WatchBall] -BallY- Variance   : 270.107
+targetY: -413
+[WatchBall] -BallY- Variance   : 1363.12
+targetY: -413
+[WatchBall] -BallY- Variance   : 1988.72
+targetY: -413
+[WatchBall] -BallY- Variance   : 1988.72
+targetY: -413
+[WatchBall] -BallY- Variance   : 1325.81
+targetY: -413
+[WatchBall] -BallY- Variance   : 738.679
+targetY: -413
+[WatchBall] -BallY- Variance   : 1108.02
+targetY: -413
+[WatchBall] -BallY- Variance   : 1108.02
+targetY: -413
+[WatchBall] -BallY- Variance   : 1537.95
+targetY: -413
+[WatchBall] -BallY- Variance   : 783.492
+targetY: -413
+[WatchBall] -BallY- Variance   : 783.492
+targetY: -413
+[WatchBall] -BallY- Variance   : 522.328
+targetY: -413
+[WatchBall] -BallY- Variance   : 474.16
+targetY: -413
+[WatchBall] -BallY- Variance   : 711.24
+targetY: -413
+[WatchBall] -BallY- Variance   : 711.24
+targetY: -413
+[WatchBall] -BallY- Variance   : 845.52
+targetY: -413
+[WatchBall] -BallY- Variance   : 330.504
+targetY: -413
+[WatchBall] -BallY- Variance   : 330.504
+targetY: -413
+[WatchBall] -BallY- Variance   : 220.336
+targetY: -413
+[WatchBall] -BallY- Variance   : 1371.81
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1508.21
+targetY: -413
+[WatchBall] -BallY- Variance   : 1508.21
+targetY: -413
+[WatchBall] -BallY- Variance   : 1005.48
+targetY: -413
+[WatchBall] -BallY- Variance   : 570.788
+targetY: -413
+[WatchBall] -BallY- Variance   : 856.182
+targetY: -413
+[WatchBall] -BallY- Variance   : 856.182
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1341.21
+targetY: -413
+[WatchBall] -BallY- Variance   : 370.853
+targetY: -413
+Trans: 262.697
+[WatchBall] -BallY- Variance   : 556.279
+targetY: -413
+Trans: 262.697
+[WatchBall] -BallY- Variance   : 556.279
+targetY: -413
+Trans: 262.697
+[WatchBall] -BallY- Variance   : 1136.9
+targetY: -413
+Trans: 261.319
+[WatchBall] -BallY- Variance   : 813.777
+targetY: -413
+Trans: 261.319
+[WatchBall] -BallY- Variance   : 813.777
+targetY: -413
+Trans: 261.319
+[WatchBall] -BallY- Variance   : 1506.36
+targetY: -413
+[WatchBall] -BallY- Variance   : 1268.37
+targetY: -413
+[WatchBall] -BallY- Variance   : 1268.37
+targetY: -413
+[WatchBall] -BallY- Variance   : 845.581
+targetY: -413
+[WatchBall] -BallY- Variance   : 588.361
+targetY: -413
+[WatchBall] -BallY- Variance   : 882.541
+targetY: -413
+[WatchBall] -BallY- Variance   : 882.541
+targetY: -413
+[WatchBall] -BallY- Variance   : 1722.91
+targetY: -413
+[WatchBall] -BallY- Variance   : 1274.98
+targetY: -413
+[WatchBall] -BallY- Variance   : 1274.98
+targetY: -413
+[WatchBall] -BallY- Variance   : 849.989
+targetY: -413
+[WatchBall] -BallY- Variance   : 1863.36
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1202.58
+targetY: -413
+[WatchBall] -BallY- Variance   : 1202.58
+targetY: -413
+[WatchBall] -BallY- Variance   : 801.721
+targetY: -413
+[WatchBall] -BallY- Variance   : 225.424
+targetY: -413
+[WatchBall] -BallY- Variance   : 338.136
+targetY: -413
+[WatchBall] -BallY- Variance   : 338.136
+targetY: -413
+[WatchBall] -BallY- Variance   : 276.003
+targetY: -413
+[WatchBall] -BallY- Variance   : 73.8992
+targetY: -413
+[WatchBall] -BallY- Variance   : 73.8992
+targetY: -413
+[WatchBall] -BallY- Variance   : 49.2661
+targetY: -413
+[WatchBall] -BallY- Variance   : 1093.06
+targetY: -413
+[WatchBall] -BallY- Variance   : 1639.59
+targetY: -413
+[WatchBall] -BallY- Variance   : 1639.59
+targetY: -413
+[WatchBall] -BallY- Variance   : 1654.26
+targetY: -413
+[WatchBall] -BallY- Variance   : 498.038
+targetY: -413
+[WatchBall] -BallY- Variance   : 498.038
+targetY: -413
+[WatchBall] -BallY- Variance   : 332.025
+targetY: -413
+[WatchBall] -BallY- Variance   : 22.722
+targetY: -413
+[WatchBall] -BallY- Variance   : 34.0829
+targetY: -413
+[WatchBall] -BallY- Variance   : 34.0829
+targetY: -413
+[WatchBall] -BallY- Variance   : 366.481
+targetY: -413
+[WatchBall] -BallY- Variance   : 523.066
+targetY: -413
+[WatchBall] -BallY- Variance   : 523.066
+targetY: -413
+[WatchBall] -BallY- Variance   : 348.711
+targetY: -413
+[WatchBall] -BallY- Variance   : 504.29
+targetY: -413
+[WatchBall] -BallY- Variance   : 756.435
+targetY: -413
+[WatchBall] -BallY- Variance   : 756.435
+targetY: -413
+[WatchBall] -BallY- Variance   : 1118.89
+targetY: -413
+[WatchBall] -BallY- Variance   : 615.205
+targetY: -413
+[WatchBall] -BallY- Variance   : 615.205
+targetY: -413
+[WatchBall] -BallY- Variance   : 410.136
+targetY: -413
+[WatchBall] -BallY- Variance   : 172.254
+targetY: -413
+[WatchBall] -BallY- Variance   : 258.381
+targetY: -413
+[WatchBall] -BallY- Variance   : 258.381
+targetY: -413
+[WatchBall] -BallY- Variance   : 225.194
+targetY: -413
+Trans: 252.904
+[WatchBall] -BallY- Variance   : 43.0119
+targetY: -413
+Trans: 252.904
+[WatchBall] -BallY- Variance   : 43.0119
+targetY: -413
+Trans: 252.904
+[WatchBall] -BallY- Variance   : 1573.93
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1473.55
+targetY: -413
+[WatchBall] -BallY- Variance   : 298.357
+targetY: -413
+[WatchBall] -BallY- Variance   : 447.536
+targetY: -413
+[WatchBall] -BallY- Variance   : 447.536
+targetY: -413
+[WatchBall] -BallY- Variance   : 582.233
+targetY: -413
+[WatchBall] -BallY- Variance   : 306.641
+targetY: -413
+[WatchBall] -BallY- Variance   : 306.641
+targetY: -413
+[WatchBall] -BallY- Variance   : 204.427
+targetY: -413
+[WatchBall] -BallY- Variance   : 685.132
+targetY: -413
+[WatchBall] -BallY- Variance   : 1027.7
+targetY: -413
+[WatchBall] -BallY- Variance   : 1027.7
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1592.08
+targetY: -413
+[WatchBall] -BallY- Variance   : 1592.08
+targetY: -413
+[WatchBall] -BallY- Variance   : 1061.39
+targetY: -413
+[WatchBall] -BallY- Variance   : 102.435
+targetY: -413
+[WatchBall] -BallY- Variance   : 153.652
+targetY: -413
+[WatchBall] -BallY- Variance   : 153.652
+targetY: -413
+[WatchBall] -BallY- Variance   : 214.335
+targetY: -413
+[WatchBall] -BallY- Variance   : 190.723
+targetY: -413
+[WatchBall] -BallY- Variance   : 190.723
+targetY: -413
+[WatchBall] -BallY- Variance   : 127.149
+targetY: -413
+[WatchBall] -BallY- Variance   : 1340.79
+targetY: -413
+targetY: -400.365
+targetY: -400.365
+[WatchBall] -BallY- Variance   : 1287.09
+targetY: -413
+[WatchBall] -BallY- Variance   : 159.648
+targetY: -413
+[WatchBall] -BallY- Variance   : 159.648
+targetY: -413
+[WatchBall] -BallY- Variance   : 106.432
+targetY: -413
+[WatchBall] -BallY- Variance   : 77.6039
+targetY: -413
+[WatchBall] -BallY- Variance   : 116.406
+targetY: -413
+[WatchBall] -BallY- Variance   : 116.406
+targetY: -413
+[WatchBall] -BallY- Variance   : 1012.61
+targetY: -413
+[WatchBall] -BallY- Variance   : 1247.97
+targetY: -413
+[WatchBall] -BallY- Variance   : 1247.97
+targetY: -413
+[WatchBall] -BallY- Variance   : 831.979
+targetY: -413
+[WatchBall] -BallY- Variance   : 44.149
+targetY: -413
+[WatchBall] -BallY- Variance   : 66.2235
+targetY: -413
+[WatchBall] -BallY- Variance   : 66.2235
+targetY: -413
+[WatchBall] -BallY- Variance   : 147.442
+targetY: -413
+[WatchBall] -BallY- Variance   : 112.891
+targetY: -413
+[WatchBall] -BallY- Variance   : 112.891
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.2603
+targetY: -413
+[WatchBall] -BallY- Variance   : 244.022
+targetY: -413
+[WatchBall] -BallY- Variance   : 366.033
+targetY: -413
+[WatchBall] -BallY- Variance   : 366.033
+targetY: -413
+[WatchBall] -BallY- Variance   : 280.282
+targetY: -413
+[WatchBall] -BallY- Variance   : 112.61
+targetY: -413
+[WatchBall] -BallY- Variance   : 112.61
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.0735
+targetY: -413
+[WatchBall] -BallY- Variance   : 543.883
+targetY: -413
+[WatchBall] -BallY- Variance   : 815.824
+targetY: -413
+[WatchBall] -BallY- Variance   : 815.824
+targetY: -413
+[WatchBall] -BallY- Variance   : 606.984
+targetY: -413
+[WatchBall] -BallY- Variance   : 45.8593
+targetY: -413
+[WatchBall] -BallY- Variance   : 45.8593
+targetY: -413
+[WatchBall] -BallY- Variance   : 133.231
+targetY: -413
+[WatchBall] -BallY- Variance   : 136.198
+targetY: -413
+[WatchBall] -BallY- Variance   : 136.198
+targetY: -413
+[WatchBall] -BallY- Variance   : 90.7985
+targetY: -413
+[WatchBall] -BallY- Variance   : 1544.57
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1481.39
+targetY: -413
+[WatchBall] -BallY- Variance   : 276.746
+targetY: -413
+[WatchBall] -BallY- Variance   : 276.746
+targetY: -413
+[WatchBall] -BallY- Variance   : 184.497
+targetY: -413
+[WatchBall] -BallY- Variance   : 289.806
+targetY: -413
+[WatchBall] -BallY- Variance   : 434.708
+targetY: -413
+[WatchBall] -BallY- Variance   : 434.708
+targetY: -413
+[WatchBall] -BallY- Variance   : 502.251
+targetY: -413
+[WatchBall] -BallY- Variance   : 216.525
+targetY: -413
+[WatchBall] -BallY- Variance   : 216.525
+targetY: -413
+[WatchBall] -BallY- Variance   : 144.35
+targetY: -413
+[WatchBall] -BallY- Variance   : 11.0367
+targetY: -413
+[WatchBall] -BallY- Variance   : 16.555
+targetY: -413
+[WatchBall] -BallY- Variance   : 16.555
+targetY: -413
+[WatchBall] -BallY- Variance   : 94.5448
+targetY: -413
+[WatchBall] -BallY- Variance   : 104.522
+targetY: -413
+[WatchBall] -BallY- Variance   : 104.522
+targetY: -413
+[WatchBall] -BallY- Variance   : 69.6815
+targetY: -413
+[WatchBall] -BallY- Variance   : 17.3379
+targetY: -413
+[WatchBall] -BallY- Variance   : 26.0069
+targetY: -413
+[WatchBall] -BallY- Variance   : 26.0069
+targetY: -413
+[WatchBall] -BallY- Variance   : 90.5174
+targetY: -413
+Trans: 240.687
+[WatchBall] -BallY- Variance   : 88.0304
+targetY: -413
+Trans: 240.687
+[WatchBall] -BallY- Variance   : 88.0304
+targetY: -413
+Trans: 240.687
+[WatchBall] -BallY- Variance   : 58.6869
+targetY: -413
+Trans: 240.687
+[WatchBall] -BallY- Variance   : 243.865
+targetY: -413
+[WatchBall] -BallY- Variance   : 365.798
+targetY: -413
+[WatchBall] -BallY- Variance   : 365.798
+targetY: -413
+[WatchBall] -BallY- Variance   : 307.353
+targetY: -413
+[WatchBall] -BallY- Variance   : 244.009
+targetY: -413
+[WatchBall] -BallY- Variance   : 244.009
+targetY: -413
+[WatchBall] -BallY- Variance   : 162.673
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1086.71
+targetY: -413
+[WatchBall] -BallY- Variance   : 1086.71
+targetY: -413
+[WatchBall] -BallY- Variance   : 724.474
+targetY: -413
+[WatchBall] -BallY- Variance   : 252.228
+targetY: -413
+[WatchBall] -BallY- Variance   : 378.342
+targetY: -413
+[WatchBall] -BallY- Variance   : 378.342
+targetY: -413
+targetY: -184.379
+Trans: 588.067
+targetY: -29.4143
+Trans: 1051.4
+targetY: -29.4143
+Trans: 1051.4
+[WatchBall] -BallY- Variance   : 1713.91
+targetY: -413
+[WatchBall] -BallY- Variance   : 438.166
+targetY: -413
+[WatchBall] -BallY- Variance   : 438.166
+targetY: -413
+[WatchBall] -BallY- Variance   : 292.11
+targetY: -413
+[WatchBall] -BallY- Variance   : 177.679
+targetY: -413
+[WatchBall] -BallY- Variance   : 266.519
+targetY: -413
+[WatchBall] -BallY- Variance   : 266.519
+targetY: -413
+[WatchBall] -BallY- Variance   : 229.283
+targetY: -413
+[WatchBall] -BallY- Variance   : 168.486
+targetY: -413
+[WatchBall] -BallY- Variance   : 168.486
+targetY: -413
+[WatchBall] -BallY- Variance   : 112.324
+targetY: -413
+[WatchBall] -BallY- Variance   : 606.176
+targetY: -413
+[WatchBall] -BallY- Variance   : 909.264
+targetY: -413
+[WatchBall] -BallY- Variance   : 909.264
+targetY: -413
+[WatchBall] -BallY- Variance   : 666.546
+targetY: -413
+[WatchBall] -BallY- Variance   : 383.221
+targetY: -413
+[WatchBall] -BallY- Variance   : 383.221
+targetY: -413
+[WatchBall] -BallY- Variance   : 255.481
+targetY: -413
+[WatchBall] -BallY- Variance   : 233.709
+targetY: -413
+[WatchBall] -BallY- Variance   : 350.563
+targetY: -413
+[WatchBall] -BallY- Variance   : 350.563
+targetY: -413
+[WatchBall] -BallY- Variance   : 225.031
+targetY: -413
+[WatchBall] -BallY- Variance   : 49.578
+targetY: -413
+[WatchBall] -BallY- Variance   : 49.578
+targetY: -413
+[WatchBall] -BallY- Variance   : 33.052
+targetY: -413
+[WatchBall] -BallY- Variance   : 145.804
+targetY: -413
+[WatchBall] -BallY- Variance   : 218.706
+targetY: -413
+[WatchBall] -BallY- Variance   : 218.706
+targetY: -413
+[WatchBall] -BallY- Variance   : 451.352
+targetY: -413
+[WatchBall] -BallY- Variance   : 325.912
+targetY: -413
+[WatchBall] -BallY- Variance   : 325.912
+targetY: -413
+[WatchBall] -BallY- Variance   : 217.275
+targetY: -413
+[WatchBall] -BallY- Variance   : 44.6498
+targetY: -413
+[WatchBall] -BallY- Variance   : 66.9747
+targetY: -413
+[WatchBall] -BallY- Variance   : 66.9747
+targetY: -413
+[WatchBall] -BallY- Variance   : 513.088
+targetY: -413
+[WatchBall] -BallY- Variance   : 767.546
+targetY: -413
+[WatchBall] -BallY- Variance   : 767.546
+targetY: -413
+[WatchBall] -BallY- Variance   : 511.697
+targetY: -413
+[WatchBall] -BallY- Variance   : 697.428
+targetY: -413
+[WatchBall] -BallY- Variance   : 1046.14
+targetY: -413
+[WatchBall] -BallY- Variance   : 1046.14
+targetY: -413
+[WatchBall] -BallY- Variance   : 815.644
+targetY: -413
+[WatchBall] -BallY- Variance   : 86.447
+targetY: -413
+[WatchBall] -BallY- Variance   : 86.447
+targetY: -413
+[WatchBall] -BallY- Variance   : 57.6314
+targetY: -413
+[WatchBall] -BallY- Variance   : 48.6113
+targetY: -413
+[WatchBall] -BallY- Variance   : 72.9169
+targetY: -413
+[WatchBall] -BallY- Variance   : 72.9169
+targetY: -413
+[WatchBall] -BallY- Variance   : 922.507
+targetY: -413
+[WatchBall] -BallY- Variance   : 1266.76
+targetY: -413
+[WatchBall] -BallY- Variance   : 1266.76
+targetY: -413
+[WatchBall] -BallY- Variance   : 844.505
+targetY: -413
+[WatchBall] -BallY- Variance   : 1208.66
+targetY: -413
+[WatchBall] -BallY- Variance   : 1812.99
+targetY: -413
+[WatchBall] -BallY- Variance   : 1812.99
+targetY: -413
+[WatchBall] -BallY- Variance   : 1320.15
+targetY: -413
+[WatchBall] -BallY- Variance   : 70.038
+targetY: -413
+[WatchBall] -BallY- Variance   : 70.038
+targetY: -413
+[WatchBall] -BallY- Variance   : 316.976
+targetY: -413
+[WatchBall] -BallY- Variance   : 460.849
+targetY: -413
+[WatchBall] -BallY- Variance   : 460.849
+targetY: -413
+[WatchBall] -BallY- Variance   : 307.233
+targetY: -413
+[WatchBall] -BallY- Variance   : 50.0154
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.0231
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.0231
+targetY: -413
+[WatchBall] -BallY- Variance   : 93.4667
+targetY: -413
+[WatchBall] -BallY- Variance   : 53.3831
+targetY: -413
+[WatchBall] -BallY- Variance   : 53.3831
+targetY: -413
+[WatchBall] -BallY- Variance   : 35.5887
+targetY: -413
+[WatchBall] -BallY- Variance   : 92.2322
+targetY: -413
+[WatchBall] -BallY- Variance   : 138.348
+targetY: -413
+[WatchBall] -BallY- Variance   : 138.348
+targetY: -413
+[WatchBall] -BallY- Variance   : 223.379
+targetY: -413
+[WatchBall] -BallY- Variance   : 288.57
+targetY: -413
+[WatchBall] -BallY- Variance   : 288.57
+targetY: -413
+[WatchBall] -BallY- Variance   : 192.38
+targetY: -413
+[WatchBall] -BallY- Variance   : 6.67114
+targetY: -413
+[WatchBall] -BallY- Variance   : 10.0067
+targetY: -413
+[WatchBall] -BallY- Variance   : 10.0067
+targetY: -413
+[WatchBall] -BallY- Variance   : 1026.58
+targetY: -413
+[WatchBall] -BallY- Variance   : 1587.12
+targetY: -413
+[WatchBall] -BallY- Variance   : 1587.12
+targetY: -413
+[WatchBall] -BallY- Variance   : 1058.08
+targetY: -413
+[WatchBall] -BallY- Variance   : 1711.03
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 1933.49
+targetY: -413
+[WatchBall] -BallY- Variance   : 274.98
+targetY: -413
+[WatchBall] -BallY- Variance   : 274.98
+targetY: -413
+[WatchBall] -BallY- Variance   : 183.32
+targetY: -413
+[WatchBall] -BallY- Variance   : 161.745
+targetY: -413
+[WatchBall] -BallY- Variance   : 242.618
+targetY: -413
+[WatchBall] -BallY- Variance   : 242.618
+targetY: -413
+[WatchBall] -BallY- Variance   : 194.7
+targetY: -413
+[WatchBall] -BallY- Variance   : 142.348
+targetY: -413
+[WatchBall] -BallY- Variance   : 142.348
+targetY: -413
+[WatchBall] -BallY- Variance   : 94.8989
+targetY: -413
+[WatchBall] -BallY- Variance   : 153.201
+targetY: -413
+[WatchBall] -BallY- Variance   : 229.802
+targetY: -413
+[WatchBall] -BallY- Variance   : 229.802
+targetY: -413
+[WatchBall] -BallY- Variance   : 488.03
+targetY: -413
+[WatchBall] -BallY- Variance   : 374.176
+targetY: -413
+[WatchBall] -BallY- Variance   : 374.176
+targetY: -413
+[WatchBall] -BallY- Variance   : 249.451
+targetY: -413
+[WatchBall] -BallY- Variance   : 63.1113
+targetY: -413
+[WatchBall] -BallY- Variance   : 94.6669
+targetY: -413
+[WatchBall] -BallY- Variance   : 94.6669
+targetY: -413
+[WatchBall] -BallY- Variance   : 1351.06
+targetY: -413
+Trans: 287.043
+targetY: -413
+Trans: 287.043
+targetY: -413
+Trans: 287.043
+[WatchBall] -BallY- Variance   : 1380.09
+targetY: -413
+Trans: 287.043
+[WatchBall] -BallY- Variance   : 220.892
+targetY: -413
+Trans: 261.063
+[WatchBall] -BallY- Variance   : 331.338
+targetY: -413
+Trans: 261.063
+[WatchBall] -BallY- Variance   : 331.338
+targetY: -413
+Trans: 261.063
+targetY: -413
+targetY: -413
+targetY: -413
+targetY: -413
+[WatchBall] -BallY- Variance   : 152.875
+targetY: -413
+[WatchBall] -BallY- Variance   : 152.875
+targetY: -413
+[WatchBall] -BallY- Variance   : 101.917
+targetY: -413
+[WatchBall] -BallY- Variance   : 213.872
+targetY: -413
+[WatchBall] -BallY- Variance   : 320.807
+targetY: -413
+[WatchBall] -BallY- Variance   : 320.807
+targetY: -413
+[WatchBall] -BallY- Variance   : 226.536
+targetY: -413
+Trans: 279.135
+[WatchBall] -BallY- Variance   : 18.3048
+targetY: -413
+Trans: 279.135
+[WatchBall] -BallY- Variance   : 18.3048
+targetY: -413
+Trans: 279.135
+[WatchBall] -BallY- Variance   : 12.2032
+targetY: -413
+Trans: 279.135
+[WatchBall] -BallY- Variance   : 474.862
+targetY: -413
+Trans: 243.367
+[WatchBall] -BallY- Variance   : 712.293
+targetY: -413
+Trans: 243.367
+[WatchBall] -BallY- Variance   : 712.293
+targetY: -413
+Trans: 243.367
+[WatchBall] -BallY- Variance   : 462.565
+targetY: -413
+[WatchBall] -BallY- Variance   : 3.66992
+targetY: -413
+[WatchBall] -BallY- Variance   : 3.66992
+targetY: -413
+[WatchBall] -BallY- Variance   : 2.44661
+targetY: -413
+[WatchBall] -BallY- Variance   : 441.724
+targetY: -413
+[WatchBall] -BallY- Variance   : 662.586
+targetY: -413
+[WatchBall] -BallY- Variance   : 662.586
+targetY: -413
+[WatchBall] -BallY- Variance   : 801.876
+targetY: -413
+[WatchBall] -BallY- Variance   : 801.364
+targetY: -413
+[WatchBall] -BallY- Variance   : 801.364
+targetY: -413
+[WatchBall] -BallY- Variance   : 534.243
+targetY: -413
+[WatchBall] -BallY- Variance   : 85.3602
+targetY: -413
+[WatchBall] -BallY- Variance   : 128.04
+targetY: -413
+[WatchBall] -BallY- Variance   : 128.04
+targetY: -413
+[WatchBall] -BallY- Variance   : 419.298
+targetY: -413
+[WatchBall] -BallY- Variance   : 536.021
+targetY: -413
+[WatchBall] -BallY- Variance   : 536.021
+targetY: -413
+[WatchBall] -BallY- Variance   : 357.347
+targetY: -413
+[WatchBall] -BallY- Variance   : 564.263
+targetY: -413
+[WatchBall] -BallY- Variance   : 846.394
+targetY: -413
+[WatchBall] -BallY- Variance   : 846.394
+targetY: -413
+[WatchBall] -BallY- Variance   : 658.876
+targetY: -413
+[WatchBall] -BallY- Variance   : 385.034
+targetY: -413
+[WatchBall] -BallY- Variance   : 385.034
+targetY: -413
+[WatchBall] -BallY- Variance   : 256.689
+targetY: -413
+[WatchBall] -BallY- Variance   : 302.083
+targetY: -413
+[WatchBall] -BallY- Variance   : 453.124
+targetY: -413
+[WatchBall] -BallY- Variance   : 453.124
+targetY: -413
+[WatchBall] -BallY- Variance   : 310.779
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.3381
+targetY: -413
+[WatchBall] -BallY- Variance   : 75.3381
+targetY: -413
+[WatchBall] -BallY- Variance   : 50.2254
+targetY: -413
+[WatchBall] -BallY- Variance   : 180.267
+targetY: -413
+[WatchBall] -BallY- Variance   : 270.4
+targetY: -413
+[WatchBall] -BallY- Variance   : 270.4
+targetY: -413
+[WatchBall] -BallY- Variance   : 1096.33
+targetY: -413
+[WatchBall] -BallY- Variance   : 1125.62
+targetY: -413
+[WatchBall] -BallY- Variance   : 1125.62
+targetY: -413
+[WatchBall] -BallY- Variance   : 767.889
+targetY: -413
+[WatchBall] -BallY- Variance   : 249.774
+targetY: -413
+[WatchBall] -BallY- Variance   : 249.774
+targetY: -413
+[WatchBall] -BallY- Variance   : 166.516
+targetY: -413
+[WatchBall] -BallY- Variance   : 95.3384
+targetY: -413
+[WatchBall] -BallY- Variance   : 143.008
+targetY: -413
+[WatchBall] -BallY- Variance   : 143.008
+targetY: -413
+[WatchBall] -BallY- Variance   : 230.488
+targetY: -413
+[WatchBall] -BallY- Variance   : 286.958
+targetY: -413
+[WatchBall] -BallY- Variance   : 286.958
+targetY: -413
+[WatchBall] -BallY- Variance   : 191.305
+targetY: -413
+[WatchBall] -BallY- Variance   : 224.118
+targetY: -413
+[WatchBall] -BallY- Variance   : 336.177
+targetY: -413
+[WatchBall] -BallY- Variance   : 336.177
+targetY: -413
+[WatchBall] -BallY- Variance   : 315.735
+targetY: -413
+[WatchBall] -BallY- Variance   : 255.189
+targetY: -413
+[WatchBall] -BallY- Variance   : 255.189
+targetY: -413
+[WatchBall] -BallY- Variance   : 170.126
+targetY: -413
+[WatchBall] -BallY- Variance   : 146.839
+targetY: -413
+[WatchBall] -BallY- Variance   : 220.258
+targetY: -413
+[WatchBall] -BallY- Variance   : 220.258
+targetY: -413
+[WatchBall] -BallY- Variance   : 166.122
+targetY: -413
+[WatchBall] -BallY- Variance   : 14.4097
+targetY: -413
+[WatchBall] -BallY- Variance   : 14.4097
+targetY: -413
+[WatchBall] -BallY- Variance   : 9.60647
+targetY: -413
