@@ -10,9 +10,12 @@
 #include <RingBuffer.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+// for std::pair
+#include <utility>
 #include <string>
 
 using msl_actuator_msgs::MotionControl;
+using std::pair;
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -46,9 +49,12 @@ class WatchBall : public DomainBehaviour
     double goalWidth;
 	double ballMovingThreshold;
 
-	// calcGoalImpactY uses the RingBuffer to calculate the Y impact of
-	// the ball at the goal line.
-    double calcGoalImpactY();
+	// calcGoalImpactY tries to calculate the impact location of the ball at the goal line.
+	// If the ball would impact it returns true and the Y-Coordinate of the impact point.
+	// Otherwise it returns false and 0.
+    pair<bool, double> calcGoalImpactY(
+			shared_ptr<geometry::CNPoint2D> alloBallPos,
+			shared_ptr<geometry::CNVelocity2D> egoBallVel);
 
 	// updateGoalPosition uses the laser scanner to update the goals mid
 	// position.
@@ -64,7 +70,7 @@ class WatchBall : public DomainBehaviour
 	// if the the robot would exceed the max rotation given maxRot.
 	double clampRotation(double mcRotation, double ownTheta, double maxRot);
 
-	// driveTo drives to the given target but respects the goal area
+	// driveAndAlignTo drives to the given target but respects the goal area.
 	MotionControl driveAndAlignTo(
 			shared_ptr<geometry::CNPoint2D> target,
 			shared_ptr<geometry::CNPoint2D> alloAlginPoint
@@ -77,7 +83,7 @@ class WatchBall : public DomainBehaviour
 	shared_ptr<geometry::CNPoint2D> mirroredOwnPos();
 
 	// ballIsMoving returns true if the ball speed exceeds ballMovingThreshold.
-	bool ballIsMoving();
+	bool ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec);
 
     /*PROTECTED REGION END*/
   private:

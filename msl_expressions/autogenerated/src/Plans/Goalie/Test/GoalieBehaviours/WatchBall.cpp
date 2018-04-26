@@ -94,28 +94,34 @@ void WatchBall::run(void *msg)
 	
 	// Lambda that returns one prediction of the goal impact or nullptr if
 	// a prediction is not possible.
-	auto calculateTarget = [&]() -> shared_ptr<geometry::CNPoint2D> {
+	auto determineTarget = [&]() -> shared_ptr<geometry::CNPoint2D> {
+
+		// Retrieve ball velocity vector
+		auto ballVec = wm->ball->getEgoBallVelocity();
+
 		double targetY = 0;
 
-		if (ballIsMoving()) {
-			targetY = calcGoalImpactY();
+		const auto calcResult = calcGoalImpactY(alloBall, ballVec);
+		bool wouldImpact = calcResult.first;
+		double impactPoint = calcResult.second;
+
+		if (ballIsMoving(ballVec) && wouldImpact) {
+			targetY = impactPoint;
 		} else {
-			// if ball is not moving, do stuff
+			// if ball is not moving or would not hit goal, then
+			// do drive to ball height.
 			targetY = alloBall->y;
 		}
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
 		const double targetX = alloGoalMid->x + 200;
-		if (targetY != 0) {
-			std::cout << "targetY: " << targetY << std::endl;
-		}
+		//std::cout << "targetY: " << targetY << std::endl;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
 
-
-	auto alloTarget = calculateTarget();
+	auto alloTarget = determineTarget();
 
 	// If alloTarget was not calculated, move to the goal mid.
 	if (alloTarget == nullptr) {
@@ -125,7 +131,7 @@ void WatchBall::run(void *msg)
 	auto offset = std::make_shared<geometry::CNPoint2D>(200, 0);
 
 	// Finaly if a goal impact can be calculated drive to the calculated impact
-	mc = faster(driveAndAlignTo(alloTarget + offset, alloBall));
+	mc = faster(driveAndAlignTo(alloTarget + offset, mirroredOwnPos()));
 
 	// Clamp rotation to 45°
 	mc.motion.rotation = clampRotation(
@@ -142,61 +148,51 @@ void WatchBall::initialiseParameters()
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ // Add additional methods here
-double WatchBall::calcGoalImpactY()
+pair<bool, double> WatchBall::calcGoalImpactY(
+		shared_ptr<geometry::CNPoint2D> alloBallPos,
+		shared_ptr<geometry::CNVelocity2D> egoBallVel)
 {
-	// Retrieve ball velocity vector
-	auto ballVec = wm->ball->getEgoBallVelocity();
-	if (ballVec == nullptr) {
-		return 0; // TODO: Indicate error
+	if (egoBallVel == nullptr || alloBallPos == nullptr) {
+		return std::make_pair(false, 0.0);
 	}
 
-	auto ballSpeed = ballVec->length();
-
-	// Calculation itself
-	const auto bvx = -ballVec->x; // ball velocity x
-	const auto bvy = -ballVec->y;
-	const auto bpx = alloBall->x; // ball position x
-	const auto bpy = alloBall->y;
+	// Calculation itself.
+	// I solved the vector equation for a line for y.
+	const auto bvx = -egoBallVel->x; // ball velocity x
+	const auto bvy = -egoBallVel->y;
+	const auto bpx = alloBallPos->x; // ball position x
+	const auto bpy = alloBallPos->y;
 	const auto glx = alloGoalMid->x;
 
 	if (bvx >= 0) {
-		puts("Ball not moving to our direction");
-		return 0;
+		//puts("Ball not moving to our direction");
+		return std::make_pair(false, 0.0);
 	}
 
 	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
 
-	const double threshold = 1000.0;
+	/* static int c = 0; */
+	/* if (c++ == 5) { */
+	/* 	printf("ballVec: %f %f, ballSpeed: %f, y: %f\n", */
+	/* 			ballVec->x, ballVec->y, ballSpeed, y); */
+	/* 	c = 0; */
+	/* 	if (ballSpeed >= threshold) { */
+	/* 		puts("Ball IS moving!"); */
+	/* 	} else { */
+	/* 		puts("Ball NOT moving!"); */
+	/* 	} */
+	/* } */
 
-	static int c = 0;
-	if (c++ == 5) {
-		printf("ballVec: %f %f, ballSpeed: %f, y: %f\n",
-				ballVec->x, ballVec->y, ballSpeed, y);
-		c = 0;
-		if (ballSpeed >= threshold) {
-			puts("Ball IS moving!");
-		} else {
-			puts("Ball NOT moving!");
-		}
-	}
-
-	if (ballSpeed < threshold)
-	{
-		return 0;
-	}
-
-
-	return y;
+	return std::make_pair(true, y);
 }
 
-bool WatchBall::ballIsMoving()
+bool WatchBall::ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec)
 {
 	// Retrieve ball velocity vector
-	auto ballVec = wm->ball->getEgoBallVelocity();
 	if (ballVec == nullptr) {
 		return 0; // TODO: Indicate error
 	}
-	auto ballSpeed = ballVec->length();
+	const auto ballSpeed = ballVec->length();
 	return ballSpeed >= ballMovingThreshold;
 }
 
@@ -205,17 +201,14 @@ double WatchBall::fitTargetY(double targetY)
 
     if (targetY > alloGoalLeft->y)
     {
-        //			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
         return alloGoalLeft->y;
     }
     else if (targetY < alloGoalRight->y)
     {
-        //			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
         return alloGoalRight->y;
     }
     else
     {
-        //			cout << "[WatchBall] fitTarget else: " << targetY << endl;
         return targetY;
     }
 }
