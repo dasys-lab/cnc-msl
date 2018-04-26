@@ -152,12 +152,6 @@ double WatchBall::calcGoalImpactY()
 	auto ballSpeed = ballVec->length();
 	// auto alloBallVec = ballVec->egoToAllo(*alloBall);
 
-
-	const double threshold = 500.0;
-	if (ballSpeed > threshold) {
-		puts("Ball is moving!");
-	}
-
 	// Calculation itself
 	const auto bvx = ballVec->x; // ball velocity x
 	const auto bvy = ballVec->y;
@@ -165,13 +159,18 @@ double WatchBall::calcGoalImpactY()
 	const auto bpy = alloBall->y;
 	const auto glx = alloGoalMid->x;
 
-	const auto y = bpy + ((glx-bpx)/bvx);
+	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
 
 	static int c = 0;
 	if (c++ == 5) {
 		printf("ballVec: %f %f, ballSpeed: %f, y: %f\n",
 				ballVec->x, ballVec->y, ballSpeed, y);
 		c = 0;
+	}
+
+	const double threshold = 500.0;
+	if (ballSpeed > threshold) {
+		puts("Ball is moving!");
 	}
 
 	return y;
