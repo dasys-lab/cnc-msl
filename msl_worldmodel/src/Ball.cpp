@@ -510,7 +510,11 @@ void Ball::updateHaveBall()
 {
 	if ( (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator()) && (wm->rawSensorData->getLightBarrier()) )
 	{
-		this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
+		if (!this->haveBall()) {
+			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 5;
+		} else {
+			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
+		}
 	}
 
 	if ( getVisionBallPosition() != nullptr // kicerdistance + dynamic_distance < ballpos.length
@@ -520,18 +524,19 @@ void Ball::updateHaveBall()
 	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 	}
 
-	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter == 0) || visionHaveBallCounter == 0)
-	{
-		this->ballInKicker = false;
-		if (visionHaveBallCounter == 0 ) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
-		if (lightbarrierTriggeredCounter == 0 ) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
-		return;
-	}
-
 	this->ballInKicker = true;
 	this->lightbarrierTriggeredCounter--;
 	this->visionHaveBallCounter--;
 	this->ballPossessionStatus = BallPossessionStatus::HaveBall;
+
+	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter == 0) || visionHaveBallCounter == 0
+			|| this->lightbarrierTriggeredCounter > this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS)
+	{
+		this->ballInKicker = false;
+		if (visionHaveBallCounter == 0) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
+		if (lightbarrierTriggeredCounter == 0) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
+		return;
+	}
 }
 
 bool Ball::robotHasBall(int robotId)
