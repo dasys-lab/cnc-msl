@@ -30,7 +30,6 @@ namespace alica
     void DropBallAttackerPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537841488) ENABLED START*/ //Add additional options here
-
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
@@ -41,11 +40,9 @@ namespace alica
         auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
-        	cout << "DBAP: alo ball pos null" << endl;
+            cout << "DBAP: alo ball pos null" << endl;
             alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
         }
-
-
 
         auto alloTarget = wm->field->posOwnGoalMid() - alloBallPos;
         alloTarget = alloTarget->normalize() * 1250;
