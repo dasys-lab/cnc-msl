@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434046634656" name="StandardAttack" comment="lostBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="1" maxCardinality="1">
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1434048722503</inTransitions>
     <inTransitions>#1450175866364</inTransitions>
@@ -34,7 +33,6 @@
     <outTransitions>#1434716048579</outTransitions>
   </states>
   <states id="1450175617600" name="SideLineGetBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <plans xsi:type="alica:BehaviourConfiguration">FetchFromSideLine.beh#1450175679178</plans>
     <inTransitions>#1450175864724</inTransitions>
     <outTransitions>#1450175866364</outTransitions>
