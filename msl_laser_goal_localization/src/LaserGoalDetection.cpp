@@ -6,7 +6,6 @@
 #include <visualization_msgs/Marker.h>
 #include <limits>
 
-
 using std::cout;
 using std::endl;
 using std::min;
@@ -44,6 +43,9 @@ LaserGoalDetection::LaserGoalDetection(int argc, char **argv)
     this->candPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/candidates", 10));
     this->goalMidPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/goal_mid", 10));
     this->goalMidResultPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<visualization_msgs::Marker>("/laser_goal_mid", 10));
+
+    this->goalMidPointPublisher = std::make_shared<ros::Publisher>(rosNode.advertise<geometry_msgs::Point>("/laser_goal_mid_point", 10));
+
 }
 
 LaserGoalDetection::~LaserGoalDetection()
@@ -283,6 +285,16 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
     pointPublisher->publish(point_list);
     goalMidPublisher->publish(goalMidPoint);
     goalMidResultPublisher->publish(goalMidPointResult);
+
+	// Publish sinlge point
+	{
+	geometry_msgs::Point p;
+	p.x = goalMidPoint.points[0].x;
+	p.y = goalMidPoint.points[0].y;
+	p.z = goalMidPoint.points[0].z;
+    goalMidPointPublisher->publish(p);
+	}
+
     candPublisher->publish(pointCandidates);
 
     for (auto pt : lineCloud->points)

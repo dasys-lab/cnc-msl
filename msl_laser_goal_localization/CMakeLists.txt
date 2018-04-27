@@ -15,7 +15,7 @@ find_package(PCL 1.7  REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_laser_goal_localization
-  CATKIN_DEPENDS roscpp sensor_msgs
+  CATKIN_DEPENDS roscpp sensor_msgs geometry_msgs
 )
 
 include_directories( include

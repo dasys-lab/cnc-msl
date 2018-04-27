@@ -5,6 +5,7 @@
 #include <ros/node_handle.h>
 #include <ros/spinner.h>
 #include <sensor_msgs/LaserScan.h>
+#include <geometry_msgs/Point.h>
 #include <sensor_msgs/PointCloud.h>
 
 namespace sensor_msgs
@@ -35,7 +36,7 @@ class LaserGoalDetection
     std::shared_ptr<ros::Publisher> candPublisher;
     std::shared_ptr<ros::Publisher> goalMidResultPublisher;
     std::shared_ptr<ros::Publisher> goalMidPublisher;
-
+    std::shared_ptr<ros::Publisher> goalMidPointPublisher;
 
     ros::AsyncSpinner spinner;
 
