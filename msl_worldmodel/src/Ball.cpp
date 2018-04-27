@@ -36,6 +36,7 @@ Ball::Ball(MSLWorldModel *wm, int ringbufferLength)
 {
     this->haveBallDistanceDynamic = 0;
     this->hadBefore = false;
+    this->ballInKicker = false;
     this->hasBallIteration = 0;
     this->haveDistance = 0;
     this->selfInBallPossesion = false;
@@ -510,7 +511,7 @@ void Ball::updateHaveBall()
 {
 	if ( (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator()) && (wm->rawSensorData->getLightBarrier()) )
 	{
-		if (!this->haveBall()) {
+		if (!this->ballInKicker) {
 			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 5;
 		} else {
 			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
@@ -518,7 +519,7 @@ void Ball::updateHaveBall()
 	}
 
 	if ( getVisionBallPosition() != nullptr // kicerdistance + dynamic_distance < ballpos.length
-			&& (!wm->isUsingSimulator() && getVisionBallPosition()->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)
+			&& ((!wm->isUsingSimulator() &&  (getVisionBallPosition()->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)))
 					|| (wm->isUsingSimulator() &&  getVisionBallPosition()->length() < KICKER_DISTANCE_SIMULATOR)) )
 	{
 	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
