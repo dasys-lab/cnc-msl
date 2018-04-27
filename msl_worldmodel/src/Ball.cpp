@@ -511,10 +511,12 @@ void Ball::updateHaveBall()
 {
 	if ( (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator()) && (wm->rawSensorData->getLightBarrier()) )
 	{
-		if (!this->ballInKicker) {
-			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 5;
-		} else {
-			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
+		if(lightbarrierTriggeredCounter < LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS) {
+			if (!this->ballInKicker) {
+				this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 5;
+			} else {
+				this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
+			}
 		}
 	}
 
