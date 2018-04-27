@@ -532,8 +532,8 @@ void Ball::updateHaveBall()
 			|| this->lightbarrierTriggeredCounter > this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS)
 	{
 		this->ballInKicker = false;
-		if (visionHaveBallCounter == 0) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
-		if (lightbarrierTriggeredCounter == 0) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
+		if (visionHaveBallCounter <= 0) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
+		if (lightbarrierTriggeredCounter <= 0) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
 		return;
 	}
 	this->ballInKicker = true;
