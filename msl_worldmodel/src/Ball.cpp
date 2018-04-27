@@ -513,7 +513,7 @@ void Ball::updateHaveBall()
 	{
 		if(lightbarrierTriggeredCounter < LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS) {
 			if (!this->ballInKicker) {
-				this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 5;
+				this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS + 10;
 			} else {
 				this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 			}
