@@ -517,7 +517,8 @@ void Ball::updateHaveBall()
 	}
 
 	shared_ptr<geometry::CNPoint2D> ballPos = getVisionBallPosition();
-	if (ballPos != nullptr &&  ballPos->length() < KICKER_DISTANCE && !wm->isUsingSimulator() || (wm->isUsingSimulator() &&  ballPos->length() < KICKER_DISTANCE_SIMULATOR))
+	if (ballPos != nullptr // kicerdistance + dynamic_distance < ballpos.length
+			&& (!wm->isUsingSimulator() && ballPos->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)  || (wm->isUsingSimulator() &&  ballPos->length() < KICKER_DISTANCE_SIMULATOR)))
 	{
 	    visionHaveBallCounter = 10;
 		this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
