@@ -48,8 +48,11 @@ namespace alica
         double minTol;
         double tol;
         msl::InfoTime startTime;
-        int canPassCounter;
-        int canPassThreshold;
+        int longPassCounter;
+        int longPassThreshold;
+        int adaptiveThreshold;
+        int longThresholdMin;
+        int longThresholdMax;
 
         shared_ptr<geometry::CNPoint2D> getTeammatePosFromTaskName(string teamMateTaskName);
 

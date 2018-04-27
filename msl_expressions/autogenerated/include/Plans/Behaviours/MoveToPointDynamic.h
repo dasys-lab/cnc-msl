@@ -7,10 +7,12 @@ namespace msl
 {
     class MovementQuery;
 }
+namespace alica {
+	class Query;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class Query;
     class MoveToPointDynamic : public DomainBehaviour
     {
     public:
@@ -22,7 +24,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1456997073100) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<Query> query;
+        shared_ptr<alica::Query> query;
         double maxVel;
         bool avoidBall;
         vector<double> result;

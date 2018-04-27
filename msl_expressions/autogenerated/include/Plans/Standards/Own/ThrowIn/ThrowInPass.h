@@ -7,6 +7,10 @@ namespace geometry
 {
     class CNPoint2D;
 }
+namespace msl
+{
+    class MovementQuery;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -29,6 +33,7 @@ namespace alica
         string teamMateTaskName2;
         shared_ptr<geometry::CNPoint2D> recPos;
         shared_ptr<geometry::CNPoint2D> aRecPos;
+        shared_ptr<msl::MovementQuery> query;
         double ratio;
         double ballRadius;
         double passCorridorWidth;
@@ -47,7 +52,11 @@ namespace alica
         int aRecId;
         int longPassCounter;
         int longPassThreshold;
+        int adaptiveThreshold;
+        int longThresholdMin;
+        int longThresholdMax;
         bool sentPm;
+        bool useExperimentalAlignment;
         pair<int, shared_ptr<geometry::CNPoint2D>> getTeammateIdAndPosFromTaskName(string teamMateTaskName);
         /*PROTECTED REGION END*/};
 } /* namespace alica */

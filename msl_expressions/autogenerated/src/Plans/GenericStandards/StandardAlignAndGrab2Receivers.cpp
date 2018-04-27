@@ -40,8 +40,11 @@ namespace alica
         this->angleIntErr = 0.0;
         this->trans = 0.0;
         this->haveBallCounter = 0;
-        this->canPassCounter = 1;
-        this->canPassThreshold = 1;
+        this->longPassCounter = 1;
+        this->longThresholdMax = 0;
+        this->longThresholdMin = 0;
+        this->longPassThreshold = 0;
+        this->adaptiveThreshold = 0;
         this->query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -119,23 +122,23 @@ namespace alica
         // Since coimbra 17
         if (this->longPassPossible)
         {
-            this->canPassCounter = max(-40, min(this->canPassCounter + 1, 50));
+            this->longPassCounter = max(this->longThresholdMin, min(this->longPassCounter + 1, this->longThresholdMax));
         }
         else
         {
-            this->canPassCounter = max(-40, min(this->canPassCounter - 1, 50));
+            this->longPassCounter = max(this->longThresholdMin, min(this->longPassCounter - 1, this->longThresholdMax));
         }
 
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
-        if (this->canPassCounter > this->canPassThreshold)
+        if (this->longPassCounter > this->longPassThreshold)
         {
-            this->canPassThreshold = -20;
+            this->longPassThreshold = -this->adaptiveThreshold;
 //        cout << "SAAG2R: aiming to receiver" << endl;
             alloTarget = this->recPos;
         }
         else
         {
-            this->canPassThreshold = 20;
+            this->longPassThreshold = this->adaptiveThreshold;
 //        cout << "SAAG2R: aiming to alternative receiver" << endl;
             alloTarget = this->aRecPos;
         }
@@ -286,11 +289,17 @@ namespace alica
         this->maxTurnAngle = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "maxTurnAngle", NULL);
         this->minOppDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "minOppDist", NULL);
         this->trans = (*this->sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
+        this->longThresholdMin = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMin", NULL);
+        this->longThresholdMax = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMax", NULL);
+        this->adaptiveThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                "adaptiveThreshold", NULL);
         string tmp;
         bool success = true;
         this->longPassPossible = true;
-        this->canPassCounter = 1;
-        this->canPassThreshold = 1;
+        this->longPassCounter = 1;
+        this->longPassThreshold = 1;
         try
         {
             success &= getParameter("TeamMateTaskName1", tmp);

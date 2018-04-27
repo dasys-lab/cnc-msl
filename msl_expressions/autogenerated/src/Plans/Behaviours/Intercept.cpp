@@ -43,7 +43,7 @@ namespace alica
 
         this->minDistErr = (*sc)["Drive"]->get<double>("Drive.Intercept.minDistErr", NULL);
 
-        this->maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
+        this->maxVel = (*sc)["Drive"]->get<double>("Drive.InterceptMaxSpeed", NULL);
 
         this->predictionTimestep = (*sc)["Drive"]->get<double>("Drive.Intercept.predictionTimestep", NULL);
         this->predictionHorizon = (*sc)["Drive"]->get<int>("Drive.Intercept.predictionHorizon", NULL);

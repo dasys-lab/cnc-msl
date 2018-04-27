@@ -57,6 +57,8 @@ Ball::Ball(MSLWorldModel *wm, int ringbufferLength)
     this->oppDistWithoutBallBefore = (*this->sc)["GameState"]->get<double>("GameState.oppDistWithoutBallBefore", NULL);
     this->oppDistWithBallBefore = (*this->sc)["GameState"]->get<double>("GameState.oppDistWithBallBefore", NULL);
     this->oppBallPossessionHystersis = (*this->sc)["GameState"]->get<double>("GameState.oppBallPossessionHystersis", NULL);
+    this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS = (*this->sc)["Dribble"]->get<int>("Dribble", "visionHaveBallIterationsAfterLoss", NULL);
+    this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS = (*this->sc)["Dribble"]->get<int>("Dribble", "lightbarrierHaveBallIterations", NULL);
     this->oppHasBallCounter = 0;
     this->visionHaveBallCounter = 0;
     this->lightbarrierTriggeredCounter = 0;
@@ -510,7 +512,7 @@ void Ball::updateHaveBall()
 	{
 		if (wm->rawSensorData->getLightBarrier())
 		{
-			lightbarrierTriggeredCounter = 30;
+			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 			this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
 		}
 	}
@@ -519,7 +521,7 @@ void Ball::updateHaveBall()
 	if (ballPos != nullptr // kicerdistance + dynamic_distance < ballpos.length
 			&& (!wm->isUsingSimulator() && ballPos->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)  || (wm->isUsingSimulator() &&  ballPos->length() < KICKER_DISTANCE_SIMULATOR)))
 	{
-	    visionHaveBallCounter = 60;
+	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 		this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
 	}
 
@@ -527,6 +529,7 @@ void Ball::updateHaveBall()
 	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter == 0) || visionHaveBallCounter == 0)
 	{
 		this->ballInKicker = false;
+		this->ballPossessionStatus = BallPossessionStatus::NotInKickerDistance;
 		return;
 	}
 

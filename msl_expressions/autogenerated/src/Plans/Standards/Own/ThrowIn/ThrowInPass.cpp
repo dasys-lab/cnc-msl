@@ -7,6 +7,7 @@ using namespace std;
 #include "engine/model/EntryPoint.h"
 #include "engine/model/Plan.h"
 #include "msl_robot/robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <Ball.h>
 #include <Game.h>
 #include <GeometryCalculator.h>
@@ -33,6 +34,7 @@ namespace alica
         this->passCorridorWidth = 0.0;
         this->maxTurnAngle = 0.0;
         this->longPassPossible = true;
+        this->useExperimentalAlignment = false;
         this->maxVel = 2000.0;
         this->pRot = 2.1;
         this->dRot = 0.0;
@@ -48,6 +50,10 @@ namespace alica
         this->aRecPos = nullptr;
         this->longPassCounter = 1;
         this->longPassThreshold = 0;
+        this->adaptiveThreshold = 0;
+        this->longThresholdMin = 0;
+        this->longThresholdMax = 0;
+        this->query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     ThrowInPass::~ThrowInPass()
@@ -128,22 +134,22 @@ namespace alica
         // since coimbra 17
         if (this->longPassPossible)
         {
-            this->longPassCounter = max(-40, min(this->longPassCounter + 1, 50));
+            this->longPassCounter = max(this->longThresholdMin, min(this->longPassCounter + 1, this->longThresholdMax));
         }
         else
         {
-            this->longPassCounter = max(-40, min(this->longPassCounter - 1, 50));
+            this->longPassCounter = max(longThresholdMin, min(this->longPassCounter - 1, this->longThresholdMax));
         }
         shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
         if (this->longPassCounter > this->longPassThreshold)
         {
-            this->longPassThreshold = -20;
+            this->longPassThreshold = -this->adaptiveThreshold;
             alloTarget = this->recPos;
             bestReceiverId = this->recId;
         }
         else
         {
-            this->longPassThreshold = 20;
+            this->longPassThreshold = this->adaptiveThreshold;
             alloTarget = this->aRecPos;
             bestReceiverId = this->aRecId;
         }
@@ -213,26 +219,47 @@ namespace alica
          */
 
         msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
-        mc.motion.rotation = geometry::sgn(mc.motion.rotation)
-                * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
-        lastRotError = deltaAngle;
-        double transBallOrth = egoBallPos->length() * mc.motion.rotation; // may be negative!
 
-        auto ballVel = this->wm->ball->getVisionBallVelocity();
-        if (!ballVel)
+        if (this->useExperimentalAlignment)
         {
-            ballVel = make_shared < geometry::CNVelocity2D > (0, 0);
+            auto alloAlignPoint = aimPoint->egoToAllo(*ownPos);
+            auto ball2AimPoint = alloBall - alloAlignPoint;
+            auto alloDriveTo = alloBall
+                    + ball2AimPoint->rotate(-M_PI)->normalize()
+                            * (this->ballRadius + msl::Rules::getInstance()->getRobotRadius());
+
+            this->query->egoDestinationPoint = alloDriveTo->alloToEgo(*ownPos);
+            this->query->egoAlignPoint = aimPoint;
+
+            mc = this->robot->robotMovement->moveToPoint(this->query);
+
+            send(mc);
+            return;
         }
+        else
+        {
+            mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
+            mc.motion.rotation = geometry::sgn(mc.motion.rotation)
+                    * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
+            lastRotError = deltaAngle;
+            double transBallOrth = egoBallPos->length() * mc.motion.rotation; // may be negative!
 
-        double transBallTo = min(1000.0, ballVel->length());
-        auto driveTo = egoBallPos->rotate(-M_PI / 2.0);
-        driveTo = driveTo->normalize() * transBallOrth;
-        driveTo = driveTo + egoBallPos->normalize() * transBallTo;
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = min(driveTo->length(), maxVel);
+            auto ballVel = this->wm->ball->getVisionBallVelocity();
+            if (!ballVel)
+            {
+                ballVel = make_shared < geometry::CNVelocity2D > (0, 0);
+            }
 
-        sendAndUpdatePT(mc);
+            double transBallTo = min(1000.0, ballVel->length());
+            auto driveTo = egoBallPos->rotate(-M_PI / 2.0);
+            driveTo = driveTo->normalize() * transBallOrth;
+            driveTo = driveTo + egoBallPos->normalize() * transBallTo;
+            mc.motion.angle = driveTo->angleTo();
+            mc.motion.translation = min(driveTo->length(), maxVel);
+
+            sendAndUpdatePT(mc);
+            return;
+        }
 
         /*PROTECTED REGION END*/
     }
@@ -245,7 +272,14 @@ namespace alica
         this->longPassPossible = true;
         this->longPassCounter = 1;
         this->longPassThreshold = 0;
-
+        this->longThresholdMin = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMin", NULL);
+        this->longThresholdMax = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMax", NULL);
+        this->adaptiveThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                "adaptiveThreshold", NULL);
+        this->useExperimentalAlignment = (*this->sc)["StandardSituation"]->get<bool>("ThrowInPass",
+                                                                                     "useExperimentalAlignment", NULL);
         this->recPos = nullptr;
         this->aRecPos = nullptr;
 
@@ -277,7 +311,6 @@ namespace alica
             {
                 teamMateTaskName2 = tmp;
             }
-            cout << "TASKNAMES: " << teamMateTaskName1 << "," << teamMateTaskName2 << endl;
         }
         catch (exception &e)
         {

@@ -45,6 +45,9 @@ namespace alica
         shared_ptr<msl::MovementQuery> m_Query;
         int longPassCounter;
         int longPassThreshold;
+        int adaptiveThreshold;
+        int longThresholdMin;
+        int longThresholdMax;
 
         shared_ptr<geometry::CNPoint2D> getTeammatePosFromTaskName(string teamMateTaskName);
 
