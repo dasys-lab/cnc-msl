@@ -512,7 +512,6 @@ void Ball::updateHaveBall()
 		{
 			lightbarrierTriggeredCounter = 30;
 			this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
-			return;
 		}
 	}
 
@@ -522,7 +521,6 @@ void Ball::updateHaveBall()
 	{
 	    visionHaveBallCounter = 60;
 		this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::NoBallSeen);
-		return;
 	}
 
 
