@@ -64,7 +64,7 @@ namespace msl
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
-		void processGoalMid(geometry_msgs::Point);
+		void processGoalMid(geometry_msgs::Point point);
 		void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 		double getAverageBearing();
 

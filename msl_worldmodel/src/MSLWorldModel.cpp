@@ -34,6 +34,7 @@
 #include <msl_sensor_msgs/SharedWorldInfo.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
+#include <geometry_msgs/Point.h>
 #include <std_msgs/Bool.h>
 
 namespace msl
@@ -105,7 +106,11 @@ namespace msl
                                       (MSLWorldModel *)this);
         imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel *)this);
 
+        goalMidSub = n.subscribe("/laser_goal_mid_point", 10,
+                &MSLWorldModel::onGoalMidDetected, (MSLWorldModel *) this);
+
         processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
+
 
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->usingSimulator = false;
@@ -135,6 +140,11 @@ namespace msl
     void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
     {
         this->rawSensorData->processJoystickCommand(msg);
+    }
+
+    void MSLWorldModel::onGoalMidDetected(geometry_msgs::Point msg)
+    {
+        this->rawSensorData->processGoalMid(msg);
     }
 
     void MSLWorldModel::onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg)

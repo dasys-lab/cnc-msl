@@ -41,6 +41,10 @@ namespace gazebo_msgs
 {
 ROS_DECLARE_MESSAGE(ModelStates)
 }
+namespace geometry_msgs
+{
+ROS_DECLARE_MESSAGE(Point)
+}
 namespace msl_helper_msgs
 {
 ROS_DECLARE_MESSAGE(PassMsg)
@@ -95,6 +99,7 @@ class MSLWorldModel
     void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
     void onLightBarrierInfo(std_msgs::BoolPtr msg);
     void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
+    void onGoalMidDetected(geometry_msgs::Point msg);
 
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
@@ -156,6 +161,7 @@ class MSLWorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
+    ros::Subscriber goalMidSub;
     ros::Publisher processCommandPub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
