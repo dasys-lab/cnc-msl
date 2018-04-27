@@ -43,8 +43,11 @@ namespace alica
         // will be set in intialize parameters ...
         this->ballRadius = msl::Rules::getInstance()->getBallRadius();
         this->minOppDist = 0;
+        this->longThresholdMax = 0;
+        this->longThresholdMin = 0;
         this->passCorridorWidth = 0;
         this->longPassThreshold = 0;
+        this->adaptiveThreshold = 0;
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint2Receivers::~StandardAlignToPoint2Receivers()
@@ -119,21 +122,21 @@ namespace alica
         // since coimbra 17
         if (this->longPassPossible)
         {
-            this->longPassCounter = max(-40, min(this->longPassCounter + 1, 50));
+            this->longPassCounter = max(this->longThresholdMin, min(this->longPassCounter + 1, this->longThresholdMax));
         }
         else
         {
-            this->longPassCounter = max(-40, min(this->longPassCounter - 1, 50));
+            this->longPassCounter = max(this->longThresholdMin, min(this->longPassCounter - 1, this->longThresholdMax));
         }
         shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
         if (this->longPassCounter > this->longPassThreshold)
         {
-            this->longPassThreshold = -20;
+            this->longPassThreshold = -this->adaptiveThreshold;
             receiverPos = this->recPos;
         }
         else
         {
-            this->longPassThreshold = 20;
+            this->longPassThreshold = this->adaptiveThreshold;
             receiverPos = this->aRecPos;
         }
 
@@ -167,6 +170,12 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1467228931063) ENABLED START*/ // Add additional options here
         this->minOppDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "minOppDist", NULL);
         this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
+        this->longThresholdMin = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMin", NULL);
+        this->longThresholdMax = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                               "longPassThresholdMax", NULL);
+        this->adaptiveThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                "adaptiveThreshold", NULL);
         this->longPassCounter = 1;
         this->longPassThreshold = 0;
         string tmp;
