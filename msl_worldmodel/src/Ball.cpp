@@ -430,7 +430,7 @@ void Ball::updateSharedBall()
         {
             continue;
         }
-        shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(shwmdata->ball.point.x, shwmdata->ball.point.y);
+        shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(shwmdata-> ball.point.x, shwmdata->ball.point.y);
         double thresholdSqr = 1000000.0;
 
         bool found = false;
@@ -508,21 +508,17 @@ BallPossessionStatus Ball::getBallPossessionStatus()
 
 void Ball::updateHaveBall()
 {
-	if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
+	if ( (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator()) && (wm->rawSensorData->getLightBarrier()) )
 	{
-		if (wm->rawSensorData->getLightBarrier())
-		{
-			this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
-		}
+		this->lightbarrierTriggeredCounter = this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 	}
 
-	shared_ptr<geometry::CNPoint2D> ballPos = getVisionBallPosition();
-	if (ballPos != nullptr // kicerdistance + dynamic_distance < ballpos.length
-			&& (!wm->isUsingSimulator() && ballPos->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)  || (wm->isUsingSimulator() &&  ballPos->length() < KICKER_DISTANCE_SIMULATOR)))
+	if ( getVisionBallPosition() != nullptr // kicerdistance + dynamic_distance < ballpos.length
+			&& (!wm->isUsingSimulator() && getVisionBallPosition()->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)
+					|| (wm->isUsingSimulator() &&  getVisionBallPosition()->length() < KICKER_DISTANCE_SIMULATOR)) )
 	{
 	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 	}
-
 
 	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter == 0) || visionHaveBallCounter == 0)
 	{
