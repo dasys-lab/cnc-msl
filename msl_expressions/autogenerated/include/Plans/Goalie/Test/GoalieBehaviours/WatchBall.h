@@ -27,7 +27,6 @@ class WatchBall : public DomainBehaviour
     virtual ~WatchBall();
     virtual void run(void *msg);
     /*PROTECTED REGION ID(pub1447863466691) ENABLED START*/ // Add additional public methods here
-    double fitTargetY(double targetY);
     /*PROTECTED REGION END*/
   protected:
     virtual void initialiseParameters();
@@ -35,18 +34,17 @@ class WatchBall : public DomainBehaviour
 
 	// Values used by methods and behaviour
 	shared_ptr<geometry::CNPosition> ownPos;
-	shared_ptr<geometry::CNPoint2D> alloGoalLeft;
-    shared_ptr<geometry::CNPoint2D> alloGoalRight;
-    shared_ptr<geometry::CNPoint2D> alloGoalMid;
-    shared_ptr<geometry::CNPoint2D> prevTarget;
     shared_ptr<geometry::CNPoint2D> alloBall;
+    shared_ptr<geometry::CNPoint2D> alloGoalLeft;
+    shared_ptr<geometry::CNPoint2D> alloGoalRight;
+
+    shared_ptr<geometry::CNPoint2D> lastLaserGoalMid;
 
 	// Config parameters
     int maxVariance;
     int goalieSize;
     int snapDistance;
     double maxRotationRad;
-    double goalWidth;
 	double ballMovingThreshold;
 
 	// calcGoalImpactY tries to calculate the impact location of the ball at the goal line.
@@ -54,17 +52,24 @@ class WatchBall : public DomainBehaviour
 	// Otherwise it returns false and 0.
     pair<bool, double> calcGoalImpactY(
 			shared_ptr<geometry::CNPoint2D> alloBallPos,
-			shared_ptr<geometry::CNVelocity2D> egoBallVel);
+			shared_ptr<geometry::CNVelocity2D> egoBallVel,
+			const double goalLineX
+			);
 
-	// updateGoalPosition uses the laser scanner to update the goals mid
-	// position.
-    void updateGoalPosition();
+	// tryLocalizeGoalMid tries to localice the goal midpoint using
+	// the laser scanner.
+	// In case of success it returns true and the localized point.
+	// Otherwise it will return the last known goal position.
+	pair<bool, shared_ptr<geometry::CNPoint2D>> tryLocalizeGoalMid();
 
 	// query is the MovementQuery for the robot to drive to the goal.
     shared_ptr<msl::MovementQuery> query;
 
 	// Helper functions
-	
+
+	// fitTargetY makes limits targetY to goalLeft and goalRight.
+    double fitTargetY(double targetY, double goalLeft, double goalRight);
+
 	// clampRotations clamps or limits the rotation to maxRot.
 	// Given the robots rotation ownTheta and the demanded mcRotation, don't rotate
 	// if the the robot would exceed the max rotation given maxRot.

@@ -26,12 +26,6 @@ WatchBall::WatchBall()
     const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
     maxRotationRad = maxRotationDeg * (M_PI/180.0);
 
-	// Read required goal dimensions.
-    goalWidth = this->wm->field->getGoalWidth();
-    const auto tempMid = wm->field->posOwnGoalMid();
-    alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
-    alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-    alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 
 	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
@@ -59,8 +53,14 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    updateGoalPosition();
-
+    const auto goalResult = tryLocalizeGoalMid();
+	const auto laserDetectedGoal = goalResult.first;
+	const auto alloGoalMid = goalResult.second;
+    alloGoalLeft = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+    alloGoalRight = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+    
     alloBall = wm->ball->getAlloBallPosition();
 
 	// Special case that depend on the ball presence and position.
@@ -87,7 +87,7 @@ void WatchBall::run(void *msg)
 
 		double targetY = 0;
 
-		const auto calcResult = calcGoalImpactY(alloBall, ballVec);
+		const auto calcResult = calcGoalImpactY(alloBall, ballVec, alloGoalMid->x);
 		bool wouldImpact = calcResult.first;
 		double impactPoint = calcResult.second;
 
@@ -100,7 +100,7 @@ void WatchBall::run(void *msg)
 		} // TODO: Try out speculative keeping
 
 		// Limit or clamp targetY to goal area
-		targetY = fitTargetY(targetY);
+		targetY = fitTargetY(targetY, alloGoalLeft->y, alloGoalRight->y);
 		const double offsetX = 150;
 		const double targetX = alloGoalMid->x + offsetX;
 
@@ -124,13 +124,13 @@ void WatchBall::run(void *msg)
 void WatchBall::initialiseParameters()
 {
     /*PROTECTED REGION ID(initialiseParameters1447863466691) ENABLED START*/ // Add additional options here
-    prevTarget = wm->field->posOwnGoalMid();
     /*PROTECTED REGION END*/
 }
 /*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ // Add additional methods here
 pair<bool, double> WatchBall::calcGoalImpactY(
 		shared_ptr<geometry::CNPoint2D> alloBallPos,
-		shared_ptr<geometry::CNVelocity2D> egoBallVel)
+		shared_ptr<geometry::CNVelocity2D> egoBallVel,
+		const double goalLineX)
 {
 	if (egoBallVel == nullptr || alloBallPos == nullptr) {
 		return std::make_pair(false, 0.0);
@@ -142,14 +142,13 @@ pair<bool, double> WatchBall::calcGoalImpactY(
 	const auto bvy = -egoBallVel->y;
 	const auto bpx = alloBallPos->x; // ball position x
 	const auto bpy = alloBallPos->y;
-	const auto glx = alloGoalMid->x;
 
 	if (bvx >= 0) {
 		//puts("Ball not moving to our direction");
 		return std::make_pair(false, 0.0);
 	}
 
-	const auto y = bpy + ((glx-bpx)/bvx) * bvy;
+	const auto y = bpy + ((goalLineX-bpx)/bvx) * bvy;
 
 	return std::make_pair(true, y);
 }
@@ -164,45 +163,30 @@ bool WatchBall::ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec)
 	return ballSpeed >= ballMovingThreshold;
 }
 
-double WatchBall::fitTargetY(double targetY)
+double WatchBall::fitTargetY(double targetY, double goalLeft, double goalRight)
 {
-
-    if (targetY > alloGoalLeft->y)
-    {
-        return alloGoalLeft->y;
+    if (targetY > goalLeft) {
+        return goalLeft;
+    } else if (targetY < goalRight) {
+        return goalRight;
     }
-    else if (targetY < alloGoalRight->y)
-    {
-        return alloGoalRight->y;
-    }
-    else
-    {
-        return targetY;
-    }
+    return targetY;
 }
 
-void WatchBall::updateGoalPosition()
+pair<bool, shared_ptr<geometry::CNPoint2D>> WatchBall::tryLocalizeGoalMid()
 {
-    shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
-
-    if (!laserDetectedEgoGoalMid)
+    auto laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
+    if (!laserDetectedEgoGoalMid && !lastLaserGoalMid)
     {
-        alloGoalMid = wm->field->posOwnGoalMid();
-    	return;
-    }
+        auto alloGoalMid = wm->field->posOwnGoalMid();
+    	return std::make_pair(false, alloGoalMid);
+    } else if (!laserDetectedEgoGoalMid && lastLaserGoalMid) {
+    	return std::make_pair(false, lastLaserGoalMid);
+	}
 
-	cout << "Update goal position using scanner!" << endl;
-    alloGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
+    lastLaserGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
 
-    if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
-        cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
-        return;
-    }
-
-    alloGoalLeft = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-    alloGoalRight = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+	return std::make_pair(true, lastLaserGoalMid);
 }
 
 double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)
