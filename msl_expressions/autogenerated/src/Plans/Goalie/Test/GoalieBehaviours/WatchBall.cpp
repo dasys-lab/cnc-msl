@@ -192,7 +192,8 @@ void WatchBall::updateGoalPosition()
     	return;
     }
 
-    alloGoalMid = laserDetectedEgoGoalMid;
+	cout << "Update goal position using scanner!" << endl;
+    alloGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
 
     if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
         cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;

@@ -71,7 +71,7 @@ namespace alica
 			mc.motion.translation = 1500;
 		}
 
-		if (me->distanceTo(alloTarget) <= snapDistance)
+		if (me->distanceTo(alloTarget) <= snapDistance+150)
 		{
 			mc.motion.translation = 0;
 			mc.motion.rotation = 0;
@@ -85,7 +85,7 @@ namespace alica
 		{
 			return;
 		}
-		// cout << "DriveToGoal: Distance left: " << me->distanceTo(alloTarget) << endl;
+		cout << "DriveToGoal: Distance left: " << me->distanceTo(alloTarget) << endl;
 		send (mc);
         /*PROTECTED REGION END*/
     }
