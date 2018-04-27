@@ -510,7 +510,7 @@ void Ball::updateHaveBall()
 	{
 		if (!wm->rawSensorData->getLightBarrier())
 		{
-			lightbarrierTriggeredCounter = 10;
+			lightbarrierTriggeredCounter = 30;
 			this->ballPossessionStatus = (this->haveBall() ? BallPossessionStatus::HaveBall : BallPossessionStatus::LightBarrierUnblocked);
 			return;
 		}
