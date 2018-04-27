@@ -50,7 +50,7 @@ namespace alica
 		alloTarget = alloGoalMid + offset;
 
 		// Build MostionControl using query
-		const double snapDistance = 300;
+		const double snapDistance = 500;
 		query->egoDestinationPoint = alloTarget->alloToEgo(*me);
 		query->egoAlignPoint = alloTarget->alloToEgo(*me);
 		query->snapDistance = snapDistance;

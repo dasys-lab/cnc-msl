@@ -101,7 +101,8 @@ void WatchBall::run(void *msg)
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY);
-		const double targetX = alloGoalMid->x + 200;
+		const double offsetX = 150;
+		const double targetX = alloGoalMid->x + offsetX;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
@@ -113,10 +114,8 @@ void WatchBall::run(void *msg)
 		alloTarget = alloGoalMid;
 	}
 
-	auto offset = std::make_shared<geometry::CNPoint2D>(200, 0);
-
 	// Finaly if a goal impact can be calculated drive to the calculated impact
-	mc = faster(driveAndAlignTo(alloTarget + offset, mirroredOwnPos()));
+	mc = faster(driveAndAlignTo(alloTarget, mirroredOwnPos()));
 
     send(mc);
 
