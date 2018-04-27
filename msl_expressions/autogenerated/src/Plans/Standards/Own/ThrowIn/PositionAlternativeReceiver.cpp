@@ -11,6 +11,8 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Robots.h>
+#include <Rules.h>
+#include <MSLFootballField.h>
 #include <MSLWorldModel.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
@@ -88,7 +90,7 @@ namespace alica
 
         mc = this->robot->robotMovement->moveToPoint(query);
 
-        if (!std::isnan(mc.motion.translation))
+        if (!std::isnan(mc.motion.translation) && wm->field->isInsideField(alloTarget ,msl::Rules::getInstance()->getRobotRadius()))
         {
             send(mc);
         }
