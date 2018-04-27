@@ -289,9 +289,9 @@ void LaserGoalDetection::onScan(const sensor_msgs::LaserScanConstPtr &laserScan)
 	// Publish sinlge point
 	{
 	geometry_msgs::Point p;
-	p.x = goalMidPoint.points[0].x;
-	p.y = goalMidPoint.points[0].y;
-	p.z = goalMidPoint.points[0].z;
+	p.x = goalMidPoint.points[0].x * 1000.0;
+	p.y = goalMidPoint.points[0].y * 1000.0;
+	p.z = goalMidPoint.points[0].z * 1000.0;
     goalMidPointPublisher->publish(p);
 	}
 
