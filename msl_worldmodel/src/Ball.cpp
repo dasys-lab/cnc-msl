@@ -524,10 +524,8 @@ void Ball::updateHaveBall()
 	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
 	}
 
-	this->ballInKicker = true;
 	this->lightbarrierTriggeredCounter--;
 	this->visionHaveBallCounter--;
-	this->ballPossessionStatus = BallPossessionStatus::HaveBall;
 
 	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter == 0) || visionHaveBallCounter == 0
 			|| this->lightbarrierTriggeredCounter > this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS)
@@ -537,6 +535,8 @@ void Ball::updateHaveBall()
 		if (lightbarrierTriggeredCounter == 0) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
 		return;
 	}
+	this->ballInKicker = true;
+	this->ballPossessionStatus = BallPossessionStatus::HaveBall;
 }
 
 bool Ball::robotHasBall(int robotId)
