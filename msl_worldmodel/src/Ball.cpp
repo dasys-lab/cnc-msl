@@ -518,21 +518,21 @@ void Ball::updateHaveBall()
 		}
 	}
 
-	if ( getVisionBallPosition() != nullptr // kicerdistance + dynamic_distance < ballpos.length
+	/*if ( getVisionBallPosition() != nullptr // kicerdistance + dynamic_distance < ballpos.length
 			&& ((!wm->isUsingSimulator() &&  (getVisionBallPosition()->length() < (KICKER_DISTANCE + HAVE_BALL_TOLERANCE_DRIBBLE)))
 					|| (wm->isUsingSimulator() &&  getVisionBallPosition()->length() < KICKER_DISTANCE_SIMULATOR)) )
 	{
 	    this->visionHaveBallCounter = this->VISION_HAVE_BALL_ITERATIONS_AFTER_LOSS;
-	}
+	}*/
 
 	this->lightbarrierTriggeredCounter--;
-	this->visionHaveBallCounter--;
+	//this->visionHaveBallCounter--;
 
-	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter <= 0) || visionHaveBallCounter <= 0
+	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter <= 0)// || visionHaveBallCounter <= 0
 			|| this->lightbarrierTriggeredCounter > this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS)
 	{
 		this->ballInKicker = false;
-		if (visionHaveBallCounter <= 0) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
+		//if (visionHaveBallCounter <= 0) this->ballPossessionStatus = BallPossessionStatus::NoBallSeen;
 		if (lightbarrierTriggeredCounter <= 0) this->ballPossessionStatus = BallPossessionStatus::LightBarrierUnblocked;
 		return;
 	}
