@@ -8,6 +8,8 @@ using namespace std;
 #include <obstaclehandler/Obstacles.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
+#include <msl_actuator_msgs/VisionRelocTrigger.h>
+#include <Game.h>
 #include <vector>
 /*PROTECTED REGION END*/
 namespace alica
@@ -26,6 +28,10 @@ WatchBall::WatchBall()
     const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
     maxRotationRad = maxRotationDeg * (M_PI/180.0);
 
+	// Ros node for relocMsg
+    ros::NodeHandle n;
+	relocPub = n.advertise<msl_actuator_msgs::VisionRelocTrigger>(
+			"/CNActuator/VisionRelocTrigger", 10);
 
 	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
@@ -61,15 +67,23 @@ void WatchBall::run(void *msg)
     
     alloBall = wm->ball->getAlloBallPosition();
 
-    const auto goalResult = tryLocalizeGoalMid();
-	const auto laserDetectedGoal = goalResult.first;
-	if (laserDetectedGoal) {
-		static int cnt = 0;
+    auto laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
+	bool laserDetectedGoal = laserGoalOffset != nullptr;
+	static int cnt = 0;
+	if (cnt++ == 15) {
+		if (laserDetectedGoal) {
 		// TODO: Eventually reloc every second or so
-		if (cnt++ == 30) {
-			puts("relocalising using laser...");
-			printf("offset: %f %f\n", goalResult.second->x,
-					goalResult.second->y);
+			printf("laserGoalOffset: x: %f y: %f\n",
+					laserGoalOffset->x, laserGoalOffset->y);
+			
+			geometry::CNPoint2D relocPos;
+			relocPos.x = alloGoalMid->x + laserGoalOffset->x;
+			relocPos.y = alloGoalMid->y + laserGoalOffset->y;
+
+			printf("relocPos: x: %f y: %f\n",
+					relocPos.x, relocPos.y);
+
+			sendReloc(relocPos, 0.0);
 			cnt = 0;
 		}
 	}
@@ -81,7 +95,7 @@ void WatchBall::run(void *msg)
 		|| alloBall->x > 1000) // Ball is in opponent half, TODO: Probably make configurable
     {
         // Goalie drives to last known target and rotates towards mirrored own position
-        cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
+        // cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
         mc = driveAndAlignTo(alloGoalMid, mirroredOwnPos());
         send(mc);
         return;
@@ -186,16 +200,6 @@ double WatchBall::fitTargetY(double targetY, double goalLeft, double goalRight)
     return targetY;
 }
 
-pair<bool, shared_ptr<geometry::CNPoint2D>> WatchBall::tryLocalizeGoalMid()
-{
-    auto laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
-	if (!laserDetectedEgoGoalMid)
-		return std::make_pair(false, nullptr);
-    auto lastLaserGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
-
-	return std::make_pair(true, lastLaserGoalMid);
-}
-
 double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)
 {
 	if (ownTheta > maxRot && mcRotation > 0) {
@@ -250,6 +254,44 @@ shared_ptr<geometry::CNPoint2D> WatchBall::mirroredOwnPos() {
 	auto mirrored = std::make_shared<geometry::CNPoint2D>(
 			ownPos->x+1000, ownPos->y);
 	return mirrored;
+}
+
+void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos, double heading) {
+	msl_actuator_msgs::VisionRelocTrigger vrt;
+	vrt.receiverID = 12; // TODO: Fetch robot id from alica
+	vrt.usePose = true; // TODO: Fetch robot id from alica
+
+	vrt.position = toVisionCoordinates(alloRelocPos.x, alloRelocPos.y, heading);
+
+	relocPub.publish(vrt);
+}
+
+msl_msgs::PositionInfo
+WatchBall::toVisionCoordinates(double x, double y, double heading) {
+	msl_msgs::PositionInfo pi;
+
+	// Eventuall convert coordinates
+	if (wm->game->ownGoalColor != Color::Yellow) // == Blue?
+	{
+		pi.x = -x;
+		pi.y = -y;
+
+		heading += M_PI;
+		while (heading > M_PI)
+		{
+			heading -= 2 * M_PI;
+		}
+		heading += M_PI;
+		while (heading > M_PI)
+		{
+			heading -= 2 * M_PI;
+		}
+		pi.angle = heading;
+	}
+
+	pi.certainty = 100.0;
+
+	return pi;
 }
 
 /*PROTECTED REGION END*/

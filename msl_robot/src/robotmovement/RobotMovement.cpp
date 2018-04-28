@@ -585,7 +585,7 @@ void RobotMovement::readConfigParameters()
 {
     supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
     this->carefullyTranslation = (*sc)["Drive"]->get<double>("Drive.Carefully.Velocity", NULL);
-    this->defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
+    this->defaultTranslation = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
     this->fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
     this->carefullyRotation = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
     this->defaultRotation = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);

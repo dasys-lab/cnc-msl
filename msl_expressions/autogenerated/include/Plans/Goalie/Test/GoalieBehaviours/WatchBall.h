@@ -10,6 +10,7 @@
 #include <RingBuffer.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+#include <ros/ros.h>
 // for std::pair
 #include <utility>
 #include <string>
@@ -39,6 +40,7 @@ class WatchBall : public DomainBehaviour
     shared_ptr<geometry::CNPoint2D> alloGoalRight;
 
     shared_ptr<geometry::CNPoint2D> lastLaserGoalMid;
+    ros::Publisher relocPub;
 
 	// Config parameters
     int maxVariance;
@@ -55,12 +57,6 @@ class WatchBall : public DomainBehaviour
 			shared_ptr<geometry::CNVelocity2D> egoBallVel,
 			const double goalLineX
 			);
-
-	// tryLocalizeGoalMid tries to localice the goal midpoint using
-	// the laser scanner.
-	// In case of success it returns true and the localized point.
-	// Otherwise it will return the last known goal position.
-	pair<bool, shared_ptr<geometry::CNPoint2D>> tryLocalizeGoalMid();
 
 	// query is the MovementQuery for the robot to drive to the goal.
     shared_ptr<msl::MovementQuery> query;
@@ -90,6 +86,11 @@ class WatchBall : public DomainBehaviour
 	// ballIsMoving returns true if the ball speed exceeds ballMovingThreshold.
 	bool ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec);
 
+	// sendReloc relocalizes the Vision at alloRelocPos.
+	void sendReloc(geometry::CNPoint2D alloRelocPos, double heading);
+
+	// toVisionCoordinates converts x,y,heading to the vision coordinats:
+	msl_msgs::PositionInfo toVisionCoordinates(double x, double y, double heading);
     /*PROTECTED REGION END*/
   private:
     /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ // Add additional private methods here

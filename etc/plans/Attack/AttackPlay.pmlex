@@ -136,4 +136,8 @@
     <key href="../Defence/MidfieldDefense.pml#1458033329973"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

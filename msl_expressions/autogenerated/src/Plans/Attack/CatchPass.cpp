@@ -7,6 +7,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <Game.h>
 #include <WhiteBoard.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
@@ -38,12 +39,16 @@ namespace alica
 
         shared_ptr < msl_helper_msgs::PassMsg > pm = wm->whiteBoard->getPassMsg();
         msl_actuator_msgs::MotionControl mc;
-        mc.senderID = -1;
         if (pm != nullptr)
         { // next go for pass msg
             passOrigin = make_shared < geometry::CNPoint2D > (pm->origin.x, pm->origin.y);
             passDestination = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y);
             passVector = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y) - passOrigin;
+        } else
+
+        if (this->passDestination != nullptr)
+        {
+
             shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
             if (ballPos == nullptr)
             {
@@ -54,10 +59,6 @@ namespace alica
 
             double error = egoDest->length();
             double trans = error * 3.0;
-            if (error > 2000)
-            {
-                trans = maxVel;
-            }
             trans = min(maxVel, trans);
             query->egoDestinationPoint = egoDest;
             query->egoAlignPoint = ballPos;
@@ -65,11 +66,6 @@ namespace alica
             mc = this->robot->robotMovement->moveToPoint(query);
 
             mc.motion.translation = min(mc.motion.translation, trans);
-
-            if (egoDest->length() < 100)
-            {
-                mc.motion.translation = 0;
-            }
 
         }
 
