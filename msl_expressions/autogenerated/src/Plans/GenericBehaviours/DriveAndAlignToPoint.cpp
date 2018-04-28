@@ -41,7 +41,7 @@ namespace alica
 
         query->egoDestinationPoint = egoTarget;
         query->egoAlignPoint = egoOrientationTarget;
-        query->snapDistance = catchRadius;
+        query->snapDistance = 250;
         //cout << "DriveAndAlignToPoint::run::query::Target " << query->egoDestinationPoint->x << " "
         //<< query->egoDestinationPoint->y << " " << query->egoDestinationPoint->z <<endl;
         //cout << "DriveAndAlignToPoint::run::query::Align " << query->egoAlignPoint->x << " " << query->egoAlignPoint->y
