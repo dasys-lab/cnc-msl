@@ -16,8 +16,6 @@ namespace alica
             DomainBehaviour("DribbleEmergencyKick")
     {
         /*PROTECTED REGION ID(con1457706800035) ENABLED START*/ //Add additional options here
-        kickpower = 0;
-        safeKick = false;
         haveKicked = false;
 
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
@@ -52,22 +50,14 @@ namespace alica
         msl_actuator_msgs::KickControl km;
         km.enabled = true;
 
-        km.power = (ushort)(390.0 + 0.6 * wm->rawSensorData->getCorrectedOdometryInfo()->motion.translation / 100.0);
-
-        /*List<Point2D> opps = WM.GetOpponentListEgoClustered();
-         //If there is an opponent in front of us -> dont do it
-         if(opps != null) {
-         foreach(Point2D opp in opps) {
-         if(Math.Abs(opp.Angle()) > Math.PI-Math.PI/6.0 && opp.Distance() < 1200) {
-         return;
-         }
-         }
-         }*/
+        km.power = (ushort)(330.0 + 0.6 * wm->rawSensorData->getCorrectedOdometryInfo()->motion.translation / 100.0);
 
         this->setSuccess(true);
 
         if (!haveKicked)
+        {
             send(km);
+        }
         haveKicked = true;
         /*PROTECTED REGION END*/
     }

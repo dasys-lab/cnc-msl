@@ -51,6 +51,7 @@ class DomainBehaviour : public BasicBehaviour
 	private:
 
 		double __maxTranslation;
+		double __maxTranslationWithoutBall;
 		double minRotation;
 		double minRotationLeft;
 		double minRotationRight;

@@ -1,5 +1,6 @@
 #include "DomainBehaviour.h"
 
+#include <Ball.h>
 #include <MSLWorldModel.h>
 #include <RawSensorData.h>
 #include <SystemConfig.h>
@@ -44,6 +45,7 @@ DomainBehaviour::DomainBehaviour(string name)
 		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
     this->__maxTranslation = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+    this->__maxTranslationWithoutBall = (*sc)["Drive"]->get<double>("Drive", "MaxSpeedWithoutBall", NULL);
     this->minRotation = (*sc)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
     this->minRotationLeft = (*sc)["Actuation"]->get<double>("Dribble.MinRotationLeft", NULL);
     this->minRotationRight = (*sc)["Actuation"]->get<double>("Dribble.MinRotationRight", NULL);
@@ -65,7 +67,14 @@ void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl &mc)
     //        this->wm->prediction.monitoring();
     mc.senderID = ownID;
     mc.timestamp = wm->getTime();
-    mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+    if(wm->ball->haveBall())
+    {
+    	mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+    }
+    else
+    {
+    	mc.motion.translation = min(this->__maxTranslationWithoutBall, mc.motion.translation);
+    }
     motionControlPub.publish(mc);
     wm->rawSensorData->processMotionControlMessage(mc);
 }
@@ -79,7 +88,14 @@ void alica::DomainBehaviour::sendAndUpdatePT(msl_actuator_msgs::MotionControl &m
 {
     mc.senderID = ownID;
     mc.timestamp = wm->getTime();
-    mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+    if(wm->ball->haveBall())
+    {
+    	mc.motion.translation = min(__maxTranslation, mc.motion.translation);
+    }
+    else
+    {
+    	mc.motion.translation = min(this->__maxTranslationWithoutBall, mc.motion.translation);
+    }
     motionControlPub.publish(mc);
     wm->rawSensorData->processMotionControlMessage(mc);
     robot->robotMovement->updatePT();
