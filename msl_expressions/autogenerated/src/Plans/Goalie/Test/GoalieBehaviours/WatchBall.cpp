@@ -8,6 +8,7 @@ using namespace std;
 #include <obstaclehandler/Obstacles.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
+#include <msl_actuator_msgs/VisionRelocTrigger.h>
 #include <vector>
 /*PROTECTED REGION END*/
 namespace alica
@@ -26,6 +27,10 @@ WatchBall::WatchBall()
     const auto maxRotationDeg = (*this->sc)["Behaviour"]->tryGet<double>(45.0, "Goalie.MaxRotation", NULL);
     maxRotationRad = maxRotationDeg * (M_PI/180.0);
 
+	// Ros node for relocMsg
+    ros::NodeHandle n;
+	relocPub = n.advertise<msl_actuator_msgs::VisionRelocTrigger>(
+			"/CNActuator/VisionRelocTrigger", 10);
 
 	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
@@ -62,14 +67,21 @@ void WatchBall::run(void *msg)
     alloBall = wm->ball->getAlloBallPosition();
 
     const auto goalResult = tryLocalizeGoalMid();
+    const auto laserGoalMid = goalResult.second;
 	const auto laserDetectedGoal = goalResult.first;
 	if (laserDetectedGoal) {
 		static int cnt = 0;
 		// TODO: Eventually reloc every second or so
 		if (cnt++ == 30) {
 			puts("relocalising using laser...");
-			printf("offset: %f %f\n", goalResult.second->x,
-					goalResult.second->y);
+			printf("offset: %f %f\n", laserGoalMid->x,
+					laserGoalMid->y);
+
+			geometry::CNPoint2D relocPos;
+			relocPos.x = alloGoalMid->x + laserGoalMid->x;
+			relocPos.y = alloGoalMid->y + laserGoalMid->y;
+
+			sendReloc(relocPos);
 			cnt = 0;
 		}
 	}
@@ -250,6 +262,22 @@ shared_ptr<geometry::CNPoint2D> WatchBall::mirroredOwnPos() {
 	auto mirrored = std::make_shared<geometry::CNPoint2D>(
 			ownPos->x+1000, ownPos->y);
 	return mirrored;
+}
+
+void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos) {
+	msl_actuator_msgs::VisionRelocTrigger vrt;
+	vrt.receiverID = 12; // TODO: Fetch robot id from alica
+	vrt.usePose = true; // TODO: Fetch robot id from alica
+
+	msl_msgs::PositionInfo pi;
+	pi.x = alloRelocPos.x;
+	pi.y = alloRelocPos.y;
+	pi.angle = 0;
+	pi.certainty = 100.0;
+
+	vrt.position = pi;
+
+	relocPub.publish(vrt);
 }
 
 /*PROTECTED REGION END*/

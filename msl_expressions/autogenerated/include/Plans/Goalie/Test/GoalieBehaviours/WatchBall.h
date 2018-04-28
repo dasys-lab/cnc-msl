@@ -10,6 +10,7 @@
 #include <RingBuffer.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+#include <ros/ros.h>
 // for std::pair
 #include <utility>
 #include <string>
@@ -39,6 +40,7 @@ class WatchBall : public DomainBehaviour
     shared_ptr<geometry::CNPoint2D> alloGoalRight;
 
     shared_ptr<geometry::CNPoint2D> lastLaserGoalMid;
+    ros::Publisher relocPub;
 
 	// Config parameters
     int maxVariance;
@@ -89,6 +91,9 @@ class WatchBall : public DomainBehaviour
 
 	// ballIsMoving returns true if the ball speed exceeds ballMovingThreshold.
 	bool ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec);
+
+	// sendReloc relocalizes the Vision at alloRelocPos.
+	void sendReloc(geometry::CNPoint2D alloRelocPos);
 
     /*PROTECTED REGION END*/
   private:
