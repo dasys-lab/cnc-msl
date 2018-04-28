@@ -3,8 +3,8 @@
   <conditions xsi:type="alica:RuntimeCondition" id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
     <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DribbleAttackConservative.beh#1457967385543</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleAttackConservative.beh#1457967385543</plans>
     <inTransitions>#1434050639119</inTransitions>
     <inTransitions>#1434050649347</inTransitions>
     <outTransitions>#1434050619363</outTransitions>
@@ -87,7 +87,7 @@
     <inState>#1434049476067</inState>
     <outState>#1434050502701</outState>
   </transitions>
-  <transitions id="1434050674494" name="MISSING_NAME" comment="ProtectBall opponent is in front of us" msg="">
+  <transitions id="1434050674494" name="MISSING_NAME" comment="ProtectBall opponent is in front of us || not mayscore" msg="">
     <preCondition id="1434050677358" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050522682</outState>

@@ -230,10 +230,11 @@ namespace alica
                     > (bestAoc->x, bestAoc->y);
             double v0 = 0;
             double distReceiver = goalReceiverVec->length();
-            double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
+            double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0 / accel)  / 1000;
             // considering network delay and reaction time 1s?:
             estimatedTimeForReceiverToArrive += 1.0;
-            pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
+            pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000 + 30000000); // this is sparta!#
+
             if (closerFactor < 0.01)
             {
                 km.power = (ushort)this->robot->kicker->getKickPowerPass(aimPoint->length());
@@ -392,7 +393,8 @@ namespace alica
         double currPassUtility = 0;
         shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
         double rcv2PassPointDist = rcv2PassPoint->length();
-        double factor = closerFactor;
+//        double factor = closerFactor;
+        double factor = cf;
         if (factor * rcv2PassPointDist < minCloserOffset)
         {
             factor = factor * rcv2PassPointDist;
