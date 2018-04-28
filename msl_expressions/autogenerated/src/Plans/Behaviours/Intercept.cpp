@@ -178,7 +178,7 @@ namespace alica
         else if (ownPass && egoBallVel->x > 300 && egoBallPos->x < -200)
         {
             egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
-            egoVelocity->y = egoBallVel->y;
+            egoVelocity->y = 2*egoBallVel->y;
         }
         else
         {
