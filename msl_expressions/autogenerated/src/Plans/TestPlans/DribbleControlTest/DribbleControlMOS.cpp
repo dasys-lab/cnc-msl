@@ -258,8 +258,8 @@ namespace alica
         //            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
         //        }
         this->haveBallDecay *= this->decayFactor;
-        msgback.leftMotor = msgback.leftMotor*(1-this->haveBallDecay)+speedNoBall*this->haveBallDecay;
-        msgback.rightMotor = msgback.rightMotor*(1-this->haveBallDecay)+speedNoBall*this->haveBallDecay;
+        msgback.leftMotor = msgback.leftMotor*(1-this->haveBallDecay)-speedNoBall*this->haveBallDecay;
+        msgback.rightMotor = msgback.rightMotor*(1-this->haveBallDecay)-speedNoBall*this->haveBallDecay;
 
 
         this->wheelSpeedLeftOld = msgback.leftMotor;
