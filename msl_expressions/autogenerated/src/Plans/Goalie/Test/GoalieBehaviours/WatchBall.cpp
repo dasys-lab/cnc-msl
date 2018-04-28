@@ -66,20 +66,21 @@ void WatchBall::run(void *msg)
     
     alloBall = wm->ball->getAlloBallPosition();
 
-    const auto goalResult = tryLocalizeGoalMid();
-    const auto laserGoalMid = goalResult.second;
-	const auto laserDetectedGoal = goalResult.first;
-	if (laserDetectedGoal) {
-		static int cnt = 0;
+    auto laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
+	bool laserDetectedGoal = laserGoalOffset != nullptr;
+	static int cnt = 0;
+	if (cnt++ == 15) {
+		if (laserDetectedGoal) {
 		// TODO: Eventually reloc every second or so
-		if (cnt++ == 30) {
-			puts("relocalising using laser...");
-			printf("offset: %f %f\n", laserGoalMid->x,
-					laserGoalMid->y);
-
+			printf("laserGoalOffset: x: %f y: %f\n",
+					laserGoalOffset->x, laserGoalOffset->y);
+			
 			geometry::CNPoint2D relocPos;
-			relocPos.x = alloGoalMid->x + laserGoalMid->x;
-			relocPos.y = alloGoalMid->y + laserGoalMid->y;
+			relocPos.x = alloGoalMid->x + laserGoalOffset->x;
+			relocPos.y = alloGoalMid->y + laserGoalOffset->y;
+
+			printf("relocPos: x: %f y: %f\n",
+					relocPos.x, relocPos.y);
 
 			sendReloc(relocPos);
 			cnt = 0;
@@ -93,7 +94,7 @@ void WatchBall::run(void *msg)
 		|| alloBall->x > 1000) // Ball is in opponent half, TODO: Probably make configurable
     {
         // Goalie drives to last known target and rotates towards mirrored own position
-        cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
+        // cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
         mc = driveAndAlignTo(alloGoalMid, mirroredOwnPos());
         send(mc);
         return;
@@ -196,16 +197,6 @@ double WatchBall::fitTargetY(double targetY, double goalLeft, double goalRight)
         return goalRight;
     }
     return targetY;
-}
-
-pair<bool, shared_ptr<geometry::CNPoint2D>> WatchBall::tryLocalizeGoalMid()
-{
-    auto laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
-	if (!laserDetectedEgoGoalMid)
-		return std::make_pair(false, nullptr);
-    auto lastLaserGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
-
-	return std::make_pair(true, lastLaserGoalMid);
 }
 
 double WatchBall::clampRotation(double mcRotation, double ownTheta, double maxRot)

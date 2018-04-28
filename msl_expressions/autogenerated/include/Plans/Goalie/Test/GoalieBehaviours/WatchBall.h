@@ -58,12 +58,6 @@ class WatchBall : public DomainBehaviour
 			const double goalLineX
 			);
 
-	// tryLocalizeGoalMid tries to localice the goal midpoint using
-	// the laser scanner.
-	// In case of success it returns true and the localized point.
-	// Otherwise it will return the last known goal position.
-	pair<bool, shared_ptr<geometry::CNPoint2D>> tryLocalizeGoalMid();
-
 	// query is the MovementQuery for the robot to drive to the goal.
     shared_ptr<msl::MovementQuery> query;
 
