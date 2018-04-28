@@ -406,7 +406,7 @@ void Game::updateGameState()
         cout << "Game::updateGameState(): State changed: Duel state" << endl;
         gs = GameState::Duel;
         this->teamMateWithBall = 0;
-        passReceived = false;
+//        passReceived = false;
     }
     else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
     {
@@ -419,7 +419,7 @@ void Game::updateGameState()
         cout << "Game::updateGameState(): State changed: OppBallPossession state" << endl;
         gs = GameState::OppBallPossession;
         this->teamMateWithBall = 0;
-        passReceived = false;
+//        passReceived = false;
     }
     else if (gs != GameState::NobodyInBallPossession && !ballPossession && !oppBallPossession)
     {

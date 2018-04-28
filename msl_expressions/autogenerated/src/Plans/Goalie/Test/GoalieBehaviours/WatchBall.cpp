@@ -35,6 +35,8 @@ WatchBall::WatchBall()
 
 	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
+
+	lastCounter = 9999999;
     /*PROTECTED REGION END*/
 }
 WatchBall::~WatchBall()
@@ -45,6 +47,9 @@ WatchBall::~WatchBall()
 void WatchBall::run(void *msg)
 {
     /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ // Add additional options here
+	static int debug_cnt = 0;
+	debug_cnt++;
+	const bool printDebug = (debug_cnt % 30 == 0);
     ownPos = wm->rawSensorData->getOwnPositionVision();
     msl_actuator_msgs::MotionControl mc;
 
@@ -59,34 +64,49 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    const auto alloGoalMid = wm->field->posOwnGoalMid();
-    alloGoalLeft = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-    alloGoalRight = make_shared<geometry::CNPoint2D>(
-    		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+    auto alloGoalMid = wm->field->posOwnGoalMid();
     
     alloBall = wm->ball->getAlloBallPosition();
 
-    auto laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
+    laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
 	bool laserDetectedGoal = laserGoalOffset != nullptr;
-	static int cnt = 0;
-	if (cnt++ == 15) {
-		if (laserDetectedGoal) {
-		// TODO: Eventually reloc every second or so
-			printf("laserGoalOffset: x: %f y: %f\n",
-					laserGoalOffset->x, laserGoalOffset->y);
-			
-			geometry::CNPoint2D relocPos;
-			relocPos.x = alloGoalMid->x + laserGoalOffset->x;
-			relocPos.y = alloGoalMid->y + laserGoalOffset->y;
 
-			printf("relocPos: x: %f y: %f\n",
-					relocPos.x, relocPos.y);
+	lastCounter++;
+	if (laserDetectedGoal) {
+	// TODO: Eventually reloc every second or so
+	
 
-			sendReloc(relocPos, 0.0);
-			cnt = 0;
-		}
+		geometry::CNPosition mid(0,0,0);
+		auto laserGoalOffsetAllo = laserGoalOffset->alloToEgo(mid);
+		
+		geometry::CNPoint2D relocPos;
+		relocPos.x = alloGoalMid->x + laserGoalOffset->x + 500;
+		relocPos.y = alloGoalMid->y + laserGoalOffset->y;
+
+		/* printf("oldpos: x: %f y: %f\n", */
+		/* 		ownPos->x, ownPos->y); */
+
+		/* printf("relocPos: x: %f y: %f\n", */
+		/* 		relocPos.x, relocPos.y); */
+
+		//sendReloc(relocPos, 0.0);
+		lastLaserGoalOffset = laserGoalOffset;
+		lastCounter = 0;
 	}
+
+	if (lastLaserGoalOffset != nullptr && lastCounter <= 10 * 30) {
+		if (printDebug) {
+			printf("laserGoalOffset: x: %f y: %f\n",
+					lastLaserGoalOffset->x, lastLaserGoalOffset->y);
+		}
+		alloGoalMid->y += lastLaserGoalOffset->y; // TODO: Try -= instead of +=
+		//alloBall->y += lastLaserGoalOffset->y;
+	}
+
+    alloGoalLeft = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, alloGoalMid->y - goalieSize / 2);
+    alloGoalRight = make_shared<geometry::CNPoint2D>(
+    		alloGoalMid->x, alloGoalMid->y + goalieSize / 2);
 
 	// Special case that depend on the ball presence and position.
     // If ball is not seen or the ball is further away than the goal mid point is.
@@ -95,7 +115,8 @@ void WatchBall::run(void *msg)
 		|| alloBall->x > 1000) // Ball is in opponent half, TODO: Probably make configurable
     {
         // Goalie drives to last known target and rotates towards mirrored own position
-        // cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
+		if (printDebug)
+	        cout << "[WatchBall]: Special case: Moving to GoalMid" << endl;
         mc = driveAndAlignTo(alloGoalMid, mirroredOwnPos());
         send(mc);
         return;
@@ -118,26 +139,25 @@ void WatchBall::run(void *msg)
 
 		if (ballIsMoving(ballVec) && wouldImpact) {
 			targetY = impactPoint;
+			if (printDebug)
+		        printf("[WatchBall]: Catching ball at %f\n", targetY);
 		} else {
 			// if ball is not moving or would not hit goal, then
 			// do drive to ball height.
 			targetY = alloGoalMid->y;
+			if (printDebug)
+		        printf("[WatchBall]: Ball unintresting: Driving to Mid...\n");
 		} // TODO: Try out speculative keeping
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY, alloGoalLeft->y, alloGoalRight->y);
-		const double offsetX = 80;
+		const double offsetX = 250;
 		const double targetX = alloGoalMid->x + offsetX;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
 	};
 
 	auto alloTarget = determineTarget();
-
-	//sdf If alloTarget was not calculated, move to the goal mid.
-	if (alloTarget == nullptr) {
-		alloTarget = alloGoalMid;
-	}
 
 	//printf("Driving to target: %f %f\n", alloTarget->x, alloTarget->y);
 
@@ -261,6 +281,8 @@ void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos, double heading) {
 	vrt.receiverID = 12; // TODO: Fetch robot id from alica
 	vrt.usePose = true; // TODO: Fetch robot id from alica
 
+	printf("alloRelocPos: %f %f %f\n", alloRelocPos.x, alloRelocPos.y, heading);
+
 	vrt.position = toVisionCoordinates(alloRelocPos.x, alloRelocPos.y, heading);
 
 	relocPub.publish(vrt);
@@ -287,9 +309,14 @@ WatchBall::toVisionCoordinates(double x, double y, double heading) {
 			heading -= 2 * M_PI;
 		}
 		pi.angle = heading;
+	} else {
+		pi.x = x;
+		pi.y = y;
+		pi.angle = -M_PI; // TODO: Fix
 	}
 
 	pi.certainty = 100.0;
+	printf("vision x: %f y: %f, heading: %f\n", pi.x, pi.y, pi.angle);
 
 	return pi;
 }
