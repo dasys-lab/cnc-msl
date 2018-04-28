@@ -530,7 +530,7 @@ void Ball::updateHaveBall()
 	this->lightbarrierTriggeredCounter--;
 	this->visionHaveBallCounter--;
 
-	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter <= 0)// || visionHaveBallCounter <= 0
+	if ((wm->lightBarrier->mayUseLightBarrier() && lightbarrierTriggeredCounter <= 0) || visionHaveBallCounter <= 0
 			|| this->lightbarrierTriggeredCounter > this->LIGHTBARRIER_HAVE_BALL_ITERATIONS_AFTER_LOSS)
 	{
 		this->ballInKicker = false;
