@@ -12,6 +12,7 @@ using namespace std;
 #include <pathplanner/PathPlanner.h>
 #include <pathplanner/PathPlannerQuery.h>
 #include <pathplanner/PathProxy.h>
+#include <WhiteBoard.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -157,11 +158,27 @@ namespace alica
         this->distIntErr = max(0.0, min(800.0, this->distIntErr)); // never drive away from the ball, cause of the I part
         this->lastDistErr = distErr;
 
+        bool ownPass = false;
+        shared_ptr<msl_helper_msgs::PassMsg> passMsg = wm->whiteBoard->getPassMsg();
+        if(passMsg!=nullptr)
+        {
+        	if (passMsg->receiverID == wm->getOwnId())
+        	{
+        		ownPass = true;
+        	}
+        }
         shared_ptr < geometry::CNPoint2D > egoVelocity;
         auto currentGameState = this->wm->game->getGameState();
         if (currentGameState == msl::GameState::OppBallPossession)
         {
             egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
+        }
+        //Hack torres vedras 18
+        //if ball rolls towards me
+        else if (ownPass && egoBallVel->x > 300 && egoBallPos->x < -200)
+        {
+            egoVelocity = make_shared < geometry::CNPoint2D > (0, 0);
+            egoVelocity->y = 2*egoBallVel->y;
         }
         else
         {
