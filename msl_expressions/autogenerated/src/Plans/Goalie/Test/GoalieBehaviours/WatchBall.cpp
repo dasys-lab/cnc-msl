@@ -140,7 +140,7 @@ void WatchBall::run(void *msg)
 		if (ballIsMoving(ballVec) && wouldImpact) {
 			targetY = impactPoint;
 			if (printDebug)
-		        printf("[WatchBall]: Catching ball at %f %f\n", targetX, targetY);
+		        printf("[WatchBall]: Catching ball at %f\n", targetY);
 		} else {
 			// if ball is not moving or would not hit goal, then
 			// do drive to ball height.
