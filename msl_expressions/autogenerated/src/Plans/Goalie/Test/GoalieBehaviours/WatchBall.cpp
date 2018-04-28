@@ -53,15 +53,26 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    const auto goalResult = tryLocalizeGoalMid();
-	const auto laserDetectedGoal = goalResult.first;
-	const auto alloGoalMid = goalResult.second;
+    const auto alloGoalMid = wm->field->posOwnGoalMid();
     alloGoalLeft = make_shared<geometry::CNPoint2D>(
     		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(
     		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
     
     alloBall = wm->ball->getAlloBallPosition();
+
+    const auto goalResult = tryLocalizeGoalMid();
+	const auto laserDetectedGoal = goalResult.first;
+	if (laserDetectedGoal) {
+		static int cnt = 0;
+		// TODO: Eventually reloc every second or so
+		if (cnt++ == 30) {
+			puts("relocalising using laser...");
+			printf("offset: %f %f\n", goalResult.second->x,
+					goalResult.second->y);
+			cnt = 0;
+		}
+	}
 
 	// Special case that depend on the ball presence and position.
     // If ball is not seen or the ball is further away than the goal mid point is.
@@ -96,12 +107,12 @@ void WatchBall::run(void *msg)
 		} else {
 			// if ball is not moving or would not hit goal, then
 			// do drive to ball height.
-			targetY = alloBall->y;
+			targetY = alloGoalMid->y;
 		} // TODO: Try out speculative keeping
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY, alloGoalLeft->y, alloGoalRight->y);
-		const double offsetX = 150;
+		const double offsetX = 80;
 		const double targetX = alloGoalMid->x + offsetX;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
@@ -109,10 +120,12 @@ void WatchBall::run(void *msg)
 
 	auto alloTarget = determineTarget();
 
-	// If alloTarget was not calculated, move to the goal mid.
+	//sdf If alloTarget was not calculated, move to the goal mid.
 	if (alloTarget == nullptr) {
 		alloTarget = alloGoalMid;
 	}
+
+	//printf("Driving to target: %f %f\n", alloTarget->x, alloTarget->y);
 
 	// Finaly if a goal impact can be calculated drive to the calculated impact
 	mc = faster(driveAndAlignTo(alloTarget, mirroredOwnPos()));
@@ -176,15 +189,9 @@ double WatchBall::fitTargetY(double targetY, double goalLeft, double goalRight)
 pair<bool, shared_ptr<geometry::CNPoint2D>> WatchBall::tryLocalizeGoalMid()
 {
     auto laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
-    if (!laserDetectedEgoGoalMid && !lastLaserGoalMid)
-    {
-        auto alloGoalMid = wm->field->posOwnGoalMid();
-    	return std::make_pair(false, alloGoalMid);
-    } else if (!laserDetectedEgoGoalMid && lastLaserGoalMid) {
-    	return std::make_pair(false, lastLaserGoalMid);
-	}
-
-    lastLaserGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
+	if (!laserDetectedEgoGoalMid)
+		return std::make_pair(false, nullptr);
+    auto lastLaserGoalMid = laserDetectedEgoGoalMid->alloToEgo(*ownPos);
 
 	return std::make_pair(true, lastLaserGoalMid);
 }

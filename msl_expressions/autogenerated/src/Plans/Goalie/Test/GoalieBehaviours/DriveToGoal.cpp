@@ -50,9 +50,10 @@ namespace alica
 		alloTarget = alloGoalMid + offset;
 
 		// Build MostionControl using query
+		auto mid = geometry::CNPoint2D(0,0);
 		const double snapDistance = 500;
 		query->egoDestinationPoint = alloTarget->alloToEgo(*me);
-		query->egoAlignPoint = alloTarget->alloToEgo(*me);
+		query->egoAlignPoint = mid.alloToEgo(*me);
 		query->snapDistance = snapDistance;
 		// Add goal posts as obstacles
 		auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
