@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="AfterGamePenalty.pml#1466934340669"/>
-    <value xPos="57" yPos="47" width="113" height="67"/>
+    <value xPos="57" yPos="47" width="113" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AfterGamePenalty.pml#1466934340668"/>
@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="AfterGamePenalty.pml#1466934357099"/>
-    <value xPos="365" yPos="48" width="73" height="67"/>
+    <value xPos="365" yPos="48" width="73" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AfterGamePenalty.pml#1466934358396"/>
@@ -78,10 +78,6 @@
   </extensions>
   <extensions>
     <key href="../PenaltyPosExecuter.beh#1466940432683"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="StayAwayAfterGamePenalty.beh#1466940600117"/>
     <value/>
   </extensions>
   <extensions>

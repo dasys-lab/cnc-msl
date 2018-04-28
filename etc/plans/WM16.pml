@@ -17,6 +17,7 @@
   </states>
   <states id="1426691835473" name="Gameplay" comment="">
     <plans xsi:type="alica:Plan">GameStrategy/Gameplay/GamePlay.pml#1457173546734</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1426691974126</inTransitions>
     <inTransitions>#1426692306144</inTransitions>
     <inTransitions>#1426692308143</inTransitions>
@@ -25,12 +26,14 @@
   </states>
   <states id="1426691842031" name="OpponentStandard" comment="">
     <plans xsi:type="alica:Plan">GenericStandards/GenericOppStandards.pml#1432132075122</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1426691979458</inTransitions>
     <outTransitions>#1426692308143</outTransitions>
     <outTransitions>#1426692328789</outTransitions>
   </states>
   <states id="1426691966433" name="OwnStandard" comment="">
     <plans xsi:type="alica:Plan">GenericStandards/GenericOwnStandards.pml#1430924951132</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1426691976989</inTransitions>
     <outTransitions>#1426692306144</outTransitions>
     <outTransitions>#1426692326813</outTransitions>
@@ -48,6 +51,7 @@
   </states>
   <states id="1426692210342" name="DroppedBall" comment="">
     <plans xsi:type="alica:Plan">GameStrategy/Other/DroppedBall.pml#1426694906399</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1426692244795</inTransitions>
     <outTransitions>#1426692315498</outTransitions>
     <outTransitions>#1426692653093</outTransitions>

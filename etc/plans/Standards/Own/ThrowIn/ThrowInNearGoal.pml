@@ -13,7 +13,6 @@
   <states id="1461237603690" name="Align" comment="" entryPoint="1461237603691">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <outTransitions>#1523091130609</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1461237614163" name="Success" comment="">
@@ -22,7 +21,6 @@
   <states id="1461237638988" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1461583806472</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1461584284347</inTransitions>
     <inTransitions>#1523091130609</inTransitions>
     <outTransitions>#1461237676305</outTransitions>
@@ -30,7 +28,6 @@
   <states id="1461237666032" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardPass.beh#1435760175843</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257626027</plans>
     <inTransitions>#1461237676305</inTransitions>
     <outTransitions>#1461584284347</outTransitions>
     <outTransitions>#1461584440317</outTransitions>
@@ -42,7 +39,6 @@
   <states id="1461237704581" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1521898536366</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1518257136977</plans>
     <inTransitions>#1461572769511</inTransitions>
     <outTransitions>#1461237853423</outTransitions>
   </states>

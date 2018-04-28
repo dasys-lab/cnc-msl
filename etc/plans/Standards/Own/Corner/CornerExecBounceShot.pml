@@ -18,7 +18,6 @@
     <outTransitions>#1459365411957</outTransitions>
   </states>
   <states id="1459365282539" name="FinishAlign" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">BouncePassFinishAlign.beh#1459357089325</plans>
     <inTransitions>#1459365407849</inTransitions>
     <outTransitions>#1459365410825</outTransitions>
