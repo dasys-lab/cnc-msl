@@ -69,8 +69,6 @@ void WatchBall::run(void *msg)
 
     auto laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
 	bool laserDetectedGoal = laserGoalOffset != nullptr;
-	static int cnt = 0;
-	if (cnt++ == 15) {
 		if (laserDetectedGoal) {
 		// TODO: Eventually reloc every second or so
 			printf("laserGoalOffset: x: %f y: %f\n",
@@ -84,9 +82,7 @@ void WatchBall::run(void *msg)
 					relocPos.x, relocPos.y);
 
 			sendReloc(relocPos, 0.0);
-			cnt = 0;
 		}
-	}
 
 	// Special case that depend on the ball presence and position.
     // If ball is not seen or the ball is further away than the goal mid point is.
