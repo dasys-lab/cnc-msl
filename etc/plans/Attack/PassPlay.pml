@@ -3,7 +3,6 @@
   <states id="1436268896672" name="Dribble" comment="" entryPoint="1436268896674">
     <plans xsi:type="alica:BehaviourConfiguration">SearchForPassPoint.beh#1436269036396</plans>
     <plans xsi:type="alica:Plan">Dribble.pml#1434049476066</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1493396908662</plans>
     <inTransitions>#1436268944412</inTransitions>
     <outTransitions>#1436268942088</outTransitions>
@@ -11,7 +10,6 @@
   <states id="1436268931449" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">AlignAndPassRapid.beh#1436269080263</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1436268942088</inTransitions>
     <outTransitions>#1436268944412</outTransitions>
   </states>

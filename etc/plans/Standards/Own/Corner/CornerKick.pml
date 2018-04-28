@@ -11,7 +11,6 @@
     </quantifiers>
   </conditions>
   <states id="1462373376007" name="AlignExec" comment="" entryPoint="1462373376008">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
     <outTransitions>#1464784050959</outTransitions>
@@ -22,7 +21,6 @@
     <outTransitions>#1464792274211</outTransitions>
   </states>
   <states id="1464783052747" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091</plans>
     <inTransitions>#1464784050959</inTransitions>
@@ -43,7 +41,6 @@
   <states id="1464792231235" name="Recieve" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1464792274211</inTransitions>
     <outTransitions>#1464796134632</outTransitions>
   </states>

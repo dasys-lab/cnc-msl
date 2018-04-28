@@ -7,7 +7,6 @@
   <vars id="1508951697442" name="x" comment="" Type=""/>
   <vars id="1508951702562" name="y" comment="" Type=""/>
   <states id="1508950989520" name="Passing" comment="" entryPoint="1508950989521">
-    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">PassIntoFreeZone.beh#1508951680585</plans>
   </states>

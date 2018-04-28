@@ -34,27 +34,23 @@
   </states>
   <states id="1436536084172" name="ApproachPass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536098621</inTransitions>
     <inTransitions>#1436536101847</inTransitions>
     <outTransitions>#1436536100248</outTransitions>
     <outTransitions>#1436536103266</outTransitions>
   </states>
   <states id="1436536085953" name="InterceptPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1436536100248</inTransitions>
     <outTransitions>#1436536101847</outTransitions>
   </states>
   <states id="1436536121614" name="InterceptPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1436536150744</inTransitions>
     <outTransitions>#1436536151770</outTransitions>
   </states>
   <states id="1436536123918" name="ApproachPass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1436536148908</inTransitions>
     <inTransitions>#1436536151770</inTransitions>
     <outTransitions>#1436536150744</outTransitions>

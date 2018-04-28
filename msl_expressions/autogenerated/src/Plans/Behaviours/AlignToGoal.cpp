@@ -119,12 +119,14 @@ namespace alica
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = driveTo->length();
 
-
         auto ruleMC = this->robot->robotMovement->ruleActionForBallGetter();
-        if(!std::isnan(ruleMC.motion.translation)) {
-        	send(ruleMC);
-        } else {
-        	sendAndUpdatePT(mc);
+        if (!std::isnan(ruleMC.motion.translation))
+        {
+            send(ruleMC);
+        }
+        else
+        {
+            sendAndUpdatePT(mc);
         }
 
         /*PROTECTED REGION END*/

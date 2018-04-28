@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="67" yPos="10" width="1415" height="737"/>
+    <value xPos="60" yPos="24" width="1449" height="737"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>

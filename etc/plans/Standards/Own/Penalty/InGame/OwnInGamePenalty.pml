@@ -7,8 +7,6 @@
   <states id="1466936786859" name="Grab Ball" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../../Dribble/DribbleControl.beh#1450175539163</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1466936849764</inTransitions>
     <inTransitions>#1466936851417</inTransitions>
     <outTransitions>#1466936850672</outTransitions>
