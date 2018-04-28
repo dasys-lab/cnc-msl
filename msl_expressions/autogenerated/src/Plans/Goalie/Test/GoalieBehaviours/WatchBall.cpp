@@ -9,6 +9,7 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_actuator_msgs/VisionRelocTrigger.h>
+#include <Game.h>
 #include <vector>
 /*PROTECTED REGION END*/
 namespace alica
@@ -82,7 +83,7 @@ void WatchBall::run(void *msg)
 			printf("relocPos: x: %f y: %f\n",
 					relocPos.x, relocPos.y);
 
-			sendReloc(relocPos);
+			sendReloc(relocPos, 0.0);
 			cnt = 0;
 		}
 	}
@@ -255,20 +256,42 @@ shared_ptr<geometry::CNPoint2D> WatchBall::mirroredOwnPos() {
 	return mirrored;
 }
 
-void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos) {
+void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos, double heading) {
 	msl_actuator_msgs::VisionRelocTrigger vrt;
 	vrt.receiverID = 12; // TODO: Fetch robot id from alica
 	vrt.usePose = true; // TODO: Fetch robot id from alica
 
-	msl_msgs::PositionInfo pi;
-	pi.x = alloRelocPos.x;
-	pi.y = alloRelocPos.y;
-	pi.angle = 0;
-	pi.certainty = 100.0;
-
-	vrt.position = pi;
+	vrt.position = toVisionCoordinates(alloRelocPos.x, alloRelocPos.y, heading);
 
 	relocPub.publish(vrt);
+}
+
+msl_msgs::PositionInfo
+WatchBall::toVisionCoordinates(double x, double y, double heading) {
+	msl_msgs::PositionInfo pi;
+
+	// Eventuall convert coordinates
+	if (wm->game->ownGoalColor != Color::Yellow) // == Blue?
+	{
+		pi.x = -x;
+		pi.y = -y;
+
+		heading += M_PI;
+		while (heading > M_PI)
+		{
+			heading -= 2 * M_PI;
+		}
+		heading += M_PI;
+		while (heading > M_PI)
+		{
+			heading -= 2 * M_PI;
+		}
+		pi.angle = heading;
+	}
+
+	pi.certainty = 100.0;
+
+	return pi;
 }
 
 /*PROTECTED REGION END*/

@@ -87,8 +87,10 @@ class WatchBall : public DomainBehaviour
 	bool ballIsMoving(shared_ptr<geometry::CNVelocity2D> ballVec);
 
 	// sendReloc relocalizes the Vision at alloRelocPos.
-	void sendReloc(geometry::CNPoint2D alloRelocPos);
+	void sendReloc(geometry::CNPoint2D alloRelocPos, double heading);
 
+	// toVisionCoordinates converts x,y,heading to the vision coordinats:
+	msl_msgs::PositionInfo toVisionCoordinates(double x, double y, double heading);
     /*PROTECTED REGION END*/
   private:
     /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ // Add additional private methods here
