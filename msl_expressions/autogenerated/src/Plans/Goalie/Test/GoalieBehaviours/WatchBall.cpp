@@ -35,6 +35,8 @@ WatchBall::WatchBall()
 
 	// Create query for movement.
     query = make_shared<msl::MovementQuery>();
+
+	lastCounter = 9999999;
     /*PROTECTED REGION END*/
 }
 WatchBall::~WatchBall()
@@ -59,30 +61,43 @@ void WatchBall::run(void *msg)
         return;
     }
 
-    const auto alloGoalMid = wm->field->posOwnGoalMid();
+    auto alloGoalMid = wm->field->posOwnGoalMid();
+    
+    alloBall = wm->ball->getAlloBallPosition();
+
+    laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
+	bool laserDetectedGoal = laserGoalOffset != nullptr;
+
+	lastCounter++;
+	if (laserDetectedGoal) {
+	// TODO: Eventually reloc every second or so
+		printf("laserGoalOffset: x: %f y: %f\n",
+				laserGoalOffset->x, laserGoalOffset->y);
+		
+		geometry::CNPoint2D relocPos;
+		relocPos.x = alloGoalMid->x + laserGoalOffset->x + 500;
+		relocPos.y = alloGoalMid->y + laserGoalOffset->y;
+
+		printf("oldpos: x: %f y: %f\n",
+				ownPos->x, ownPos->y);
+
+		printf("relocPos: x: %f y: %f\n",
+				relocPos.x, relocPos.y);
+
+		//sendReloc(relocPos, 0.0);
+		lastLaserGoalOffset = laserGoalOffset;
+		lastCounter = 0;
+	}
+
+	if (lastLaserGoalOffset != nullptr && lastCounter <= 10 * 30) {
+		alloGoalMid->y += lastLaserGoalOffset->y;
+		//alloBall->y += lastLaserGoalOffset->y;
+	}
+
     alloGoalLeft = make_shared<geometry::CNPoint2D>(
     		alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
     alloGoalRight = make_shared<geometry::CNPoint2D>(
     		alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
-    
-    alloBall = wm->ball->getAlloBallPosition();
-
-    auto laserGoalOffset = wm->rawSensorData->getEgoGoalMid();
-	bool laserDetectedGoal = laserGoalOffset != nullptr;
-		if (laserDetectedGoal) {
-		// TODO: Eventually reloc every second or so
-			printf("laserGoalOffset: x: %f y: %f\n",
-					laserGoalOffset->x, laserGoalOffset->y);
-			
-			geometry::CNPoint2D relocPos;
-			relocPos.x = alloGoalMid->x + laserGoalOffset->x;
-			relocPos.y = alloGoalMid->y + laserGoalOffset->y;
-
-			printf("relocPos: x: %f y: %f\n",
-					relocPos.x, relocPos.y);
-
-			sendReloc(relocPos, 0.0);
-		}
 
 	// Special case that depend on the ball presence and position.
     // If ball is not seen or the ball is further away than the goal mid point is.
@@ -122,7 +137,7 @@ void WatchBall::run(void *msg)
 
 		// Limit or clamp targetY to goal area
 		targetY = fitTargetY(targetY, alloGoalLeft->y, alloGoalRight->y);
-		const double offsetX = 80;
+		const double offsetX = 250;
 		const double targetX = alloGoalMid->x + offsetX;
 
 		return make_shared<geometry::CNPoint2D>(targetX, targetY);
@@ -257,6 +272,8 @@ void WatchBall::sendReloc(geometry::CNPoint2D alloRelocPos, double heading) {
 	vrt.receiverID = 12; // TODO: Fetch robot id from alica
 	vrt.usePose = true; // TODO: Fetch robot id from alica
 
+	printf("alloRelocPos: %f %f %f\n", alloRelocPos.x, alloRelocPos.y, heading);
+
 	vrt.position = toVisionCoordinates(alloRelocPos.x, alloRelocPos.y, heading);
 
 	relocPub.publish(vrt);
@@ -283,9 +300,14 @@ WatchBall::toVisionCoordinates(double x, double y, double heading) {
 			heading -= 2 * M_PI;
 		}
 		pi.angle = heading;
+	} else {
+		pi.x = x;
+		pi.y = y;
+		pi.angle = -M_PI; // TODO: Fix
 	}
 
 	pi.certainty = 100.0;
+	printf("vision x: %f y: %f, heading: %f\n", pi.x, pi.y, pi.angle);
 
 	return pi;
 }

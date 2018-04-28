@@ -38,8 +38,9 @@ class WatchBall : public DomainBehaviour
     shared_ptr<geometry::CNPoint2D> alloBall;
     shared_ptr<geometry::CNPoint2D> alloGoalLeft;
     shared_ptr<geometry::CNPoint2D> alloGoalRight;
-
-    shared_ptr<geometry::CNPoint2D> lastLaserGoalMid;
+    shared_ptr<geometry::CNPoint2D> lastLaserGoalOffset;
+    shared_ptr<geometry::CNPoint2D> laserGoalOffset;
+	int lastCounter;
     ros::Publisher relocPub;
 
 	// Config parameters
