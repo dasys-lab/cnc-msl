@@ -72,6 +72,7 @@ namespace alica
         double velYFactor;
         double velXFactor;
         double powerOfRotation;
+        double haveBallDecay;
 
         vector<double> armInputs;
         vector<double> armLeftVels;

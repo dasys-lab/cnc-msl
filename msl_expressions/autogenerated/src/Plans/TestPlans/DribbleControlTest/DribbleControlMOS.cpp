@@ -57,6 +57,7 @@ namespace alica
         this->velYFactor = 0.0;
         this->velXFactor = 0.0;
         this->powerOfRotation = 0.0;
+        this->haveBallDecay=0.0;
         /*PROTECTED REGION END*/
     }
     DribbleControlMOS::~DribbleControlMOS()
@@ -128,7 +129,9 @@ namespace alica
         {
             msgback.rightMotor = -this->speedNoBall;
             msgback.leftMotor = -this->speedNoBall;
+            this->haveBallDecay = 1.0;
             this->sendWheelSpeed(msgback);
+
             return;
         }
 
@@ -254,11 +257,17 @@ namespace alica
         //            msgback.leftMotor = wheelSpeedLeftOld + maxDelta;
         //            msgback.rightMotor = wheelSpeedRightOld + maxDelta;
         //        }
+        this->haveBallDecay *= this->decayFactor;
+        msgback.leftMotor = msgback.leftMotor*(1-this->haveBallDecay)+speedNoBall*this->haveBallDecay;
+        msgback.rightMotor = msgback.rightMotor*(1-this->haveBallDecay)+speedNoBall*this->haveBallDecay;
+
+
         this->wheelSpeedLeftOld = msgback.leftMotor;
         this->wheelSpeedRightOld = msgback.rightMotor;
         //
         //        msgback.rightMotor = std::abs(msgback.rightMotor) < 100.0 ? 0 : msgback.rightMotor;
         //        msgback.leftMotor = std::abs(msgback.leftMotor) < 100.0 ? 0 : msgback.leftMotor;
+
 
         send(msgback);
     }
