@@ -6,6 +6,10 @@
 namespace msl {
 	class MovementQuery;
 }
+
+namespace geometry {
+	class CNPoint2D;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
