@@ -57,6 +57,7 @@ add_message_files(
   CorrectedOdometryInfo.msg
   CovMatrix3D.msg
   DistanceScanInfo.msg
+  LaserLocalization.msg
   LocalizationType.msg
   LinePointList.msg
   ObstacleInfo.msg

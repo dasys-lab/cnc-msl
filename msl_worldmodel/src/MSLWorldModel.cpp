@@ -11,6 +11,7 @@
 #include "Calibration.h"
 #include "Robots.h"
 #include "WhiteBoard.h"
+#include "LaserScanner.h"
 #include "engine/AlicaEngine.h"
 #include "engine/IAlicaClock.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
@@ -35,6 +36,7 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <std_msgs/Bool.h>
+#include <msl_sensor_msgs/LaserLocalization.h>
 
 namespace msl
 {
@@ -107,6 +109,7 @@ namespace msl
 
         processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
 
+        laserScanSub = n.subscribe("/laserScan", 10, &MSLWorldModel::onLaserScanData, (MSLWorldModel *)this);
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->usingSimulator = false;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
@@ -126,6 +129,7 @@ namespace msl
         this->prediction = new Prediction();
         this->monitoring = new Monitoring(this);
         this->calibration = new Calibration(this);
+        this->laserScanner = new LaserScanner(this, ringBufferLength);
     }
     supplementary::ITrigger *MSLWorldModel::getVisionDataEventTrigger()
     {
@@ -503,5 +507,9 @@ namespace msl
     void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
     {
         rawSensorData->processLightBarrier(msg);
+    }
+    void MSLWorldModel::onLaserScanData(msl_sensor_msgs::LaserLocalizationPtr msg)
+    {
+    	laserScanner->processLaserScannPoints(msg);
     }
 } /* namespace msl */

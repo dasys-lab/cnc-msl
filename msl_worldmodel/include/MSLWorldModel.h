@@ -36,6 +36,7 @@ ROS_DECLARE_MESSAGE(SimulatorWorldModelData)
 ROS_DECLARE_MESSAGE(CorrectedOdometryInfo)
 ROS_DECLARE_MESSAGE(SharedWorldInfo)
 ROS_DECLARE_MESSAGE(BallHypothesisList)
+ROS_DECLARE_MESSAGE(LaserLocalization)
 }
 namespace gazebo_msgs
 {
@@ -75,6 +76,7 @@ class Obstacles;
 class PathPlanner;
 class MSLSharedWorldModel;
 class Calibration;
+class LaserScanner;
 class MSLWorldModel
 {
   public:
@@ -95,7 +97,7 @@ class MSLWorldModel
     void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
     void onLightBarrierInfo(std_msgs::BoolPtr msg);
     void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
-
+    void onLaserScanData(msl_sensor_msgs::LaserLocalizationPtr msg );
     bool isMaySendMessages() const;
     void setMaySendMessages(bool maySendMessages);
 
@@ -122,6 +124,7 @@ class MSLWorldModel
     Prediction *prediction;
     LightBarrier *lightBarrier;
     Calibration *calibration;
+    LaserScanner *laserScanner;
 
     supplementary::EventTrigger visionTrigger;
 
@@ -156,6 +159,7 @@ class MSLWorldModel
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
+    ros::Subscriber laserScanSub;
     ros::Publisher processCommandPub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
