@@ -10,6 +10,7 @@ namespace msl
 /*PROTECTED REGION END*/
 namespace alica
 {
+	class Query;
     class MoveToPointDynamic : public DomainBehaviour
     {
     public:
