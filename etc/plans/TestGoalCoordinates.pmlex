@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092691316"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092691315"/>
+    <value width="587" height="308"/>
+  </extensions>
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092691317"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092743927"/>
+    <value xPos="187" yPos="146" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092759824"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestGoalCoordinates.pml#1532092762539"/>
+    <value>
+      <bendpoints xPos="206" yPos="248"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestPlans/TestGoalCoordinates.beh#1532092891925"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

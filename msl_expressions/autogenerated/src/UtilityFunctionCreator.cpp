@@ -63,6 +63,8 @@
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
+#include  "Plans/TestGoalCoordinates1532092691315.h"
+
 #include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
 
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
@@ -301,6 +303,10 @@ namespace alica
 
             case 1426696586622:
                 return make_shared<UtilityFunction1426696586622>();
+                break;
+
+            case 1532092691315:
+                return make_shared<UtilityFunction1532092691315>();
                 break;
 
             case 1518622787399:

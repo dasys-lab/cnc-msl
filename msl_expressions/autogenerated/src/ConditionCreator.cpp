@@ -62,6 +62,8 @@
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
+#include  "Plans/TestGoalCoordinates1532092691315.h"
+
 #include  "Plans/TestPlans/DribbleTestMOS/TestDribbleMOS1518622787399.h"
 
 #include  "Plans/Standards/Own/Corner/CornerBounceShot1459361887233.h"
@@ -1109,6 +1111,18 @@ namespace alica
             case 1458562147436:
 
                 return make_shared<TransitionCondition1458562147436>();
+
+                break;
+
+            case 1532092762346:
+
+                return make_shared<TransitionCondition1532092762346>();
+
+                break;
+
+            case 1532092768263:
+
+                return make_shared<TransitionCondition1532092768263>();
 
                 break;
 

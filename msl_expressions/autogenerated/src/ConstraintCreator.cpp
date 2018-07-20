@@ -63,6 +63,8 @@
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
+#include  "Plans/constraints/TestGoalCoordinates1532092691315Constraints.h"
+
 #include  "Plans/TestPlans/DribbleTestMOS/constraints/TestDribbleMOS1518622787399Constraints.h"
 
 #include  "Plans/Standards/Own/Corner/constraints/CornerBounceShot1459361887233Constraints.h"

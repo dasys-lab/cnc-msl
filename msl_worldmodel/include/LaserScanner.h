@@ -15,7 +15,7 @@ class LaserScanner
     virtual ~LaserScanner();
 
     void processLaserScannPoints(msl_sensor_msgs::LaserLocalizationPtr msg);
-    shared_ptr<msl_sensor_msgs::LaserLocalization> getGoalWallPosition(int index);
+    shared_ptr<msl_sensor_msgs::LaserLocalization> getGoalWallPosition(int index=0);
 
   private:
     MSLWorldModel* wm;
