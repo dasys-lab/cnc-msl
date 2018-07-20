@@ -1,0 +1,16 @@
+int32 senderID
+int32 receiverID
+bool useBrightness
+int32 brightness
+int32 exposure
+bool autoWhiteBalance
+int32 whiteBalance1
+int32 whiteBalance2
+int32 hue
+int32 saturation
+bool enabledGamma
+int32 gamma
+bool autoShutter
+int32 shutter
+bool autoGain
+int32 gain

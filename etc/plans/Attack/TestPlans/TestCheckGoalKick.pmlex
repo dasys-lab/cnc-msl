@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076138237"/>
+    <value xPos="75" yPos="204" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076138236"/>
+    <value xPos="2" yPos="25" width="835" height="528"/>
+  </extensions>
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076138238"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076173801"/>
+    <value xPos="279" yPos="241" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076202114"/>
+    <value>
+      <bendpoints xPos="364" yPos="296"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestCheckGoalKick.pml#1449076203977"/>
+    <value>
+      <bendpoints xPos="349" yPos="341"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/Joystick.beh#1421854995808"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -1,0 +1,415 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (TMC200), 0x0002 // Tools: '166/167'
+Target (TMC200 with LOG), 0x0002 // Tools: '166/167'
+Target (VMC), 0x0002 // Tools: '166/167'
+
+Group (DAVE)
+Group (CN)
+Group (CN_HEADER)
+
+File 1,1,<.\ADC.C><ADC.C> 0x0 
+File 1,1,<.\ASC0.C><ASC0.C> 0x0 
+File 1,1,<.\CAN1.C><CAN1.C> 0x0 
+File 1,1,<.\CC2.C><CC2.C> 0x0 
+File 1,1,<.\CC6.C><CC6.C> 0x0 
+File 1,1,<.\GPT1.C><GPT1.C> 0x0 
+File 1,1,<.\IO.C><IO.C> 0x0 
+File 1,1,<.\MAIN.C><MAIN.C> 0x0 
+File 1,1,<.\RTC.C><RTC.C> 0x0 
+File 1,1,<.\WDT.C><WDT.C> 0x0 
+File 1,2,<.\cn_tmc200.asm><cn_tmc200.asm> 0x0 
+File 2,1,<.\cn_main.c><cn_main.c> 0x0 
+File 2,1,<.\cn_time.c><cn_time.c> 0x0 
+File 2,1,<.\cn_led.c><cn_led.c> 0x0 
+File 2,1,<.\cn_motor.c><cn_motor.c> 0x0 
+File 2,1,<.\cn_serial.c><cn_serial.c> 0x0 
+File 2,1,<.\cn_commands.c><cn_commands.c> 0x0 
+File 2,1,<.\cn_controller.c><cn_controller.c> 0x0 
+File 2,1,<.\cn_pwm.c><cn_pwm.c> 0x0 
+File 2,1,<.\cn_adc.c><cn_adc.c> 0x0 
+File 2,1,<.\cn_logging.c><cn_logging.c> 0x0 
+File 2,1,<.\cn_force_lookup.c><cn_force_lookup.c> 0x0 
+File 3,5,<.\cn_main.h><cn_main.h> 0x0 
+File 3,5,<.\cn_time.h><cn_time.h> 0x0 
+File 3,5,<.\cn_led.h><cn_led.h> 0x0 
+File 3,5,<.\cn_motor.h><cn_motor.h> 0x0 
+File 3,5,<.\cn_serial.h><cn_serial.h> 0x0 
+File 3,5,<.\cn_commands.h><cn_commands.h> 0x0 
+File 3,5,<.\cn_controller.h><cn_controller.h> 0x0 
+File 3,5,<.\cn_pwm.h><cn_pwm.h> 0x0 
+File 3,5,<.\cn_adc.h><cn_adc.h> 0x0 
+File 3,5,<.\cn_logging.h><cn_logging.h> 0x0 
+File 3,5,<.\cn_force_lookup.h><cn_force_lookup.h> 0x0 
+
+
+Options 1,0,0  // Target 'TMC200'
+ Device (C164CI)
+ Vendor (Infineon)
+ Cpu (IRAM(0xF600-0xFDFF) XRAM(0xE000-0xE7FF) CLOCK(20000000) IROM (0-0xFFFF) ICAN(0xE800-0xEFFF) MOD167)
+ FlashUt ()
+ StupF ("LIB\START167.A66" ("C16x/ST10 Startup Code"))
+ FlashDR ()
+ DevID ()
+ Rgf (REG164CI.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\output\)
+ OutName (cn_tmc200)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=0
+ Browse=1
+ LstDir (.\output\)
+ HexSel=0
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ SVCSID <>
+ Model=1
+ RTOS=0
+ nHold=6
+ iHold=65535
+ sHold=65535
+ bHold=65535
+ MOD167=1
+ MODV2=0
+ UseOnChipRom=1
+ UseOnchipXCAN=1
+ UseOnchipXRAM2=0
+ NearRam=0
+ NearRom=0
+ ExtMem 0 1,4096,196608
+ ExtMem 1 0,524288,196608
+ ExtMem 2 0,0,0
+ ExtMem 3 0,0,0
+ ExtMem 4 0,0,0
+ ExtMem 5 0,0,0
+ Optimize=6
+ SpeedSize=1
+ RegColor=0
+ Static=0
+ WarningLev=3
+ Alias=1
+ Order=0
+ UnsignedChar=0
+ NoDppSave=1
+ Float64=0
+ SaveUsr=0
+ Reorder=0
+ cMisc (MOD167)
+ Define (CN_NO_LOG)
+ Undefine ()
+ INCC6 ()
+ EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ECMISC ()
+ ECDEFINE ()
+ ECUNDEF ()
+ ECINC ()
+ MPL=1
+ CASE=0
+ aMisc (MOD167)
+ aSet (WATCHDOG)
+ aReset ()
+ INCA6 ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ useLinkFile=0
+ LnkFile ()
+ LinkOnly=0
+ UseTargSet=1
+ DppUse=0
+ nDataSel=2
+ nConstSel=1
+ NearDataStr ()
+ NearConstStr ()
+ CinitTab (0x010000 - 0x030FFF)
+ IntVectAddr ()
+ lWarnLev=2
+ lDisWarn ()
+ lAssign ()
+ lRegbank ()
+ lReserve ()
+ lMisc ()
+ lClasses ()
+ lSect ()
+  OPTDL (S166.DLL)()(D167.DLL)(-p164CI)(S166.DLL)()(T167.DLL)(-p164CI)
+  OPTDBG 48125,0,()()()()()()()()()() (MONITOR\MON166.DLL)()()()
+ FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
+ FLASH2 ()
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+
+Options 2,0,0  // Target 'TMC200 with LOG'
+ Device (C164CI)
+ Vendor (Infineon)
+ Cpu (IRAM(0xF600-0xFDFF) XRAM(0xE000-0xE7FF) CLOCK(20000000) IROM (0-0xFFFF) ICAN(0xE800-0xEFFF) MOD167)
+ FlashUt ()
+ StupF ("LIB\START167.A66" ("C16x/ST10 Startup Code"))
+ FlashDR ()
+ DevID ()
+ Rgf (REG164CI.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\output\)
+ OutName (cn_tmc200)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=0
+ Browse=1
+ LstDir (.\output\)
+ HexSel=0
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ SVCSID <>
+ Model=1
+ RTOS=0
+ nHold=6
+ iHold=65535
+ sHold=65535
+ bHold=65535
+ MOD167=1
+ MODV2=0
+ UseOnChipRom=1
+ UseOnchipXCAN=1
+ UseOnchipXRAM2=0
+ NearRam=0
+ NearRom=0
+ ExtMem 0 1,4096,196608
+ ExtMem 1 0,524288,196608
+ ExtMem 2 0,0,0
+ ExtMem 3 0,0,0
+ ExtMem 4 0,0,0
+ ExtMem 5 0,0,0
+ Optimize=6
+ SpeedSize=1
+ RegColor=0
+ Static=0
+ WarningLev=3
+ Alias=1
+ Order=0
+ UnsignedChar=0
+ NoDppSave=1
+ Float64=0
+ SaveUsr=0
+ Reorder=0
+ cMisc (MOD167)
+ Define ()
+ Undefine ()
+ INCC6 ()
+ EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ECMISC ()
+ ECDEFINE ()
+ ECUNDEF ()
+ ECINC ()
+ MPL=1
+ CASE=0
+ aMisc (MOD167)
+ aSet (WATCHDOG)
+ aReset ()
+ INCA6 ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ useLinkFile=0
+ LnkFile ()
+ LinkOnly=0
+ UseTargSet=1
+ DppUse=0
+ nDataSel=2
+ nConstSel=1
+ NearDataStr ()
+ NearConstStr ()
+ CinitTab (0x010000 - 0x030FFF)
+ IntVectAddr ()
+ lWarnLev=2
+ lDisWarn ()
+ lAssign ()
+ lRegbank ()
+ lReserve ()
+ lMisc ()
+ lClasses ()
+ lSect ()
+  OPTDL (S166.DLL)()(D167.DLL)(-p164CI)(S166.DLL)()(T167.DLL)(-p164CI)
+  OPTDBG 48125,0,()()()()()()()()()() (MONITOR\MON166.DLL)()()()
+ FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
+ FLASH2 ()
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+
+Options 3,0,0  // Target 'VMC'
+ Device (C166 (all Variants))
+ Vendor (Infineon)
+ Cpu (IRAM(0xFA00-0xFDFF) CLOCK(25000000))
+ FlashUt ()
+ StupF ("LIB\STARTUP.A66" ("80C166 Startup Code"))
+ FlashDR ()
+ DevID ()
+ Rgf (REG166.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\output\)
+ OutName (cn_tmc200)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=0
+ Browse=1
+ LstDir (.\output\)
+ HexSel=0
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ SVCSID <>
+ Model=1
+ RTOS=0
+ nHold=6
+ iHold=65535
+ sHold=65535
+ bHold=65535
+ MOD167=0
+ MODV2=0
+ UseOnChipRom=0
+ UseOnchipXCAN=0
+ UseOnchipXRAM2=0
+ NearRam=0
+ NearRom=0
+ ExtMem 0 1,4096,196608
+ ExtMem 1 0,524288,196608
+ ExtMem 2 0,0,0
+ ExtMem 3 0,0,0
+ ExtMem 4 0,0,0
+ ExtMem 5 0,0,0
+ Optimize=6
+ SpeedSize=1
+ RegColor=0
+ Static=0
+ WarningLev=3
+ Alias=1
+ Order=0
+ UnsignedChar=0
+ NoDppSave=1
+ Float64=0
+ SaveUsr=0
+ Reorder=0
+ cMisc ()
+ Define ()
+ Undefine ()
+ INCC6 ()
+ EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ECMISC ()
+ ECDEFINE ()
+ ECUNDEF ()
+ ECINC ()
+ MPL=1
+ CASE=0
+ aMisc ()
+ aSet (WATCHDOG)
+ aReset ()
+ INCA6 ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ useLinkFile=0
+ LnkFile ()
+ LinkOnly=0
+ UseTargSet=1
+ DppUse=0
+ nDataSel=2
+ nConstSel=1
+ NearDataStr ()
+ NearConstStr ()
+ CinitTab (0x010000 - 0x030FFF)
+ IntVectAddr ()
+ lWarnLev=2
+ lDisWarn ()
+ lAssign ()
+ lRegbank ()
+ lReserve ()
+ lMisc ()
+ lClasses ()
+ lSect ()
+  OPTDL (S166.DLL)()(D167.DLL)(-p166)(S166.DLL)()(T167.DLL)(-p166)
+  OPTDBG 48125,0,()()()()()()()()()() (MONITOR\MON166.DLL)()()()
+ FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
+ FLASH2 ()
+ FLASH3 ()
+ FLASH4 ()
+EndOpt
+

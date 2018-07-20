@@ -1,0 +1,7 @@
+am335x-bone-cape-bone-robot.o: src/arm/am335x-bone-cape-bone-robot.dts \
+ src/arm/am33xx.dtsi include/dt-bindings/gpio/gpio.h \
+ include/dt-bindings/pinctrl/am33xx.h include/dt-bindings/pinctrl/omap.h \
+ src/arm/skeleton.dtsi src/arm/am335x-bone-common.dtsi \
+ src/arm/am335x-bone-common-pinmux.dtsi src/arm/am335x-bone-robot.dtsi \
+ src/arm/am335x-bone-ehrpwm1A.dtsi src/arm/am335x-bone-ehrpwm2A.dtsi \
+ src/arm/am335x-bone-ehrpwm2B.dtsi

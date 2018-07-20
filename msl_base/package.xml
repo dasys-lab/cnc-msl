@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_base</name>
+  <version>0.0.0</version>
+  <description>The msl_base package</description>
+
+  <maintainer email="witsch@vs.uni-kassel.de">Andreas Witsch</maintainer>
+
+  <license>MIT</license>
+
+  <author email="opfer@vs.uni-kassel.de">Stephan Opfer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>alica_engine</build_depend>
+  <build_depend>system_config</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>CGAL</build_depend>
+  <build_depend>autodiff</build_depend>
+  <build_depend>msl_simulator</build_depend>
+  <build_depend>msl_expressions</build_depend>
+  <build_depend>msl_worldmodel</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>alica_ros_proxy</build_depend>
+  
+  <run_depend>alica_engine</run_depend>
+  <run_depend>system_config</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>CGAL</run_depend>
+  <run_depend>autodiff</run_depend>  
+  <run_depend>msl_simulator</run_depend>
+  <run_depend>msl_expressions</run_depend>
+  <run_depend>msl_worldmodel</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>alica_ros_proxy</run_depend>
+
+  <export>
+  </export>
+</package>

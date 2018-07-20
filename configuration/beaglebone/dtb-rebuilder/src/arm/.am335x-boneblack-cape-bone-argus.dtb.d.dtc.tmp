@@ -1,0 +1,1 @@
+src/arm/am335x-boneblack-cape-bone-argus.dtb: src/arm/.am335x-boneblack-cape-bone-argus.dtb.dts.tmp src/arm/am33xx-clocks.dtsi src/arm/tps65217.dtsi

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:TaskRepository xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1226672409680" name="" comment="" defaultTask="1225112227903">
+  <tasks id="1225112227903" name="DefaultTask" comment="" description="DefaultTask"/>
+  <tasks id="1225115536468" name="SupportAttack" comment="" description=""/>
+  <tasks id="1221754402444" name="KeepGoal" comment="" description="KeepGoal"/>
+  <tasks id="1222613952469" name="Attack" comment="" description="Attack"/>
+  <tasks id="1225115406909" name="Defend" comment="" description="Defend"/>
+  <tasks id="1225116131298" name="SupportDefend" comment="" description=""/>
+  <tasks id="1307185798142" name="ReceivePassInGame" comment="" description=""/>
+  <tasks id="1439997010902" name="ExecuteStandard" comment="" description=""/>
+  <tasks id="1439997023446" name="ReceiveStandard" comment="" description=""/>
+  <tasks id="1461237765109" name="Block" comment="" description=""/>
+  <tasks id="1462360858945" name="AlternativeReceive" comment="" description=""/>
+  <tasks id="1464532449309" name="StandInsideOppPenalty" comment="" description=""/>
+  <tasks id="1464864263733" name="StandCloseToOppPenalty" comment="" description=""/>
+</alica:TaskRepository>

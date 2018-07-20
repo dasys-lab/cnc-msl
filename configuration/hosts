@@ -1,0 +1,29 @@
+127.0.0.1	localhost
+# Mit "robox" muss der name des Roboters ersetzt werden, auf dem diese Datei liegt
+# Der entsprechende Eintrag zur eigenen Roboter-IP muss entfernt werden
+127.0.1.1	robox
+# 172.16.40.XX	robox
+172.16.40.11	mops
+172.16.40.12	bart
+172.16.40.13	fransen
+172.16.40.14	zwerg
+172.16.40.15	muecke
+172.16.40.16	scotti
+172.16.40.17	brain
+172.16.40.18	hairy
+172.16.40.19	nase
+172.16.40.20	savvy
+172.16.40.21	myo
+172.16.40.22	foxy
+
+10.0.0.1	debug
+10.0.0.10	bbb
+192.168.0.2	eth2can
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1455888574532" name="StandardAlignAndGrab" comment="" destinationPath="Plans/GenericStandards">
+  <configurations id="1455888617961" name="StandardAlignAndGrabGenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1459456572146" name="MISSING_NAME" comment="" key="planName" value="GenericExecute"/>
+    <parameters id="1459456579327" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+  <configurations id="1459456566595" name="StandardAlignAndGrabOwnKickOff" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1459456574779" name="MISSING_NAME" comment="" key="planName" value="OwnKickOff"/>
+    <parameters id="1459456584448" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+  <configurations id="1461583806472" name="StandardAlignAndGrabThrowIn" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1461583832320" name="MISSING_NAME" comment="" key="planName" value="ThrowInNearGoal"/>
+    <parameters id="1461583841747" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+  <configurations id="1465038982091" name="StandardAlignAndGrabCornerKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1465039005917" name="MISSING_NAME" comment="" key="planName" value="CornerKick"/>
+    <parameters id="1465039021874" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+  <configurations id="1466861369486" name="StandardAlignAndGrabOFKIOH" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1466861405145" name="MISSING_NAME" comment="" key="planName" value="OwnFreeKickInOppHalf"/>
+    <parameters id="1466863721270" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+  <configurations id="1467436134025" name="StandardAlignAndGrabDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1516967541468" name="MISSING_NAME" comment="" key="planName" value="TestSAAG"/>
+    <parameters id="1516967554672" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+</alica:Behaviour>

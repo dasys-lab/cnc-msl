@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1436269063295" name="AlignAndPassRapid" comment="" destinationPath="Plans/Attack">
+  <configurations id="1436269080263" name="AlignAndPassRapidDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1440849398823" name="MISSING_NAME" comment="" key="DistToFieldBorder" value="-500"/>
+    <parameters id="1440849411993" name="MISSING_NAME" comment="" key="FreeOppAngle" value="1.5"/>
+    <parameters id="1440849426133" name="MISSING_NAME" comment="" key="MaxPassDist" value="14000"/>
+    <parameters id="1440849439009" name="MISSING_NAME" comment="" key="MaxTurnAngle" value="0.75"/>
+    <parameters id="1440849454267" name="MISSING_NAME" comment="" key="MinOppDist" value="1000"/>
+    <parameters id="1440849465278" name="MISSING_NAME" comment="" key="MinPassDist" value="2500"/>
+    <parameters id="1440849476842" name="MISSING_NAME" comment="" key="PassCorridorWidth" value="1000"/>
+    <parameters id="1440849496542" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="AttackPlay"/>
+    <parameters id="1440849505103" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="AttackPlay"/>
+    <parameters id="1440849514834" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
+    <parameters id="1440849527880" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="Block"/>
+  </configurations>
+  <configurations id="1441108023281" name="AlignAndPassRapidTest" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1441108074571" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
+    <parameters id="1441108081318" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="SupportAttack"/>
+    <parameters id="1441108097352" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="PassPlan"/>
+    <parameters id="1441108118537" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="PassPlan"/>
+    <parameters id="1441108154549" name="MISSING_NAME" comment="" key="DistToFieldBorder" value="-500"/>
+    <parameters id="1441108167542" name="MISSING_NAME" comment="" key="FreeOppAngle" value="1.5"/>
+    <parameters id="1441108212459" name="MISSING_NAME" comment="" key="MaxPassDist" value="14000"/>
+    <parameters id="1441108222838" name="MISSING_NAME" comment="" key="MaxTurnAngle" value="0.75"/>
+    <parameters id="1441108237303" name="MISSING_NAME" comment="" key="MinOppDist" value="1000"/>
+    <parameters id="1441108250947" name="MISSING_NAME" comment="" key="MinPassDist" value="2500"/>
+    <parameters id="1441117480205" name="MISSING_NAME" comment="" key="PassCorridorWidth" value="1000"/>
+  </configurations>
+</alica:Behaviour>

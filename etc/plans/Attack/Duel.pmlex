@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="Duel.pml#1450178655416"/>
+    <value xPos="22" yPos="101" width="917" height="518"/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1450178655418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/Duel.beh#1450178707835"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1458127402884"/>
+    <value xPos="162" yPos="178" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1458131546373"/>
+    <value xPos="633" yPos="225"/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1458131557622"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1458662648729"/>
+    <value xPos="171" yPos="353" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1458662674153"/>
+    <value xPos="-74" yPos="311"/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

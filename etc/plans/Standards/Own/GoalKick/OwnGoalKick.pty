@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:PlanType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1465397323080" name="OwnGoalKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="">
+  <plans id="1465397349681" name="MISSING_NAME" comment="" activated="true">
+    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
+  </plans>
+  <plans id="1469529968727" name="MISSING_NAME" comment="" activated="true">
+    <plan>GoalKick.pml#1469521732930</plan>
+  </plans>
+</alica:PlanType>

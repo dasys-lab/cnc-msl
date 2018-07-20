@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:PlanType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1447870848925" name="OppFreeKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="">
+  <plans id="1457016035412" name="MISSING_NAME" comment="" activated="true">
+    <plan>../OppStandardExecution.pml#1457015277573</plan>
+  </plans>
+</alica:PlanType>

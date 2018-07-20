@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="PassPlay.pml#1436268896672"/>
+    <value xPos="61" yPos="119" width="245" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlay.pml#1436268896671"/>
+    <value width="653" height="394"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlay.pml#1436268896674"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassPlay.pml#1436268931449"/>
+    <value xPos="372" yPos="58" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlay.pml#1436268942088"/>
+    <value>
+      <bendpoints xPos="344" yPos="158"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="PassPlay.pml#1436268944412"/>
+    <value>
+      <bendpoints xPos="349" yPos="191"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="SearchForPassPoint.beh#1436269036396"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AlignAndPassRapid.beh#1436269080263"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Dribble.pml#1434049476066"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Dribble.pml#1434049476066"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Dribble.pml#1434049476066"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1493396908662"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

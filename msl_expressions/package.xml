@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_expressions</name>
+  <version>0.0.0</version>
+  <description>The msl_expressions package</description>
+
+  <maintainer email="witsch@vs.uni-kassel.de">Andreas Witsch</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>msl_worldmodel</build_depend>
+  <build_depend>alica_engine</build_depend>
+  <build_depend>system_config</build_depend>
+  <build_depend>autodiff</build_depend>
+  <build_depend>system_util</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>msl_robot</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>msl_worldmodel</run_depend>
+  <run_depend>alica_engine</run_depend>
+  <run_depend>system_config</run_depend>
+  <run_depend>autodiff</run_depend>
+  <run_depend>system_util</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
+  <run_depend>msl_robot</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
+
+  <export>
+  </export>
+</package>

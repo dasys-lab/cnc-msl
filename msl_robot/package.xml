@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_robot</name>
+  <version>0.0.1</version>
+  <description>The msl_robot package contains everything that has to do with the creation of
+  actuator commands. (Kickpower, BallHandling, Driving, etc.)</description>
+
+  <maintainer email="opfer@vs.uni-kassel.de">Stephan Opfer</maintainer>
+
+  <license>MIT</license>
+
+  <author email="opfer@vs.uni-kassel.de">Stephan Opfer</author>
+  
+  <build_depend>msl_worldmodel</build_depend> 
+  <build_depend>cnc_geometry</build_depend>
+  <build_depend>system_config</build_depend>
+  
+  
+
+  <run_depend>msl_worldmodel</run_depend>
+  <run_depend>cnc_geometry</run_depend>
+  <run_depend>system_config</run_depend>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>

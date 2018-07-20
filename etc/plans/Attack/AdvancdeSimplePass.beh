@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1450176193656" name="AdvancdeSimplePass" comment="" destinationPath="Plans/Attack">
+  <configurations id="1450176216458" name="AdvancdeSimplePassDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1450176235130" name="MISSING_NAME" comment="" key="AttackTask" value="ReceivePassInGame"/>
+    <parameters id="1450176239673" name="MISSING_NAME" comment="" key="Plan" value="SimplePass"/>
+  </configurations>
+</alica:Behaviour>

@@ -1,0 +1,6 @@
+dra72-evm.o: src/arm/dra72-evm.dts src/arm/dra72x.dtsi src/arm/dra7.dtsi \
+ include/dt-bindings/interrupt-controller/arm-gic.h \
+ include/dt-bindings/interrupt-controller/irq.h \
+ include/dt-bindings/pinctrl/dra.h src/arm/skeleton.dtsi \
+ src/arm/omap5-cpu-thermal.dtsi include/dt-bindings/thermal/thermal.h \
+ include/dt-bindings/gpio/gpio.h include/dt-bindings/clk/ti-dra7-atl.h

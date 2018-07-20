@@ -1,0 +1,17 @@
+<library path="lib/libmsl_joystick">
+  <class name="msl_joystick/Joystick" type="msl_joystick::Joystick" base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to send MSL Joystick Commands.
+    </description>
+    <qtgui>
+      <group>
+        <label>Robot Tools</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to robot tools.</statustip>
+      </group>
+      <label>MSL Joystick</label>
+      <icon type="file">resources/Joystick-256.png</icon>
+      <statustip>A GUI plugin for sending MSL Joystick Commands.</statustip>
+    </qtgui>
+  </class>
+</library>

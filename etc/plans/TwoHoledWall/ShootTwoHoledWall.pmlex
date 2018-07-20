@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620209050"/>
+    <value xPos="183" yPos="151" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620189234"/>
+    <value xPos="-9" yPos="-12" width="1004" height="652"/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620209051"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620225739"/>
+    <value xPos="371" yPos="383" width="303" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620267846"/>
+    <value>
+      <bendpoints xPos="498" yPos="299"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620275486"/>
+    <value xPos="743" yPos="291"/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620285804"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620327753"/>
+    <value>
+      <bendpoints xPos="451" yPos="443"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="AlignAndShootTwoHoledWall.beh#1417620730939"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

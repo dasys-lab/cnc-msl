@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1430324312982"/>
+    <value xPos="122" yPos="338" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1430324312981"/>
+    <value width="844" height="795"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1430324312983"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1430324405240"/>
+    <value xPos="496" yPos="369" width="184" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1430324473378"/>
+    <value>
+      <bendpoints xPos="472" yPos="455"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/AttackOpp.beh#1430324680117"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431012024235"/>
+    <value>
+      <bendpoints xPos="467" yPos="384"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528571070"/>
+    <value xPos="216" yPos="157" width="150" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528624159"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528632614"/>
+    <value xPos="485" yPos="79"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528763807"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528769561"/>
+    <value xPos="114" yPos="543" width="140" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528884169"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528885520"/>
+    <value>
+      <bendpoints xPos="298" yPos="303"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528887705"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528896700"/>
+    <value>
+      <bendpoints xPos="275" yPos="517"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431528982294"/>
+    <value xPos="313" yPos="667" width="152" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431529011607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431529013661"/>
+    <value>
+      <bendpoints xPos="414" yPos="576"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

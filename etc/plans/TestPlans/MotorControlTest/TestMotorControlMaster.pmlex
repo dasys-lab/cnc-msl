@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163489122"/>
+    <value xPos="121" yPos="127" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163489121"/>
+    <value width="732" height="415"/>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163489123"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163786868"/>
+    <value xPos="371" yPos="134" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163826573"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControlMaster.pml#1482163828829"/>
+    <value>
+      <bendpoints xPos="422" yPos="258"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestMotorControl.beh#1482163995843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1482165487602"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

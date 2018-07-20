@@ -1,0 +1,54 @@
+#!/bin/bash
+set -e
+home="/home/cn"
+
+if [ "$(id -u)" != "0" ]; then
+   echo "no permissions: use sudo!" 1>&2
+   exit 1
+fi
+
+hostfile="$home/cnws/src/cnc-msl/configuration/hosts"
+robotip="$(grep $(hostname) $hostfile | tail -1 | cut -f 1 | tr -d ' ')"
+
+interface="wlp5s0"
+change_interfaces()
+{
+	configpath="$home/cnws/src/cnc-msl/configuration/"
+	filename="${configpath}${1}"
+	test -f $filename || (echo "$filename does not exist" ; exit 1)
+	echo $configpath
+	rm -f /etc/network/interfaces.d/*
+	sed "s/ROBOT_ADDRESS/$robotip/g" $filename>/etc/network/interfaces.d/conf.interface
+	sleep 3 && ifdown "$interface" && sleep 1 && ifup "$interface" &
+}
+
+add_source()
+{
+	echo "Adding 'source /etc/network/interfaces.d/*' ..."
+	echo 'source /etc/network/interfaces.d/*' >>/etc/network/interfaces
+}
+
+grep -q 'source /etc/network/interfaces.d/*' /etc/network/interfaces || add_source
+
+option="$1"
+
+case "${option}" in
+field)
+	echo  "Changing to field"
+	change_interfaces field.interface
+		;;
+git)
+	echo  "Changing to git"
+	change_interfaces git.interface
+		;;
+CNC)
+	echo  "Changing to CNC"
+	change_interfaces git.interface
+		;;
+MSL_FIELD_A_a)
+	echo  "Changing to field"
+	change_interfaces field.interface
+		;;
+*)
+	echo "usage: ${0} [field|git|CNC|MSL_FIELD_A_a]"
+esac

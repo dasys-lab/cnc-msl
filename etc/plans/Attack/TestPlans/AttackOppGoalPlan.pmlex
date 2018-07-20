@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <value xPos="-79" yPos="-6" width="1015" height="470" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="AttackOppGoalPlan.pml#1437902649391"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <value xPos="417" yPos="197" width="193" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <value xPos="67" yPos="232" width="192" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <value xPos="586" yPos="300" width="65" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../../Behaviours/GoalKick.beh#1415205578139"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../DribbleToAttackPoint.beh#1437391438054"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../DribbleToAttackPoint.beh#1436855860607"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969665132"/>
+    <value xPos="100" yPos="196" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969665131"/>
+    <value width="886" height="565"/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969665133"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/RobotMovementDribbleTest.beh#1462969753310"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969759156"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969786619"/>
+    <value>
+      <bendpoints xPos="258" yPos="129"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTestPlan.pml#1462969884284"/>
+    <value xPos="190" yPos="53" width="93" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

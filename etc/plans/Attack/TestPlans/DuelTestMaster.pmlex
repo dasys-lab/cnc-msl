@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DuelTestMaster.pml#1454506180438"/>
+    <value xPos="88" yPos="202" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1454506180437"/>
+    <value width="876" height="605"/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1454506180439"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1454506213756"/>
+    <value xPos="279" yPos="195" width="90" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1454506223310"/>
+    <value>
+      <bendpoints xPos="347" yPos="252"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Duel.pml#1450178655416"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125263117"/>
+    <value xPos="471" yPos="208" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125292658"/>
+    <value>
+      <bendpoints xPos="534" yPos="247"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125318498"/>
+    <value>
+      <bendpoints xPos="457" yPos="375"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458135841024"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

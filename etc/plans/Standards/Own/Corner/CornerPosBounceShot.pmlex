@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362020729"/>
+    <value xPos="55" yPos="16" width="201" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459361999064"/>
+    <value width="531" height="424"/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362020730"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362605142"/>
+    <value xPos="23" yPos="203"/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362606949"/>
+    <value xPos="145" yPos="201"/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362636939"/>
+    <value xPos="161" yPos="131" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459362640122"/>
+    <value xPos="85" yPos="273" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BounceShotAlignPasser.beh#1459354990329"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BounceShotAlignWall.beh#1459355025721"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardDefendPos.beh#1459356685875"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardDefendPos.beh#1459355071258"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

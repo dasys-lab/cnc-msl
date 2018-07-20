@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033358325"/>
+    <value xPos="185" yPos="251" width="111" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033329973"/>
+    <value width="635" height="431"/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033358326"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033385978"/>
+    <value xPos="119" yPos="64" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033395158"/>
+    <value xPos="373" yPos="76" width="125" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033410354"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033411608"/>
+    <value>
+      <bendpoints xPos="428" yPos="166"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="MidfieldDefense.pml#1458033412731"/>
+    <value>
+      <bendpoints xPos="435" yPos="106"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ReleaseMid.beh#1458033497042"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldBlock.pml#1458033620834"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033644590"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033644590"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MidfieldBlock.pml#1458033620834"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

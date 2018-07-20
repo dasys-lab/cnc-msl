@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CornerKick.pml#1462373376007"/>
+    <value xPos="23" yPos="60" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373376006"/>
+    <value xPos="-409" yPos="-9" width="1248" height="611"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373376008"/>
+    <value xPos="-133" yPos="130" width="121" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373457908"/>
+    <value xPos="-108" yPos="260" width="154" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462374515826"/>
+    <value xPos="28" yPos="204" width="224" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464783052747"/>
+    <value xPos="299" yPos="64" width="225" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464784050959"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464787959998"/>
+    <value xPos="565" yPos="60" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464787987943"/>
+    <value>
+      <bendpoints xPos="234" yPos="136"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464787998856"/>
+    <value>
+      <bendpoints xPos="241" yPos="90"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464788034326"/>
+    <value xPos="822" yPos="66" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464788058735"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1433950043262"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464792231235"/>
+    <value xPos="293" yPos="203" width="232" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464792274211"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464792294365"/>
+    <value xPos="1019" yPos="224" width="67" height="32"/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464793555239"/>
+    <value xPos="-13" yPos="329"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464793576624"/>
+    <value xPos="35" yPos="335" width="167" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464793619930"/>
+    <value xPos="-7" yPos="325"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464793641082"/>
+    <value xPos="29" yPos="449" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464793807994"/>
+    <value xPos="554" yPos="516"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1464796134632"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Pos4ReceiverCornerKick.beh#1464787549220"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

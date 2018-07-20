@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360503829"/>
+    <value xPos="31" yPos="78" width="225" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360503828"/>
+    <value width="1145" height="622"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360503830"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360607517"/>
+    <value xPos="89" yPos="301"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360610006"/>
+    <value xPos="10" yPos="288"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360612527"/>
+    <value xPos="12" yPos="340"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360912906"/>
+    <value xPos="162" yPos="1" width="321" height="134" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360919387"/>
+    <value xPos="478" yPos="-3" width="201" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360928236"/>
+    <value xPos="696" yPos="-1" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360957397"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360958905"/>
+    <value>
+      <bendpoints xPos="578" yPos="77"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462360960031"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462361351034"/>
+    <value xPos="79" yPos="225" width="230" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462361358155"/>
+    <value xPos="83" yPos="329" width="298" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462361373364"/>
+    <value xPos="87" yPos="445" width="167" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462361418213"/>
+    <value xPos="612" yPos="357"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462363134771"/>
+    <value xPos="502" yPos="329" width="232" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInPass.beh#1462363309950"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462363320340"/>
+    <value xPos="803" yPos="257"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368095616"/>
+    <value xPos="390" yPos="162" width="232" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368130262"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368161988"/>
+    <value xPos="923" yPos="416"/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368201420"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368266008"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462368267461"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ThrowInOwnHalf.pml#1462369226508"/>
+    <value>
+      <bendpoints xPos="558" yPos="57"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1433950043262"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ReceiveInOppHalf.beh#1462370388995"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PositionAlternativeReceiver.beh#1462978671719"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/GenericExecutePass.beh#1465040471344"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1521898536366"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257136977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1518257626027"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

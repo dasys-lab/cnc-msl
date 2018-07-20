@@ -1,0 +1,26 @@
+if [ -z $ROSWS_HOME_DIR ]; then
+    echo rosws_switch: Please set ROSWS_HOME_DIR to the directory containing ROS workspaces for this script to work.
+fi
+
+_roscomplete_rosws_switch() {
+    local cur WORKSPACES
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    WORKSPACES=$(find $ROSWS_HOME_DIR -mindepth 1 -maxdepth 1 -type d | grep -v "^.$" | sed 's/.*\///')
+
+    COMPREPLY=( $(compgen -W "${WORKSPACES}" -- ${cur}) )
+    return 0
+}
+
+rosws_switch() {
+    if [ -e $ROSWS_HOME_DIR/$1/setup.bash ]; then
+        source $ROSWS_HOME_DIR/$1/setup.bash
+    elif [ -e $ROSWS_HOME_DIR/$1/devel/setup.bash ]; then
+        source $ROSWS_HOME_DIR/$1/devel/setup.bash
+    fi
+    # HACK prepend stuff that should go even before this in path
+    export PATH=$ROS_PATH_OVERLAY:$PATH
+}
+
+complete -F _roscomplete_rosws_switch rosws_switch
+

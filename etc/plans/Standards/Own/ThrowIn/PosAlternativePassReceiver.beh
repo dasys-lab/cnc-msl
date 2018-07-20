@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1461674942156" name="PosAlternativePassReceiver" comment="" destinationPath="Plans/Standards/Own/ThrowIn">
+  <configurations id="1461674968023" name="PosAlternativePassReceiverDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1461675013410" name="MISSING_NAME" comment="" key="TeamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
+</alica:Behaviour>

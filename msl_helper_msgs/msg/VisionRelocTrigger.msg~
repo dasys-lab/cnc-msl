@@ -1,0 +1,6 @@
+int32 receiverID
+bool usePose
+CNMessages/PositionInfo position
+
+
+

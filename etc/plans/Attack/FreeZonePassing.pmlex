@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="FreeZonePassing.pml#1508950989520"/>
+    <value xPos="306" yPos="190" width="248" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="FreeZonePassing.pml#1508950989519"/>
+    <value width="779" height="580"/>
+  </extensions>
+  <extensions>
+    <key href="FreeZonePassing.pml#1508950989521"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1493396908662"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="FreeZonePassing.pml#1508951693560"/>
+    <value xPos="541" yPos="359"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoFreeZone.beh#1508951680585"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

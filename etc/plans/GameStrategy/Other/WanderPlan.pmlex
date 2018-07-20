@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="WanderPlan.pml#1458553921359"/>
+    <value xPos="239" yPos="85" width="168" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553921358"/>
+    <value xPos="88" yPos="115" width="688" height="586"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553921360"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553931557"/>
+    <value xPos="-30" yPos="294"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553934246"/>
+    <value xPos="-13" yPos="291"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553937231"/>
+    <value xPos="-20" yPos="306"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553960488"/>
+    <value xPos="217" yPos="197" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553962697"/>
+    <value xPos="248" yPos="309" width="146" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WanderPlan.pml#1458553964618"/>
+    <value xPos="210" yPos="438" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Attack/Wander.beh#1434716230628"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

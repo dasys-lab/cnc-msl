@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466968232005"/>
+    <value xPos="136" yPos="23" width="288" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466968232004"/>
+    <value width="771" height="423"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466968232006"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466975602577"/>
+    <value xPos="-117" yPos="136" width="121" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466975612430"/>
+    <value xPos="204" yPos="132" width="284" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466975637792"/>
+    <value xPos="173" yPos="239" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466975645495"/>
+    <value xPos="73" yPos="292"/>
+  </extensions>
+  <extensions>
+    <key href="OppInGamePenalty.pml#1466975666362"/>
+    <value xPos="414" yPos="355"/>
+  </extensions>
+  <extensions>
+    <key href="Pos4OppPenaltyIntercept.beh#1466975764775"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Own/Penalty/InGame/Pos4PenaltyRebounce.beh#1466975991599"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

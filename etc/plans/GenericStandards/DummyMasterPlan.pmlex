@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="DummyMasterPlan.pml#1432139066766"/>
+    <value xPos="65" yPos="44" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <value width="524" height="433" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="DummyMasterPlan.pml#1432139066767"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericOwnStandards.pml#1430924951132"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

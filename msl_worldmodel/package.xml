@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_worldmodel</name>
+  <version>0.0.0</version>
+  <description>The msl_worldmodel package</description>
+
+  <maintainer email="witsch@vs.uni-kassel.de">Andreas Witsch</maintainer>
+
+  <license>MIT</license>
+
+  <author email="jakob@vs.uni-kassel.de">Stefan Jakob</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>cnc_geometry</build_depend>
+  <build_depend>CGAL</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>system_config</build_depend>
+  <build_depend>alica_engine</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>msl_helper_msgs</build_depend>
+  <build_depend>event_handling</build_depend>
+  <build_depend>robot_control</build_depend> 
+  <build_depend>constraintsolver</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>process_manager</build_depend>  
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>cnc_geometry</run_depend>
+  <run_depend>CGAL</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>system_config</run_depend>
+  <run_depend>alica_engine</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
+  <run_depend>msl_helper_msgs</run_depend>
+  <run_depend>event_handling</run_depend>
+  <run_depend>robot_control</run_depend>
+  <run_depend>constraintsolver</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>process_manager</run_depend>
+
+  <test_depend>gtest</test_depend>
+
+  <export>
+  </export>
+</package>

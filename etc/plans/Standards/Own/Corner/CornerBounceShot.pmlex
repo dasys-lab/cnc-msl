@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361887234"/>
+    <value xPos="40" yPos="77" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361887233"/>
+    <value width="693" height="301"/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361887235"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361895479"/>
+    <value xPos="231" yPos="97" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361899313"/>
+    <value xPos="248" yPos="115"/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361900873"/>
+    <value xPos="256" yPos="148"/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361911154"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361912344"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerBounceShot.pml#1459361914595"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerPosBounceShot.pml#1459361999064"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459362028865"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

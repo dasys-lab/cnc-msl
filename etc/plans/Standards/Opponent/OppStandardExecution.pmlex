@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015277575"/>
+    <value xPos="130" yPos="104" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015277573"/>
+    <value xPos="153" yPos="20" width="897" height="412"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015277576"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015292860"/>
+    <value xPos="397" yPos="109" width="261" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015308829"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015318562"/>
+    <value xPos="516" yPos="99"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardPositionType.pty#1457015361187"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1457015478636"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardWatchBallType.pty#1457015489608"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TeamWatchBall.beh#1457015565562"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555969546"/>
+    <value xPos="167" yPos="265"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555971683"/>
+    <value xPos="421" yPos="260"/>
+  </extensions>
+  <extensions>
+    <key href="../../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555987772"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555989921"/>
+    <value>
+      <bendpoints xPos="511" yPos="276"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555991449"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555993363"/>
+    <value>
+      <bendpoints xPos="761" yPos="283"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

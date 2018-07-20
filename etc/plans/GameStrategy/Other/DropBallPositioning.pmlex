@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537014535"/>
+    <value xPos="245" yPos="54" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537014534"/>
+    <value width="820" height="528"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537014536"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537247542"/>
+    <value xPos="-12" yPos="257"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537250535"/>
+    <value xPos="-5" yPos="268"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537253704"/>
+    <value xPos="-17" yPos="282"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537278849"/>
+    <value xPos="259" yPos="152" width="199" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537281002"/>
+    <value xPos="238" yPos="255" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallPositioning.pml#1455537283938"/>
+    <value xPos="276" yPos="386" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallAttackerPos.beh#1455537879822"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CoverSpace.beh#1455537928849"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CoverSpace.beh#1455537979559"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/BackroomDefence.beh#1454507819086"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

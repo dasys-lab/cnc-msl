@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905043166"/>
+    <value xPos="79" yPos="92" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905043165"/>
+    <value width="703" height="341"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905043167"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905147809"/>
+    <value xPos="359" yPos="80" width="118" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905162449"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleControlMOS.beh#1479905216821"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestDribbleControlMaster.pml#1479905466840"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

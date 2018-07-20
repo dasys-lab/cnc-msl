@@ -1,0 +1,25 @@
+/=333===================================== WORKING AREA ======================================================
+
+		// Clear all Rotation counter ******************************************************
+		case _CLEAR_ALL_TICKS_ABS_:
+			// call function to clear the ROTs
+			Clear_all_Rots();
+			// if optional status Request byte is set, get Status Message
+ 		    if (Command.datalen == 7)
+				// Make short Status Request for all Channels (id=0) and Request Byte
+				ais_mctrl_shortStatusRequest(0, Command.data[1]);
+	     	break;
+
+// ToDo
+		// Clear Rotation counter of one given motor ****************************************
+		case _CLEAR_ONE_TICKS_ABS_:
+			// call function to set the RPM, - 1 because of external representation of motors begins with 1
+			Clear_ref_Rots(_NumToIndex_(Command.data[0]));
+			// if optional status Request byte is set, get Status Message
+ 		    if (Command.datalen == 7)
+				// Make short Status Request from ChannelID and Request Byte
+				ais_mctrl_shortStatusRequest( _NumToIndex_(Command.data[0]), Command.data[1]);
+	     	break;
+
+//===========================================***********=======================================================
+ 

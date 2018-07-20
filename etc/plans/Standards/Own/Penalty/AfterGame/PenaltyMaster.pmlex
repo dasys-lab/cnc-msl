@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973051874"/>
+    <value xPos="69" yPos="21" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973051873"/>
+    <value width="473" height="181"/>
+  </extensions>
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973051875"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973070716"/>
+    <value xPos="232" yPos="24" width="185" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973076640"/>
+    <value>
+      <bendpoints xPos="332" yPos="104"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="PenaltyMaster.pml#1466973077670"/>
+    <value>
+      <bendpoints xPos="312" yPos="84"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="AfterGamePenalty.pml#1466934340668"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -1,0 +1,6 @@
+am437x-sk-evm.o: src/arm/am437x-sk-evm.dts src/arm/am4372.dtsi \
+ include/dt-bindings/gpio/gpio.h \
+ include/dt-bindings/interrupt-controller/arm-gic.h \
+ include/dt-bindings/interrupt-controller/irq.h src/arm/skeleton.dtsi \
+ include/dt-bindings/pinctrl/am43xx.h include/dt-bindings/pwm/pwm.h \
+ include/dt-bindings/input/input.h

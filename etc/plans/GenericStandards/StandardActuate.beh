@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1435766212595" name="StandardActuate" comment="" destinationPath="Plans/GenericStandards">
+  <configurations id="1435766278023" name="StandardActuateDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1518257136977" name="StandardActuateFast" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1518257173103" name="MISSING_NAME" comment="" key="ConstWheelSpeed" value="4000"/>
+  </configurations>
+  <configurations id="1518257157495" name="StandardActuateSlow" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1518257184344" name="MISSING_NAME" comment="" key="ConstWheelSpeed" value="1000"/>
+  </configurations>
+  <configurations id="1518257626027" name="StandardActuate2k" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1518262721079" name="MISSING_NAME" comment="" key="ConstWheelSpeed" value="2000"/>
+  </configurations>
+</alica:Behaviour>

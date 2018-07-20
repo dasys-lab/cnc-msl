@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DefendPlay.pml#1457173750607"/>
+    <value xPos="263" yPos="81" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173681216"/>
+    <value width="805" height="609"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173750608"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173768386"/>
+    <value xPos="-6" yPos="293"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173771067"/>
+    <value xPos="-14" yPos="316"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173773492"/>
+    <value xPos="276" yPos="213" width="65" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173775213"/>
+    <value xPos="271" yPos="379" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173948942"/>
+    <value xPos="470" yPos="509"/>
+  </extensions>
+  <extensions>
+    <key href="../../Attack/StandardAttack.pml#1434046634656"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

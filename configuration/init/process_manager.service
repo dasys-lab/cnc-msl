@@ -1,0 +1,17 @@
+# process_manager
+
+#start on stopped rc RUNLEVEL=[2345]
+#stop on runlevel [!2345]
+
+#exec /usr/local/bin/start-process-manager
+
+[Unit]
+Description=Launcher for the CN Process Manager
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/start-process-manager
+
+[Install]
+WantedBy=network-online.target
+

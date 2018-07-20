@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="Robotcheck.pml#1456756058056"/>
+    <value xPos="149" yPos="82" width="180" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456756058055"/>
+    <value xPos="8" yPos="4" width="863" height="574"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456756058057"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotTest.beh#1456756164754"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456841196692"/>
+    <value xPos="126" yPos="234" width="65" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456841216933"/>
+    <value>
+      <bendpoints xPos="237" yPos="226"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456841242506"/>
+    <value>
+      <bendpoints xPos="356" yPos="254"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456841265112"/>
+    <value xPos="654" yPos="259"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456841274321"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

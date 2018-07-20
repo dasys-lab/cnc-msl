@@ -1,0 +1,18 @@
+#!/bin/sh
+
+interface=wlan0
+logf=/var/log/keepwlan.log
+
+while true
+do
+	if iwconfig $interface | grep -iq 'not-associated'
+	then
+		echo "[$(date)] Lost wifi connection, reconnecting..." >>$logf
+		ifdown $interface
+		sleep 1
+		ifup $interface
+		sleep 10 
+	fi
+
+	sleep 1
+done

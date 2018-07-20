@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698586747"/>
+    <value xPos="77" yPos="82" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698586746"/>
+    <value width="890" height="376"/>
+  </extensions>
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698586748"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698608390"/>
+    <value xPos="471" yPos="90" width="133" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698633209"/>
+    <value>
+      <bendpoints xPos="440" yPos="180"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="KickCurveTuning.pml#1457698634760"/>
+    <value>
+      <bendpoints xPos="453" yPos="138"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="LaserBallTracking.beh#1457698689219"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

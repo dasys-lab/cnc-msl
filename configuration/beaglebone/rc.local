@@ -1,0 +1,82 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+
+# PWM Export
+	# P9.14
+		echo 0 > /sys/class/pwm/pwmchip2/export
+	# P9.16
+		echo 1 > /sys/class/pwm/pwmchip2/export
+	# P8.19
+		echo 0 > /sys/class/pwm/pwmchip4/export
+	# P8 13
+		echo 1 > /sys/class/pwm/pwmchip4/export
+
+# PWM Change State
+	# Ggf versuchen in der BlackLib-Library bzw im Programm State zu veraendern
+	echo pwm > /sys/devices/ocp.3/P9_14_pinmux.41/state
+	echo pwm > /sys/devices/ocp.3/P9_16_pinmux.43/state
+	echo pwm > /sys/devices/ocp.3/P8_13_pinmux.10/state
+	echo pwm > /sys/devices/ocp.3/P8_19_pinmux.16/state
+
+# PWM enable
+	echo 20000000 > /sys/class/pwm/pwmchip2/pwm0/period
+	echo 0 > /sys/class/pwm/pwmchip2/pwm0/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip2/pwm0/enable
+	echo 20000000 > /sys/class/pwm/pwmchip2/pwm1/period
+	echo 0 > /sys/class/pwm/pwmchip2/pwm1/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip2/pwm1/enable
+	echo 10000 > /sys/class/pwm/pwmchip4/pwm0/period
+	echo 0 > /sys/class/pwm/pwmchip4/pwm0/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip4/pwm0/enable
+	echo 10000 > /sys/class/pwm/pwmchip4/pwm1/period
+	echo 0 > /sys/class/pwm/pwmchip4/pwm1/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip4/pwm1/enable
+
+
+# GPIO Export
+	echo  7 > /sys/class/gpio/export
+	echo 20 > /sys/class/gpio/export
+	echo 26 > /sys/class/gpio/export
+	echo 27 > /sys/class/gpio/export
+	echo 30 > /sys/class/gpio/export
+	echo 31 > /sys/class/gpio/export
+	echo 44 > /sys/class/gpio/export
+	echo 45 > /sys/class/gpio/export
+	echo 46 > /sys/class/gpio/export
+	echo 47 > /sys/class/gpio/export
+	echo 48 > /sys/class/gpio/export
+	echo 49 > /sys/class/gpio/export
+	echo 60 > /sys/class/gpio/export
+	echo 61 > /sys/class/gpio/export
+	echo 65 > /sys/class/gpio/export
+	echo 66 > /sys/class/gpio/export
+	echo 67 > /sys/class/gpio/export
+	echo 68 > /sys/class/gpio/export
+	echo 69 > /sys/class/gpio/export
+	echo 112 > /sys/class/gpio/export
+	echo 115 > /sys/class/gpio/export
+	echo 116 > /sys/class/gpio/export
+	echo 117 > /sys/class/gpio/export
+
+#echo PINNR > /sys/class/gpio/export
+
+chown -R cn:cn /sys/class/gpio
+chown -R cn:cn /sys/class/pwm
+chown -R cn:cn /sys/devices
+
+
+# sync time with robot
+#(while true; do (ntpdate -s 10.0.0.1 ; sleep 60); done) &
+
+exit 0

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1446033324019" name="CalcCalib" comment="" destinationPath="Plans/Behaviours">
+  <configurations id="1446033354004" name="CalcCalibDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1465463617149" name="MISSING_NAME" comment="" key="X-Direction" value="1"/>
+  </configurations>
+  <configurations id="1446036332071" name="CalcCalib2" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1446036372245" name="CalcCalib3" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+  <configurations id="1446036391317" name="CalcCalib4" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+</alica:Behaviour>

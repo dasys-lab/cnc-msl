@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:PlanType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1465397117125" name="OwnCorner" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="">
+  <plans id="1465397254322" name="MISSING_NAME" comment="" activated="true">
+    <plan>CornerKick.pml#1462373376006</plan>
+  </plans>
+  <plans id="1465397147200" name="MISSING_NAME" comment="" activated="false">
+    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
+  </plans>
+</alica:PlanType>

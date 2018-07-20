@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_ptgrey_camera</name>
+  <version>0.0.1</version>
+  <description>The msl_ptgrey_camera package is the interface between the vision module
+  and the Point Grey FlyCap SDK.</description>
+
+  <maintainer email="info@philipp-mandler.com">Philipp Mandler</maintainer>
+
+  <license>MIT</license>
+
+  <author email="info@philipp-mandler.com">Philipp Mandler</author>
+
+  <build_depend>system_config</build_depend>
+
+
+  <run_depend>system_config</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>

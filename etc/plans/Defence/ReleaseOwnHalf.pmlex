@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033660892"/>
+    <value xPos="114" yPos="60" width="125" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033644590"/>
+    <value width="534" height="278"/>
+  </extensions>
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033660893"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ReleaseOwnHalf.pml#1458033759784"/>
+    <value xPos="155" yPos="229"/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/MoveToPointDynamic.beh#1458033795798"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

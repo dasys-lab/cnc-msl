@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="GenericDefend.pml#1432133473780"/>
+    <value xPos="131" yPos="285" width="81" height="67" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <value width="722" height="554" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432134414694"/>
+    <value xPos="125" yPos="94" width="65" height="67" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432134598332"/>
+    <value xPos="608" yPos="179" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432134614588"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432134616763"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432209644156"/>
+    <value xPos="52" yPos="205" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="GenericDefend.pml#1432209646142"/>
+    <value xPos="48" yPos="263" width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:RoleDefinitionSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1222973297046" name="" comment="">
+  <roles id="1222973297052" name="Keeper" comment="">
+    <characteristics id="1321628569237" name="IsGoalie" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628326872</capability>
+      <value>capabilitiesDefinition.cdefset#1321628342874</value>
+    </characteristics>
+  </roles>
+  <roles id="1301084991775" name="Attacker" comment="">
+    <characteristics id="1321628612757" name="Speed" comment="" weight="0.9">
+      <capability>capabilitiesDefinition.cdefset#1321621347117</capability>
+      <value>capabilitiesDefinition.cdefset#1321622749476</value>
+    </characteristics>
+    <characteristics id="1321628628750" name="Kicker" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628281127</capability>
+      <value>capabilitiesDefinition.cdefset#1321628298433</value>
+    </characteristics>
+    <characteristics id="1322661614419" name="CanPass" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628355780</capability>
+      <value>capabilitiesDefinition.cdefset#1321628383701</value>
+    </characteristics>
+  </roles>
+  <roles id="1301085012645" name="AttackSupporter" comment="">
+    <characteristics id="1322661506760" name="Speed" comment="" weight="0.6">
+      <capability>capabilitiesDefinition.cdefset#1321621347117</capability>
+      <value>capabilitiesDefinition.cdefset#1321622749476</value>
+    </characteristics>
+    <characteristics id="1322661543193" name="Kicker" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628281127</capability>
+      <value>capabilitiesDefinition.cdefset#1321628298433</value>
+    </characteristics>
+    <characteristics id="1322661570882" name="CanPass" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628355780</capability>
+      <value>capabilitiesDefinition.cdefset#1321628383701</value>
+    </characteristics>
+  </roles>
+  <roles id="1309349068496" name="Supporter" comment="">
+    <characteristics id="1322661813070" name="Speed" comment="" weight="0.15">
+      <capability>capabilitiesDefinition.cdefset#1321621347117</capability>
+      <value>capabilitiesDefinition.cdefset#1321622770357</value>
+    </characteristics>
+    <characteristics id="1322661980585" name="CanPass" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628355780</capability>
+      <value>capabilitiesDefinition.cdefset#1321628383701</value>
+    </characteristics>
+  </roles>
+  <roles id="1309349121234" name="Defender" comment="">
+    <characteristics id="1322661793213" name="Speed" comment="" weight="0.15">
+      <capability>capabilitiesDefinition.cdefset#1321621347117</capability>
+      <value>capabilitiesDefinition.cdefset#1321622770357</value>
+    </characteristics>
+    <characteristics id="1322661951807" name="CanPass" comment="" weight="1.0">
+      <capability>capabilitiesDefinition.cdefset#1321628355780</capability>
+      <value>capabilitiesDefinition.cdefset#1321628383701</value>
+    </characteristics>
+  </roles>
+</alica:RoleDefinitionSet>

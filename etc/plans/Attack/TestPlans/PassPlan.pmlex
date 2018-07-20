@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="PassPlan.pml#1441107009534"/>
+    <value xPos="93" yPos="18" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441106995954"/>
+    <value width="718" height="417"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107009535"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107038524"/>
+    <value xPos="-14" yPos="220"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107040804"/>
+    <value xPos="-6" yPos="234"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107086220"/>
+    <value xPos="124" yPos="132" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107089085"/>
+    <value xPos="113" yPos="249" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107193775"/>
+    <value xPos="329" yPos="36" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107212515"/>
+    <value>
+      <bendpoints xPos="459" yPos="91"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441107214550"/>
+    <value>
+      <bendpoints xPos="449" yPos="131"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../SearchForPassPoint.beh#1441107270872"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../AlignAndPassRapid.beh#1441108023281"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

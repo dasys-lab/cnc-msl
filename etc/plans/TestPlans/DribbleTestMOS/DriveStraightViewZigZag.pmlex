@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628208301"/>
+    <value xPos="47" yPos="41" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628181064"/>
+    <value width="1149" height="756"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628208302"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628264747"/>
+    <value xPos="225" yPos="54" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628271731"/>
+    <value xPos="57" yPos="185" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628274520"/>
+    <value xPos="221" yPos="184" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628283827"/>
+    <value xPos="45" yPos="304" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628286000"/>
+    <value xPos="209" yPos="301" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628290233"/>
+    <value xPos="37" yPos="412" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628292258"/>
+    <value xPos="216" yPos="417" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628303950"/>
+    <value xPos="25" yPos="519" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628307967"/>
+    <value xPos="223" yPos="525" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628314413"/>
+    <value xPos="23" yPos="618" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628321479"/>
+    <value xPos="224" yPos="622" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628712392"/>
+    <value xPos="417" yPos="605" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628752744"/>
+    <value xPos="590" yPos="613"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628756592"/>
+    <value xPos="790" yPos="610" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628760064"/>
+    <value xPos="583" yPos="528" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628764719"/>
+    <value xPos="781" yPos="535" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628767896"/>
+    <value xPos="569" yPos="439" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628771551"/>
+    <value xPos="752" yPos="448" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628774590"/>
+    <value xPos="565" yPos="342" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628777877"/>
+    <value xPos="746" yPos="347" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628780303"/>
+    <value xPos="554" yPos="223" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628783130"/>
+    <value xPos="738" yPos="226" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628785929"/>
+    <value xPos="555" yPos="80" width="82" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DriveStraightViewZigZag.pml#1518628789283"/>
+    <value xPos="735" yPos="90" width="82" height="67"/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

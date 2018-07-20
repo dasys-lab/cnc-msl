@@ -1,0 +1,2 @@
+KERNEL=="dv1394*|video1394*|raw1394*|fw[0-9]*",    GROUP="video"
+SUBSYSTEM=="firewire", GROUP="video"

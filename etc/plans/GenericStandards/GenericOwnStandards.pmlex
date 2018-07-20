@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430924951133"/>
+    <value xPos="16" yPos="137" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430924951132"/>
+    <value xPos="6" yPos="73" width="953" height="611"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925626532"/>
+    <value xPos="10" yPos="189"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925718512"/>
+    <value xPos="22" yPos="5" width="114" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925736746"/>
+    <value xPos="307" yPos="12" width="164" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925743739"/>
+    <value xPos="530" yPos="15" width="164" height="103" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925751875"/>
+    <value xPos="415" yPos="226" width="164" height="103" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925759928"/>
+    <value xPos="207" yPos="292" width="164" height="103" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925774870"/>
+    <value xPos="198" yPos="429" width="140" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925917001"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925918585"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925919866"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925921331"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925922843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925924151"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925945981"/>
+    <value xPos="448" yPos="201"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925960854"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925962882"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925965662"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925967608"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925971330"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925973111"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericExecute.pml#1431522123418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1431523920444"/>
+    <value xPos="-7" yPos="314"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1431523938514"/>
+    <value xPos="49" yPos="457" width="153" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/KickOff/OwnKickOff.pty#1438785270887"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericExecute.pml#1431522123418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555183582"/>
+    <value xPos="246" yPos="174" width="146" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555205351"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555207649"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555214716"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555218949"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555221149"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555788972"/>
+    <value>
+      <bendpoints xPos="202" yPos="312"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555819730"/>
+    <value>
+      <bendpoints xPos="289" yPos="251"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555853125"/>
+    <value>
+      <bendpoints xPos="433" yPos="135"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555879137"/>
+    <value>
+      <bendpoints xPos="162" yPos="181"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555896457"/>
+    <value>
+      <bendpoints xPos="247" yPos="169"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/ThrowIn/ThrowIn.pty#1461672654276"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/FreeKick/FreeKick.pty#1464783134585"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/Corner/OwnCorner.pty#1465397117125"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

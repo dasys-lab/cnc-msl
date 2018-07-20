@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1498664309837" name="DribbleToAttackPointTest" comment="" destinationPath="Plans/TestPlans/DribbleControlTest">
+  <configurations id="1498664342592" name="DribbleToAttackPointTestDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+</alica:Behaviour>

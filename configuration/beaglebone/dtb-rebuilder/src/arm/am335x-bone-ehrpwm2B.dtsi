@@ -1,0 +1,34 @@
+/*
+ * Copyright (C) 2013 CircuitCo
+ * Copyright (C) 2013 Texas Instruments
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+&am33xx_pinmux {
+	pinctrl_ehrpwm2B: pinctrl_ehrpwm2B_pins {
+      pinctrl-single,pins = <0x024  0x4>; /* P8_13 (ZCZ ball T10) | MODE 4 */
+	};
+};
+
+&ocp {
+	P8_13_pinmux {
+		status = "disabled";
+	};
+
+	pwm_test_P8_13 {
+		compatible	= "pwm_test";
+		pwms 		= <&ehrpwm2 1 500000 0>;
+		pwm-names 	= "PWM_P8_13";
+
+		pinctrl-names	= "default";
+		pinctrl-0	= <&pinctrl_ehrpwm2B>;
+
+		enabled		= <1>;
+		duty		= <0>;
+		status 		= "okay";
+	};
+};
+

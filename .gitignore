@@ -7,6 +7,20 @@ log/temp/
 *.swp
 *.swo
 
+# ignoring eagle-files
+*.b#*
+*.s#*
+*.brd.lck
+*.sch.lck
+
+# ignoring avr-gcc generated files
+*.o
+*.lst
+*.elf
+*.hex
+*.map
+.dep/
+
 # coala
 *.orig
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DroppedBall.pml#1426694906400"/>
+    <value xPos="158" yPos="235" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DroppedBall.pml#1426694906399"/>
+    <value width="799" height="608"/>
+  </extensions>
+  <extensions>
+    <key href="DroppedBall.pml#1426694906401"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DropBallType.pty#1426696396136"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DroppedBall.pml#1426696458333"/>
+    <value xPos="592" yPos="285"/>
+  </extensions>
+  <extensions>
+    <key href="DroppedBall.pml#1426696476530"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

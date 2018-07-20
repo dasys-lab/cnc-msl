@@ -1,0 +1,60 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+
+##The following is a copy from the robots
+iface can0 inet manual
+address 127.42.23.180
+netmask 255.255.255.0
+#up ip link set can0 up txqueuelen 1000 type can bitrate 1000000
+##ideally use this:
+##use this if dmesg show error 'no bittiming available' (kernel flag)
+##up ip link set can0 up txqueuelen 1000 type can tq 125 prop-seg 2 phase-seg1 3
+##phase-seg2 2 sjw 1
+##Taker Fix: adding pre-up instead of up, working on nase
+pre-up ip link set can0 type can bitrate 1000000 triple-sampling on
+down ifconfig $IFACE down
+auto can0
+##end-copy
+
+# The primary network interface
+#
+iface eth0 inet static
+address 10.0.0.10
+#address 172.16.40.200
+netmask 255.0.0.0
+#gateway 172.16.40.1
+gateway 10.0.0.1
+auto eth0
+#iface eth0 inet dhcp
+
+#iface eth0 inet static
+#address 172.16.40.60
+#netmask 255.0.0.0
+#gateway 172.16.40.1
+
+# Example to keep MAC address between reboots
+#hwaddress ether DE:AD:BE:EF:CA:FE
+
+# The secondary network interface
+#auto eth1
+#iface eth1 inet dhcp
+
+# WiFi Example
+#auto wlan0
+#iface wlan0 inet dhcp
+#    wpa-ssid "essid"
+#    wpa-psk  "password"
+
+# Ethernet/RNDIS gadget (g_ether)
+# ... or on host side, usbnet and random hwaddr
+# Note on some boards, usb0 is automaticly setup with an init script
+iface usb0 inet static
+    address 192.168.7.2
+    netmask 255.255.255.0
+    network 192.168.7.0
+    gateway 192.168.7.1

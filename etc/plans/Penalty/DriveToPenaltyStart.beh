@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1459609457478" name="DriveToPenaltyStart" comment="" destinationPath="Plans/Penalty">
+  <configurations id="1459609537461" name="DriveToPenaltyStartDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+</alica:Behaviour>

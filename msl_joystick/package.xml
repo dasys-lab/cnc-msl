@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_joystick</name>
+  <version>0.1.0</version>
+  <description>msl_joystick provides a GUI plugin for sending Joystick Commands.</description>
+  <maintainer email="Michael@gmail.com">Michael</maintainer>
+  <author>Michael Gottesleben</author>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>msl_msgs</build_depend>
+  <build_depend>system_config</build_depend>
+
+
+  <run_depend>rqt_gui</run_depend>
+  <run_depend>msl_msgs</run_depend>
+  <run_depend>rqt_gui_cpp</run_depend>
+  <run_depend>system_config</run_depend>
+
+  <run_depend>libqt5-core</run_depend>
+  <run_depend>libqt5-gui</run_depend>
+  <run_depend>libqt5-widgets</run_depend>
+  <run_depend>roscpp</run_depend>
+
+  <export>
+    <rqt_gui plugin="${prefix}/plugin.xml"/>
+  </export>
+</package>
