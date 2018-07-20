@@ -109,7 +109,7 @@ namespace msl
 
         processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
 
-        laserScanSub = n.subscribe("/laserScan", 10, &MSLWorldModel::onLaserScanData, (MSLWorldModel *)this);
+        laserScanSub = n.subscribe("/laser_scan_localization", 10, &MSLWorldModel::onLaserScanData, (MSLWorldModel *)this);
         this->sharedWorldModel = new MSLSharedWorldModel(this);
         this->usingSimulator = false;
         this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
