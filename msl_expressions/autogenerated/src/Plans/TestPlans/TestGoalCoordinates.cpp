@@ -40,20 +40,20 @@ void TestGoalCoordinates::run(void *msg)
     geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
 
     auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPosition);
-    auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
+    auto alloRightGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
 
     auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
     auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
 
     cout << "Left Goal post: laser scan [" << alloLeftGoalPos->x << "|" << alloLeftGoalPos->y << "]" << endl;
     cout << "Left Goal post: laser scan [" << configAlloLeftGoalPos->x << "|" << configAlloLeftGoalPos->y << "]" << endl;
-    cout << "Right Goal post: config [" << alloRighGoalPos->x << "|" << alloRighGoalPos->y << "]" << endl;
+    cout << "Right Goal post: config [" << alloRightGoalPos->x << "|" << alloRightGoalPos->y << "]" << endl;
     cout << "Right Goal post: config [" << configAlloRightGoalPos->x << "|" << configAlloRightGoalPos->y << "]" << endl;
 
-    cout << "Diff left Goal post: [" << fabs(configAlloRightGoalPos->x - alloLeftGoalPos->x) << "|"
-    		<< fabs(configAlloRightGoalPos->y - alloLeftGoalPos->y) << "]" << endl;
-    cout << "Diff right Goal post: [" << fabs(configAlloRightGoalPos->x - alloRighGoalPos->x) << "|"
-    		<< fabs(configAlloRightGoalPos->y - alloRighGoalPos->y) << "]" << endl;
+    cout << "Diff left Goal post: [" << fabs(configAlloLeftGoalPos->x - alloLeftGoalPos->x) << "|"
+    		<< fabs(configAlloLeftGoalPos->y - alloLeftGoalPos->y) << "]" << endl;
+    cout << "Diff right Goal post: [" << fabs(configAlloRightGoalPos->x - alloRightGoalPos->x) << "|"
+    		<< fabs(configAlloRightGoalPos->y - alloRightGoalPos->y) << "]" << endl;
     /*PROTECTED REGION END*/
 }
 void TestGoalCoordinates::initialiseParameters()
