@@ -8,6 +8,9 @@ using namespace std;
 #include <MSLWorldModel.h>
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/kicker/Kicker.h>
+
+#include <LaserScanner.h>
+#include <msl_sensor_msgs/LaserLocalization.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -32,6 +35,28 @@ namespace alica
         this->angleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.AngleTolerance", NULL);
         this->ballAngleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.BallAngleTolerance", NULL);
 
+
+        // Localize goal with laser scanner
+        auto ownPosition = wm->rawSensorData->getOwnPositionVision();
+		if (ownPosition == nullptr)
+		{
+			return;
+		}
+		auto position = wm->laserScanner->getGoalWallPosition();
+		if (position == nullptr)
+		{
+			return;
+		}
+		geometry::CNPoint2D egoLeftGoalPos = geometry::CNPoint2D(position->points[0].x, position->points[0].y);
+		geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
+
+		auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPosition);
+		auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
+
+		// Goal position based on configuration
+		auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
+		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
+
         // Hole Stuff
         this->lowerHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.X", NULL);
         this->lowerHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.Y", NULL);
@@ -40,6 +65,13 @@ namespace alica
         this->higherHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.X", NULL);
         this->higherHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Y", NULL);
         this->higherHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Z", NULL);
+
+        // Modify hole position via laser scan localization
+        cout << 'f[' << this->higherHole.x << ',' << this->higherHole.y << std::endl;
+        cout << 'c[' << configAlloLeftGoalPos->x << ',' << configAlloLeftGoalPos->y << std::endl;
+        cout << 'o[' << alloLeftGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
+        //this->lowerHole.x = configAlloRightGoalPos - (configAlloRightGoalPos.x - this->lowerHole.x);
+        //this->lowerHole.y = configAlloRightGoalPos - (configAlloRightGoalPos.y - this->lowerHole.y);
 
         this->holeMode = (HoleMode)(*this->sc)["Show"]->get<int>("TwoHoledWall.HoleMode", NULL);
         this->useLowerHole = true;
