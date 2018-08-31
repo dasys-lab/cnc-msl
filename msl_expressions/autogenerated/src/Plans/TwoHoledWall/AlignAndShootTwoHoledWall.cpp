@@ -42,20 +42,20 @@ namespace alica
 		{
 			return;
 		}
-		auto position = wm->laserScanner->getGoalWallPosition();
-		if (position == nullptr)
-		{
-			return;
-		}
-		geometry::CNPoint2D egoLeftGoalPos = geometry::CNPoint2D(position->points[0].x, position->points[0].y);
-		geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
-
-		auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPosition);
-		auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
-
-		// Goal position based on configuration
-		auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
-		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
+//		auto position = wm->laserScanner->getGoalWallPosition();
+//		if (position == nullptr)
+//		{
+//			return;
+//		}
+//		geometry::CNPoint2D egoLeftGoalPos = geometry::CNPoint2D(position->points[0].x, position->points[0].y);
+//		geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
+//
+//		auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPosition);
+//		auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
+//
+//		// Goal position based on configuration
+//		auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
+//		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
 
         // Hole Stuff
         this->lowerHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.X", NULL);
@@ -67,9 +67,9 @@ namespace alica
         this->higherHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Z", NULL);
 
         // Modify hole position via laser scan localization
-        cout << 'f[' << this->higherHole.x << ',' << this->higherHole.y << std::endl;
-        cout << 'c[' << configAlloLeftGoalPos->x << ',' << configAlloLeftGoalPos->y << std::endl;
-        cout << 'o[' << alloLeftGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
+//        cout << "f[" << this->higherHole.x << ',' << this->higherHole.y << std::endl;
+//        cout << "c[" << configAlloLeftGoalPos->x << ',' << configAlloLeftGoalPos->y << std::endl;
+//        cout << "o[" << alloLeftGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
         //this->lowerHole.x = configAlloRightGoalPos - (configAlloRightGoalPos.x - this->lowerHole.x);
         //this->lowerHole.y = configAlloRightGoalPos - (configAlloRightGoalPos.y - this->lowerHole.y);
 
@@ -181,7 +181,7 @@ namespace alica
 //            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
 //                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
 //                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
-            this->timesOnTargetCounter = 0;
+            this->timesOnTargetCounter = 0;git
         }
 
         cout << "timesOnTargetCounter: " << this->timesOnTargetCounter << endl;
@@ -269,6 +269,31 @@ namespace alica
                 this->useLowerHole = false;
                 break;
         }
+
+
+
+		auto position = wm->laserScanner->getGoalWallPosition();
+		if (position == nullptr)
+		{
+			return;
+		}
+		geometry::CNPoint2D egoLeftGoalPos = geometry::CNPoint2D(position->points[0].x, position->points[0].y);
+		geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
+
+		auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPosition);
+		auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPosition);
+
+		// Goal position based on configuration
+		auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
+		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
+
+		// Modify hole position via laser scan localization
+		cout << "f[" << this->higherHole.x << ',' << this->higherHole.y << std::endl;
+		cout << "c[" << configAlloLeftGoalPos->x << ',' << configAlloLeftGoalPos->y << std::endl;
+		cout << "o[" << alloLeftGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
+
+		//this->lowerHole.x = configAlloRightGoalPos - (configAlloRightGoalPos.x - this->lowerHole.x);
+		//this->lowerHole.y = configAlloRightGoalPos - (configAlloRightGoalPos.y - this->lowerHole.y);
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
