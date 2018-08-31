@@ -37,11 +37,11 @@ namespace alica
 
 
         // Localize goal with laser scanner
-        auto ownPosition = wm->rawSensorData->getOwnPositionVision();
-		if (ownPosition == nullptr)
-		{
-			return;
-		}
+//        auto ownPosition = wm->rawSensorData->getOwnPositionVision();
+//		if (ownPosition == nullptr)
+//		{
+//			return;
+//		}
 //		auto position = wm->laserScanner->getGoalWallPosition();
 //		if (position == nullptr)
 //		{
@@ -270,7 +270,12 @@ namespace alica
                 break;
         }
 
-
+        // Localize goal with laser scanner
+        auto ownPosition = wm->rawSensorData->getOwnPositionVision();
+		if (ownPosition == nullptr)
+		{
+			return;
+		}
 
 		auto position = wm->laserScanner->getGoalWallPosition();
 		if (position == nullptr)
