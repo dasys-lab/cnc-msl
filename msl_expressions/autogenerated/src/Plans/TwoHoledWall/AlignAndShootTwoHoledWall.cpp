@@ -322,8 +322,8 @@ namespace alica
 		cout << "c[" << configAlloRightGoalPos->x << ',' << configAlloRightGoalPos->y << std::endl;
 		cout << "o[" << alloRighGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
 
-		this->lowerHole.x = this->lowerHole.x + (configAlloRightGoalPos->x - alloRighGoalPos->x);
-		this->lowerHole.y = this->lowerHole.y + (configAlloRightGoalPos->y - alloRighGoalPos->y);
+		this->lowerHole.x = this->lowerHole.x - (configAlloRightGoalPos->x - alloRighGoalPos->x);
+		this->lowerHole.y = this->lowerHole.y - (configAlloRightGoalPos->y - alloRighGoalPos->y);
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
