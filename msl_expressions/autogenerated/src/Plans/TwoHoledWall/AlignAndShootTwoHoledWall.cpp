@@ -181,7 +181,7 @@ namespace alica
 //            cout << "AlignAndShootTwoHoledWall: miss target: fabs(deltaBallAngle): " << fabs(deltaBallAngle)
 //                    << "ballAngleTolerance: " << this->ballAngleTolerance << "fabs(deltaHoleAngle): "
 //                    << fabs(deltaHoleAngle) << "angleToleranc: " << this->angleTolerance << endl;
-            this->timesOnTargetCounter = 0;git
+            this->timesOnTargetCounter = 0;
         }
 
         cout << "timesOnTargetCounter: " << this->timesOnTargetCounter << endl;
