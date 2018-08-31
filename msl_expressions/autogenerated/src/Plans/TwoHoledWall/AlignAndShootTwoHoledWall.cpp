@@ -123,6 +123,28 @@ namespace alica
             return;
         }
 
+        // Localize goal with laser scanner
+
+		auto position = wm->laserScanner->getGoalWallPosition();
+		if (position == nullptr)
+		{
+			return;
+		}
+		geometry::CNPoint2D egoLeftGoalPos = geometry::CNPoint2D(position->points[0].x, position->points[0].y);
+		geometry::CNPoint2D egoRightGoalPos = geometry::CNPoint2D(position->points[1].x, position->points[1].y);
+
+		auto alloLeftGoalPos = egoLeftGoalPos.egoToAllo(*ownPos);
+		auto alloRighGoalPos = egoRightGoalPos.egoToAllo(*ownPos);
+
+		// Goal position based on configuration
+		auto configAlloLeftGoalPos = wm->field->posLeftOppGoalPost();
+		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
+
+		// Modify hole position via laser scan localization
+		cout << "f[" << this->lowerHole.x << ',' << this->lowerHole.y << std::endl;
+		cout << "c[" << configAlloRightGoalPos->x << ',' << configAlloRightGoalPos->y << std::endl;
+		cout << "o[" << alloRighGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
+
         // stupid variant to be sure, that we have shoot!!!
         if (this->kicked)
         {
