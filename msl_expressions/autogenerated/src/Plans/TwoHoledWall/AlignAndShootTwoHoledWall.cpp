@@ -184,6 +184,8 @@ namespace alica
             this->timesOnTargetCounter = 0;
         }
 
+        cout << "timesOnTargetCounter: " << this->timesOnTargetCounter << endl;
+        cout << "timesOnTargetThreshold: " << this->timesOnTargetThreshold << endl;
         // Kick if aiming was correct long enough
         if (this->timesOnTargetCounter > this->timesOnTargetThreshold)
         {
