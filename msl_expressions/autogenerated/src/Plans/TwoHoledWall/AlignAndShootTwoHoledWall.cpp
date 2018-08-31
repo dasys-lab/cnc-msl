@@ -145,6 +145,9 @@ namespace alica
 		cout << "c[" << configAlloRightGoalPos->x << ',' << configAlloRightGoalPos->y << std::endl;
 		cout << "o[" << alloRighGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
 
+		this->lowerHole.x = this->lowerHole.x + (configAlloRightGoalPos.x - alloRighGoalPos->x);
+		this->lowerHole.y = this->lowerHole.y + (configAlloRightGoalPos.y - alloRighGoalPos->y);
+
         // stupid variant to be sure, that we have shoot!!!
         if (this->kicked)
         {
