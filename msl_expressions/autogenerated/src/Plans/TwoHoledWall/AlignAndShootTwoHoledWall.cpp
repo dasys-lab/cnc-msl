@@ -293,9 +293,9 @@ namespace alica
 		auto configAlloRightGoalPos = wm->field->posRightOppGoalPost();
 
 		// Modify hole position via laser scan localization
-		cout << "f[" << this->higherHole.x << ',' << this->higherHole.y << std::endl;
-		cout << "c[" << configAlloLeftGoalPos->x << ',' << configAlloLeftGoalPos->y << std::endl;
-		cout << "o[" << alloLeftGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
+		cout << "f[" << this->lowerHole.x << ',' << this->lowerHole.y << std::endl;
+		cout << "c[" << configAlloRightGoalPos->x << ',' << configAlloRightGoalPos->y << std::endl;
+		cout << "o[" << alloRighGoalPos->x << ',' << alloRighGoalPos->y << std::endl;
 
 		//this->lowerHole.x = configAlloRightGoalPos - (configAlloRightGoalPos.x - this->lowerHole.x);
 		//this->lowerHole.y = configAlloRightGoalPos - (configAlloRightGoalPos.y - this->lowerHole.y);
