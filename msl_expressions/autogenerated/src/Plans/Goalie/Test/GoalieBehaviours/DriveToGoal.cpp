@@ -37,10 +37,10 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-
-	if (wm->field->posOwnGoalMid() == nullptr) {
-		cout << "SOMETHING IS REALLY WRONG; WORLDMODEL SUCKS" << endl;
-	}
+        if (wm->field->posOwnGoalMid() == nullptr)
+        {
+            cout << "SOMETHING IS REALLY WRONG; WORLDMODEL SUCKS" << endl;
+        }
 
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
@@ -59,11 +59,12 @@ namespace alica
         }
         else
         {
-        	//updateGoalPosition();
-		if (alloGoalMid == nullptr)  {
-			cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
-			return;
-		}
+            //updateGoalPosition();
+            if (alloGoalMid == nullptr)
+            {
+                cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
+                return;
+            }
 
             if (goalInitPos.compare("Left") == 0)
             {
@@ -92,25 +93,25 @@ namespace alica
             query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
             query->snapDistance = 100;
 
+            // Add goal posts as obstacles
+            auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+            additionalPoints->push_back(alloGoalLeft);
+            additionalPoints->push_back(alloGoalRight);
 
-			// Add goal posts as obstacles
-			auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			additionalPoints->push_back(alloGoalLeft);
-			additionalPoints->push_back(alloGoalRight);
+            // Add ball as obstacle
+            auto alloBall = wm->ball->getAlloBallPosition();
+            if (alloBall != nullptr)
+                additionalPoints->push_back(alloBall);
 
-			// Add ball as obstacle
-			auto alloBall = wm->ball->getAlloBallPosition();
-			if (alloBall != nullptr)
-				additionalPoints->push_back(alloBall);
-
-			query->additionalPoints = additionalPoints;
+            query->additionalPoints = additionalPoints;
 
             mc = this->robot->robotMovement->moveToPoint(query);
-			// TODO: Probably remove as soon as motion is fixed
-			// Clamp translation because of motion failure
-			if (mc.motion.translation > 1500) {
-				mc.motion.translation = 1500;
-			}
+            // TODO: Probably remove as soon as motion is fixed
+            // Clamp translation because of motion failure
+            if (mc.motion.translation > 1500)
+            {
+                mc.motion.translation = 1500;
+            }
 
             if (me->distanceTo(alloTarget) <= 100)
             {
@@ -134,34 +135,33 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-
     void DriveToGoal::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1447863424939) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
-
-/*PROTECTED REGION ID(methods1447863424939) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1447863424939) ENABLED START*/ //Add additional methods here
     void DriveToGoal::updateGoalPosition()
     {
-    	shared_ptr<geometry::CNPoint2D> laserDetectedEgoGoalMid =  wm->rawSensorData->getEgoGoalMid();
+        shared_ptr < geometry::CNPoint2D > laserDetectedEgoGoalMid = wm->rawSensorData->getEgoGoalMid();
 
         if (laserDetectedEgoGoalMid)
         {
-        	alloGoalMid = laserDetectedEgoGoalMid;
+            alloGoalMid = laserDetectedEgoGoalMid;
         }
         else
         {
-        	alloGoalMid = wm->field->posOwnGoalMid();
+            alloGoalMid = wm->field->posOwnGoalMid();
         }
-	if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)  {
-		cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
-		return;
-	}
-    	alloGoalLeft = make_shared < geometry::CNPoint2D
-    	                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-    	alloGoalRight = make_shared < geometry::CNPoint2D
-    	                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+        if (alloGoalMid == nullptr || wm->field->posLeftOwnGoalPost() == nullptr)
+        {
+            cout << "Can't determine goal mid using scanner, alloGoalMid == nullptr" << endl;
+            return;
+        }
+        alloGoalLeft = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+        alloGoalRight = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

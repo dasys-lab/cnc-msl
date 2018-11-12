@@ -19,6 +19,8 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
+#include  "Plans/TestPlans/DribbleTestMBE/Lemniskate1541947378314.h"
+
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
@@ -213,6 +215,10 @@ namespace alica
 
             case 1466973051873:
                 return make_shared<UtilityFunction1466973051873>();
+                break;
+
+            case 1541947378314:
+                return make_shared<UtilityFunction1541947378314>();
                 break;
 
             case 1426695119330:

@@ -19,6 +19,8 @@
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/constraints/PenaltyMaster1466973051873Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMBE/constraints/Lemniskate1541947378314Constraints.h"
+
 #include  "Plans/GameStrategy/Other/constraints/Parking1426695119330Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
