@@ -2,12 +2,12 @@
 #define MoveToPointDynamic_H_
 
 #include "DomainBehaviour.h"
-
 /*PROTECTED REGION ID(inc1456997073100) ENABLED START*/ //Add additional includes here
 #include <memory>
 
-namespace alica {
-	class Query;
+namespace alica
+{
+    class Query;
 }
 namespace msl
 

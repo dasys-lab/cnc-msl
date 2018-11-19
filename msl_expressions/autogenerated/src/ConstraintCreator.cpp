@@ -53,6 +53,8 @@
 
 #include  "Plans/TestPlans/DribbleTestMOS/constraints/CircleSeeForwards1520679916966Constraints.h"
 
+#include  "Plans/TestPlans/DribbleTestMBE/constraints/LemniskateAlignToNP1542642731136Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/constraints/OwnInGamePenalty1466936775181Constraints.h"

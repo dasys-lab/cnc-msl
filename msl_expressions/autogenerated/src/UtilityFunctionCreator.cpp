@@ -53,6 +53,8 @@
 
 #include  "Plans/TestPlans/DribbleTestMOS/CircleSeeForwards1520679916966.h"
 
+#include  "Plans/TestPlans/DribbleTestMBE/LemniskateAlignToNP1542642731136.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -283,6 +285,10 @@ namespace alica
 
             case 1520679916966:
                 return make_shared<UtilityFunction1520679916966>();
+                break;
+
+            case 1542642731136:
+                return make_shared<UtilityFunction1542642731136>();
                 break;
 
             case 1434046634656:

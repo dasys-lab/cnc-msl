@@ -52,6 +52,8 @@
 
 #include  "Plans/TestPlans/DribbleTestMOS/CircleSeeForwards1520679916966.h"
 
+#include  "Plans/TestPlans/DribbleTestMBE/LemniskateAlignToNP1542642731136.h"
+
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/OwnInGamePenalty1466936775181.h"
@@ -979,6 +981,66 @@ namespace alica
             case 1520682683152:
 
                 return make_shared<TransitionCondition1520682683152>();
+
+                break;
+
+            case 1542642731149:
+
+                return make_shared<TransitionCondition1542642731149>();
+
+                break;
+
+            case 1542642731151:
+
+                return make_shared<TransitionCondition1542642731151>();
+
+                break;
+
+            case 1542642731153:
+
+                return make_shared<TransitionCondition1542642731153>();
+
+                break;
+
+            case 1542642731155:
+
+                return make_shared<TransitionCondition1542642731155>();
+
+                break;
+
+            case 1542642731157:
+
+                return make_shared<TransitionCondition1542642731157>();
+
+                break;
+
+            case 1542642731159:
+
+                return make_shared<TransitionCondition1542642731159>();
+
+                break;
+
+            case 1542642731161:
+
+                return make_shared<TransitionCondition1542642731161>();
+
+                break;
+
+            case 1542642731163:
+
+                return make_shared<TransitionCondition1542642731163>();
+
+                break;
+
+            case 1542642731165:
+
+                return make_shared<TransitionCondition1542642731165>();
+
+                break;
+
+            case 1542642731167:
+
+                return make_shared<TransitionCondition1542642731167>();
 
                 break;
 
