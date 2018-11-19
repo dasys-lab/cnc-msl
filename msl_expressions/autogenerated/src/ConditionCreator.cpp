@@ -442,6 +442,60 @@ namespace alica
 
                 break;
 
+            case 1542528165498:
+
+                return make_shared<TransitionCondition1542528165498>();
+
+                break;
+
+            case 1542528166981:
+
+                return make_shared<TransitionCondition1542528166981>();
+
+                break;
+
+            case 1542528168349:
+
+                return make_shared<TransitionCondition1542528168349>();
+
+                break;
+
+            case 1542528170594:
+
+                return make_shared<TransitionCondition1542528170594>();
+
+                break;
+
+            case 1542528172510:
+
+                return make_shared<TransitionCondition1542528172510>();
+
+                break;
+
+            case 1542528174698:
+
+                return make_shared<TransitionCondition1542528174698>();
+
+                break;
+
+            case 1542528176027:
+
+                return make_shared<TransitionCondition1542528176027>();
+
+                break;
+
+            case 1542528177298:
+
+                return make_shared<TransitionCondition1542528177298>();
+
+                break;
+
+            case 1542528184111:
+
+                return make_shared<TransitionCondition1542528184111>();
+
+                break;
+
             case 1429111678112:
 
                 return make_shared<TransitionCondition1429111678112>();

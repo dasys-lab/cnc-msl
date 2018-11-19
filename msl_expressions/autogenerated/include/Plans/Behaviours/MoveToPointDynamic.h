@@ -2,8 +2,15 @@
 #define MoveToPointDynamic_H_
 
 #include "DomainBehaviour.h"
+
 /*PROTECTED REGION ID(inc1456997073100) ENABLED START*/ //Add additional includes here
+#include <memory>
+
+namespace alica {
+	class Query;
+}
 namespace msl
+
 {
     class MovementQuery;
 }
@@ -21,7 +28,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1456997073100) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<Query> query;
+        std::shared_ptr<Query> query;
         double maxVel;
         bool avoidBall;
         vector<double> result;
